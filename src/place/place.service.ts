@@ -11,12 +11,11 @@ export class PlaceService {
         private readonly placeRepository: Repository<Place>
     ) { }
 
-    async getPlaces(query: any): Promise<any> {
-        // TODO change user id from token
+    async getPlaces(token: any, query: any): Promise<any> {
         let options: any = {
             where: {
                 user: {
-                    id: 1
+                    id: token.userId
                 }
             },
             order: {
@@ -53,13 +52,11 @@ export class PlaceService {
         return await this.placeRepository.remove(place);
     }
 
-    async getPlaceById(id: number) {
-        // TODO change user id from token
-        return this.placeRepository.findOneOrFail({id: id, user: {id: 1 }});
+    async getPlaceById(token: any, id: number) {
+        return this.placeRepository.findOneOrFail({id: id, user: {id: token.userId }});
     }
 
-    async getPlaceByName(name: string) {
-        // TODO change user id from token
-        return this.placeRepository.findOne({ name: name, user: {id: 1 }});
+    async getPlaceByName(token: any, name: string) {
+        return this.placeRepository.findOne({ name: name, user: {id: token.userId }});
     }
 }

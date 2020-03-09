@@ -1,4 +1,5 @@
 import { Module, MiddlewareConsumer } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HelmetMiddleware } from '@nest-middlewares/helmet';
 import { AppController } from './app.controller';
@@ -13,11 +14,11 @@ import { EntityNotFoundFilter } from './exception/entity-not-found-filter';
 import { QueryFailedErrorFilter } from './exception/query-failed-error-filter';
 import { GliderModule } from './glider/glider.module';
 import { NewsModule } from './news/news.module';
-import * as dotenv from "dotenv";
-dotenv.config();
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DATABASE_HOST,
@@ -29,11 +30,12 @@ dotenv.config();
       // autoLoadEntities: true,
       synchronize: true,
     }),
+    AuthModule,
     FlightModule,
     PlaceModule,
     UserModule,
     GliderModule,
-    NewsModule
+    NewsModule,
   ],
   controllers: [AppController],
   providers: [
