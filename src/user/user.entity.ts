@@ -57,7 +57,7 @@ export class User {
         
 
     @Column("varchar",{ 
-        nullable:false,
+        nullable:true,
         name:"salt"
         })
     salt:string;

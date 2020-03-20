@@ -6,8 +6,8 @@ import { UserModule } from 'src/user/user.module';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategy/local.strategy';
 import { AuthController } from './auth.controller';
-import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { JwtStrategy } from './strategy/jwt.strategy';
+import { AuthFacade } from './auth.facade';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { JwtStrategy } from './strategy/jwt.strategy';
       signOptions: { expiresIn: process.env.TOKEN_EXPIRATION },
     })
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, AuthFacade],
   controllers: [AuthController]
 })
 export class AuthModule { }
