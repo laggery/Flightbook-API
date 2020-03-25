@@ -11,7 +11,7 @@ The entire project is construct in three parts.
 - A Mobile application – https://github.com/laggery/Flightbook-MobileApp
 
 ## History
-I started with this project in 2013 and first it was used from some Friends and me. 2015 I published the first mobile application version and developed a Symfony web page. 2019 I decided to redevelop the mobile application with the Ionic Framework, the backend with nestjs and make the entire project open source.
+I started with this project in 2013 and first it was used from some Friends and me. 2015 I published the first mobile application version and developed a Symfony web page. 2020 I decided to redevelop the mobile application with the Ionic Framework, the backend with nestjs and make the entire project open source.
 
 ## Getting started
 
