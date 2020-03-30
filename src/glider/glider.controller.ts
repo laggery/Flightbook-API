@@ -1,7 +1,7 @@
 import { Controller, UseGuards, Get, Request, Query, Post, Body, Put, Param, Delete, HttpCode } from '@nestjs/common';
 import { GliderFacade } from './glider.facade';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
-import { GliderDto } from './interface/place-dto';
+import { GliderDto } from './interface/glider-dto';
 
 @Controller('gliders')
 export class GliderController {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { GliderService } from './glider.service';
 import { UserService } from 'src/user/user.service';
-import { GliderDto } from './interface/place-dto';
+import { GliderDto } from './interface/glider-dto';
 import { Glider } from './glider.entity';
 import { plainToClass } from 'class-transformer';
 import { User } from 'src/user/user.entity';
