@@ -46,6 +46,7 @@ export class GliderFacade {
         const glider: Glider = await this.gliderService.getGliderById(token, id);
 
         glider.brand = gliderDto.brand;
+        glider.name = gliderDto.name;
         // format date
         if (gliderDto.buyDate) {
             glider.buyDate = moment(gliderDto.buyDate).format('YYYY-MM-DD');
