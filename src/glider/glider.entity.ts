@@ -24,7 +24,7 @@ export class Glider {
         nullable:true,
         name:"buy_date"
         })
-    buy_date:string | null;
+    buyDate:string | null;
         
 
     @Column("varchar",{ 

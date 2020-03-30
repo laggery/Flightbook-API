@@ -19,6 +19,7 @@ export class PlaceFacade {
     async createPlace(token: any, placeDto: PlaceDto): Promise<PlaceDto> {
         const user: User = await this.userService.getUserById(token.userId);
         const place: Place = plainToClass(Place, placeDto);
+        place.id = null;
         place.user = user;
 
         // Check if name already existe for this user
