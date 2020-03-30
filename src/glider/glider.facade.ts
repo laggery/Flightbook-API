@@ -6,7 +6,7 @@ import { Glider } from './glider.entity';
 import { plainToClass } from 'class-transformer';
 import { User } from 'src/user/user.entity';
 import * as moment from 'moment';
-import { WrongDateFormatException } from './exception/wrong-date-format-exception';
+import { InvalidDateException } from './exception/invalid-date-exception';
 
 @Injectable()
 export class GliderFacade {
@@ -19,13 +19,18 @@ export class GliderFacade {
     }
 
     async createPlace(token: any, gliderDto: GliderDto): Promise<GliderDto> {
-        // check if date is valide format
-        if (gliderDto.buyDate && !moment(gliderDto.buyDate, 'YYYY-MM-DD',true).isValid()) {
-            throw new WrongDateFormatException();
+        // check if date is valide
+        if (gliderDto.buyDate && Number.isNaN(Date.parse(gliderDto.buyDate))) {
+            throw new InvalidDateException();
         }
 
         const user: User = await this.userService.getUserById(token.userId);
         const glider: Glider = plainToClass(Glider, gliderDto);
+
+        // format date
+        if (gliderDto.buyDate) {
+            glider.buyDate = moment(gliderDto.buyDate).format('YYYY-MM-DD');
+        }
         glider.id = null;
         glider.user = user;
 
@@ -34,15 +39,19 @@ export class GliderFacade {
     }
 
     async updateGlider(token: any, id: number, gliderDto: GliderDto): Promise<GliderDto> {
-        // check if date is valide format
-        if (gliderDto.buyDate && !moment(gliderDto.buyDate, 'YYYY-MM-DD',true).isValid()) {
-            throw new WrongDateFormatException();
+        // check if date is valide
+        if (gliderDto.buyDate && Number.isNaN(Date.parse(gliderDto.buyDate))) {
+            throw new InvalidDateException();
         }
-
         const glider: Glider = await this.gliderService.getGliderById(token, id);
 
         glider.brand = gliderDto.brand;
-        glider.buyDate = gliderDto.buyDate;
+        // format date
+        if (gliderDto.buyDate) {
+            glider.buyDate = moment(gliderDto.buyDate).format('YYYY-MM-DD');
+        } else {
+            glider.buyDate = null;
+        }
         glider.tandem = gliderDto.tandem;
         const gliderResp: Glider = await this.gliderService.saveGlider(glider);
         return plainToClass(GliderDto, gliderResp);
