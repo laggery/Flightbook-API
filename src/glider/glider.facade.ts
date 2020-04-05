@@ -63,4 +63,9 @@ export class GliderFacade {
         const gliderResp: Glider = await this.gliderService.removePlace(glider);
         return plainToClass(GliderDto, gliderResp);
     }
+
+    async getGliderById(token: any, id: number): Promise<GliderDto | undefined> {
+        const glider: Glider = await this.gliderService.getGliderById(token, id);
+        return plainToClass(GliderDto, glider);
+    }
 }

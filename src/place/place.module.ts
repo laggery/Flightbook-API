@@ -9,6 +9,7 @@ import { UserModule } from 'src/user/user.module';
 @Module({
   imports: [UserModule, TypeOrmModule.forFeature([Place])],
   controllers: [PlaceController],
-  providers: [PlaceService, PlaceFacade]
+  providers: [PlaceService, PlaceFacade],
+  exports: [PlaceFacade]
 })
 export class PlaceModule {}

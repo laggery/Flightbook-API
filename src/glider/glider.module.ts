@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 @Module({
   imports: [UserModule, TypeOrmModule.forFeature([Glider])],
   controllers: [GliderController],
-  providers: [GliderService, GliderFacade]
+  providers: [GliderService, GliderFacade],
+  exports: [GliderFacade]
 })
 export class GliderModule {}

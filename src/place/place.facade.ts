@@ -50,4 +50,9 @@ export class PlaceFacade {
         const placeResp: Place = await this.placeService.removePlace(place);
         return plainToClass(PlaceDto, placeResp);
     }
+
+    async getPlaceByName(token: any, name: string): Promise<PlaceDto | undefined> {
+        const place: Place = await this.placeService.getPlaceByName(token, name);
+        return plainToClass(PlaceDto, place);
+    }
 }
