@@ -77,6 +77,12 @@ export class FlightFacade {
             throw new InvalidGliderException();
         }
 
+        if (flightDto.time && moment(flightDto.time,"HH:mm").isValid()) {
+            if (!Number.isNaN(Date.parse(flightDto.time))) {
+                flight.time = moment(flightDto.time).format('HH:mm');
+            }
+        }
+
         // Check if glider is valid
         try {
             const gliderDto = await this.gliderFacade.getGliderById(token, flightDto.glider.id)
@@ -86,14 +92,14 @@ export class FlightFacade {
         }
 
         // Check if start an landing exist and if not create it
-        if (flightDto.start) {
+        if (flightDto.start && flightDto.start.name) {
             let startDto = await this.placeFacade.getPlaceByName(token, flightDto.start.name);
             if (!startDto) {
                 startDto = await this.placeFacade.createPlace(token, flightDto.start);
             }
             flight.start = plainToClass(Place, startDto);
         }
-        if (flightDto.landing) {
+        if (flightDto.landing && flightDto.landing.name) {
             let landingDto = await this.placeFacade.getPlaceByName(token, flightDto.landing.name);
             if (!landingDto) {
                 landingDto = await this.placeFacade.createPlace(token, flightDto.landing);
