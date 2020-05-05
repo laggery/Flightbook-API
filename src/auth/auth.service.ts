@@ -32,4 +32,8 @@ export class AuthService {
       refresh_token: uuid
     };
   }
+
+  async hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, 11);
+  }
 }

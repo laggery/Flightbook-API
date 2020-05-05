@@ -1,4 +1,4 @@
-import { ConflictException, UnprocessableEntityException } from "@nestjs/common";
+import { UnprocessableEntityException } from "@nestjs/common";
 
 export class InvalidGliderException extends UnprocessableEntityException {
     constructor() {

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
@@ -12,7 +12,7 @@ import { AuthFacade } from './auth.facade';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    UserModule,
+    forwardRef(() => UserModule),
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
@@ -20,6 +20,7 @@ import { AuthFacade } from './auth.facade';
     })
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy, AuthFacade],
-  controllers: [AuthController]
+  controllers: [AuthController],
+  exports: [AuthService],
 })
 export class AuthModule { }
