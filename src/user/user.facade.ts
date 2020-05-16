@@ -51,12 +51,15 @@ export class UserFacade {
             throw new InvalidUserException();
         }
 
-        let userExist: User = await this.userService.getUserByEmail(userWriteDto.email);
-        if (userExist) {
-            throw new UserAlreadyExistsException();
-        }
-
         let user: User = await this.userService.getUserById(id);
+
+        if (user.email !== userWriteDto.email) {
+            let userExist: User = await this.userService.getUserByEmail(userWriteDto.email);
+
+            if (userExist) {
+                throw new UserAlreadyExistsException();
+            }
+        }
 
         user.username = userWriteDto.email;
         user.username_canonical = userWriteDto.email;
