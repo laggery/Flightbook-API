@@ -5,8 +5,6 @@ import { PlaceDto } from "src/place/interface/place-dto";
 @Exclude()
 export class UserReadDto {
     @Expose()
-    readonly id: number;
-    @Expose()
     readonly email: string;
     @Expose()
     readonly firstname: string;
