@@ -15,6 +15,12 @@ export class PlaceController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get(':name')
+    getPlacesByName(@Request() req, @Param('name') name: string): Promise<PlaceDto[]> {
+        return this.placeFacade.getPlacesByName(req.user, name);
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Post()
     createPlace(@Request() req, @Body() placeDto: PlaceDto): Promise<PlaceDto> {
         return this.placeFacade.createPlace(req.user, placeDto);

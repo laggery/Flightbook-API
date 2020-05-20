@@ -16,6 +16,11 @@ export class PlaceFacade {
         return plainToClass(PlaceDto, list);
     }
 
+    async getPlacesByName(token: any, name: string): Promise<PlaceDto[]> {
+        const list: Place[] = await this.placeService.getPlacesByName(token, name);
+        return plainToClass(PlaceDto, list);
+    }
+
     async createPlace(token: any, placeDto: PlaceDto): Promise<PlaceDto> {
         const user: User = await this.userService.getUserById(token.userId);
         const place: Place = plainToClass(Place, placeDto);

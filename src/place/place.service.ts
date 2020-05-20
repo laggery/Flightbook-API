@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { Place } from './place.entity';
 
 @Injectable()
@@ -53,10 +53,25 @@ export class PlaceService {
     }
 
     async getPlaceById(token: any, id: number) {
-        return this.placeRepository.findOneOrFail({id: id, user: {id: token.userId }});
+        return this.placeRepository.findOneOrFail({ id: id, user: { id: token.userId } });
     }
 
     async getPlaceByName(token: any, name: string) {
-        return this.placeRepository.findOne({ name: name, user: {id: token.userId }});
+        return this.placeRepository.findOne({ name: name, user: { id: token.userId } });
+    }
+
+    async getPlacesByName(token: any, name: string) {
+        let options: any = {
+            where: {
+                user: {
+                    id: token.userId
+                },
+                name: Like(`%${name}%`)
+            },
+            order: {
+                name: 'ASC'
+            }
+        };
+        return this.placeRepository.find(options);
     }
 }
