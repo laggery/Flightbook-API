@@ -16,8 +16,8 @@ export class PlaceFacade {
         return plainToClass(PlaceDto, list);
     }
 
-    async getPlacesByName(token: any, name: string): Promise<PlaceDto[]> {
-        const list: Place[] = await this.placeService.getPlacesByName(token, name);
+    async getPlacesByName(token: any,  query: any, name: string): Promise<PlaceDto[]> {
+        const list: Place[] = await this.placeService.getPlacesByName(token, query, name);
         return plainToClass(PlaceDto, list);
     }
 

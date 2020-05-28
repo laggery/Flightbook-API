@@ -60,7 +60,7 @@ export class PlaceService {
         return this.placeRepository.findOne({ name: name, user: { id: token.userId } });
     }
 
-    async getPlacesByName(token: any, name: string) {
+    async getPlacesByName(token: any, query: any, name: string) {
         let options: any = {
             where: {
                 user: {
@@ -72,6 +72,19 @@ export class PlaceService {
                 name: 'ASC'
             }
         };
+        if (query && query.limit) {
+            if (Number.isNaN(Number(query.limit))) {
+                throw new BadRequestException("limit is not a number");
+            };
+            options.take = query.limit;
+        }
+
+        if (query && query.offset) {
+            if (Number.isNaN(Number(query.offset))) {
+                throw new BadRequestException("offset is not a number");
+            };
+            options.skip = query.offset;
+        }
         return this.placeRepository.find(options);
     }
 }
