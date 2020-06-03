@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { Glider } from './glider.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 
 @Injectable()
 export class GliderService {
@@ -38,6 +38,21 @@ export class GliderService {
             options.skip = query.offset;
         }
 
+        if (query && query.brand) {
+            options.where.brand = Like(`%${query.brand}%`);
+        }
+
+        if (query && query.name) {
+            options.where.name = Like(`%${query.name}%`);
+        }
+
+        if (query && query.type) {
+            if (Number.isNaN(Number(query.type))) {
+                throw new BadRequestException("type is not a 0 or 1");
+            };
+            options.where.tandem = query.type;
+        }
+        
         return await this.gliderRepository.find(options);
     }
 
