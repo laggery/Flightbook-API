@@ -1,7 +1,8 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { Flight } from './flight.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
+import { FlightStatisticDto } from './interface/flight-statistic-dto';
 
 @Injectable()
 export class FlightService {
@@ -12,7 +13,7 @@ export class FlightService {
     ) { }
 
     async getFLights(token: any, query: any): Promise<Flight[]> {
-        let builder = this.flightRepository.createQueryBuilder('flight')
+        let builder: SelectQueryBuilder<Flight> = this.flightRepository.createQueryBuilder('flight')
             .addSelect('user')
             .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
             .leftJoinAndSelect('flight.glider', 'glider', 'glider.id = flight.glider_id')
@@ -20,6 +21,47 @@ export class FlightService {
             .leftJoinAndSelect('flight.landing', 'landing', 'landing.id = flight.landing_id')
             .where(`user.id = ${token.userId}`)
 
+        builder = this.addQueryParams(builder, query);
+
+        builder.orderBy('flight.date', 'DESC');
+        builder.addOrderBy('flight.timestamp', 'DESC');
+
+        return builder.getMany();
+    }
+
+    async getStatistic(token: any, query: any): Promise<FlightStatisticDto> {
+        let builder = this.flightRepository.createQueryBuilder('flight')
+            .select('count(flight.id)', "nbFlights")
+            .addSelect("Sum(Time_to_sec(flight.time))", "time")
+            .addSelect('Sum(flight.price)', "income")
+            .addSelect('Avg(Time_to_sec(flight.time))', "average")
+            .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
+            .leftJoin('flight.glider', 'glider', 'glider.id = flight.glider_id')
+            .where(`user.id = ${token.userId}`)
+
+        builder = this.addQueryParams(builder, query);
+
+        let statistic: FlightStatisticDto = await builder.getRawOne();
+        statistic.nbFlights = Number(statistic.nbFlights);
+        statistic.time = Number(statistic.time);
+        statistic.average = Number(statistic.average);
+
+        return statistic;
+    }
+
+    async saveFlight(flight: Flight): Promise<Flight | undefined> {
+        return await this.flightRepository.save(flight);
+    }
+
+    async removeFlight(flight: Flight): Promise<Flight | undefined> {
+        return await this.flightRepository.remove(flight);
+    }
+
+    async getFlightById(token: any, id: number): Promise<Flight> {
+        return this.flightRepository.findOneOrFail({ id: id, user: { id: token.userId } });
+    }
+
+    private addQueryParams(builder: SelectQueryBuilder<Flight>, query: any): SelectQueryBuilder<Flight> {
         if (query && query.limit) {
             if (Number.isNaN(Number(query.limit))) {
                 throw new BadRequestException("limit is not a number");
@@ -55,22 +97,6 @@ export class FlightService {
         if (query && query.to) {
             builder.andWhere(`flight.date <= "${query.to}"`);
         }
-
-        builder.orderBy('flight.date', 'DESC');
-        builder.addOrderBy('flight.timestamp', 'DESC');
-
-        return builder.getMany();
-    }
-
-    async saveFlight(flight: Flight): Promise<Flight | undefined> {
-        return await this.flightRepository.save(flight);
-    }
-
-    async removeFlight(flight: Flight): Promise<Flight | undefined> {
-        return await this.flightRepository.remove(flight);
-    }
-
-    async getFlightById(token: any, id: number): Promise<Flight> {
-        return this.flightRepository.findOneOrFail({ id: id, user: { id: token.userId } });
+        return builder
     }
 }

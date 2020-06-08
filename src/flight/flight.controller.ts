@@ -2,6 +2,7 @@ import { Controller, Get, Req, UseGuards, Request, Query, Post, Body, Put, Param
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { FlightDto } from './interface/flight-dto';
 import { FlightFacade } from './flight.facade';
+import { FlightStatisticDto } from './interface/flight-statistic-dto';
 
 @Controller('flights')
 export class FlightController {
@@ -12,6 +13,12 @@ export class FlightController {
     @Get()
     getPlaces(@Request() req, @Query() query): Promise<FlightDto[]> {
         return this.flightFacade.getGliders(req.user, query);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('statistic')
+    getStatistic(@Request() req, @Query() query): Promise<FlightStatisticDto> {
+        return this.flightFacade.getStatistic(req.user, query);
     }
 
     @UseGuards(JwtAuthGuard)
