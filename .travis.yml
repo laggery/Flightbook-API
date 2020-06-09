@@ -8,7 +8,6 @@ jobs:
         - docker tag  $DOCKER_USERNAME/flightbook-api:latest $DOCKER_USERNAME/flightbook-api:"$TRAVIS_BUILD_NUMBER"
         - docker push $DOCKER_USERNAME/flightbook-api:"$TRAVIS_BUILD_NUMBER"
         - docker push $DOCKER_USERNAME/flightbook-api:latest
-  branches:
-    only:
-    - master
-    
+    branches:
+      only:
+      - master
