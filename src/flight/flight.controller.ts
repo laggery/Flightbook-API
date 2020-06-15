@@ -22,6 +22,18 @@ export class FlightController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get('/places/:id/count')
+    nbFlightsByPlaceId(@Request() req, @Param('id') id: number) {
+        return this.flightFacade.nbFlightsByPlaceId(req.user, id);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('/gliders/:id/count')
+    nbFlightsByGliderId(@Request() req, @Param('id') id: number) {
+        return this.flightFacade.nbFlightsByGliderId(req.user, id);
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Post()
     createFlight(@Request() req, @Body() flightDto: FlightDto): Promise<FlightDto> {
         return this.flightFacade.createFlight(req.user, flightDto);

@@ -82,7 +82,7 @@ export class FlightFacade {
             throw new InvalidGliderException();
         }
 
-        if (flightDto.time && moment(flightDto.time,"HH:mm").isValid()) {
+        if (flightDto.time && moment(flightDto.time, "HH:mm").isValid()) {
             if (!Number.isNaN(Date.parse(flightDto.time))) {
                 flight.time = moment(flightDto.time).format('HH:mm');
             }
@@ -113,5 +113,13 @@ export class FlightFacade {
         }
 
         return flight;
+    }
+
+    async nbFlightsByPlaceId(token: any, placeId: number) {
+        return this.flightService.countFlightsByPlaceId(token, placeId);
+    }
+
+    async nbFlightsByGliderId(token: any, gliderId: number) {
+        return this.flightService.countFlightsByGliderId(token, gliderId);
     }
 }

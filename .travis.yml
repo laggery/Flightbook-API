@@ -1,3 +1,4 @@
+language: generic
 jobs:
     include:
       - stage: build docker image

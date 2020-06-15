@@ -99,4 +99,24 @@ export class FlightService {
         }
         return builder
     }
+
+    async countFlightsByPlaceId(token: any, placeId: number): Promise<any> {
+        let builder = this.flightRepository.createQueryBuilder('flight')
+            .select('distinct count(flight.id)', "nbFlights")
+            .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
+            .where(`user.id = ${token.userId}`)
+            .andWhere(`flight.start_id = ${placeId} OR flight.landing_id = ${placeId}`)
+
+        return builder.getRawOne();
+    }
+
+    async countFlightsByGliderId(token: any, gliderId: number): Promise<any> {
+        let builder = this.flightRepository.createQueryBuilder('flight')
+            .select('distinct count(flight.id)', "nbFlights")
+            .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
+            .where(`user.id = ${token.userId}`)
+            .andWhere(`flight.glider_id = ${gliderId}`)
+
+        return builder.getRawOne();
+    }
 }
