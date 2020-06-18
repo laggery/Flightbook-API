@@ -27,4 +27,9 @@ export class AuthController {
     async logout(@Request() req) {
         await this.authFacade.logout(req.user)
     }
+
+    @Get('reset-password/:email')
+    async resetPassword(@Param('email') email) {
+        return this.authFacade.resetPassword(email);
+    }
 }
