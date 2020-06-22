@@ -12,6 +12,10 @@ COPY package.json package-lock.json ./
 RUN npm install --production
 
 FROM node:lts-alpine
+RUN apk add tzdata
+RUN cp /usr/share/zoneinfo/Europe/Zurich /etc/localtime
+RUN echo "Europe/Zurich" >  /etc/timezone
+RUN apk del tzdata
 WORKDIR /usr/local/nub-api
 COPY --from=node_modules /tmp/node_modules ./node_modules
 COPY --from=dist /tmp/dist ./dist
