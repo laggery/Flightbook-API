@@ -26,8 +26,6 @@ export class FlightService {
         builder.orderBy('flight.date', 'DESC');
         builder.addOrderBy('flight.timestamp', 'DESC');
 
-        console.log(builder.getSql());
-
         return builder.getMany();
     }
 
@@ -42,8 +40,6 @@ export class FlightService {
             .where(`user.id = ${token.userId}`);
 
         builder = this.addQueryParams(builder, query);
-
-        console.log(builder.getSql());
 
         let statistic: FlightStatisticDto = await builder.getRawOne();
         statistic.nbFlights = Number(statistic.nbFlights);
