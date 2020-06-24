@@ -95,11 +95,11 @@ export class FlightService {
         }
 
         if (query && query.from) {
-            builder.andWhere(`flight.date >= "${query.from}"`);
+            builder.andWhere(`flight.date >= '${query.from}'`);
         }
 
         if (query && query.to) {
-            builder.andWhere(`flight.date <= "${query.to}"`);
+            builder.andWhere(`flight.date <= '${query.to}'`);
         }
         return builder
     }
