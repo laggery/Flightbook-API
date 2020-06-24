@@ -19,7 +19,7 @@ export class FlightService {
             .leftJoinAndSelect('flight.glider', 'glider', 'glider.id = flight.glider_id')
             .leftJoinAndSelect('flight.start', 'start', 'start.id = flight.start_id')
             .leftJoinAndSelect('flight.landing', 'landing', 'landing.id = flight.landing_id')
-            .where(`user.id = ${token.userId}`)
+            .where(`user.id = ${token.userId}`);
 
         builder = this.addQueryParams(builder, query);
 
@@ -37,7 +37,7 @@ export class FlightService {
             .addSelect('Avg(Time_to_sec(flight.time))', "average")
             .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
             .leftJoin('flight.glider', 'glider', 'glider.id = flight.glider_id')
-            .where(`user.id = ${token.userId}`)
+            .where(`user.id = ${token.userId}`);
 
         builder = this.addQueryParams(builder, query);
 
