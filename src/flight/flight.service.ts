@@ -26,6 +26,8 @@ export class FlightService {
         builder.orderBy('flight.date', 'DESC');
         builder.addOrderBy('flight.timestamp', 'DESC');
 
+        console.log(builder.printSql());
+
         return builder.getMany();
     }
 
