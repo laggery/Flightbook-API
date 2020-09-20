@@ -24,7 +24,7 @@ export class FlightFacade {
         private userService: UserService
     ) { }
 
-    async getGliders(token: any, query: any): Promise<FlightDto[]> {
+    async getFLights(token: any, query: any): Promise<FlightDto[]> {
         const list: Flight[] = await this.flightService.getFLights(token, query);
         return plainToClass(FlightDto, list);
     }

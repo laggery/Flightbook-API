@@ -11,8 +11,8 @@ export class FlightController {
 
     @UseGuards(JwtAuthGuard)
     @Get()
-    getPlaces(@Request() req, @Query() query): Promise<FlightDto[]> {
-        return this.flightFacade.getGliders(req.user, query);
+    getFlights(@Request() req, @Query() query): Promise<FlightDto[]> {
+        return this.flightFacade.getFLights(req.user, query);
     }
 
     @UseGuards(JwtAuthGuard)

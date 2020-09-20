@@ -18,7 +18,7 @@ export class GliderFacade {
         return plainToClass(GliderDto, list);
     }
 
-    async createPlace(token: any, gliderDto: GliderDto): Promise<GliderDto> {
+    async createGlider(token: any, gliderDto: GliderDto): Promise<GliderDto> {
         // check if date is valide
         if (gliderDto.buyDate && Number.isNaN(Date.parse(gliderDto.buyDate))) {
             throw new InvalidDateException();

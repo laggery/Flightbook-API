@@ -5,6 +5,8 @@ import { PlaceDto } from "src/place/interface/place-dto";
 @Exclude()
 export class FlightDto {
     @Expose()
+    readonly number: number;
+    @Expose()
     readonly id: number;
     @Expose()
     readonly glider: GliderDto;

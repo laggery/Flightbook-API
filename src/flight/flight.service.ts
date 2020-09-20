@@ -1,8 +1,12 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { Flight } from './flight.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository, SelectQueryBuilder, getManager } from 'typeorm';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
+import { PlainObjectToNewEntityTransformer } from 'typeorm/query-builder/transformer/PlainObjectToNewEntityTransformer';
+import { plainToClass } from 'class-transformer';
+import { Glider } from 'src/glider/glider.entity';
+import { Place } from 'src/place/place.entity';
 
 @Injectable()
 export class FlightService {
@@ -12,21 +16,55 @@ export class FlightService {
         private readonly flightRepository: Repository<Flight>
     ) { }
 
+    // @hack for use ROW_NUMBER function from mysql with typeorm
     async getFLights(token: any, query: any): Promise<Flight[]> {
         let builder: SelectQueryBuilder<Flight> = this.flightRepository.createQueryBuilder('flight')
-            .addSelect('user')
+            .addSelect('flight_number')
             .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
             .leftJoinAndSelect('flight.glider', 'glider', 'glider.id = flight.glider_id')
             .leftJoinAndSelect('flight.start', 'start', 'start.id = flight.start_id')
             .leftJoinAndSelect('flight.landing', 'landing', 'landing.id = flight.landing_id')
-            .where(`user.id = ${token.userId}`);
+            .where(`flight.user_id = ${token.userId}`);
 
         builder = this.addQueryParams(builder, query);
-
         builder.orderBy('flight.date', 'DESC');
         builder.addOrderBy('flight.timestamp', 'DESC');
 
-        return builder.getMany();
+        let sqlRequest = builder.getSql();
+        sqlRequest = sqlRequest.replace('FROM `flight` `flight`', ` FROM (Select ROW_NUMBER() OVER (ORDER BY flight.date ASC) flight_number, flight.* from flight where user_id = ${token.userId}) as flight`)
+        if (query && query.limit) { sqlRequest = sqlRequest + ` LIMIT ${query.limit}`}
+        if (query && query.offset) { sqlRequest = sqlRequest + ` OFFSET ${query.offset}`}
+
+        let res: [] = await getManager().query(sqlRequest);
+
+        let list: Flight[] = [];
+        res.forEach((raw: Object) => {
+            let data = new Flight();
+            Object.keys(raw).forEach(key => {
+                if (key.startsWith('flight')) {
+                    let name = key.substring(7, key.length);
+                    data[name] = raw[key];
+                }
+                if (key.startsWith('glider')) {
+                    if (!data.glider) data.glider = new Glider();
+                    let name = key.substring(7, key.length);
+                    data["glider"][name] = raw[key];
+                }
+                if (key.startsWith('start')) {
+                    if (!data.start) data.start = new Place();
+                    let name = key.substring(6, key.length);
+                    data["start"][name] = raw[key];
+                }
+                if (key.startsWith('landing')) {
+                    if (!data.landing) data.landing = new Place();
+                    let name = key.substring(8, key.length);
+                    data["landing"][name] = raw[key];
+                }
+            })
+            list.push(data)
+        })
+
+        return list;
     }
 
     async getStatistic(token: any, query: any): Promise<FlightStatisticDto> {
