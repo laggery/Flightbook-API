@@ -12,4 +12,8 @@ export class GliderDto {
     readonly name: string;
     @Expose()
     readonly tandem: boolean;
+    @Expose()
+    readonly nbFlights: number;
+    @Expose()
+    readonly time: number;
 }

@@ -20,7 +20,6 @@ export class FlightService {
     async getFLights(token: any, query: any): Promise<Flight[]> {
         let builder: SelectQueryBuilder<Flight> = this.flightRepository.createQueryBuilder('flight')
             .addSelect('flight_number')
-            .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
             .leftJoinAndSelect('flight.glider', 'glider', 'glider.id = flight.glider_id')
             .leftJoinAndSelect('flight.start', 'start', 'start.id = flight.start_id')
             .leftJoinAndSelect('flight.landing', 'landing', 'landing.id = flight.landing_id')

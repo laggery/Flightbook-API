@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { Glider } from './glider.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 
 @Injectable()
 export class GliderService {
@@ -12,48 +12,47 @@ export class GliderService {
     ) { }
 
     async getGliders(token: any, query: any): Promise<Glider[]> {
-        let options: any = {
-            where: {
-                user: {
-                    id: token.userId
-                }
-            },
-            order: {
+
+        let builder: SelectQueryBuilder<Glider> = this.gliderRepository.createQueryBuilder('glider')
+            .addSelect('count(flight.id)', "glider_nbFlights")
+            .addSelect('Sum(Time_to_sec(flight.time))', "glider_time")
+            .leftJoin('flight', 'flight', 'flight.glider_id = glider.id')
+            .where(`glider.user_id = ${token.userId}`)
+            .groupBy('glider.id')
+            .orderBy({
                 brand: 'ASC',
                 name: 'ASC'
-            }
-        };
+            });
 
         if (query && query.limit) {
             if (Number.isNaN(Number(query.limit))) {
                 throw new BadRequestException("limit is not a number");
             };
-            options.take = query.limit;
+            builder.limit(query.limit);
         }
 
         if (query && query.offset) {
             if (Number.isNaN(Number(query.offset))) {
                 throw new BadRequestException("offset is not a number");
             };
-            options.skip = query.offset;
+            builder.offset(query.offset);
         }
 
         if (query && query.brand) {
-            options.where.brand = Like(`%${query.brand}%`);
+            builder.andWhere(`glider.brand LIKE '%${query.brand}%'`)
         }
 
         if (query && query.name) {
-            options.where.name = Like(`%${query.name}%`);
+            builder.andWhere(`glider.name LIKE '%${query.name}%'`)
         }
 
         if (query && query.type) {
             if (Number.isNaN(Number(query.type))) {
                 throw new BadRequestException("type is not a 0 or 1");
             };
-            options.where.tandem = query.type;
+            builder.andWhere(`glider.tandem = ${query.type}`)
         }
-        
-        return await this.gliderRepository.find(options);
+        return await builder.getMany();
     }
 
     async saveGlider(glider: Glider): Promise<Glider | undefined> {
@@ -65,6 +64,6 @@ export class GliderService {
     }
 
     async getGliderById(token: any, id: number): Promise<Glider> {
-        return this.gliderRepository.findOneOrFail({id: id, user: {id: token.userId }});
+        return this.gliderRepository.findOneOrFail({ id: id, user: { id: token.userId } });
     }
 }

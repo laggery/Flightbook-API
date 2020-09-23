@@ -12,9 +12,8 @@ export class Glider {
         name:"id"
         })
     id:number;
-        
 
-   
+
     @ManyToOne(type=>User, user=>user.gliders,{  nullable:false,onDelete: 'RESTRICT',onUpdate: 'RESTRICT' })
     @JoinColumn({ name:'user_id'})
     user:User | null;
@@ -55,5 +54,11 @@ export class Glider {
    
     @OneToMany(type=>Flight, flight=>flight.glider,{ onDelete: 'RESTRICT' ,onUpdate: 'RESTRICT' })
     flights:Flight[];
+
+    @Column({ select: false, nullable: true, insert: false, readonly: true })
+    nbFlights: number;
+
+    @Column({ select: false, nullable: true, insert: false, readonly: true })
+    time: number;
     
 }
