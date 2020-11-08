@@ -13,6 +13,7 @@ import { InvalidGliderException } from './exception/invalid-glider-exception';
 import { GliderFacade } from 'src/glider/glider.facade';
 import { Glider } from 'src/glider/glider.entity';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
+import { PagerDto } from 'src/interface/pager-dto';
 
 @Injectable()
 export class FlightFacade {
@@ -27,6 +28,10 @@ export class FlightFacade {
     async getFLights(token: any, query: any): Promise<FlightDto[]> {
         const list: Flight[] = await this.flightService.getFLights(token, query);
         return plainToClass(FlightDto, list);
+    }
+
+    async getFlightsPager(token: any, query: any): Promise<PagerDto> {
+        return this.flightService.getFlightsPager(token, query);
     }
 
     async getStatistic(token: any, query: any): Promise<FlightStatisticDto> {

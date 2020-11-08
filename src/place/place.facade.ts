@@ -6,6 +6,7 @@ import { User } from '../user/user.entity';
 import { Place } from './place.entity';
 import { plainToClass } from 'class-transformer';
 import { PlaceAlreadyExistsException } from './exception/place-already-exists-exception';
+import { PagerDto } from 'src/interface/pager-dto';
 
 @Injectable()
 export class PlaceFacade {
@@ -14,6 +15,10 @@ export class PlaceFacade {
     async getPlaces(token: any, query: any): Promise<PlaceDto[]> {
         const list: Place[] = await this.placeService.getPlaces(token, query);
         return plainToClass(PlaceDto, list);
+    }
+
+    async getPlacesPager(token: any, query: any): Promise<PagerDto> {
+        return this.placeService.getPlacesPager(token, query);
     }
 
     async getPlacesByName(token: any,  query: any, name: string): Promise<PlaceDto[]> {

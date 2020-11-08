@@ -3,6 +3,7 @@ import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { FlightDto } from './interface/flight-dto';
 import { FlightFacade } from './flight.facade';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
+import { PagerDto } from 'src/interface/pager-dto';
 
 @Controller('flights')
 export class FlightController {
@@ -13,6 +14,12 @@ export class FlightController {
     @Get()
     getFlights(@Request() req, @Query() query): Promise<FlightDto[]> {
         return this.flightFacade.getFLights(req.user, query);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('pager')
+    getFlightsPager(@Request() req, @Query() query): Promise<PagerDto> {
+        return this.flightFacade.getFlightsPager(req.user, query);
     }
 
     @UseGuards(JwtAuthGuard)

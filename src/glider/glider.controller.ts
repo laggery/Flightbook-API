@@ -2,6 +2,7 @@ import { Controller, UseGuards, Get, Request, Query, Post, Body, Put, Param, Del
 import { GliderFacade } from './glider.facade';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { GliderDto } from './interface/glider-dto';
+import { PagerDto } from 'src/interface/pager-dto';
 
 @Controller('gliders')
 export class GliderController {
@@ -12,6 +13,12 @@ export class GliderController {
     @Get()
     getGliders(@Request() req, @Query() query): Promise<GliderDto[]> {
         return this.gliderFacade.getGliders(req.user, query);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('pager')
+    getGlidersPager(@Request() req, @Query() query): Promise<PagerDto> {
+        return this.gliderFacade.getGlidersPager(req.user, query);
     }
 
     @UseGuards(JwtAuthGuard)

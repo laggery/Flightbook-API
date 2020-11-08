@@ -3,10 +3,9 @@ import { Flight } from './flight.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder, getManager } from 'typeorm';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
-import { PlainObjectToNewEntityTransformer } from 'typeorm/query-builder/transformer/PlainObjectToNewEntityTransformer';
-import { plainToClass } from 'class-transformer';
 import { Glider } from 'src/glider/glider.entity';
 import { Place } from 'src/place/place.entity';
+import { PagerDto } from 'src/interface/pager-dto';
 
 @Injectable()
 export class FlightService {
@@ -96,6 +95,26 @@ export class FlightService {
 
     async getFlightById(token: any, id: number): Promise<Flight> {
         return this.flightRepository.findOneOrFail({ id: id, user: { id: token.userId } });
+    }
+
+    async getFlightsPager(token: any, query: any): Promise<PagerDto> {
+        let pagerDto = new PagerDto();
+
+        let builder = this.flightRepository.createQueryBuilder('flight')
+            .leftJoinAndSelect('flight.glider', 'glider', 'glider.id = flight.glider_id')
+            .leftJoinAndSelect('flight.start', 'start', 'start.id = flight.start_id')
+            .leftJoinAndSelect('flight.landing', 'landing', 'landing.id = flight.landing_id')
+            .where(`flight.user_id = ${token.userId}`);
+
+        builder = this.addQueryParams(builder, query);
+        let entityNumber: [Flight[], number] = await builder.getManyAndCount();
+
+        pagerDto.itemCount = entityNumber[0].length;
+        pagerDto.totalItems = entityNumber[1];
+        pagerDto.itemsPerPage = (query && query.limit) ? Number(query.limit) : pagerDto.itemCount;
+        pagerDto.totalPages =  (query && query.limit) ?  Math.ceil(pagerDto.totalItems / Number(query.limit)) : pagerDto.totalItems;
+        pagerDto.currentPage = (query && query.offset) ? (query.offset >= pagerDto.totalItems ? null : Math.floor(parseInt(query.offset) / parseInt(query.limit)) + 1) : 1;
+        return pagerDto;
     }
 
     private addQueryParams(builder: SelectQueryBuilder<Flight>, query: any): SelectQueryBuilder<Flight> {

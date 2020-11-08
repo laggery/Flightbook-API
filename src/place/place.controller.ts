@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, HttpCode, Put, Param, Delete, Query, UseGu
 import { PlaceDto } from './interface/place-dto';
 import { PlaceFacade } from './place.facade';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { PagerDto } from 'src/interface/pager-dto';
 
 @Controller('places')
 export class PlaceController {
@@ -12,6 +13,12 @@ export class PlaceController {
     @Get()
     getPlaces(@Request() req, @Query() query): Promise<PlaceDto[]> {
         return this.placeFacade.getPlaces(req.user, query);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('pager')
+    getPlacesPager(@Request() req, @Query() query): Promise<PagerDto> {
+        return this.placeFacade.getPlacesPager(req.user, query);
     }
 
     @UseGuards(JwtAuthGuard)

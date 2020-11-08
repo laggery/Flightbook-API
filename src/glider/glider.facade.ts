@@ -7,6 +7,7 @@ import { plainToClass } from 'class-transformer';
 import { User } from 'src/user/user.entity';
 import * as moment from 'moment';
 import { InvalidDateException } from './exception/invalid-date-exception';
+import { PagerDto } from 'src/interface/pager-dto';
 
 @Injectable()
 export class GliderFacade {
@@ -16,6 +17,10 @@ export class GliderFacade {
     async getGliders(token: any, query: any): Promise<GliderDto[]> {
         const list: Glider[] = await this.gliderService.getGliders(token, query);
         return plainToClass(GliderDto, list);
+    }
+
+    async getGlidersPager(token: any, query: any): Promise<PagerDto> {
+        return this.gliderService.getGlidersPager(token, query);
     }
 
     async createGlider(token: any, gliderDto: GliderDto): Promise<GliderDto> {
