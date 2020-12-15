@@ -65,7 +65,7 @@ export class FlightService {
         return list;
     }
 
-    async getStatistic(token: any, query: any): Promise<FlightStatisticDto> {
+    async getStatistic(token: any, query: any): Promise<FlightStatisticDto | FlightStatisticDto[]> {
         let builder = this.flightRepository.createQueryBuilder('flight')
             .select('count(flight.id)', "nbFlights")
             .addSelect("Sum(Time_to_sec(flight.time))", "time")
@@ -78,10 +78,38 @@ export class FlightService {
         builder = this.addQueryParams(builder, query);
 
         let statistic: FlightStatisticDto = await builder.getRawOne();
+        statistic = this.statisticDataConverter(statistic);
+
+        if (query.years && query.years === "1") {
+            let builderYears = this.flightRepository.createQueryBuilder('flight')
+            .select('YEAR(flight.date)', "year")
+            .addSelect('count(flight.id)', "nbFlights")
+            .addSelect("Sum(Time_to_sec(flight.time))", "time")
+            .addSelect('Sum(flight.price)', "income")
+            .addSelect('Avg(Time_to_sec(flight.time))', "average")
+            .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
+            .leftJoin('flight.glider', 'glider', 'glider.id = flight.glider_id')
+            .where(`user.id = ${token.userId}`)
+            .groupBy('YEAR(flight.date)')
+            .orderBy('year', "ASC");
+
+            builderYears = this.addQueryParams(builderYears, query);
+
+            let statisticList: FlightStatisticDto[] = await builderYears.getRawMany();
+            statisticList.forEach(statElement => {
+                statElement = this.statisticDataConverter(statElement);
+            })
+            statisticList.splice(0, 0, statistic);
+            return statisticList;
+        }
+
+        return statistic;
+    }
+
+    private statisticDataConverter(statistic: any): any {
         statistic.nbFlights = Number(statistic.nbFlights);
         statistic.time = Number(statistic.time);
         statistic.average = Number(statistic.average);
-
         return statistic;
     }
 

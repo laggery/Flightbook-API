@@ -24,7 +24,7 @@ export class FlightController {
 
     @UseGuards(JwtAuthGuard)
     @Get('statistic')
-    getStatistic(@Request() req, @Query() query): Promise<FlightStatisticDto> {
+    getStatistic(@Request() req, @Query() query): Promise<FlightStatisticDto | FlightStatisticDto[]> {
         return this.flightFacade.getStatistic(req.user, query);
     }
 

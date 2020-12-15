@@ -34,7 +34,7 @@ export class FlightFacade {
         return this.flightService.getFlightsPager(token, query);
     }
 
-    async getStatistic(token: any, query: any): Promise<FlightStatisticDto> {
+    async getStatistic(token: any, query: any): Promise<FlightStatisticDto | FlightStatisticDto[]> {
         return this.flightService.getStatistic(token, query);
     }
 
