@@ -1,4 +1,4 @@
-import {BaseEntity,Column,Entity,Index,JoinColumn,JoinTable,ManyToMany,ManyToOne,OneToMany,OneToOne,PrimaryColumn,PrimaryGeneratedColumn,RelationId} from "typeorm";
+import { Column,Entity,PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity("news",{schema:"flight" } )

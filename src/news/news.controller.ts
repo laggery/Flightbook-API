@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { NewsFacade } from './news.facade';
 
 @Controller('news')

@@ -1,6 +1,5 @@
 import { Injectable, HttpService } from '@nestjs/common';
 import { EmailBodyDto } from './email-body-dto';
-import { Observable } from 'rxjs';
 
 @Injectable()
 export class EmailService {
@@ -9,9 +8,7 @@ export class EmailService {
     constructor(private readonly httpService: HttpService) {
         this.httpService.get('http://mail.zoho.com/api/accounts', { headers: { "Authorization": process.env.EMAIL_AUTHORIZATION } }).subscribe(res => {
             this.accountId = res.data.data[0].accountId;
-        }, error => {
-            
-        });
+        })
     }
 
     sendEmail(body: EmailBodyDto): Promise<any> {

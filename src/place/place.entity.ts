@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn, RelationId } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "../user/user.entity";
 import { Flight } from "../flight/flight.entity";
 import { Exclude, Expose } from "class-transformer";
@@ -16,7 +16,7 @@ export class Place {
     id: number;
 
     @Expose()
-    @ManyToOne(type => User, user => user.places, { nullable: false, onDelete: 'RESTRICT', onUpdate: 'RESTRICT' })
+    @ManyToOne(() => User, user => user.places, { nullable: false, onDelete: 'RESTRICT', onUpdate: 'RESTRICT' })
     @JoinColumn({ name: 'user_id' })
     user: User | null;
 
@@ -35,9 +35,9 @@ export class Place {
     })
     altitude: number | null;
 
-    @OneToMany(type => Flight, flight => flight.start, { onDelete: 'RESTRICT', onUpdate: 'RESTRICT' })
+    @OneToMany(() => Flight, flight => flight.start, { onDelete: 'RESTRICT', onUpdate: 'RESTRICT' })
     flights: Flight[];
 
-    @OneToMany(type => Flight, flight => flight.landing, { onDelete: 'RESTRICT', onUpdate: 'RESTRICT' })
+    @OneToMany(() => Flight, flight => flight.landing, { onDelete: 'RESTRICT', onUpdate: 'RESTRICT' })
     flights2: Flight[];
 }

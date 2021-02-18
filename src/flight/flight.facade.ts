@@ -5,7 +5,6 @@ import { FlightDto } from './interface/flight-dto';
 import { Flight } from './flight.entity';
 import { plainToClass } from 'class-transformer';
 import { User } from 'src/user/user.entity';
-import moment = require('moment');
 import { PlaceFacade } from 'src/place/place.facade';
 import { Place } from 'src/place/place.entity';
 import { InvalidDateException } from './exception/invalid-date-exception';
@@ -14,6 +13,8 @@ import { GliderFacade } from 'src/glider/glider.facade';
 import { Glider } from 'src/glider/glider.entity';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { PagerDto } from 'src/interface/pager-dto';
+import moment = require('moment');
+import { checkIfDateIsValid } from '../util/date-utils';
 
 @Injectable()
 export class FlightFacade {
@@ -25,7 +26,7 @@ export class FlightFacade {
         private userService: UserService
     ) { }
 
-    async getFLights(token: any, query: any): Promise<FlightDto[]> {
+    async getFlights(token: any, query: any): Promise<FlightDto[]> {
         const list: Flight[] = await this.flightService.getFLights(token, query);
         return plainToClass(FlightDto, list);
     }
@@ -72,47 +73,48 @@ export class FlightFacade {
     }
 
     private async flightValidityCheck(flightDto: FlightDto, flight: Flight, token: any) {
-        // check if date is valide
-        if (!flightDto.date || (flightDto.date && Number.isNaN(Date.parse(flightDto.date)))) {
+        const { start, date, time, glider, landing } = flightDto;
+
+        if (checkIfDateIsValid(date)) {
             throw new InvalidDateException();
         }
 
         // format date
-        if (flightDto.date) {
-            flight.date = moment(flightDto.date).format('YYYY-MM-DD');
+        if (date) {
+            flight.date = moment(date).format('YYYY-MM-DD');
         }
 
         // Check if glider exist 
-        if (!flightDto.glider) {
+        if (!glider) {
             throw new InvalidGliderException();
         }
 
-        if (flightDto.time && moment(flightDto.time, "HH:mm").isValid()) {
-            if (!Number.isNaN(Date.parse(flightDto.time))) {
-                flight.time = moment(flightDto.time).format('HH:mm');
+        if (time && moment(time, "HH:mm").isValid()) {
+            if (!Number.isNaN(Date.parse(time))) {
+                flight.time = moment(time).format('HH:mm');
             }
         }
 
         // Check if glider is valid
         try {
-            const gliderDto = await this.gliderFacade.getGliderById(token, flightDto.glider.id)
+            const gliderDto = await this.gliderFacade.getGliderById(token, glider.id)
             flight.glider = plainToClass(Glider, gliderDto);
         } catch (e) {
             throw new InvalidGliderException();
         }
 
         // Check if start an landing exist and if not create it
-        if (flightDto.start && flightDto.start.name) {
-            let startDto = await this.placeFacade.getPlaceByName(token, flightDto.start.name);
+        if (start && start.name) {
+            let startDto = await this.placeFacade.getPlaceByName(token, start.name);
             if (!startDto) {
-                startDto = await this.placeFacade.createPlace(token, flightDto.start);
+                startDto = await this.placeFacade.createPlace(token, start);
             }
             flight.start = plainToClass(Place, startDto);
         }
-        if (flightDto.landing && flightDto.landing.name) {
-            let landingDto = await this.placeFacade.getPlaceByName(token, flightDto.landing.name);
+        if (landing?.name) {
+            let landingDto = await this.placeFacade.getPlaceByName(token, landing.name);
             if (!landingDto) {
-                landingDto = await this.placeFacade.createPlace(token, flightDto.landing);
+                landingDto = await this.placeFacade.createPlace(token, landing);
             }
             flight.landing = plainToClass(Place, landingDto);
         }

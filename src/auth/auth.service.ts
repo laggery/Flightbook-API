@@ -25,10 +25,12 @@ export class AuthService {
       uuid = randomStringGenerator();
     } while (await this.userService.getUserByToken(uuid));
     user.token = uuid;
-    this.userService.saveUser(user);
+    await this.userService.saveUser(user);
 
     return {
+      // eslint-disable-next-line @typescript-eslint/camelcase
       access_token: this.jwtService.sign(payload),
+      // eslint-disable-next-line @typescript-eslint/camelcase
       refresh_token: uuid
     };
   }

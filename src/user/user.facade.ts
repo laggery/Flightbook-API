@@ -20,7 +20,7 @@ export class UserFacade {
     ) { }
 
     async getCurrentUser(id: number): Promise<any> {
-        let user: User = await this.userService.getUserById(id);
+        const user: User = await this.userService.getUserById(id);
         return plainToClass(UserReadDto, user);
     }
 
@@ -36,7 +36,9 @@ export class UserFacade {
 
         user = plainToClass(User, userWriteDto);
         user.username = user.email;
+        // eslint-disable-next-line @typescript-eslint/camelcase
         user.username_canonical = user.email;
+        // eslint-disable-next-line @typescript-eslint/camelcase
         user.email_canonical = user.email;
         user.enabled = true;
         user.password = await this.authService.hashPassword(user.password);
@@ -51,10 +53,10 @@ export class UserFacade {
             throw new InvalidUserException();
         }
 
-        let user: User = await this.userService.getUserById(id);
+        const user: User = await this.userService.getUserById(id);
 
         if (user.email !== userWriteDto.email) {
-            let userExist: User = await this.userService.getUserByEmail(userWriteDto.email);
+            const userExist: User = await this.userService.getUserByEmail(userWriteDto.email);
 
             if (userExist) {
                 throw new UserAlreadyExistsException();
@@ -62,7 +64,9 @@ export class UserFacade {
         }
 
         user.username = userWriteDto.email;
+        // eslint-disable-next-line @typescript-eslint/camelcase
         user.username_canonical = userWriteDto.email;
+        // eslint-disable-next-line @typescript-eslint/camelcase
         user.email_canonical = userWriteDto.email;
         user.email = userWriteDto.email;
         user.firstname = userWriteDto.firstname;
@@ -77,7 +81,7 @@ export class UserFacade {
             throw new InvalidPasswordException();
         }
 
-        let user: User = await this.userService.getUserById(id);
+        const user: User = await this.userService.getUserById(id);
 
         const validatedUser = await this.authService.validateUser(user.email, userPasswordWriteDto.oldPassword);
         if (!validatedUser) {

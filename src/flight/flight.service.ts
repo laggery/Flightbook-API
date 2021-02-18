@@ -24,7 +24,7 @@ export class FlightService {
             .leftJoinAndSelect('flight.landing', 'landing', 'landing.id = flight.landing_id')
             .where(`flight.user_id = ${token.userId}`);
 
-        builder = this.addQueryParams(builder, query);
+        builder = FlightService.addQueryParams(builder, query);
         builder.orderBy('flight.date', 'DESC');
         builder.addOrderBy('flight.timestamp', 'DESC');
 
@@ -33,29 +33,29 @@ export class FlightService {
         if (query && query.limit) { sqlRequest = sqlRequest + ` LIMIT ${query.limit}`}
         if (query && query.offset) { sqlRequest = sqlRequest + ` OFFSET ${query.offset}`}
 
-        let res: [] = await getManager().query(sqlRequest);
+        const res: [] = await getManager().query(sqlRequest);
 
-        let list: Flight[] = [];
-        res.forEach((raw: Object) => {
-            let data = new Flight();
+        const list: Flight[] = [];
+        res.forEach((raw: Record<string, any>) => {
+            const data = new Flight();
             Object.keys(raw).forEach(key => {
                 if (key.startsWith('flight')) {
-                    let name = key.substring(7, key.length);
+                    const name = key.substring(7, key.length);
                     data[name] = raw[key];
                 }
                 if (key.startsWith('glider')) {
                     if (!data.glider) data.glider = new Glider();
-                    let name = key.substring(7, key.length);
+                    const name = key.substring(7, key.length);
                     data["glider"][name] = raw[key];
                 }
                 if (key.startsWith('start')) {
                     if (!data.start) data.start = new Place();
-                    let name = key.substring(6, key.length);
+                    const name = key.substring(6, key.length);
                     data["start"][name] = raw[key];
                 }
                 if (key.startsWith('landing')) {
                     if (!data.landing) data.landing = new Place();
-                    let name = key.substring(8, key.length);
+                    const name = key.substring(8, key.length);
                     data["landing"][name] = raw[key];
                 }
             })
@@ -75,10 +75,10 @@ export class FlightService {
             .leftJoin('flight.glider', 'glider', 'glider.id = flight.glider_id')
             .where(`user.id = ${token.userId}`);
 
-        builder = this.addQueryParams(builder, query);
+        builder = FlightService.addQueryParams(builder, query);
 
         let statistic: FlightStatisticDto = await builder.getRawOne();
-        statistic = this.statisticDataConverter(statistic);
+        statistic = FlightService.statisticDataConverter(statistic);
 
         if (query.years && query.years === "1") {
             let builderYears = this.flightRepository.createQueryBuilder('flight')
@@ -93,11 +93,11 @@ export class FlightService {
             .groupBy('YEAR(flight.date)')
             .orderBy('year', "ASC");
 
-            builderYears = this.addQueryParams(builderYears, query);
+            builderYears = FlightService.addQueryParams(builderYears, query);
 
-            let statisticList: FlightStatisticDto[] = await builderYears.getRawMany();
+            const statisticList: FlightStatisticDto[] = await builderYears.getRawMany();
             statisticList.forEach(statElement => {
-                statElement = this.statisticDataConverter(statElement);
+                FlightService.statisticDataConverter(statElement);
             })
             statisticList.splice(0, 0, statistic);
             return statisticList;
@@ -106,7 +106,7 @@ export class FlightService {
         return statistic;
     }
 
-    private statisticDataConverter(statistic: any): any {
+    private static statisticDataConverter(statistic: any): any {
         statistic.nbFlights = Number(statistic.nbFlights);
         statistic.time = Number(statistic.time);
         statistic.average = Number(statistic.average);
@@ -126,7 +126,7 @@ export class FlightService {
     }
 
     async getFlightsPager(token: any, query: any): Promise<PagerDto> {
-        let pagerDto = new PagerDto();
+        const pagerDto = new PagerDto();
 
         let builder = this.flightRepository.createQueryBuilder('flight')
             .leftJoinAndSelect('flight.glider', 'glider', 'glider.id = flight.glider_id')
@@ -134,43 +134,43 @@ export class FlightService {
             .leftJoinAndSelect('flight.landing', 'landing', 'landing.id = flight.landing_id')
             .where(`flight.user_id = ${token.userId}`);
 
-        builder = this.addQueryParams(builder, query);
-        let entityNumber: [Flight[], number] = await builder.getManyAndCount();
+        builder = FlightService.addQueryParams(builder, query);
+        const entityNumber: [Flight[], number] = await builder.getManyAndCount();
 
         pagerDto.itemCount = entityNumber[0].length;
         pagerDto.totalItems = entityNumber[1];
-        pagerDto.itemsPerPage = (query && query.limit) ? Number(query.limit) : pagerDto.itemCount;
-        pagerDto.totalPages =  (query && query.limit) ?  Math.ceil(pagerDto.totalItems / Number(query.limit)) : pagerDto.totalItems;
-        pagerDto.currentPage = (query && query.offset) ? (query.offset >= pagerDto.totalItems ? null : Math.floor(parseInt(query.offset) / parseInt(query.limit)) + 1) : 1;
+        pagerDto.itemsPerPage = (query?.limit) ? Number(query.limit) : pagerDto.itemCount;
+        pagerDto.totalPages =  (query?.limit) ?  Math.ceil(pagerDto.totalItems / Number(query.limit)) : pagerDto.totalItems;
+        pagerDto.currentPage = (query?.offset) ? (query.offset >= pagerDto.totalItems ? null : Math.floor(parseInt(query.offset) / parseInt(query.limit)) + 1) : 1;
         return pagerDto;
     }
 
-    private addQueryParams(builder: SelectQueryBuilder<Flight>, query: any): SelectQueryBuilder<Flight> {
+    private static addQueryParams(builder: SelectQueryBuilder<Flight>, query: any): SelectQueryBuilder<Flight> {
         if (query && query.limit) {
             if (Number.isNaN(Number(query.limit))) {
                 throw new BadRequestException("limit is not a number");
-            };
+            }
             builder.take(query.limit)
         }
 
         if (query && query.offset) {
             if (Number.isNaN(Number(query.offset))) {
                 throw new BadRequestException("offset is not a number");
-            };
+            }
             builder.skip(query.offset);
         }
 
         if (query && query.glider) {
             if (Number.isNaN(Number(query.glider))) {
                 throw new BadRequestException("glider is not a number");
-            };
+            }
             builder.andWhere(`glider.id = ${query.glider}`);
         }
 
         if (query && query["glider-type"]) {
             if (Number.isNaN(Number(query["glider-type"]))) {
                 throw new BadRequestException("type is not a 0 or 1");
-            };
+            }
             builder.andWhere(`glider.tandem = ${query["glider-type"]}`)
         }
 
@@ -185,7 +185,7 @@ export class FlightService {
     }
 
     async countFlightsByPlaceId(token: any, placeId: number): Promise<any> {
-        let builder = this.flightRepository.createQueryBuilder('flight')
+        const builder = this.flightRepository.createQueryBuilder('flight')
             .select('distinct count(flight.id)', "nbFlights")
             .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
             .where(`user.id = ${token.userId}`)
@@ -195,7 +195,7 @@ export class FlightService {
     }
 
     async countFlightsByGliderId(token: any, gliderId: number): Promise<any> {
-        let builder = this.flightRepository.createQueryBuilder('flight')
+        const builder = this.flightRepository.createQueryBuilder('flight')
             .select('distinct count(flight.id)', "nbFlights")
             .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
             .where(`user.id = ${token.userId}`)

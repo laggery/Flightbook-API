@@ -1,4 +1,4 @@
-import { Controller, Post, Request, Body, Put, Param, UseGuards, Get } from '@nestjs/common';
+import { Controller, Post, Request, Body, Put, UseGuards, Get } from '@nestjs/common';
 import { UserFacade } from './user.facade';
 import { UserWriteDto } from './interface/user-write-dto';
 import { UserReadDto } from './interface/user-read-dto';
