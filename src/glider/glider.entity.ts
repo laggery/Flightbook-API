@@ -1,64 +1,52 @@
-import {BaseEntity,Column,Entity,Index,JoinColumn,JoinTable,ManyToMany,ManyToOne,OneToMany,OneToOne,PrimaryColumn,PrimaryGeneratedColumn,RelationId} from "typeorm";
-import {User} from "../user/user.entity";
-import {Flight} from "../flight/flight.entity";
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { User } from "../user/user.entity";
+import { Flight } from "../flight/flight.entity";
 
-
-@Entity("glider",{schema:"flight" } )
-@Index("user_id",["user",])
+@Index("idx_16593_primary", ["id"], { unique: true })
+@Index("idx_16593_user_id", ["userId"], {})
+@Entity("glider")
 export class Glider {
+  @PrimaryGeneratedColumn()
+  @Column("integer", { primary: true, name: "id" })
+  id: number;
 
-    @PrimaryGeneratedColumn({
-        type:"int", 
-        name:"id"
-        })
-    id:number;
+  @Column("integer", { name: "user_id" })
+  userId: number;
 
+  @Column("date", { name: "buy_date", nullable: true })
+  buyDate: string | null;
 
-    @ManyToOne(type=>User, user=>user.gliders,{  nullable:false,onDelete: 'RESTRICT',onUpdate: 'RESTRICT' })
-    @JoinColumn({ name:'user_id'})
-    user:User | null;
+  @Column("character varying", { name: "brand", length: 30 })
+  brand: string;
 
+  @Column("character varying", { name: "name", length: 30 })
+  name: string;
 
-    @Column("date",{ 
-        nullable:true,
-        name:"buy_date"
-        })
-    buyDate:string | null;
-        
+  @Column("boolean", { name: "tandem", default: () => "false" })
+  tandem: boolean;
 
-    @Column("varchar",{ 
-        nullable:false,
-        length:30,
-        name:"brand"
-        })
-    brand:string;
-        
+  @Column({ select: false, nullable: true, insert: false, readonly: true })
+  nbFlights: number;
 
-    @Column("varchar",{ 
-        nullable:false,
-        length:30,
-        name:"name"
-        })
-    name:string;
-        
+  @Column({ select: false, nullable: true, insert: false, readonly: true })
+  time: number | null;
 
-    @Column("tinyint",{ 
-        nullable:false,
-        width:1,
-        default: () => "'0'",
-        name:"tandem"
-        })
-    tandem:boolean;
-        
+  @OneToMany(() => Flight, (flight) => flight.glider)
+  flights: Flight[];
 
-   
-    @OneToMany(type=>Flight, flight=>flight.glider,{ onDelete: 'RESTRICT' ,onUpdate: 'RESTRICT' })
-    flights:Flight[];
-
-    @Column({ select: false, nullable: true, insert: false, readonly: true })
-    nbFlights: number;
-
-    @Column({ select: false, nullable: true, insert: false, readonly: true })
-    time: number;
-    
+  @ManyToOne(() => User, (user) => user.gliders, {
+    onDelete: "RESTRICT",
+    onUpdate: "RESTRICT",
+  })
+  @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
+  user: User;
 }
+

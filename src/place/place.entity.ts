@@ -1,43 +1,47 @@
-import { BaseEntity, Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn, RelationId } from "typeorm";
+import { Exclude, Expose } from "class-transformer";
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { User } from "../user/user.entity";
 import { Flight } from "../flight/flight.entity";
-import { Exclude, Expose } from "class-transformer";
 
 @Exclude()
-@Entity("place", { schema: "flight" })
-@Index("user_id", ["user",])
+@Index("idx_16603_primary", ["id"], { unique: true })
+@Index("idx_16603_user_id", ["userId"], {})
+@Entity("place")
 export class Place {
+  @Expose()
+  @PrimaryGeneratedColumn()
+  @Column("integer", { primary: true, name: "id" })
+  id: number;
 
-    @Expose()
-    @PrimaryGeneratedColumn({
-        type: "int",
-        name: "id"
-    })
-    id: number;
+  @Column("integer", { name: "user_id" })
+  userId: number;
 
-    @Expose()
-    @ManyToOne(type => User, user => user.places, { nullable: false, onDelete: 'RESTRICT', onUpdate: 'RESTRICT' })
-    @JoinColumn({ name: 'user_id' })
-    user: User | null;
+  @Expose()
+  @Column("character varying", { name: "name", length: 40 })
+  name: string;
 
-    @Expose()
-    @Column("varchar", {
-        nullable: false,
-        length: 40,
-        name: "name"
-    })
-    name: string;
+  @Expose()
+  @Column("integer", { name: "altitude", nullable: true })
+  altitude: number | null;
 
-    @Expose()
-    @Column("int", {
-        nullable: true,
-        name: "altitude"
-    })
-    altitude: number | null;
+  @OneToMany(() => Flight, (flight) => flight.start)
+  flights: Flight[];
 
-    @OneToMany(type => Flight, flight => flight.start, { onDelete: 'RESTRICT', onUpdate: 'RESTRICT' })
-    flights: Flight[];
+  @OneToMany(() => Flight, (flight) => flight.landing)
+  flights2: Flight[];
 
-    @OneToMany(type => Flight, flight => flight.landing, { onDelete: 'RESTRICT', onUpdate: 'RESTRICT' })
-    flights2: Flight[];
+  @ManyToOne(() => User, (user) => user.places, {
+    onDelete: "RESTRICT",
+    onUpdate: "RESTRICT",
+  })
+  @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
+  user: User;
 }

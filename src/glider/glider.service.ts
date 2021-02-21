@@ -16,7 +16,7 @@ export class GliderService {
 
         let builder: SelectQueryBuilder<Glider> = this.gliderRepository.createQueryBuilder('glider')
             .addSelect('count(flight.id)', "glider_nbFlights")
-            .addSelect('Sum(Time_to_sec(flight.time))', "glider_time")
+            .addSelect('EXTRACT(EPOCH FROM Sum(flight.time))', "glider_time")
             .leftJoin('flight', 'flight', 'flight.glider_id = glider.id')
             .where(`glider.user_id = ${token.userId}`)
             .groupBy('glider.id')

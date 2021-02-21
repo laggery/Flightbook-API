@@ -29,7 +29,7 @@ export class FlightService {
         builder.addOrderBy('flight.timestamp', 'DESC');
 
         let sqlRequest = builder.getSql();
-        sqlRequest = sqlRequest.replace('FROM `flight` `flight`', ` FROM (Select ROW_NUMBER() OVER (ORDER BY flight.date ASC) flight_number, flight.* from flight where user_id = ${token.userId}) as flight`)
+        sqlRequest = sqlRequest.replace('FROM "public"."flight" "flight"', ` FROM (Select ROW_NUMBER() OVER (ORDER BY flight.date ASC) flight_number, flight.* from flight where user_id = ${token.userId}) as flight`)
         if (query && query.limit) { sqlRequest = sqlRequest + ` LIMIT ${query.limit}`}
         if (query && query.offset) { sqlRequest = sqlRequest + ` OFFSET ${query.offset}`}
 
@@ -68,9 +68,9 @@ export class FlightService {
     async getStatistic(token: any, query: any): Promise<FlightStatisticDto | FlightStatisticDto[]> {
         let builder = this.flightRepository.createQueryBuilder('flight')
             .select('count(flight.id)', "nbFlights")
-            .addSelect("Sum(Time_to_sec(flight.time))", "time")
+            .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
             .addSelect('Sum(flight.price)', "income")
-            .addSelect('Avg(Time_to_sec(flight.time))', "average")
+            .addSelect('EXTRACT(epoch FROM Avg(flight.time))', "average")
             .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
             .leftJoin('flight.glider', 'glider', 'glider.id = flight.glider_id')
             .where(`user.id = ${token.userId}`);
@@ -78,38 +78,27 @@ export class FlightService {
         builder = this.addQueryParams(builder, query);
 
         let statistic: FlightStatisticDto = await builder.getRawOne();
-        statistic = this.statisticDataConverter(statistic);
 
         if (query.years && query.years === "1") {
             let builderYears = this.flightRepository.createQueryBuilder('flight')
-            .select('YEAR(flight.date)', "year")
+            .select('EXTRACT(YEAR FROM "flight"."date")', "year")
             .addSelect('count(flight.id)', "nbFlights")
-            .addSelect("Sum(Time_to_sec(flight.time))", "time")
+            .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
             .addSelect('Sum(flight.price)', "income")
-            .addSelect('Avg(Time_to_sec(flight.time))', "average")
+            .addSelect('EXTRACT(epoch FROM Avg(flight.time))', "average")
             .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
             .leftJoin('flight.glider', 'glider', 'glider.id = flight.glider_id')
             .where(`user.id = ${token.userId}`)
-            .groupBy('YEAR(flight.date)')
+            .groupBy('EXTRACT(YEAR FROM "flight"."date")')
             .orderBy('year', "ASC");
 
             builderYears = this.addQueryParams(builderYears, query);
 
             let statisticList: FlightStatisticDto[] = await builderYears.getRawMany();
-            statisticList.forEach(statElement => {
-                statElement = this.statisticDataConverter(statElement);
-            })
             statisticList.splice(0, 0, statistic);
             return statisticList;
         }
 
-        return statistic;
-    }
-
-    private statisticDataConverter(statistic: any): any {
-        statistic.nbFlights = Number(statistic.nbFlights);
-        statistic.time = Number(statistic.time);
-        statistic.average = Number(statistic.average);
         return statistic;
     }
 
@@ -171,7 +160,7 @@ export class FlightService {
             if (Number.isNaN(Number(query["glider-type"]))) {
                 throw new BadRequestException("type is not a 0 or 1");
             };
-            builder.andWhere(`glider.tandem = ${query["glider-type"]}`)
+            builder.andWhere(`glider.tandem = ${Number(query["glider-type"]) ? true : false}`)
         }
 
         if (query && query.from) {

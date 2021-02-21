@@ -36,8 +36,8 @@ export class UserFacade {
 
         user = plainToClass(User, userWriteDto);
         user.username = user.email;
-        user.username_canonical = user.email;
-        user.email_canonical = user.email;
+        user.usernameCanonical = user.email;
+        user.emailCanonical = user.email;
         user.enabled = true;
         user.password = await this.authService.hashPassword(user.password);
         user.roles = 'a:0:{}';
@@ -62,8 +62,8 @@ export class UserFacade {
         }
 
         user.username = userWriteDto.email;
-        user.username_canonical = userWriteDto.email;
-        user.email_canonical = userWriteDto.email;
+        user.usernameCanonical = userWriteDto.email;
+        user.emailCanonical = userWriteDto.email;
         user.email = userWriteDto.email;
         user.firstname = userWriteDto.firstname;
         user.lastname = userWriteDto.lastname;
