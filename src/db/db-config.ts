@@ -16,5 +16,11 @@ export const dbConfig: TypeOrmModuleOptions = {
     cli: {
         migrationsDir: 'src/db/migrations'
     },
-    migrationsRun: true
+    migrationsRun: true,
+    ssl: true,
+    extra: {
+        ssl: {
+            rejectUnauthorized: false
+        }
+    }
 }
