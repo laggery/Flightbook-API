@@ -1,6 +1,6 @@
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 
-export const dbConfig: TypeOrmModuleOptions = {
+const dbConfigBase: any = {
     type: 'postgres',
     host: process.env.DATABASE_HOST,
     port: Number(process.env.DATABASE_PORT),
@@ -16,11 +16,20 @@ export const dbConfig: TypeOrmModuleOptions = {
     cli: {
         migrationsDir: 'src/db/migrations'
     },
-    migrationsRun: true,
-    ssl: true,
-    extra: {
+    migrationsRun: true
+}
+
+if (process.env.DATABASE_SSL === "false") {
+    dbConfigBase.ssl = false;
+    const dbConfig: TypeOrmModuleOptions = dbConfigBase;
+} else {
+    dbConfigBase.ssl = true;
+    dbConfigBase.extra = {
         ssl: {
             rejectUnauthorized: false
         }
     }
+    const dbConfig: TypeOrmModuleOptions = dbConfigBase;
 }
+
+export const dbConfig: TypeOrmModuleOptions = dbConfigBase;
