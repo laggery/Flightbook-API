@@ -59,14 +59,14 @@ export class Flight {
   @JoinColumn([{ name: "glider_id", referencedColumnName: "id" }])
   glider: Glider;
 
-  @ManyToOne(() => Place, (place) => place.flights, {
+  @ManyToOne(() => Place, (place) => place.landing, {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })
   @JoinColumn([{ name: "landing_id", referencedColumnName: "id" }])
   landing: Place;
 
-  @ManyToOne(() => Place, (place) => place.flights2, {
+  @ManyToOne(() => Place, (place) => place.start, {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })

@@ -33,10 +33,10 @@ export class Place {
   altitude: number | null;
 
   @OneToMany(() => Flight, (flight) => flight.start)
-  flights: Flight[];
+  start: Flight[];
 
   @OneToMany(() => Flight, (flight) => flight.landing)
-  flights2: Flight[];
+  landing: Flight[];
 
   @ManyToOne(() => User, (user) => user.places, {
     onDelete: "RESTRICT",
