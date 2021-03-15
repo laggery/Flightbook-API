@@ -26,6 +26,7 @@ export class FlightService {
 
         builder = this.addQueryParams(builder, query);
         builder.orderBy('flight.date', 'DESC');
+        builder.addOrderBy('flight.flight_number', 'DESC');
         builder.addOrderBy('flight.timestamp', 'DESC');
 
         let sqlRequest = builder.getSql();

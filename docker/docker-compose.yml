@@ -23,7 +23,7 @@ services:
       - 8180:8080
 
   pgadmin:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:latest
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@flightbook.ch
       PGADMIN_DEFAULT_PASSWORD: test
