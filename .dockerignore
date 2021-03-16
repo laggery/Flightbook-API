@@ -32,5 +32,8 @@ lerna-debug.log*
 # IDE - VSCode
 .vscode/*
 
+#dev
+/docker
+
 #CI/CD
 /.github

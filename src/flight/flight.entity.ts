@@ -1,86 +1,82 @@
-import {Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
-import {Glider} from '../glider/glider.entity';
-import {Place} from "../place/place.entity";
-import {User} from "../user/user.entity";
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Glider } from '../glider/glider.entity';
+import { Place } from "../place/place.entity";
+import { User } from "../user/user.entity";
 
-
-@Entity("flight",{schema:"flightbook" } )
-@Index("glider_id",["glider"])
-@Index("landing_id",["landing"])
-@Index("start_id",["start"])
-@Index("user_id",["user"])
+@Index("idx_16586_glider_id", ["gliderId"], {})
+@Index("idx_16586_primary", ["id"], { unique: true })
+@Index("idx_16586_landing_id", ["landingId"], {})
+@Index("idx_16586_start_id", ["startId"], {})
+@Index("idx_16586_user_id", ["userId"], {})
+@Entity("flight")
 export class Flight {
+  @PrimaryGeneratedColumn()
+  @Column("integer", { primary: true, name: "id" })
+  id: number;
 
-    @PrimaryGeneratedColumn({
-        type:"int", 
-        name:"id"
-        })
-    id:number;
-        
+  @Column("integer", { name: "glider_id" })
+  gliderId: number;
 
-   
-    @ManyToOne(()=>Glider, glider=>glider.flights,{  nullable:false,onDelete: 'RESTRICT',onUpdate: 'RESTRICT' })
-    @JoinColumn({ name:'glider_id'})
-    glider:Glider | null;
-   
-    @ManyToOne(()=>Place, place=>place.flights,{ onDelete: 'RESTRICT',onUpdate: 'RESTRICT' })
-    @JoinColumn({ name:'start_id'})
-    start:Place | null;
+  @Column("integer", { name: "start_id", nullable: true })
+  startId: number | null;
 
+  @Column("integer", { name: "landing_id", nullable: true })
+  landingId: number | null;
 
-   
-    @ManyToOne(()=>Place, place=>place.flights2,{ onDelete: 'RESTRICT',onUpdate: 'RESTRICT' })
-    @JoinColumn({ name:'landing_id'})
-    landing:Place | null;
+  @Column("integer", { name: "user_id" })
+  userId: number;
 
+  @Column("date", { name: "date", nullable: true })
+  date: string | null;
 
-   
-    @ManyToOne(()=>User, user=>user.flights,{  nullable:false,onDelete: 'RESTRICT',onUpdate: 'RESTRICT' })
-    @JoinColumn({ name:'user_id'})
-    user:User | null;
+  @Column("time without time zone", { name: "time", nullable: true })
+  time: string | null;
 
+  @Column("character varying", {
+    name: "description",
+    nullable: true,
+    length: 2000,
+  })
+  description: string | null;
 
-    @Column("date",{ 
-        nullable:true,
-        name:"date"
-        })
-    date:string | null;
-        
+  @Column("double precision", { name: "price", nullable: true })
+  price: number | null;
 
-    @Column("time",{ 
-        nullable:true,
-        name:"time"
-        })
-    time:string | null;
-        
+  @Column("integer", { name: "km", nullable: true })
+  km: number | null;
 
-    @Column("varchar",{ 
-        nullable:true,
-        length:2000,
-        name:"description"
-        })
-    description:string | null;
-        
+  @Column("timestamp with time zone", {
+    name: "timestamp",
+    nullable: true,
+    default: () => "CURRENT_TIMESTAMP",
+  })
+  timestamp: Date | null;
 
-    @Column("double",{ 
-        nullable:true,
-        name:"price"
-        })
-    price:number | null;
-        
+  @ManyToOne(() => Glider, (glider) => glider.flights, {
+    onDelete: "RESTRICT",
+    onUpdate: "RESTRICT",
+  })
+  @JoinColumn([{ name: "glider_id", referencedColumnName: "id" }])
+  glider: Glider;
 
-    @Column("int",{ 
-        nullable:true,
-        name:"km"
-        })
-    km:number | null;
-        
+  @ManyToOne(() => Place, (place) => place.landing, {
+    onDelete: "RESTRICT",
+    onUpdate: "RESTRICT",
+  })
+  @JoinColumn([{ name: "landing_id", referencedColumnName: "id" }])
+  landing: Place;
 
-    @Column("timestamp",{ 
-        nullable:false,
-        default: () => "CURRENT_TIMESTAMP",
-        name:"timestamp"
-        })
-    timestamp:Date;
-        
+  @ManyToOne(() => Place, (place) => place.start, {
+    onDelete: "RESTRICT",
+    onUpdate: "RESTRICT",
+  })
+  @JoinColumn([{ name: "start_id", referencedColumnName: "id" }])
+  start: Place;
+
+  @ManyToOne(() => User, (user) => user.flights, {
+    onDelete: "RESTRICT",
+    onUpdate: "RESTRICT",
+  })
+  @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
+  user: User;
 }

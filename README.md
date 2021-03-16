@@ -15,6 +15,30 @@ I started with this project in 2013 and first it was used from some Friends and 
 
 ## Getting started
 
+Start docker-compose.yml
+```
+docker-compose -f docker/docker-compose.yml up -d
+```
+
+Create a .env file
+```
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_USER=flightbook_dev
+DATABASE_PASSWORD=dev
+DATABASE_NAME=flightbook_dev
+DATABASE_SYNCHRONIZE=false
+DATABASE_SCHEMA=public
+DATABASE_SSL=false
+
+JWT_SECRET=mySecret
+TOKEN_EXPIRATION=1000h
+```
+
+Start nestjs app
+```
+npm run start:dev
+```
 
 ## Security
 If you discover security related issues, please email yannick.lagger@flightbook.ch instead of using the issue tracker.
