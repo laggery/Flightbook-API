@@ -79,6 +79,7 @@ export class FlightService {
         builder = this.addQueryParams(builder, query);
 
         let statistic: FlightStatisticDto = await builder.getRawOne();
+        statistic = this.statisticDataConverter(statistic);
 
         if (query.years && query.years === "1") {
             let builderYears = this.flightRepository.createQueryBuilder('flight')
@@ -96,10 +97,20 @@ export class FlightService {
             builderYears = this.addQueryParams(builderYears, query);
 
             let statisticList: FlightStatisticDto[] = await builderYears.getRawMany();
+            statisticList.forEach(statElement => {
+                statElement = this.statisticDataConverter(statElement);
+            })
             statisticList.splice(0, 0, statistic);
             return statisticList;
         }
 
+        return statistic;
+    }
+
+    private statisticDataConverter(statistic: any): any {
+        statistic.nbFlights = Number(statistic.nbFlights);
+        statistic.time = Number(statistic.time);
+        statistic.average = Number(statistic.average);
         return statistic;
     }
 
