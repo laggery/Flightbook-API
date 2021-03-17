@@ -65,11 +65,11 @@ export class GliderService {
         }
 
         if (query && query.brand) {
-            builder.andWhere(`glider.brand LIKE '%${query.brand}%'`)
+            builder.andWhere(`glider.brand ILIKE '%${query.brand}%'`)
         }
 
         if (query && query.name) {
-            builder.andWhere(`glider.name LIKE '%${query.name}%'`)
+            builder.andWhere(`glider.name ILIKE '%${query.name}%'`)
         }
 
         if (query && query.type) {
