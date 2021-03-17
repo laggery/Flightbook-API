@@ -5,6 +5,8 @@
   "author": "",
   "license": "MIT",
   "scripts": {
+    "typeorm:cli": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli -f src/db/db-config-migrations.ts",
+    "migration-generate": "npm run typeorm:cli -- migration:generate -n",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -32,14 +34,14 @@
     "class-transformer": "^0.2.3",
     "class-validator": "^0.12.2",
     "moment": "^2.24.0",
-    "mysql": "^2.18.1",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
+    "pg": "^8.5.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
     "rxjs": "^6.5.4",
-    "typeorm": "^0.2.26"
+    "typeorm": "^0.2.31"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.5.4",
