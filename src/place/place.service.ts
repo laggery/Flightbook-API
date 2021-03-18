@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, ILike } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { Place } from './place.entity';
 import { PagerDto } from 'src/interface/pager-dto';
 
@@ -97,7 +97,7 @@ export class PlaceService {
                 user: {
                     id: token.userId
                 },
-                name: ILike("%" + name + "%")
+                name: Like(`%${name}%`)
             },
             order: {
                 name: 'ASC'
