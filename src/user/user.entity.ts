@@ -1,3 +1,5 @@
+import { TeamMember } from "src/schoolModule/teamMember/teamMember.entity";
+import { Validation } from "src/schoolModule/validation/validation.entity";
 import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Flight } from "../flight/flight.entity";
 import { Glider } from "../glider/glider.entity";
@@ -97,4 +99,10 @@ export class User {
 
   @OneToMany(() => Place, (place) => place.user)
   places: Place[];
+
+  @OneToMany(() => TeamMember, (teamMember) => teamMember.user)
+  teamMembers: TeamMember[];
+
+  @OneToMany(() => Validation, (validation) => validation.teacher)
+  validations: Validation[];
 }

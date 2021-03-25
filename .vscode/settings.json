@@ -1,3 +1,14 @@
 {
-    "debug.node.autoAttach": "on"
+    "debug.node.autoAttach": "on",
+    "rest-client.environmentVariables": {
+        "local": {
+            "baseUrl": "http://localhost:8282"
+        },
+        "dev": {
+            "baseUrl": "http://178.62.203.126:7183"
+        },
+        "prod": {
+            "baseUrl": "https://api.flightbook.ch"
+        }
+    }
 }

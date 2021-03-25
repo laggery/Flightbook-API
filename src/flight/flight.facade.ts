@@ -14,6 +14,8 @@ import { GliderFacade } from 'src/glider/glider.facade';
 import { Glider } from 'src/glider/glider.entity';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { PagerDto } from 'src/interface/pager-dto';
+import { SchoolFacade } from 'src/schoolModule/school.facade';
+import { InvalidSchoolException } from './exception/invalid-school-exception';
 
 @Injectable()
 export class FlightFacade {
@@ -22,6 +24,7 @@ export class FlightFacade {
         private flightService: FlightService,
         private placeFacade: PlaceFacade,
         private gliderFacade: GliderFacade,
+        private schoolFacade: SchoolFacade,
         private userService: UserService
     ) { }
 
@@ -72,7 +75,7 @@ export class FlightFacade {
     }
 
     private async flightValidityCheck(flightDto: FlightDto, flight: Flight, token: any) {
-        // check if date is valide
+        // check if date is valid
         if (!flightDto.date || (flightDto.date && Number.isNaN(Date.parse(flightDto.date)))) {
             throw new InvalidDateException();
         }
@@ -115,6 +118,25 @@ export class FlightFacade {
                 landingDto = await this.placeFacade.createPlace(token, flightDto.landing);
             }
             flight.landing = plainToClass(Place, landingDto);
+        }
+
+        // Check if school is valid
+        if (flight.validation) {
+            // set state to pending
+            flight.validation.state = ValidationState.PENDING;
+
+            // user cannot set validation date
+            flight.validation.date = null;
+
+            // Check if school exist 
+            if (!flight.validation.school || !flight.validation.school.id) {
+                throw new InvalidSchoolException;
+            } else {
+                const schoolDto = await this.schoolFacade.getSchoolById(flightDto.validation.school.id);
+                if (!schoolDto) {
+                    throw new InvalidSchoolException;
+                }
+            }
         }
 
         return flight;

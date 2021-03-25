@@ -1,9 +1,9 @@
-import { Controller, Post, Request, Body, Put, Param, UseGuards, Get } from '@nestjs/common';
+import { Controller, Post, Request, Body, Put, UseGuards, Get } from '@nestjs/common';
 import { UserFacade } from './user.facade';
 import { UserWriteDto } from './interface/user-write-dto';
 import { UserReadDto } from './interface/user-read-dto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
-import { UserPasswordWriteDto } from './interface/user -password-write-dto';
+import { UserPasswordWriteDto } from './interface/user-password-write-dto';
 
 @Controller('users')
 export class UserController {

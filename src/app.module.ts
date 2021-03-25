@@ -16,7 +16,8 @@ import { GliderModule } from './glider/glider.module';
 import { NewsModule } from './news/news.module';
 import { AuthModule } from './auth/auth.module';
 import { EmailService } from './email/email.service';
-import {dbConfig} from './db/db-config';
+import { dbConfig } from './db/db-config';
+import { SchoolModule } from './schoolModule/school/school.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import {dbConfig} from './db/db-config';
     UserModule,
     GliderModule,
     NewsModule,
-    HttpModule
+    HttpModule,
+    SchoolModule
   ],
   controllers: [AppController],
   providers: [

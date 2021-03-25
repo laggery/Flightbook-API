@@ -1,0 +1,24 @@
+# @name auth
+POST {{baseUrl}}/auth/login HTTP/1.1
+content-type: application/json
+
+{
+	"email": "demo@demo.com",
+	"password": "demo"
+}
+
+###
+
+#Post create new school
+POST {{baseUrl}}/school HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{auth.response.body.access_token}}
+
+{
+	"name": "Paragliding-school",
+	"address1": "demo",
+    "plz": "3000",
+    "city": "Bern",
+    "phone": "079 000 00 00",
+    "email": "email@email.com"
+}

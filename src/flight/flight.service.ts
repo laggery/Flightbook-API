@@ -6,6 +6,8 @@ import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { Glider } from 'src/glider/glider.entity';
 import { Place } from 'src/place/place.entity';
 import { PagerDto } from 'src/interface/pager-dto';
+import { Validation } from 'src/schoolModule/validation/validation.entity';
+import { School } from 'src/schoolModule/school/school.entity';
 
 @Injectable()
 export class FlightService {
@@ -22,6 +24,8 @@ export class FlightService {
             .leftJoinAndSelect('flight.glider', 'glider', 'glider.id = flight.glider_id')
             .leftJoinAndSelect('flight.start', 'start', 'start.id = flight.start_id')
             .leftJoinAndSelect('flight.landing', 'landing', 'landing.id = flight.landing_id')
+            .leftJoinAndSelect('flight.validation', 'validation', 'validation.id = flight.validation_id')
+            .leftJoinAndSelect('validation.school', 'school', 'school.id = validation.school_id')
             .where(`flight.user_id = ${token.userId}`);
 
         builder = this.addQueryParams(builder, query);
@@ -59,7 +63,19 @@ export class FlightService {
                     let name = key.substring(8, key.length);
                     data["landing"][name] = raw[key];
                 }
+                if (key.startsWith('validation') && raw["validation_id"]) {
+                    if (!data.validation) data.validation = new Validation();
+                    let name = key.substring(11, key.length);
+                    data["validation"][name] = raw[key];
+                }
             })
+            if (raw["validation_school_id"]) {
+                const school = new School();
+                school.id = raw["school_id"];
+                school.name = raw["school_name"];
+                data.validation.school = school;
+                delete data.validation["school_id"];
+            }
             list.push(data)
         })
 
@@ -83,16 +99,16 @@ export class FlightService {
 
         if (query.years && query.years === "1") {
             let builderYears = this.flightRepository.createQueryBuilder('flight')
-            .select('EXTRACT(YEAR FROM "flight"."date")', "year")
-            .addSelect('count(flight.id)', "nbFlights")
-            .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
-            .addSelect('Sum(flight.price)', "income")
-            .addSelect('EXTRACT(epoch FROM Avg(flight.time))', "average")
-            .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
-            .leftJoin('flight.glider', 'glider', 'glider.id = flight.glider_id')
-            .where(`user.id = ${token.userId}`)
-            .groupBy('EXTRACT(YEAR FROM "flight"."date")')
-            .orderBy('year', "ASC");
+                .select('EXTRACT(YEAR FROM "flight"."date")', "year")
+                .addSelect('count(flight.id)', "nbFlights")
+                .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
+                .addSelect('Sum(flight.price)', "income")
+                .addSelect('EXTRACT(epoch FROM Avg(flight.time))', "average")
+                .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
+                .leftJoin('flight.glider', 'glider', 'glider.id = flight.glider_id')
+                .where(`user.id = ${token.userId}`)
+                .groupBy('EXTRACT(YEAR FROM "flight"."date")')
+                .orderBy('year', "ASC");
 
             builderYears = this.addQueryParams(builderYears, query);
 
@@ -141,7 +157,7 @@ export class FlightService {
         pagerDto.itemCount = entityNumber[0].length;
         pagerDto.totalItems = entityNumber[1];
         pagerDto.itemsPerPage = (query && query.limit) ? Number(query.limit) : pagerDto.itemCount;
-        pagerDto.totalPages =  (query && query.limit) ?  Math.ceil(pagerDto.totalItems / Number(query.limit)) : pagerDto.totalItems;
+        pagerDto.totalPages = (query && query.limit) ? Math.ceil(pagerDto.totalItems / Number(query.limit)) : pagerDto.totalItems;
         pagerDto.currentPage = (query && query.offset) ? (query.offset >= pagerDto.totalItems ? null : Math.floor(parseInt(query.offset) / parseInt(query.limit)) + 1) : 1;
         return pagerDto;
     }

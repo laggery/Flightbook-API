@@ -1,4 +1,5 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Validation } from "src/schoolModule/validation/validation.entity";
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Glider } from '../glider/glider.entity';
 import { Place } from "../place/place.entity";
 import { User } from "../user/user.entity";
@@ -79,4 +80,8 @@ export class Flight {
   })
   @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
   user: User;
+
+  @OneToOne(() => Validation, { cascade: ['insert', 'update'] })
+  @JoinColumn([{ name: "validation_id", referencedColumnName: "id" }])
+  validation: Validation;
 }
