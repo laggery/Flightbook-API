@@ -8,7 +8,10 @@ export class EmailService {
     constructor(private readonly httpService: HttpService) {
         this.httpService.get('http://mail.zoho.com/api/accounts', { headers: { "Authorization": process.env.EMAIL_AUTHORIZATION } }).subscribe(res => {
             this.accountId = res.data.data[0].accountId;
-        })
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+        }, error => {
+            //TODO: Proper error handling
+        });
     }
 
     sendEmail(body: EmailBodyDto): Promise<any> {
