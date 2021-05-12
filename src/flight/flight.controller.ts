@@ -1,4 +1,4 @@
-import { Controller, Get, Req, UseGuards, Request, Query, Post, Body, Put, Param, Delete, HttpCode } from '@nestjs/common';
+import { Controller, Get, UseGuards, Request, Query, Post, Body, Put, Param, Delete, HttpCode } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { FlightDto } from './interface/flight-dto';
 import { FlightFacade } from './flight.facade';
@@ -13,7 +13,7 @@ export class FlightController {
     @UseGuards(JwtAuthGuard)
     @Get()
     getFlights(@Request() req, @Query() query): Promise<FlightDto[]> {
-        return this.flightFacade.getFLights(req.user, query);
+        return this.flightFacade.getFlights(req.user, query);
     }
 
     @UseGuards(JwtAuthGuard)

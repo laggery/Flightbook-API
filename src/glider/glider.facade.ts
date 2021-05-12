@@ -8,6 +8,7 @@ import { User } from 'src/user/user.entity';
 import * as moment from 'moment';
 import { InvalidDateException } from './exception/invalid-date-exception';
 import { PagerDto } from 'src/interface/pager-dto';
+import { checkIfDateIsValid } from '../util/date-utils';
 
 @Injectable()
 export class GliderFacade {
@@ -24,8 +25,9 @@ export class GliderFacade {
     }
 
     async createGlider(token: any, gliderDto: GliderDto): Promise<GliderDto> {
-        // check if date is valide
-        if (gliderDto.buyDate && Number.isNaN(Date.parse(gliderDto.buyDate))) {
+        const { buyDate } = gliderDto;
+
+        if (checkIfDateIsValid(buyDate)) {
             throw new InvalidDateException();
         }
 
@@ -33,8 +35,8 @@ export class GliderFacade {
         const glider: Glider = plainToClass(Glider, gliderDto);
 
         // format date
-        if (gliderDto.buyDate) {
-            glider.buyDate = moment(gliderDto.buyDate).format('YYYY-MM-DD');
+        if (buyDate) {
+            glider.buyDate = moment(buyDate).format('YYYY-MM-DD');
         }
         glider.id = null;
         glider.user = user;

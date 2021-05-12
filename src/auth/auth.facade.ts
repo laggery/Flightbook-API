@@ -14,7 +14,7 @@ export class AuthFacade {
     }
 
     async refresh(refreshToken: string) {
-        let user: User = await this.userService.getUserByToken(refreshToken);
+        const user: User = await this.userService.getUserByToken(refreshToken);
         if (user) {
             return this.authService.login(user);
         }
@@ -24,7 +24,7 @@ export class AuthFacade {
     async logout(token: any) {
         const user: User = await this.userService.getUserById(token.userId);
         user.token = null;
-        this.userService.saveUser(user);
+        await this.userService.saveUser(user);
     }
 
     async resetPassword(email) {
@@ -40,7 +40,7 @@ export class AuthFacade {
 
         const newPassword = Math.random().toString(36).slice(-8);
         user.password = await this.authService.hashPassword(newPassword);
-        this.userService.saveUser(user);
+        await this.userService.saveUser(user);
 
         const emailBody = new EmailBodyDto();
         emailBody.toAddress = email;
@@ -50,7 +50,7 @@ export class AuthFacade {
         <p>Password : ${newPassword}</p>`;
 
         try {
-            let resp = await this.emailService.sendEmail(emailBody);
+            await this.emailService.sendEmail(emailBody);
         } catch (e) {
             throw new HttpException("Email service is unavailable", 503);
         }

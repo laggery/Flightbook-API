@@ -11,8 +11,8 @@ export class NewsService {
         private readonly placeRepository: Repository<News>
     ) { }
 
-    async getNews(language: string): Promise<any> {
-        let options: any = {
+    async getNews(language: string): Promise<News[]> {
+        const options: any = {
             where: {
                 language: language
             },

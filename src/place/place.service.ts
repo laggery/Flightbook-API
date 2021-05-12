@@ -13,7 +13,7 @@ export class PlaceService {
     ) { }
 
     async getPlaces(token: any, query: any): Promise<any> {
-        let options: any = {
+        const options: any = {
             where: {
                 user: {
                     id: token.userId
@@ -27,14 +27,14 @@ export class PlaceService {
         if (query && query.limit) {
             if (Number.isNaN(Number(query.limit))) {
                 throw new BadRequestException("limit is not a number");
-            };
+            }
             options.take = query.limit;
         }
 
         if (query && query.offset) {
             if (Number.isNaN(Number(query.offset))) {
                 throw new BadRequestException("offset is not a number");
-            };
+            }
             options.skip = query.offset;
         }
 
@@ -42,26 +42,26 @@ export class PlaceService {
     }
 
     async getPlacesPager(token: any, query: any): Promise<PagerDto> {
-        let pagerDto = new PagerDto();
+        const pagerDto = new PagerDto();
 
-        let builder = this.placeRepository.createQueryBuilder('place')
+        const builder = this.placeRepository.createQueryBuilder('place')
             .where(`user_id = ${token.userId}`);
 
-        if (query && query.limit) {
+        if (query?.limit) {
             if (Number.isNaN(Number(query.limit))) {
                 throw new BadRequestException("limit is not a number");
-            };
+            }
             builder.limit(query.limit);
         }
 
-        if (query && query.offset) {
+        if (query?.offset) {
             if (Number.isNaN(Number(query.offset))) {
                 throw new BadRequestException("offset is not a number");
-            };
+            }
             builder.offset(query.offset);
         }
 
-        let entityNumber: [Place[], number] = await builder.getManyAndCount();
+        const entityNumber: [Place[], number] = await builder.getManyAndCount();
 
         pagerDto.itemCount = entityNumber[0].length;
         pagerDto.totalItems = entityNumber[1];
@@ -92,7 +92,7 @@ export class PlaceService {
     }
 
     async getPlacesByName(token: any, query: any, name: string) {
-        let options: any = {
+        const options: any = {
             where: {
                 user: {
                     id: token.userId
@@ -103,17 +103,17 @@ export class PlaceService {
                 name: 'ASC'
             }
         };
-        if (query && query.limit) {
+        if (query?.limit) {
             if (Number.isNaN(Number(query.limit))) {
                 throw new BadRequestException("limit is not a number");
-            };
+            }
             options.take = query.limit;
         }
 
-        if (query && query.offset) {
+        if (query?.offset) {
             if (Number.isNaN(Number(query.offset))) {
                 throw new BadRequestException("offset is not a number");
-            };
+            }
             options.skip = query.offset;
         }
         return this.placeRepository.find(options);

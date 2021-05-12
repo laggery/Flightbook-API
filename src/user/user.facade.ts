@@ -20,7 +20,7 @@ export class UserFacade {
     ) { }
 
     async getCurrentUser(id: number): Promise<any> {
-        let user: User = await this.userService.getUserById(id);
+        const user: User = await this.userService.getUserById(id);
         return plainToClass(UserReadDto, user);
     }
 
@@ -51,10 +51,10 @@ export class UserFacade {
             throw new InvalidUserException();
         }
 
-        let user: User = await this.userService.getUserById(id);
+        const user: User = await this.userService.getUserById(id);
 
         if (user.email !== userWriteDto.email) {
-            let userExist: User = await this.userService.getUserByEmail(userWriteDto.email);
+            const userExist: User = await this.userService.getUserByEmail(userWriteDto.email);
 
             if (userExist) {
                 throw new UserAlreadyExistsException();
@@ -77,7 +77,7 @@ export class UserFacade {
             throw new InvalidPasswordException();
         }
 
-        let user: User = await this.userService.getUserById(id);
+        const user: User = await this.userService.getUserById(id);
 
         const validatedUser = await this.authService.validateUser(user.email, userPasswordWriteDto.oldPassword);
         if (!validatedUser) {

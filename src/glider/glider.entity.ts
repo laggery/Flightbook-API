@@ -49,4 +49,3 @@ export class Glider {
   @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
   user: User;
 }
-
