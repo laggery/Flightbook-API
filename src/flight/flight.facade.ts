@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Req } from '@nestjs/common';
 import { FlightService } from './flight.service';
 import { UserService } from 'src/user/user.service';
 import { FlightDto } from './interface/flight-dto';
@@ -15,11 +15,13 @@ import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { PagerDto } from 'src/interface/pager-dto';
 import moment = require('moment');
 import { checkIfDateIsValid } from '../util/date-utils';
+import { S3Service } from '../util/s3.service';
 
 @Injectable()
 export class FlightFacade {
 
     constructor(
+        private s3Service: S3Service,
         private flightService: FlightService,
         private placeFacade: PlaceFacade,
         private gliderFacade: GliderFacade,
@@ -40,14 +42,15 @@ export class FlightFacade {
     }
 
     async createFlight(token: any, flightDto: FlightDto): Promise<FlightDto> {
-        const user: User = await this.userService.getUserById(token.userId);
+        const user: User = await this.userService.getUserById(token.user.userId);
         let flight: Flight = plainToClass(Flight, flightDto);
 
-        flight = await this.flightValidityCheck(flightDto, flight, token);
+        flight = await this.flightValidityCheck(flightDto, flight, token.user.userId);
 
         flight.id = null;
         flight.user = user;
 
+        await this.uploadIgcFile(token);
         const flightResp: Flight = await this.flightService.saveFlight(flight);
         return plainToClass(FlightDto, flightResp);
     }
@@ -129,4 +132,13 @@ export class FlightFacade {
     async nbFlightsByGliderId(token: any, gliderId: number) {
         return this.flightService.countFlightsByGliderId(token, gliderId);
     }
+
+    private async uploadIgcFile(request) {
+        try {
+            await this.s3Service.fileupload(request);
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
 }

@@ -24,4 +24,6 @@ export class FlightDto {
     readonly description?: string;
     @Expose()
     readonly price?: number;
+    @Expose()
+    readonly file?: string;
 }

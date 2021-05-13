@@ -10,7 +10,7 @@ const dbConfigBase: any = {
     schema: process.env.DATABASE_SCHEMA || "public",
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     // autoLoadEntities: true,
-    synchronize: process.env.DATABASE_SYNCHRONIZE === "true",
+    synchronize: process.env.DATABASE_SYNCHRONIZE === "false",
     migrations: [__dirname + '/../db/migrations/*{.ts,.js}'],
     migrationsTableName: 'db_migrations',
     cli: {

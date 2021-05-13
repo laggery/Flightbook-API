@@ -43,13 +43,13 @@ export class FlightController {
     @UseGuards(JwtAuthGuard)
     @Post()
     createFlight(@Request() req, @Body() flightDto: FlightDto): Promise<FlightDto> {
-        return this.flightFacade.createFlight(req.user, flightDto);
+        return this.flightFacade.createFlight(req, flightDto);
     }
 
     @UseGuards(JwtAuthGuard)
     @Put(':id')
     updatePlace(@Request() req, @Param('id') id: number, @Body() flightDto: FlightDto) {
-        return this.flightFacade.updateFlight(req.user, id, flightDto);
+        return this.flightFacade.updateFlight(req, id, flightDto);
     }
 
     @UseGuards(JwtAuthGuard)
