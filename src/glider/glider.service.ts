@@ -90,6 +90,6 @@ export class GliderService {
     }
 
     async getGliderById(token: any, id: number): Promise<Glider> {
-        return this.gliderRepository.findOneOrFail({ id: id, user: { id: token } });
+        return this.gliderRepository.findOneOrFail({ id: id, user: { id: token.userId } });
     }
 }

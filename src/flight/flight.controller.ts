@@ -1,10 +1,21 @@
-import { Controller, Get, UseGuards, Request, Query, Post, Body, Put, Param, Delete, HttpCode } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    UseGuards,
+    Request,
+    Query,
+    Post,
+    Body,
+    Put,
+    Param,
+    Delete,
+    HttpCode,
+} from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { FlightDto } from './interface/flight-dto';
 import { FlightFacade } from './flight.facade';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { PagerDto } from 'src/interface/pager-dto';
-
 @Controller('flights')
 export class FlightController {
 
@@ -43,13 +54,13 @@ export class FlightController {
     @UseGuards(JwtAuthGuard)
     @Post()
     createFlight(@Request() req, @Body() flightDto: FlightDto): Promise<FlightDto> {
-        return this.flightFacade.createFlight(req, flightDto);
+        return this.flightFacade.createFlight(req.user, flightDto);
     }
 
     @UseGuards(JwtAuthGuard)
     @Put(':id')
     updatePlace(@Request() req, @Param('id') id: number, @Body() flightDto: FlightDto) {
-        return this.flightFacade.updateFlight(req, id, flightDto);
+        return this.flightFacade.updateFlight(req.user, id, flightDto);
     }
 
     @UseGuards(JwtAuthGuard)

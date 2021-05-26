@@ -11,15 +11,15 @@ const s3 = new AWS.S3({
 });
 
 @Injectable()
-export class S3Service {
+export class FileUploadService {
 
+  async fileUpload(file, env, userId) {
 
-  async fileupload(@Req() req) {
     try {
       const params = {
         Bucket: "flightbookbucket",
-        Key: req.body.file,
-        Body: req.body.file,
+        Key: `${+env}/${userId}/${file.originalname}`,
+        Body: file.buffer,
         ACL: "private",
         Metadata: {
           "x-amz-meta-my-key": "your-value"
