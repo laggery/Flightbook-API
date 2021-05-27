@@ -1,7 +1,7 @@
 import {
     Controller,
     Post,
-    UseInterceptors, UploadedFile, Param, UseGuards, UploadedFiles,
+    UseInterceptors, UploadedFile, Param, UseGuards, UploadedFiles, Request,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileUploadService } from './file-upload.service';
@@ -14,10 +14,10 @@ export class FileUploadController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Post('/igcfile/:env/:id')
+    @Post('/igcfile')
     @UseInterceptors(FileInterceptor('file'))
-    uploadFile(@UploadedFile() file: Express.Multer.File, @Param('env') env: string, @Param('id') id: number) {
-        return this.fileUploadService.fileUpload(file, env, id);
+    async uploadFile(@Request() req, @UploadedFile() file: Express.Multer.File) {
+        return this.fileUploadService.fileUpload(file, 'staging', req.user.userId);
     }
 
 }
