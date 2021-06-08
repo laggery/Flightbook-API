@@ -42,7 +42,6 @@ export class FlightFacade {
     async createFlight(token: any, flightDto: FlightDto): Promise<FlightDto> {
         const user: User = await this.userService.getUserById(token.userId);
         let flight: Flight = plainToClass(Flight, flightDto);
-        flight.filepath = 'test'
 
         flight = await this.flightValidityCheck(flightDto, flight, token);
 
