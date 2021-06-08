@@ -18,12 +18,9 @@ export class FileUploadService {
     try {
       const params = {
         Bucket: "flightbookbucket",
-        Key: `${+env}/${userId}/${file.originalname}`,
+        Key: `${env}/${userId}/${file.originalname}`,
         Body: file.buffer,
         ACL: "private",
-        Metadata: {
-          "x-amz-meta-my-key": "your-value"
-        }
       };
 
       s3.putObject(params, function(err, data) {
