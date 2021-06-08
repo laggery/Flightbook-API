@@ -29,16 +29,14 @@ export class FileUploadController {
   @Get(':filename')
   @UseGuards(JwtAuthGuard)
   async getFile(@Request() req, @Query() query, @Param('filename') filename)  {
-    let file = await this.fileUploadService.getFile(query.env, req.user.userId, filename);
-    return file;
+    return await this.fileUploadService.getFile(query.env, req.user.userId, filename);
   }
 
   @Delete(':filename')
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   async deleteFile(@Request() req, @Query() query, @Param('filename') filename)  {
-    let file = await this.fileUploadService.deleteFile(query.env, req.user.userId, filename);
-    return file;
+    return await this.fileUploadService.deleteFile(query.env, req.user.userId, filename);
   }
 
 }
