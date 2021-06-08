@@ -9,7 +9,7 @@ import {
     Put,
     Param,
     Delete,
-    HttpCode,
+    HttpCode, UseInterceptors,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { FlightDto } from './interface/flight-dto';
