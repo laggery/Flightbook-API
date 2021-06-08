@@ -1,6 +1,6 @@
 import {
-  Controller,
-  Get,
+  Controller, Delete,
+  Get, HttpCode,
   Param,
   Post,
   Query,
@@ -30,6 +30,14 @@ export class FileUploadController {
   @UseGuards(JwtAuthGuard)
   async getFile(@Request() req, @Query() query, @Param('filename') filename)  {
     let file = await this.fileUploadService.getFile(query.env, req.user.userId, filename);
+    return file;
+  }
+
+  @Delete(':filename')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(204)
+  async deleteFile(@Request() req, @Query() query, @Param('filename') filename)  {
+    let file = await this.fileUploadService.deleteFile(query.env, req.user.userId, filename);
     return file;
   }
 

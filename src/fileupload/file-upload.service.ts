@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import * as multer from 'multer';
 import * as AWS from 'aws-sdk';
 import * as multerS3 from 'multer-s3';
@@ -25,13 +25,13 @@ export class FileUploadService {
 
       s3.putObject(params, function(err, data) {
         if (err) {
-          console.log(err, err.stack);
+          return err;
         } else {
           console.log(data);
         }
       });
     } catch (error) {
-      console.log(error);
+      return error;
     }
   }
 
@@ -57,5 +57,18 @@ export class FileUploadService {
       }).catch((err) => {
         return err;
       });
+  }
+
+  async deleteFile(env: string, userId: number, filename: string) {
+    const params = {
+      Bucket: 'flightbookbucket',
+      Key: `${env}/${userId}/${filename}`,
+    };
+    s3.deleteObject(params).promise()
+      .then((res) => {
+        return HttpStatus.NO_CONTENT;
+      }).catch((err) => {
+      return err;
+    });
   }
 }
