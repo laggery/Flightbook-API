@@ -1,5 +1,5 @@
-import { TeamMember } from "src/schoolModule/teamMember/teamMember.entity";
-import { Validation } from "src/schoolModule/validation/validation.entity";
+import { TeamMember } from "src/school-module/team-member/team-member.entity";
+import { Validation } from "src/school-module/validation/validation.entity";
 import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Flight } from "../flight/flight.entity";
 import { Glider } from "../glider/glider.entity";

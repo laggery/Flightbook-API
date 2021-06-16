@@ -1,5 +1,5 @@
 import { Exclude, Expose } from "class-transformer";
-import { SchoolReadDto } from "src/schoolModule/school/interface/school-read-dto";
+import { SchoolDto } from "src/school-module/school/interface/school-dto";
 import { UserReadDto } from "src/user/interface/user-read-dto";
 
 @Exclude()
@@ -13,5 +13,5 @@ export class ValidationDto {
     @Expose()
     readonly teacher: UserReadDto;
     @Expose()
-    school!: SchoolReadDto;
+    school!: SchoolDto;
 }

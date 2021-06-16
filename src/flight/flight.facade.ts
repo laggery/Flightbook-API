@@ -14,8 +14,8 @@ import { GliderFacade } from 'src/glider/glider.facade';
 import { Glider } from 'src/glider/glider.entity';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { PagerDto } from 'src/interface/pager-dto';
-import { SchoolFacade } from 'src/schoolModule/school.facade';
 import { InvalidSchoolException } from './exception/invalid-school-exception';
+import { SchoolFacade } from 'src/school-module/school/school.facade';
 
 @Injectable()
 export class FlightFacade {

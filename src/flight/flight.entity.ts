@@ -1,4 +1,4 @@
-import { Validation } from "src/schoolModule/validation/validation.entity";
+import { Validation } from "src/school-module/validation/validation.entity";
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Glider } from '../glider/glider.entity';
 import { Place } from "../place/place.entity";

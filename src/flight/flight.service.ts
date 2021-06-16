@@ -6,8 +6,8 @@ import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { Glider } from 'src/glider/glider.entity';
 import { Place } from 'src/place/place.entity';
 import { PagerDto } from 'src/interface/pager-dto';
-import { Validation } from 'src/schoolModule/validation/validation.entity';
-import { School } from 'src/schoolModule/school/school.entity';
+import { Validation } from 'src/school-module/validation/validation.entity';
+import { School } from 'src/school-module/school/school.entity';
 
 @Injectable()
 export class FlightService {

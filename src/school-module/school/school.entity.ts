@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ControlSheet } from "../controlSheet/controlSheet.entity";
-import { TeamMember } from "../teamMember/teamMember.entity";
+import { TeamMember } from "../team-member/team-member.entity";
 import { Validation } from "../validation/validation.entity";
 
 @Entity("school")

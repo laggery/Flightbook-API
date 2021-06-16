@@ -2,7 +2,7 @@ import { Exclude, Expose } from "class-transformer";
 import { IsEmail } from 'class-validator';
 
 @Exclude()
-export class SchoolReadDto {
+export class SchoolDto {
     @Expose()
     readonly id: number;
     @Expose()

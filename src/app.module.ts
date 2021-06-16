@@ -17,7 +17,8 @@ import { NewsModule } from './news/news.module';
 import { AuthModule } from './auth/auth.module';
 import { EmailService } from './email/email.service';
 import { dbConfig } from './db/db-config';
-import { SchoolModule } from './schoolModule/school/school.module';
+import { SchoolModule } from './school-module/school/school.module';
+import { TeamMemberModule } from './school-module/team-member/team-member.module';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { SchoolModule } from './schoolModule/school/school.module';
     GliderModule,
     NewsModule,
     HttpModule,
-    SchoolModule
+    SchoolModule,
+    TeamMemberModule
   ],
   controllers: [AppController],
   providers: [

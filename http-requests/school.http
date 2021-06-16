@@ -22,3 +22,19 @@ Authorization: Bearer {{auth.response.body.access_token}}
     "phone": "079 000 00 00",
     "email": "email@email.com"
 }
+
+###
+
+#Put update school
+PUT {{baseUrl}}/school/18 HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{auth.response.body.access_token}}
+
+{
+	"name": "demo",
+	"address1": "demo1",
+    "plz": "3001",
+    "city": "Bern",
+    "phone": "079 000 00 00",
+    "email": "email@email.com"
+}
