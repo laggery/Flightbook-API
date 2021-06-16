@@ -3,15 +3,19 @@ import { Glider } from '../glider/glider.entity';
 import { Place } from "../place/place.entity";
 import { User } from "../user/user.entity";
 
+@Index("idx_16389_glider_id", ["gliderId"], {})
 @Index("idx_16586_glider_id", ["gliderId"], {})
+@Index("idx_16389_primary", ["id"], { unique: true })
 @Index("idx_16586_primary", ["id"], { unique: true })
+@Index("idx_16389_landing_id", ["landingId"], {})
 @Index("idx_16586_landing_id", ["landingId"], {})
 @Index("idx_16586_start_id", ["startId"], {})
+@Index("idx_16389_start_id", ["startId"], {})
 @Index("idx_16586_user_id", ["userId"], {})
-@Entity("flight")
+@Index("idx_16389_user_id", ["userId"], {})
+@Entity("flight", { schema: "public" })
 export class Flight {
-  @PrimaryGeneratedColumn()
-  @Column("integer", { primary: true, name: "id" })
+  @PrimaryGeneratedColumn({ type: "integer", name: "id" })
   id: number;
 
   @Column("integer", { name: "glider_id" })
@@ -42,15 +46,14 @@ export class Flight {
   @Column("double precision", { name: "price", nullable: true })
   price: number | null;
 
-  @Column("integer", { name: "km", nullable: true })
+  @Column("double precision", { name: "km", nullable: true })
   km: number | null;
 
   @Column("timestamp with time zone", {
     name: "timestamp",
-    nullable: true,
     default: () => "CURRENT_TIMESTAMP",
   })
-  timestamp: Date | null;
+  timestamp: Date;
 
   @ManyToOne(() => Glider, (glider) => glider.flights, {
     onDelete: "RESTRICT",

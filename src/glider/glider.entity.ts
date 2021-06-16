@@ -11,11 +11,12 @@ import { User } from "../user/user.entity";
 import { Flight } from "../flight/flight.entity";
 
 @Index("idx_16593_primary", ["id"], { unique: true })
+@Index("idx_16396_primary", ["id"], { unique: true })
+@Index("idx_16396_user_id", ["userId"], {})
 @Index("idx_16593_user_id", ["userId"], {})
-@Entity("glider")
+@Entity("glider", { schema: "public" })
 export class Glider {
-  @PrimaryGeneratedColumn()
-  @Column("integer", { primary: true, name: "id" })
+  @PrimaryGeneratedColumn({ type: "integer", name: "id" })
   id: number;
 
   @Column("integer", { name: "user_id" })
@@ -33,10 +34,10 @@ export class Glider {
   @Column("boolean", { name: "tandem", default: () => "false" })
   tandem: boolean;
 
-  @Column({ select: false, nullable: true, insert: false, readonly: true })
-  nbFlights: number;
+  @Column("integer", { name: "nbFlights", nullable: true })
+  nbFlights: number | null;
 
-  @Column({ select: false, nullable: true, insert: false, readonly: true })
+  @Column("integer", { name: "time", nullable: true })
   time: number | null;
 
   @OneToMany(() => Flight, (flight) => flight.glider)
