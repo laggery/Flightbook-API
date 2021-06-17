@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 
 @Injectable()
 export class UserService {
@@ -16,7 +16,9 @@ export class UserService {
     }
 
     async getUserByEmail(email: string): Promise<User | undefined> {
-        return this.userRepository.findOne({ email: email });
+        return this.userRepository.findOne({ where: {
+            email: ILike(email)
+        } });
     }
 
     async getUserByToken(token: string): Promise<User | undefined> {
@@ -24,6 +26,10 @@ export class UserService {
     }
 
     async saveUser(user: User): Promise<User | undefined> {
+        user.email = user.email.toLowerCase();
+        user.emailCanonical = user.email;
+        user.username = user.email;
+        user.usernameCanonical = user.email;
         return this.userRepository.save(user);
     }
 }
