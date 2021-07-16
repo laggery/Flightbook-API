@@ -1,12 +1,8 @@
 # This workfow shows how to build a Docker image, tag and push it to DigitalOcean Container Registry, and
-# deploy the application on a DIgitalOcean Kubernetes cluster. For description to the entire worklow,
-# see www.digitalocean.com/docs/kubernetes/how-to/deploy-using-github-actions.
+# deploy the application on a DIgitalOcean Kubernetes cluster.
 
 name: Build, push, and deploy
-
-# Controls when the action will run.
 on:
-  # Triggers the workflow on push request on the main branch for changes in the specified paths.
   push:
     branches:
       - 'feature/migrate-to-kubernetes'
@@ -15,17 +11,13 @@ on:
       - 'Dockerfile'
       - '.github/workflows/**'
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel.
 jobs:
   # This workflow contains a single job called "build".
   build:
-    # The type of runner that the job will run on.
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
 
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it.
       - name: Checkout master
         uses: actions/checkout@main
 
@@ -35,7 +27,7 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      # Build a Docker image of your application in your registry and tag the image with the $GITHUB_SHA.
+      # Build a Docker image in the registry and tag the image with the $GITHUB_SHA.
       - name: Build container image
         run: docker build -t registry.digitalocean.com/flightbook-container-registry/flightbook-repository:$(echo $GITHUB_SHA | head -c7) .
 
@@ -51,14 +43,6 @@ jobs:
 
       - name: Save DigitalOcean kubeconfig with short-lived credenti als
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 flightbook-k8s-1-21-2-do-2-ams3-1625754997114
-
-        # If you haven't already integrated with your registry and only want workloads in a particular namespace to be able to pull
-        # from your registry, uncomment the next two commands.
-        #- name: Upload credentials of your registry to your DigitalOcean Kubernetes cluster
-        #  run: doctl registry kubernetes-manifest | kubectl apply -f -
-
-      #- name: Reference the secret you just uploaded as an imagePullSecrets
-      #  run: "kubectl patch serviceaccount default -p '{\"imagePullSecrets\": [{\"name\": \"registry-sdas\"}]}'"
 
       - name: Deploy to DigitalOcean Kubernetes
         run: kubectl apply -f $GITHUB_WORKSPACE/kubernetes/deployment.yml
