@@ -24,7 +24,6 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      # Build a Docker image in the registry and tag the image with the $GITHUB_SHA.
       - name: Build container image
         run: docker build -t registry.digitalocean.com/flightbook-container-registry/flightbook-repository:$(echo $GITHUB_SHA | head -c7) .
 
