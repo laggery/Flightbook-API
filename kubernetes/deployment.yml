@@ -21,6 +21,9 @@ spec:
     spec:
       containers:
         - name: flightbook
+          env:
+            - name: JWT_SECRET
+              value: "secret"
           image: <IMAGE>
           ports:
             - containerPort: 80
@@ -31,6 +34,7 @@ spec:
             limits:
               cpu: "0.4"
               memory: "1Gi"
+
 ---
 apiVersion: v1
 kind: Service

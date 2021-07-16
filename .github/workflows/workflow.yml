@@ -6,7 +6,6 @@ on:
   push:
     branches:
       - 'feature/migrate-to-kubernetes'
-
     paths:
       - 'Dockerfile'
       - '.github/workflows/**'
