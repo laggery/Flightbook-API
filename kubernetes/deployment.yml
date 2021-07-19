@@ -23,7 +23,21 @@ spec:
         - name: flightbook
           env:
             - name: JWT_SECRET
-              value: "secret"
+              value: ${{ secrets.DEV_JWT_SECRET }}
+            - name: DATABASE_HOST
+              value: ${{ secrets.DEV_DATABASE_HOST }}
+            - name: DATABASE_NAME
+              value: ${{ secrets.DEV_DATABASE_NAME }}
+            - name: DATABASE_PASSWORD
+              value: ${{ secrets.DEV_DATABASE_PASSWORD }}
+            - name: DATABASE_PORT
+              value: ${{ secrets.DEV_DATABASE_PORT }}
+            - name: DATABASE_USER
+              value: ${{ secrets.DEV_DATABASE_USER }}
+            - name: EMAIL_AUTHORIZATION
+              value: ${{ secrets.DEV_EMAIL_AUTHORIZATION }}
+            - name: TOKEN_EXPIRATION
+              value: ${{ secrets.DEV_TOKEN_EXPIRATION }}
           image: <IMAGE>
           ports:
             - containerPort: 80
