@@ -9,6 +9,7 @@ on:
     paths:
       - 'Dockerfile'
       - '.github/workflows/**'
+      - 'kubernetes/**'
 
 jobs:
   build:
