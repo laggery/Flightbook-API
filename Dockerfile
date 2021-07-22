@@ -1,5 +1,6 @@
 FROM node:lts-alpine as dist
 ARG JWT_SECRET
+ENV JWT_SECRET=${JWT_SECRET}
 WORKDIR /tmp/
 COPY package.json package-lock.json tsconfig.json tsconfig.build.json ./
 COPY src/ src/
