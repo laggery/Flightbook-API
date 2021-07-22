@@ -24,7 +24,7 @@ jobs:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
       - name: Build container image
-        run: docker build -t registry.digitalocean.com/flightbook-container-registry/flightbook-repository:$(echo $GITHUB_SHA | head -c7) .
+        run: docker build --build-arg JWT_SECRET=${JWT_SECRET} -t registry.digitalocean.com/flightbook-container-registry/flightbook-repository:$(echo $GITHUB_SHA | head -c7) .
         env:
           JWT_SECRET: ${{ secrets.DEV_JWT_SECRET }}
           DATABASE_HOST: ${{ secrets.DEV_DATABASE_HOST }}
