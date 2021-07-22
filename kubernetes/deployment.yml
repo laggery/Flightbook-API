@@ -29,8 +29,8 @@ spec:
               cpu: "0.2"
               memory: "512Mi"
             limits:
-              cpu: "0.5"
-              memory: "1.5Gi"
+              cpu: "0.6"
+              memory: "2Gi"
 
 ---
 apiVersion: v1
