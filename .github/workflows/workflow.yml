@@ -15,15 +15,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - env:
-          JWT_SECRET: ${{ secrets.DEV_JWT_SECRET }}
-          DATABASE_HOST: ${{ secrets.DEV_DATABASE_HOST }}
-          DATABASE_NAME: ${{ secrets.DEV_DATABASE_NAME }}
-          DATABASE_PASSWORD: ${{ secrets.DEV_DATABASE_PASSWORD }}
-          DATABASE_PORT: ${{ secrets.DEV_DATABASE_PORT }}
-          DATABASE_USER: ${{ secrets.DEV_DATABASE_USER }}
-          EMAIL_AUTHORIZATION: ${{ secrets.DEV_EMAIL_AUTHORIZATION }}
-          TOKEN_EXPIRATION: ${{ secrets.DEV_TOKEN_EXPIRATION }}
       - name: Checkout master
         uses: actions/checkout@main
 
@@ -34,6 +25,15 @@ jobs:
 
       - name: Build container image
         run: docker build -t registry.digitalocean.com/flightbook-container-registry/flightbook-repository:$(echo $GITHUB_SHA | head -c7) .
+        env:
+          JWT_SECRET: ${{ secrets.DEV_JWT_SECRET }}
+          DATABASE_HOST: ${{ secrets.DEV_DATABASE_HOST }}
+          DATABASE_NAME: ${{ secrets.DEV_DATABASE_NAME }}
+          DATABASE_PASSWORD: ${{ secrets.DEV_DATABASE_PASSWORD }}
+          DATABASE_PORT: ${{ secrets.DEV_DATABASE_PORT }}
+          DATABASE_USER: ${{ secrets.DEV_DATABASE_USER }}
+          EMAIL_AUTHORIZATION: ${{ secrets.DEV_EMAIL_AUTHORIZATION }}
+          TOKEN_EXPIRATION: ${{ secrets.DEV_TOKEN_EXPIRATION }}
 
       - name: Log in to DigitalOcean Container Registry with short-lived credentials
         run: doctl registry login --expiry-seconds 1800
