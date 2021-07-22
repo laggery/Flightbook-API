@@ -35,7 +35,7 @@ jobs:
           EMAIL_AUTHORIZATION: ${{ secrets.DEV_EMAIL_AUTHORIZATION }}
           TOKEN_EXPIRATION: ${{ secrets.DEV_TOKEN_EXPIRATION }}
 
-      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+      - name: Log in to Digital Ocean Container Registry with short-lived credentials
         run: doctl registry login --expiry-seconds 1800
 
       - name: Push image to DigitalOcean Container Registry
