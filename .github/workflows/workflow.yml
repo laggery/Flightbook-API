@@ -33,7 +33,7 @@ jobs:
           DATABASE_USER: ${{ secrets.DEV_DATABASE_USER }}
           EMAIL_AUTHORIZATION: ${{ secrets.DEV_EMAIL_AUTHORIZATION }}
           TOKEN_EXPIRATION: ${{ secrets.DEV_TOKEN_EXPIRATION }}
-        run: docker build --build-arg JWT_SECRET=$JWT_SECRET -t registry.digitalocean.com/flightbook-container-registry/flightbook-repository:$(echo $GITHUB_SHA | head -c7) .
+        run: docker build --build-arg JWT_SECRET=test -t registry.digitalocean.com/flightbook-container-registry/flightbook-repository:$(echo $GITHUB_SHA | head -c7) .
 
       - name: Log in to Digital Ocean Container Registry with short-lived credentials
         run: doctl registry login --expiry-seconds 1800
