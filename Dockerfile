@@ -1,9 +1,9 @@
 FROM node:lts-alpine as dist
+WORKDIR /tmp/
 ARG JWT_SECRET
 RUN echo $JWT_SECRET
 ENV JWT_SECRET=${JWT_SECRET:-mySecret}
 RUN echo $JWT_SECRET
-WORKDIR /tmp/
 COPY package.json package-lock.json tsconfig.json tsconfig.build.json ./
 COPY src/ src/
 RUN npm install
