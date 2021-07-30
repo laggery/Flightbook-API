@@ -22,6 +22,9 @@ spec:
       containers:
         - name: flightbook
           image: <IMAGE>
+          env:
+            - name: JWT_SECRET
+              value: "test"
           ports:
             - containerPort: 80
           resources:
