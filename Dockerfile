@@ -1,5 +1,5 @@
 FROM node:lts-alpine as dist
-ARG JWT_SECRET mySecret
+ARG JWT_SECRET=mySecret
 ENV JWT_SECRET_ENV=$JWT_SECRET
 RUN echo "JWT_SECRET is $JWT_SECRET_ENV"
 WORKDIR /tmp/
