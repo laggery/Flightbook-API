@@ -1,7 +1,7 @@
 FROM node:lts-alpine as dist
 ARG JWT_SECRET mySecret
 ENV JWT_SECRET_ENV=$JWT_SECRET
-RUN echo "JWT_SECRET is ${JWT_SECRET_ENV}"
+RUN echo "JWT_SECRET is $JWT_SECRET_ENV"
 WORKDIR /tmp/
 COPY package.json package-lock.json tsconfig.json tsconfig.build.json ./
 COPY src/ src/
