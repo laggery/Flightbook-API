@@ -182,6 +182,10 @@ export class FlightService {
         if (query && query.to) {
             builder.andWhere(`flight.date <= '${query.to}'`);
         }
+
+        if (query && query.description) {
+            builder.andWhere(`flight.description ILIKE '%${query.description}%'`);
+        }
         return builder
     }
 
