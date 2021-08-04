@@ -23,11 +23,11 @@ spec:
         - name: flightbook
           image: <IMAGE>
           env:
-            - name: JWT_SECRET
-                valueFrom:
-                  secretKeyRef:
-                    name: jwtsecret
-                    key: JWT_SECRET
+          - name: JWT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: jwtsecret
+                key: JWT_SECRET
           ports:
             - containerPort: 80
           resources:
