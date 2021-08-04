@@ -24,7 +24,10 @@ spec:
           image: <IMAGE>
           env:
             - name: JWT_SECRET
-              value: "test"
+                valueFrom:
+                  secretKeyRef:
+                    name: jwtsecret
+                    key: JWT_SECRET
           ports:
             - containerPort: 80
           resources:
