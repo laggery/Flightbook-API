@@ -26,8 +26,53 @@ spec:
           - name: JWT_SECRET
             valueFrom:
               secretKeyRef:
-                name: jwtsecret
+                name: devsecrets
                 key: JWT_SECRET
+          - name: DATABASE_HOST
+            valueFrom:
+              secretKeyRef:
+                name: devsecrets
+                key: DATABASE_HOST
+          - name: DATABASE_PORT
+            valueFrom:
+              secretKeyRef:
+                name: devsecrets
+                key: DATABASE_PORT
+          - name: DATABASE_USER
+            valueFrom:
+              secretKeyRef:
+                name: devsecrets
+                key: DATABASE_USER
+          - name: DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: devsecrets
+                key: DATABASE_PASSWORD
+          - name: DATABASE_NAME
+            valueFrom:
+              secretKeyRef:
+                name: devsecrets
+                key: DATABASE_NAME
+          - name: EMAIL_AUTHORIZATION
+            valueFrom:
+              secretKeyRef:
+                name: devsecrets
+                key: EMAIL_AUTHORIZATION
+          - name: EMAIL_FROM
+            valueFrom:
+              secretKeyRef:
+                name: devsecrets
+                key: EMAIL_FROM
+          - name: EMAIL_FORMAT
+            valueFrom:
+              secretKeyRef:
+                name: devsecrets
+                key: EMAIL_FORMAT
+          - name: TOKEN_EXPIRATION
+            valueFrom:
+              secretKeyRef:
+                name: devsecrets
+                key: TOKEN_EXPIRATION
           ports:
             - containerPort: 80
           resources:
