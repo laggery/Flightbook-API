@@ -35,8 +35,8 @@ jobs:
       - name: Update deployment file
         run: TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|registry.digitalocean.com/flightbook-container-registry/flightbook-repository:'${TAG}'|' $GITHUB_WORKSPACE/kubernetes/deployment.yml
 
-      - name: Save DigitalOcean kubeconfig with short-lived credenti als
-        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 flightbook-k8s-1-21-2-do-2-ams3-1625754997114
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 k8s-1-21-2-do-2-ams3-1628844727688
 
       - name: Deploy to DigitalOcean Kubernetes
         run: kubectl apply -f $GITHUB_WORKSPACE/kubernetes/deployment.yml
