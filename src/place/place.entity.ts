@@ -12,13 +12,14 @@ import { User } from "../user/user.entity";
 import { Flight } from "../flight/flight.entity";
 
 @Exclude()
+@Index("idx_16406_primary", ["id"], { unique: true })
 @Index("idx_16603_primary", ["id"], { unique: true })
 @Index("idx_16603_user_id", ["userId"], {})
-@Entity("place")
+@Index("idx_16406_user_id", ["userId"], {})
+@Entity("place", { schema: "public" })
 export class Place {
   @Expose()
-  @PrimaryGeneratedColumn()
-  @Column("integer", { primary: true, name: "id" })
+  @PrimaryGeneratedColumn({ type: "integer", name: "id" })
   id: number;
 
   @Column("integer", { name: "user_id" })

@@ -4,22 +4,34 @@ import { Glider } from "../glider/glider.entity";
 import { Place } from "../place/place.entity";
 
 @Index("idx_16606_idx_e12875dfb3b1d92d7d7c5377e2", ["email"], { unique: true })
+@Index("idx_16409_idx_e12875dfb3b1d92d7d7c5377e2", ["email"], { unique: true })
+@Index("idx_16409_email", ["email"], { unique: true })
 @Index("idx_16606_email", ["email"], { unique: true })
+@Index("idx_16409_idx_846d5513f58dc765ecc299582a", ["emailCanonical"], {
+  unique: true,
+})
+@Index("idx_16409_uniq_8d93d649a0d96fbf", ["emailCanonical"], { unique: true })
 @Index("idx_16606_idx_846d5513f58dc765ecc299582a", ["emailCanonical"], {
   unique: true,
 })
 @Index("idx_16606_uniq_8d93d649a0d96fbf", ["emailCanonical"], { unique: true })
 @Index("idx_16606_primary", ["id"], { unique: true })
+@Index("idx_16409_primary", ["id"], { unique: true })
+@Index("idx_16409_uniq_8d93d64992fc23a8", ["usernameCanonical"], {
+  unique: true,
+})
 @Index("idx_16606_uniq_8d93d64992fc23a8", ["usernameCanonical"], {
   unique: true,
 })
 @Index("idx_16606_idx_ed85f2a29d842b9b0dfefaba34", ["usernameCanonical"], {
   unique: true,
 })
-@Entity("user")
+@Index("idx_16409_idx_ed85f2a29d842b9b0dfefaba34", ["usernameCanonical"], {
+  unique: true,
+})
+@Entity("user", { schema: "public" })
 export class User {
-  @PrimaryGeneratedColumn()
-  @Column("integer", { primary: true, name: "id" })
+  @PrimaryGeneratedColumn({ type: "integer", name: "id" })
   id: number;
 
   @Column("character varying", { name: "username", length: 255 })
