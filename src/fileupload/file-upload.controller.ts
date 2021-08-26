@@ -23,20 +23,20 @@ export class FileUploadController {
   @Post('upload/igcfile')
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(@Request() req, @UploadedFile() file: Express.Multer.File, @Query() query) {
-    return this.fileUploadService.fileUpload(file, query.env, req.user.userId);
+    return this.fileUploadService.fileUpload(file, req.user.userId);
   }
 
   @Get(':filename')
   @UseGuards(JwtAuthGuard)
   async getFile(@Request() req, @Query() query, @Param('filename') filename)  {
-    return await this.fileUploadService.getFile(query.env, req.user.userId, filename);
+    return await this.fileUploadService.getFile(req.user.userId, filename);
   }
 
   @Delete(':filename')
   @UseGuards(JwtAuthGuard)
   @HttpCode(204)
   async deleteFile(@Request() req, @Query() query, @Param('filename') filename)  {
-    return await this.fileUploadService.deleteFile(query.env, req.user.userId, filename);
+    return await this.fileUploadService.deleteFile(req.user.userId, filename);
   }
 
 }

@@ -83,6 +83,6 @@ export class Flight {
   @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
   user: User;
 
-  @Column("character varying", { name: "filepath", nullable: true })
-  filepath: string | null;
+  @Column("character varying", { name: "igc_filepath", nullable: true })
+  igcFilepath: string | null;
 }

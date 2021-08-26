@@ -25,5 +25,5 @@ export class FlightDto {
     @Expose()
     readonly price?: number;
     @Expose()
-    readonly filepath?: string;
+    readonly igcFilepath?: string;
 }
