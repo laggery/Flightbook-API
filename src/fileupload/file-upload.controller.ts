@@ -15,14 +15,14 @@ import { FileUploadService } from './file-upload.service';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { CopyFileDto } from './interface/copyFile-dto';
 
-@Controller('')
+@Controller('file')
 export class FileUploadController {
 
   constructor(private fileUploadService: FileUploadService) {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('upload/igcfile')
+  @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(@Request() req, @UploadedFile() file: Express.Multer.File, @Query() query) {
     return this.fileUploadService.fileUpload(file, req.user.userId);
