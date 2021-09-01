@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller, Delete,
   Get, HttpCode,
   Param,
@@ -12,6 +13,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileUploadService } from './file-upload.service';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { CopyFileDto } from './interface/copyFile-dto';
 
 @Controller('')
 export class FileUploadController {
@@ -26,16 +28,22 @@ export class FileUploadController {
     return this.fileUploadService.fileUpload(file, req.user.userId);
   }
 
-  @Get(':filename')
   @UseGuards(JwtAuthGuard)
-  async getFile(@Request() req, @Query() query, @Param('filename') filename)  {
+  @Post('copy')
+  async copyFile(@Request() req, @Body() copyFile: CopyFileDto) {
+    return this.fileUploadService.copyFile(req.user.userId, copyFile);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':filename')
+  async getFile(@Request() req, @Param('filename') filename)  {
     return await this.fileUploadService.getFile(req.user.userId, filename);
   }
 
-  @Delete(':filename')
   @UseGuards(JwtAuthGuard)
+  @Delete(':filename')
   @HttpCode(204)
-  async deleteFile(@Request() req, @Query() query, @Param('filename') filename)  {
+  async deleteFile(@Request() req, @Param('filename') filename)  {
     return await this.fileUploadService.deleteFile(req.user.userId, filename);
   }
 

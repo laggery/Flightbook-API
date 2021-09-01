@@ -15,6 +15,7 @@ import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { PagerDto } from 'src/interface/pager-dto';
 import moment = require('moment');
 import { checkIfDateIsValid } from '../util/date-utils';
+import { FileUploadService } from 'src/fileupload/file-upload.service';
 
 @Injectable()
 export class FlightFacade {
@@ -23,7 +24,8 @@ export class FlightFacade {
         private flightService: FlightService,
         private placeFacade: PlaceFacade,
         private gliderFacade: GliderFacade,
-        private userService: UserService
+        private userService: UserService,
+        private fileUploadService: FileUploadService
     ) { }
 
     async getFlights(token: any, query: any): Promise<FlightDto[]> {
@@ -69,6 +71,9 @@ export class FlightFacade {
     async removeFlight(token: any, id: number): Promise<FlightDto> {
         const flight: Flight = await this.flightService.getFlightById(token, id);
         const flightResp: Flight = await this.flightService.removeFlight(flight);
+        if (flight.igcFilepath){
+            this.fileUploadService.deleteFile(token.userId, flight.igcFilepath);
+        }
         return plainToClass(FlightDto, flightResp);
     }
 
