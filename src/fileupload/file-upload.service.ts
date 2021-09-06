@@ -49,7 +49,6 @@ export class FileUploadService {
   }
 
   async copyFile(userId: number, copyFile: CopyFileDto) {
-    console.log(copyFile);
     try {
       const params = {
         Bucket: this.bucket,

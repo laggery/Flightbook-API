@@ -63,6 +63,7 @@ export class FlightFacade {
         flight.km = flightDto.km;
         flight.description = flightDto.description;
         flight.price = flightDto.price;
+        flight.igcFilepath = flightDto.igcFilepath;
 
         const flightResp: Flight = await this.flightService.saveFlight(flight);
         return plainToClass(FlightDto, flightResp);
