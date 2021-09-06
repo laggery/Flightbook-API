@@ -26,7 +26,7 @@ export class Place {
   userId: number;
 
   @Expose()
-  @Column("character varying", { name: "name", length: 40 })
+  @Column("character varying", { name: "name" })
   name: string;
 
   @Expose()
