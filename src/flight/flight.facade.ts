@@ -63,7 +63,7 @@ export class FlightFacade {
         flight.km = flightDto.km;
         flight.description = flightDto.description;
         flight.price = flightDto.price;
-        flight.igcFilepath = flightDto.igcFilepath;
+        flight.igc = flightDto.igc;
 
         const flightResp: Flight = await this.flightService.saveFlight(flight);
         return plainToClass(FlightDto, flightResp);
@@ -72,8 +72,8 @@ export class FlightFacade {
     async removeFlight(token: any, id: number): Promise<FlightDto> {
         const flight: Flight = await this.flightService.getFlightById(token, id);
         const flightResp: Flight = await this.flightService.removeFlight(flight);
-        if (flight.igcFilepath){
-            this.fileUploadService.deleteFile(token.userId, flight.igcFilepath);
+        if (flight.igc && flight.igc.filepath){
+            this.fileUploadService.deleteFile(token.userId, flight.igc.filepath);
         }
         return plainToClass(FlightDto, flightResp);
     }

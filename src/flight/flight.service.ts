@@ -42,11 +42,7 @@ export class FlightService {
             Object.keys(raw).forEach(key => {
                 if (key.startsWith('flight')) {
                     const name = key.substring(7, key.length);
-                    if (key === 'flight_igc_filepath') {
-                        data["igcFilepath"] = raw[key];
-                    } else {
-                        data[name] = raw[key];
-                    }
+                    data[name] = raw[key];
                 }
                 if (key.startsWith('glider')) {
                     if (!data.glider) data.glider = new Glider();

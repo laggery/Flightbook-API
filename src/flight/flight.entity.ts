@@ -2,6 +2,7 @@ import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } 
 import { Glider } from '../glider/glider.entity';
 import { Place } from "../place/place.entity";
 import { User } from "../user/user.entity";
+import { Igc } from "./interface/igc";
 
 @Index("idx_16389_glider_id", ["gliderId"], {})
 @Index("idx_16586_glider_id", ["gliderId"], {})
@@ -83,6 +84,6 @@ export class Flight {
   @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
   user: User;
 
-  @Column("character varying", { name: "igc_filepath", nullable: true })
-  igcFilepath: string | null;
+  @Column("jsonb", { name: "igc", nullable: true })
+  igc: Igc | null;
 }

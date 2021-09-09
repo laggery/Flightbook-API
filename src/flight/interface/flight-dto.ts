@@ -1,6 +1,7 @@
 import { Exclude, Expose } from "class-transformer";
 import { GliderDto } from "src/glider/interface/glider-dto";
 import { PlaceDto } from "src/place/interface/place-dto";
+import { Igc } from "./igc";
 
 @Exclude()
 export class FlightDto {
@@ -25,5 +26,5 @@ export class FlightDto {
     @Expose()
     readonly price?: number;
     @Expose()
-    readonly igcFilepath?: string;
+    readonly igc?: Igc;
 }
