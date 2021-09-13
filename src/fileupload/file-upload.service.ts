@@ -42,7 +42,7 @@ export class FileUploadService {
 
       const command = new PutObjectCommand(params);
 
-      const res = await this.s3.send(command);
+      await this.s3.send(command);
     } catch (error) {
       throw new S3Exception();
     }
@@ -58,7 +58,7 @@ export class FileUploadService {
       };
 
       const command = new CopyObjectCommand(params);
-      const res = await this.s3.send(command);
+      await this.s3.send(command);
     } catch (error) {
       throw new S3Exception();
     }
@@ -98,7 +98,7 @@ export class FileUploadService {
     const command = new DeleteObjectCommand(params);
 
     try {
-      const res = await this.s3.send(command);
+      await this.s3.send(command);
       return HttpStatus.NO_CONTENT;
     } catch (error) {
       return error;

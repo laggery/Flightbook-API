@@ -4,7 +4,6 @@ import {
   Get, HttpCode,
   Param,
   Post,
-  Query,
   Request,
   UploadedFile,
   UseGuards,
@@ -24,7 +23,7 @@ export class FileUploadController {
   @UseGuards(JwtAuthGuard)
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@Request() req, @UploadedFile() file: Express.Multer.File, @Query() query) {
+  async uploadFile(@Request() req, @UploadedFile() file: Express.Multer.File) {
     return this.fileUploadService.fileUpload(file, req.user.userId);
   }
 
