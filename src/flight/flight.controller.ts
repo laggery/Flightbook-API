@@ -1,10 +1,21 @@
-import { Controller, Get, UseGuards, Request, Query, Post, Body, Put, Param, Delete, HttpCode } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    UseGuards,
+    Request,
+    Query,
+    Post,
+    Body,
+    Put,
+    Param,
+    Delete,
+    HttpCode,
+} from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { FlightDto } from './interface/flight-dto';
 import { FlightFacade } from './flight.facade';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { PagerDto } from 'src/interface/pager-dto';
-
 @Controller('flights')
 export class FlightController {
 

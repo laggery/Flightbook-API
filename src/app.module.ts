@@ -17,6 +17,7 @@ import { NewsModule } from './news/news.module';
 import { AuthModule } from './auth/auth.module';
 import { EmailService } from './email/email.service';
 import {dbConfig} from './db/db-config';
+import { FileUploadModule } from './fileupload/file-upload.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import {dbConfig} from './db/db-config';
     TypeOrmModule.forRoot(dbConfig),
     AuthModule,
     FlightModule,
+    FileUploadModule,
     PlaceModule,
     UserModule,
     GliderModule,
