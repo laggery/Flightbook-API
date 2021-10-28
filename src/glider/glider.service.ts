@@ -30,6 +30,19 @@ export class GliderService {
         return await builder.getMany();
     }
 
+    async getGliderByName(token: any, name: string): Promise<Glider> {
+
+        let builder: SelectQueryBuilder<Glider> = this.gliderRepository.createQueryBuilder('glider')
+            .addSelect(`similarity(name, '${name}')`)
+            .where(`glider.user_id = ${token.userId}`)
+            .orderBy({
+                similarity: 'DESC'
+            })
+            .limit(1);
+
+        return await builder.getOne();
+    }
+
     async getGlidersPager(token: any, query: any): Promise<PagerDto> {
         const pagerDto = new PagerDto();
 

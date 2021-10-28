@@ -16,6 +16,12 @@ export class GliderController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get('name/:name')
+    getGliderByName(@Request() req, @Param('name') name: string): Promise<GliderDto> {
+        return this.gliderFacade.getGliderbyName(req.user, name);
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Get('pager')
     getGlidersPager(@Request() req, @Query() query): Promise<PagerDto> {
         return this.gliderFacade.getGlidersPager(req.user, query);
