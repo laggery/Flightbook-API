@@ -1,3 +1,5 @@
+import { Student } from "src/student/student.entity";
+import { TeamMember } from "src/team-member/team-member.entity";
 import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Flight } from "../flight/flight.entity";
 import { Glider } from "../glider/glider.entity";
@@ -109,4 +111,10 @@ export class User {
 
   @OneToMany(() => Place, (place) => place.user)
   places: Place[];
+
+  @OneToMany(() => TeamMember, (teamMember) => teamMember.user)
+  teamMembers: TeamMember[];
+
+  @OneToMany(() => Student, (student) => student.user)
+  students: Student[];
 }

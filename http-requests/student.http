@@ -1,0 +1,14 @@
+# @name auth
+POST {{baseUrl}}/auth/login HTTP/1.1
+content-type: application/json
+
+{
+	"email": "demo@demo.com",
+	"password": "demo"
+}
+
+###
+
+#Get studentinfo
+GET {{baseUrl}}/students/1/flights HTTP/1.1
+Authorization: Bearer {{auth.response.body.access_token}}
