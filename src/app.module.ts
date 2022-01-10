@@ -18,6 +18,8 @@ import { AuthModule } from './auth/auth.module';
 import { EmailService } from './email/email.service';
 import {dbConfig} from './db/db-config';
 import { FileUploadModule } from './fileupload/file-upload.module';
+import { StudentModule } from './student/student.module';
+import { SchoolModule } from './school/school.module';
 
 @Module({
   imports: [
@@ -30,7 +32,9 @@ import { FileUploadModule } from './fileupload/file-upload.module';
     UserModule,
     GliderModule,
     NewsModule,
-    HttpModule
+    HttpModule,
+    StudentModule,
+    SchoolModule
   ],
   controllers: [AppController],
   providers: [

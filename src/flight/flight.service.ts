@@ -16,7 +16,7 @@ export class FlightService {
     ) { }
 
     // @hack for use ROW_NUMBER function from mysql with typeorm
-    async getFLights(token: any, query: any): Promise<Flight[]> {
+    async getFlights(token: any, query: any): Promise<Flight[]> {
         let builder: SelectQueryBuilder<Flight> = this.flightRepository.createQueryBuilder('flight')
             .addSelect('flight_number')
             .leftJoinAndSelect('flight.glider', 'glider', 'glider.id = flight.glider_id')
