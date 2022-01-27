@@ -31,7 +31,7 @@ export class EnrollmentFacade {
         private emailService: EmailService
     ) { }
 
-    async createStudentEnrollment(schoolId: number, enrollmentWriteDto: EnrollmentWriteDto): Promise<EnrollmentDto> {
+    async createStudentEnrollment(schoolId: number, enrollmentWriteDto: EnrollmentWriteDto, origin: string): Promise<EnrollmentDto> {
         const user = await this.userService.getUserByEmail(enrollmentWriteDto.email);
         if (user) {
             const students = await this.studenService.getStudentsBySchoolId(schoolId);
@@ -44,7 +44,7 @@ export class EnrollmentFacade {
         const enrollmentList = await this.enrollmentService.getStudentsEnrollmentByEmailAndSchoolId(enrollmentWriteDto.email, schoolId);
         for (const enrollment of enrollmentList){
             if (new Date() < new Date(enrollment.expireAt)) {
-                await this.sendMail(enrollment);
+                await this.sendMail(enrollment, origin);
                 return plainToClass(EnrollmentDto, enrollment);
             }
         }
@@ -67,18 +67,18 @@ export class EnrollmentFacade {
 
         const enrollmentResp = this.enrollmentService.saveEnrollment(enrollment);
 
-        await this.sendMail(enrollment);
+        await this.sendMail(enrollment, origin);
 
         return plainToClass(EnrollmentDto, enrollmentResp);
     }
 
-    async sendMail(enrollment: Enrollment) {
+    async sendMail(enrollment: Enrollment, origin: string) {
         const emailBody = new EmailBodyDto();
         emailBody.toAddress = enrollment.email;
         emailBody.subject = "Share flightbook";
         emailBody.content = `<p>Hello</p>
         <p>${ enrollment.school.name } invite you to share your flightbook. You can accept this invitation by follow the link below.</p>
-        <p>Link : https://instructor.flightbook.ch/enrollment/${enrollment.token}</p>
+        <p>Link : ${origin}/enrollments/${enrollment.token}</p>
         <p>The link expire ${moment(enrollment.expireAt).format('DD.MM.YYYY HH:mm')}`;
 
         try {

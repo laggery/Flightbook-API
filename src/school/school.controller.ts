@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Headers, HttpCode, Param, Post, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { SchoolGuard } from 'src/auth/guard/school.guard';
 import { EnrollmentDto } from 'src/enrollment/interface/enrollment-dto';
@@ -41,7 +41,7 @@ export class SchoolController {
     @UseGuards(JwtAuthGuard, SchoolGuard)
     @Post('/:id/students/enrollment')
     @HttpCode(204)
-    postStudentsEnrollment(@Request() req, @Param('id') id: number, @Body() studentEnrollmentWriteDto: EnrollmentWriteDto): Promise<EnrollmentDto> {
-        return this.studentEnrollmentFacade.createStudentEnrollment(id, studentEnrollmentWriteDto);
+    postStudentsEnrollment(@Headers('origin') origin: string, @Param('id') id: number, @Body() studentEnrollmentWriteDto: EnrollmentWriteDto): Promise<EnrollmentDto> {
+        return this.studentEnrollmentFacade.createStudentEnrollment(id, studentEnrollmentWriteDto, origin);
     }
 }
