@@ -15,10 +15,16 @@ export class Student {
   @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
   user: User;
 
-  @ManyToOne(() => School, (school) => school.teamMembers, {
+  @ManyToOne(() => School, (school) => school.students, {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })
   @JoinColumn([{ name: "school_id", referencedColumnName: "id" }])
   school: School;
+
+  @Column("timestamp with time zone", {
+    name: "timestamp",
+    default: () => "CURRENT_TIMESTAMP",
+  })
+  timestamp: Date;
 }

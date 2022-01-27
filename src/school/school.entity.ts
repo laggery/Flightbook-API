@@ -1,3 +1,5 @@
+import { Enrollment } from "src/enrollment/enrollment.entity";
+import { Student } from "src/student/student.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { TeamMember } from "../team-member/team-member.entity";
 
@@ -30,4 +32,10 @@ export class School {
 
   @OneToMany(() => TeamMember, (teamMember) => teamMember.school, { cascade: ['insert', 'update'] })
   teamMembers: TeamMember[];
+
+  @OneToMany(() => Student, (student) => student.school, { cascade: ['insert', 'update'] })
+  students: Student[];
+
+  @OneToMany(() => Enrollment, (enrollment) => enrollment.school, { cascade: ['insert', 'update'] })
+  enrollments: Enrollment[];
 }
