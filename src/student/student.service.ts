@@ -21,4 +21,8 @@ export class StudentService {
         };
         return this.studentRepository.find(options);
     }
+
+    async saveStudent(student: Student): Promise<Student | undefined> {
+        return await this.studentRepository.save(student);
+    }
 }

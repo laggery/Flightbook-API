@@ -32,4 +32,8 @@ export class TeamMemberService {
         };
         return this.teamMemberRepository.find(options);
     }
+
+    async saveTeamMember(teamMember: TeamMember): Promise<TeamMember | undefined> {
+        return await this.teamMemberRepository.save(teamMember);
+    }
 }

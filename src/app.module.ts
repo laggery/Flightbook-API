@@ -20,6 +20,7 @@ import {dbConfig} from './db/db-config';
 import { FileUploadModule } from './fileupload/file-upload.module';
 import { StudentModule } from './student/student.module';
 import { SchoolModule } from './school/school.module';
+import { EnrollmentModule } from './enrollment/enrollment.module';
 
 @Module({
   imports: [
@@ -34,7 +35,8 @@ import { SchoolModule } from './school/school.module';
     NewsModule,
     HttpModule,
     StudentModule,
-    SchoolModule
+    SchoolModule,
+    EnrollmentModule
   ],
   controllers: [AppController],
   providers: [

@@ -1,7 +1,9 @@
-import { Body, Controller, Get, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { SchoolGuard } from 'src/auth/guard/school.guard';
-import { FlightDto } from 'src/flight/interface/flight-dto';
+import { EnrollmentDto } from 'src/enrollment/interface/enrollment-dto';
+import { EnrollmentWriteDto } from 'src/enrollment/interface/enrollment-write-dto';
+import { EnrollmentFacade } from 'src/enrollment/enrollment.facade';
 import { StudentDto } from 'src/student/interface/student-dto';
 import { StudentFacade } from 'src/student/student.facade';
 import { SchoolDto } from './interface/school-dto';
@@ -10,7 +12,11 @@ import { SchoolFacade } from './school.facade';
 @Controller('schools')
 export class SchoolController {
 
-    constructor(private schoolFacade: SchoolFacade, private studentFacade: StudentFacade) { } 
+    constructor(
+        private schoolFacade: SchoolFacade,
+        private studentFacade: StudentFacade,
+        private studentEnrollmentFacade: EnrollmentFacade
+    ) { }
 
     @UseGuards(JwtAuthGuard)
     @Post()
@@ -30,5 +36,12 @@ export class SchoolController {
     @Get('/:id/students')
     getStudents(@Request() req, @Param('id') id: number): Promise<StudentDto[]> {
         return this.studentFacade.getStudentsBySchoolId(id);
+    }
+
+    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @Post('/:id/students/enrollment')
+    @HttpCode(204)
+    postStudentsEnrollment(@Request() req, @Param('id') id: number, @Body() studentEnrollmentWriteDto: EnrollmentWriteDto): Promise<EnrollmentDto> {
+        return this.studentEnrollmentFacade.createStudentEnrollment(id, studentEnrollmentWriteDto);
     }
 }
