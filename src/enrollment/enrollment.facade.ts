@@ -61,7 +61,7 @@ export class EnrollmentFacade {
         enrollment.token = uuid;
 
         const expireAtDate = new Date();
-        expireAtDate.setDate(expireAtDate.getDate() + 1);
+        expireAtDate.setDate(expireAtDate.getDate() + 2);
 
         enrollment.expireAt = expireAtDate;
 
