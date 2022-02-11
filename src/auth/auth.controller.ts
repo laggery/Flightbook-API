@@ -1,16 +1,19 @@
-import { Controller, Post, UseGuards, Request, Param, Get, HttpCode } from '@nestjs/common';
+import { Controller, Post, UseGuards, Request, Param, Get, HttpCode, Body } from '@nestjs/common';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { AuthFacade } from './auth.facade';
+import { LoginDto } from './interface/login-dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('auth')
+@ApiTags('Auth')
 export class AuthController {
 
     constructor(private authFacade: AuthFacade) { }
 
     @UseGuards(LocalAuthGuard)
     @Post('login')
-    async login(@Request() req) {
+    async login(@Request() req, @Body() loginDto: LoginDto) {
         return this.authFacade.login(req.user);
     }
 
@@ -22,6 +25,7 @@ export class AuthController {
     @UseGuards(JwtAuthGuard)
     @Get('logout')
     @HttpCode(204)
+    @ApiBearerAuth('jwt')
     async logout(@Request() req) {
         await this.authFacade.logout(req.user)
     }

@@ -6,8 +6,11 @@ import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { UserPasswordWriteDto } from './interface/user-password-write-dto';
 import { SchoolDto } from 'src/school/interface/school-dto';
 import { TeamMemberFacade } from 'src/team-member/team-member.facade';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('users')
+@ApiTags('User')
+@ApiBearerAuth('jwt')
 export class UserController {
 
     constructor(

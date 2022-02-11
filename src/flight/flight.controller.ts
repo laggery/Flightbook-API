@@ -16,7 +16,10 @@ import { FlightDto } from './interface/flight-dto';
 import { FlightFacade } from './flight.facade';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { PagerDto } from 'src/interface/pager-dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 @Controller('flights')
+@ApiTags('Flight')
+@ApiBearerAuth('jwt')
 export class FlightController {
 
     constructor(private flightFacade: FlightFacade) { }
