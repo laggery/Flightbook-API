@@ -3,8 +3,11 @@ import { GliderFacade } from './glider.facade';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { GliderDto } from './interface/glider-dto';
 import { PagerDto } from 'src/interface/pager-dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('gliders')
+@ApiTags('Glider')
+@ApiBearerAuth('jwt')
 export class GliderController {
 
     constructor(private gliderFacade: GliderFacade) { }

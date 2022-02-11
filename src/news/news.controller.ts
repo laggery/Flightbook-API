@@ -1,7 +1,9 @@
 import { Controller, Get, Param } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { NewsFacade } from './news.facade';
 
 @Controller('news')
+@ApiTags('News')
 export class NewsController {
 
     constructor(private newsFacade: NewsFacade) { }
