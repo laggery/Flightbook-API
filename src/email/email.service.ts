@@ -1,23 +1,39 @@
-import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { EmailBodyDto } from './email-body-dto';
 
+import * as nodemailer from 'nodemailer';
+
 @Injectable()
 export class EmailService {
-    private accountId: string
 
-    constructor(private readonly httpService: HttpService) {
-        this.httpService.get('http://mail.zoho.com/api/accounts', { headers: { "Authorization": process.env.EMAIL_AUTHORIZATION } }).subscribe(res => {
-            this.accountId = res.data.data[0].accountId;
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-        }, error => {
-            //TODO: Proper error handling
-        });
+    constructor() {
     }
 
-    sendEmail(body: EmailBodyDto): Promise<any> {
-        body.fromAddress = process.env.EMAIL_FROM;
-        body.mailFormat = process.env.EMAIL_FORMAT || "html";
-        return this.httpService.post(`https://mail.zoho.com/api/accounts/${this.accountId}/messages`, JSON.stringify(body), { headers: { "Authorization": process.env.EMAIL_AUTHORIZATION, "content-type": "application/json" } }).toPromise();
+    async sendEmail(body: EmailBodyDto): Promise<any> {
+        const transporter = nodemailer.createTransport({
+            host: process.env.EMAIL_HOST,
+            port: Number(process.env.EMAIL_PORT),
+            secure: true,
+            auth: {
+                user: process.env.EMAIL_FROM,
+                pass: process.env.EMAIL_PASSWORD,
+            },
+            logger: false,
+        });
+
+        try {
+            const info = await transporter.sendMail({
+                from: process.env.EMAIL_FROM,
+                to: body.toAddress,
+                subject: body.subject,
+                html: body.content
+            });
+        } catch (err) {
+            console.log(err);
+            throw err;
+        }
+
+        transporter.close();
+        return true;
     }
 }
