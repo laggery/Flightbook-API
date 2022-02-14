@@ -1,0 +1,46 @@
+# @name auth
+POST {{baseUrl}}/auth/login HTTP/1.1
+content-type: application/json
+
+{
+	"email": "demo@demo.com",
+	"password": "demo"
+}
+
+###
+
+#Post create new school
+POST {{baseUrl}}/schools HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{auth.response.body.access_token}}
+
+{
+	"name": "Paragliding school",
+	"address1": "demo",
+    "plz": "3000",
+    "city": "Bern",
+    "phone": "079 000 00 00",
+    "email": "email@email.com"
+}
+
+###
+
+#Put update school
+PUT {{baseUrl}}/schools/18 HTTP/1.1
+content-type: application/json
+Authorization: Bearer {{auth.response.body.access_token}}
+
+{
+	"name": "demo",
+	"address1": "demo1",
+    "plz": "3001",
+    "city": "Bern",
+    "phone": "079 000 00 00",
+    "email": "email@email.com"
+}
+
+###
+
+#Get studentinfo
+GET {{baseUrl}}/schools/1/students HTTP/1.1
+Authorization: Bearer {{auth.response.body.access_token}}

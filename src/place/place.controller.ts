@@ -3,8 +3,11 @@ import { PlaceDto } from './interface/place-dto';
 import { PlaceFacade } from './place.facade';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { PagerDto } from 'src/interface/pager-dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('places')
+@ApiTags('Place')
+@ApiBearerAuth('jwt')
 export class PlaceController {
 
     constructor(private placeFacade: PlaceFacade) { }

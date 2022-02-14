@@ -6,7 +6,7 @@ RUN npm install
 RUN npm run build
 
 FROM node:lts-alpine as node_modules
-RUN apk add g++ make python
+RUN apk add build-base
 WORKDIR /tmp/
 COPY package.json package-lock.json ./
 RUN npm install --production

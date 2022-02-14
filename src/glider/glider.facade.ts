@@ -20,6 +20,11 @@ export class GliderFacade {
         return plainToClass(GliderDto, list);
     }
 
+    async getGliderbyName(token: any, name: string): Promise<GliderDto> {
+        const glider: Glider = await this.gliderService.getGliderByName(token, name);
+        return plainToClass(GliderDto, glider);
+    }
+
     async getGlidersPager(token: any, query: any): Promise<PagerDto> {
         return this.gliderService.getGlidersPager(token, query);
     }

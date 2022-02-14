@@ -12,6 +12,7 @@ import { FileUploadService } from 'src/fileupload/file-upload.service';
 @Module({
   imports: [UserModule, TypeOrmModule.forFeature([Flight]), PlaceModule, GliderModule],
   controllers: [FlightController],
-  providers: [FlightService, FlightFacade, FileUploadService]
+  providers: [FlightService, FlightFacade, FileUploadService],
+  exports: [FlightFacade, FlightService]
 })
 export class FlightModule {}

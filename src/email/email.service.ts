@@ -11,19 +11,19 @@ export class EmailService {
 
     async sendEmail(body: EmailBodyDto): Promise<any> {
         const transporter = nodemailer.createTransport({
-            host: "smtp.zoho.com",
-            port: 465,
+            host: process.env.EMAIL_HOST,
+            port: Number(process.env.EMAIL_PORT),
             secure: true,
             auth: {
-                user: "admin@flightbook.ch",
-                pass: "Team_2021",
+                user: process.env.EMAIL_FROM,
+                pass: process.env.EMAIL_PASSWORD,
             },
             logger: false,
         });
 
         try {
             const info = await transporter.sendMail({
-                from: "admin@flightbook.ch",
+                from: process.env.EMAIL_FROM,
                 to: body.toAddress,
                 subject: body.subject,
                 html: body.content

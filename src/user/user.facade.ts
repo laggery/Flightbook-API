@@ -7,7 +7,7 @@ import { InvalidUserException } from './exception/invalid-user-exception';
 import { plainToClass } from 'class-transformer';
 import { AuthService } from 'src/auth/auth.service';
 import { UserReadDto } from './interface/user-read-dto';
-import { UserPasswordWriteDto } from './interface/user -password-write-dto';
+import { UserPasswordWriteDto } from './interface/user-password-write-dto';
 import { InvalidPasswordException } from './exception/invalid-password-exception';
 import { InvalidOldPasswordException } from './exception/invalid-oldpassword-exception';
 

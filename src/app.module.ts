@@ -1,7 +1,6 @@
-import { Module, MiddlewareConsumer, HttpModule } from '@nestjs/common';
+import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HelmetMiddleware } from '@nest-middlewares/helmet';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { FlightModule } from './flight/flight.module';
@@ -18,6 +17,11 @@ import { AuthModule } from './auth/auth.module';
 import { EmailService } from './email/email.service';
 import {dbConfig} from './db/db-config';
 import { FileUploadModule } from './fileupload/file-upload.module';
+import { StudentModule } from './student/student.module';
+import { SchoolModule } from './school/school.module';
+import { EnrollmentModule } from './enrollment/enrollment.module';
+import { HttpModule } from '@nestjs/axios';
+import helmet from 'helmet';
 
 @Module({
   imports: [
@@ -30,7 +34,10 @@ import { FileUploadModule } from './fileupload/file-upload.module';
     UserModule,
     GliderModule,
     NewsModule,
-    HttpModule
+    HttpModule,
+    StudentModule,
+    SchoolModule,
+    EnrollmentModule
   ],
   controllers: [AppController],
   providers: [
@@ -49,11 +56,5 @@ import { FileUploadModule } from './fileupload/file-upload.module';
 export class AppModule {
   constructor(private readonly connection: Connection) { }
 
-  configure(consumer: MiddlewareConsumer) {
-    // IMPORTANT! Call Middleware.configure BEFORE using it for routes
-    HelmetMiddleware.configure({});
-    consumer.apply(HelmetMiddleware).forRoutes(
-      FlightController,
-    );
-  }
+  configure(consumer: MiddlewareConsumer) {}
 }

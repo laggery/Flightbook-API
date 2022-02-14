@@ -1,0 +1,67 @@
+# @name auth
+POST {{baseUrl}}/auth/login HTTP/1.1
+content-type: application/json
+
+{
+	"email": "demo@demo.com",
+	"password": "demo"
+}
+
+###
+
+#Get flights
+GET {{baseUrl}}/flights?offset=10 HTTP/1.1
+Authorization: Bearer {{auth.response.body.access_token}}
+
+###
+
+# #Post flight with validation
+# POST {{baseUrl}}/flights HTTP/1.1
+# content-type: application/json
+# Authorization: Bearer {{auth.response.body.access_token}}
+
+# {
+#     "glider": {
+#         "id": 108
+#     },
+#     "date": "2020-03-22",
+#     "start": {
+#         "name": "Belalp (Buffet)"
+#     },
+#     "landing": {
+#         "name": "AABrig"
+#     },
+#     "time": "00:20:00",
+#     "km": null,
+#     "description": null,
+#     "price": null,
+#     "validation": {
+#         "school": {
+#             "id":11
+#         }
+#     }
+# }
+
+# ###
+
+# #Post flight without validation
+# POST {{baseUrl}}/flights HTTP/1.1
+# content-type: application/json
+# Authorization: Bearer {{auth.response.body.access_token}}
+
+# {
+#     "glider": {
+#         "id": 108
+#     },
+#     "date": "2020-03-22",
+#     "start": {
+#         "name": "Belalp (Buffet)"
+#     },
+#     "landing": {
+#         "name": "AABrig"
+#     },
+#     "time": "00:20:00",
+#     "km": null,
+#     "description": null,
+#     "price": null
+# }

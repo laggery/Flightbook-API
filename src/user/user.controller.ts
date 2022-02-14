@@ -3,12 +3,19 @@ import { UserFacade } from './user.facade';
 import { UserWriteDto } from './interface/user-write-dto';
 import { UserReadDto } from './interface/user-read-dto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
-import { UserPasswordWriteDto } from './interface/user -password-write-dto';
+import { UserPasswordWriteDto } from './interface/user-password-write-dto';
+import { SchoolDto } from 'src/school/interface/school-dto';
+import { TeamMemberFacade } from 'src/team-member/team-member.facade';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('users')
+@ApiTags('User')
+@ApiBearerAuth('jwt')
 export class UserController {
 
-    constructor(private userFacade: UserFacade) { }
+    constructor(
+        private userFacade: UserFacade,
+        private teamMemberFacade: TeamMemberFacade) { }
 
     @UseGuards(JwtAuthGuard)
     @Get()
@@ -31,5 +38,11 @@ export class UserController {
     @Put('password/change')
     updateUserPassword(@Request() req, @Body() userPasswordWriteDto: UserPasswordWriteDto): Promise<UserReadDto> {
         return this.userFacade.updatePassword(req.user.userId, userPasswordWriteDto);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('schools')
+    getSchoolsByUserId(@Request() req): Promise<SchoolDto[]> {
+        return this.teamMemberFacade.getSchoolsByUserId(req.user.userId);
     }
 }
