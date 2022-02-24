@@ -89,7 +89,14 @@ export class GliderService {
             if (Number.isNaN(Number(query.type))) {
                 throw new BadRequestException("type is not a 0 or 1");
             }
-            builder.andWhere(`glider.tandem = ${query.type}`)
+            builder.andWhere(`glider.tandem = ${!!Number(query.type)}`)
+        }
+
+        if (query && query.archived) {
+            if (Number.isNaN(Number(query.archived))) {
+                throw new BadRequestException("archived is not a 0 or 1");
+            }
+            builder.andWhere(`glider.archived = ${!!Number(query.archived)}`)
         }
         return builder
     }

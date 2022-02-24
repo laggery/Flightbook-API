@@ -66,6 +66,7 @@ export class GliderFacade {
             glider.buyDate = null;
         }
         glider.tandem = gliderDto.tandem;
+        glider.archived = gliderDto.archived;
         const gliderResp: Glider = await this.gliderService.saveGlider(glider);
         return plainToClass(GliderDto, gliderResp);
     }

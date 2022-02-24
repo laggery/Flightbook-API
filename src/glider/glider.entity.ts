@@ -40,6 +40,9 @@ export class Glider {
   @Column("integer", { name: "time", nullable: true })
   time: number | null;
 
+  @Column("boolean", { name: "archived", default: () => "false" })
+  archived: boolean;
+
   @OneToMany(() => Flight, (flight) => flight.glider)
   flights: Flight[];
 
