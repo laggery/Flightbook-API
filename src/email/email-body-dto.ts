@@ -4,4 +4,11 @@ export class EmailBodyDto {
     public subject: string;
     public content: string;
     public mailFormat: string;
+
+    toString() {
+        return `from: ${this.fromAddress}
+        to: ${this.toAddress}
+        subject: ${this.subject}
+        content: ${this.content}`
+    }
 }

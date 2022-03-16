@@ -82,9 +82,7 @@ export class EnrollmentFacade {
         <p>The link expire ${moment(enrollment.expireAt).format('DD.MM.YYYY HH:mm')}`;
 
         try {
-            if (process.env.ENV == "dev" || process.env.ENV == "prod") {
-                await this.emailService.sendEmail(emailBody);
-            }
+            await this.emailService.sendEmail(emailBody);
         } catch (e) {
             throw new HttpException("Email service is unavailable", 503);
         }

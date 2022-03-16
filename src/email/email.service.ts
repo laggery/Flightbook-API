@@ -10,6 +10,11 @@ export class EmailService {
     }
 
     async sendEmail(body: EmailBodyDto): Promise<any> {
+        if (process.env.ENV != "dev" && process.env.ENV != "prod") {
+            console.info("block sending email");
+            console.debug("body: " + body.toString());
+            return true;
+        }
         const transporter = nodemailer.createTransport({
             host: process.env.EMAIL_HOST,
             port: Number(process.env.EMAIL_PORT),

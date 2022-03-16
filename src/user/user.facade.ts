@@ -35,12 +35,7 @@ export class UserFacade {
         }
 
         user = plainToClass(User, userWriteDto);
-        user.username = user.email;
-        user.usernameCanonical = user.email;
-        user.emailCanonical = user.email;
-        user.enabled = true;
         user.password = await this.authService.hashPassword(user.password);
-        user.roles = 'a:0:{}';
 
         const userResp: User = await this.userService.saveUser(user);
         return plainToClass(UserReadDto, userResp);
@@ -61,9 +56,6 @@ export class UserFacade {
             }
         }
 
-        user.username = userWriteDto.email;
-        user.usernameCanonical = userWriteDto.email;
-        user.emailCanonical = userWriteDto.email;
         user.email = userWriteDto.email;
         user.firstname = userWriteDto.firstname;
         user.lastname = userWriteDto.lastname;

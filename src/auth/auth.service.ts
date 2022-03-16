@@ -25,6 +25,7 @@ export class AuthService {
       uuid = randomStringGenerator();
     } while (await this.userService.getUserByToken(uuid));
     user.token = uuid;
+    user.lastLogin = new Date();
     await this.userService.saveUser(user);
 
     return {

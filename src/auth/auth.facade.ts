@@ -40,6 +40,7 @@ export class AuthFacade {
 
         const newPassword = Math.random().toString(36).slice(-8);
         user.password = await this.authService.hashPassword(newPassword);
+        user.passwordRequestedAt = new Date();
         await this.userService.saveUser(user);
 
         const emailBody = new EmailBodyDto();

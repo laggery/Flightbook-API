@@ -27,9 +27,6 @@ export class UserService {
 
     async saveUser(user: User): Promise<User | undefined> {
         user.email = user.email.toLowerCase();
-        user.emailCanonical = user.email;
-        user.username = user.email;
-        user.usernameCanonical = user.email;
         return this.userRepository.save(user);
     }
 }
