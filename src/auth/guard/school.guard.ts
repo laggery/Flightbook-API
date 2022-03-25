@@ -19,10 +19,9 @@ export class SchoolGuard implements CanActivate {
         res.find((teamMember: TeamMember) => {
           if (teamMember.user.id === request.user.userId) {
             return resolve(true)
-          } else {
-            return resolve(false);
           }
         })
+        return resolve(false);
       }).catch((error) => {
         return reject(false);
       })
