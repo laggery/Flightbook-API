@@ -7,9 +7,10 @@ import { FlightModule } from 'src/flight/flight.module';
 import { StudentController } from './student.controller';
 import { TeamMemberModule } from 'src/team-member/team-member.module';
 import { SchoolModule } from 'src/school/school.module';
+import { ControlSheetModule } from 'src/control-sheet/control-sheet.module';
 
 @Module({
-    imports: [FlightModule, TypeOrmModule.forFeature([Student]), TeamMemberModule, forwardRef(() => SchoolModule)],  
+    imports: [FlightModule, TypeOrmModule.forFeature([Student]), TeamMemberModule, ControlSheetModule, forwardRef(() => SchoolModule)],  
     providers: [StudentService, StudentFacade],
     exports: [StudentService, StudentFacade],
     controllers: [StudentController]

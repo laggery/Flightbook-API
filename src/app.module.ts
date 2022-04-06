@@ -21,7 +21,7 @@ import { StudentModule } from './student/student.module';
 import { SchoolModule } from './school/school.module';
 import { EnrollmentModule } from './enrollment/enrollment.module';
 import { HttpModule } from '@nestjs/axios';
-import helmet from 'helmet';
+import { ControlSheetModule } from './control-sheet/control-sheet.module';
 
 @Module({
   imports: [
@@ -37,7 +37,8 @@ import helmet from 'helmet';
     HttpModule,
     StudentModule,
     SchoolModule,
-    EnrollmentModule
+    EnrollmentModule,
+    ControlSheetModule
   ],
   controllers: [AppController],
   providers: [

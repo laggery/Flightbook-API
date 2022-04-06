@@ -1,6 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { SchoolService } from 'src/school/school.service';
 import { Student } from 'src/student/student.entity';
 import { StudentService } from 'src/student/student.service';
 import { TeamMember } from 'src/team-member/team-member.entity';
