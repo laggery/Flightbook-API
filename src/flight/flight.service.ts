@@ -71,7 +71,11 @@ export class FlightService {
             .select('count(flight.id)', "nbFlights")
             .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
             .addSelect('Sum(flight.price)', "income")
+            .addSelect('Sum(flight.km)', "totalDistance")
+            .addSelect('Max(flight.km)', "bestDistance")
             .addSelect('EXTRACT(epoch FROM Avg(flight.time))', "average")
+            .addSelect('count(DISTINCT(flight.start_id))', "nbStartplaces")
+            .addSelect('count(DISTINCT(flight.landing_id))', "nbLandingplaces")
             .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
             .leftJoin('flight.glider', 'glider', 'glider.id = flight.glider_id')
             .where(`user.id = ${token.userId}`);
@@ -87,7 +91,11 @@ export class FlightService {
             .addSelect('count(flight.id)', "nbFlights")
             .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
             .addSelect('Sum(flight.price)', "income")
+            .addSelect('Sum(flight.km)', "totalDistance")
+            .addSelect('Max(flight.km)', "bestDistance")
             .addSelect('EXTRACT(epoch FROM Avg(flight.time))', "average")
+            .addSelect('count(DISTINCT(flight.start_id))', "nbStartplaces")
+            .addSelect('count(DISTINCT(flight.landing_id))', "nbLandingplaces")
             .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
             .leftJoin('flight.glider', 'glider', 'glider.id = flight.glider_id')
             .where(`user.id = ${token.userId}`)
@@ -111,6 +119,10 @@ export class FlightService {
         statistic.nbFlights = Number(statistic.nbFlights);
         statistic.time = Number(statistic.time);
         statistic.average = Number(statistic.average);
+        statistic.nbStartplaces = Number(statistic.nbStartplaces);
+        statistic.nbLandingplaces = Number(statistic.nbLandingplaces);
+        statistic.totalDistance = Number(statistic.totalDistance).toFixed(2);
+        statistic.bestDistance = Number(statistic.bestDistance).toFixed(2);
         return statistic;
     }
 
