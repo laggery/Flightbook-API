@@ -11,4 +11,7 @@ export class PlaceDto {
     @ApiPropertyOptional()
     @Expose()
     readonly altitude?: number;
+    @ApiPropertyOptional()
+    @Expose()
+    readonly country?: string;
 }

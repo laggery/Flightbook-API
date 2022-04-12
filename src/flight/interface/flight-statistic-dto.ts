@@ -1,3 +1,5 @@
+import {CountryDto} from "./country-dto";
+
 export class FlightStatisticDto {
     public year: string;
     public nbFlights: number;
@@ -6,6 +8,7 @@ export class FlightStatisticDto {
     public average: number;
     public nbStartplaces: number;
     public nbLandingplaces: number;
-    public totalDistance: number;
-    public bestDistance: number;
+    public totalDistance: string;
+    public bestDistance: string;
+    public countries: CountryDto[];
 }

@@ -6,6 +6,7 @@ import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { Glider } from 'src/glider/glider.entity';
 import { Place } from 'src/place/place.entity';
 import { PagerDto } from 'src/interface/pager-dto';
+import {CountryDto} from "./interface/country-dto";
 
 @Injectable()
 export class FlightService {
@@ -67,7 +68,7 @@ export class FlightService {
     }
 
     async getStatistic(token: any, query: any): Promise<FlightStatisticDto | FlightStatisticDto[]> {
-        let builder = this.flightRepository.createQueryBuilder('flight')
+        let flightBuilder = this.flightRepository.createQueryBuilder('flight')
             .select('count(flight.id)', "nbFlights")
             .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
             .addSelect('Sum(flight.price)', "income")
@@ -80,13 +81,24 @@ export class FlightService {
             .leftJoin('flight.glider', 'glider', 'glider.id = flight.glider_id')
             .where(`user.id = ${token.userId}`);
 
-        builder = FlightService.addQueryParams(builder, query);
+        let countryBuilder = this.flightRepository.createQueryBuilder('flight')
+            .select('place.country', "code")
+            .addSelect("count(place.country)", "count")
+            .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
+            .leftJoin('flight.start', 'place', 'place.id = flight.start_id')
+            .where(`user.id = ${token.userId}`)
+            .groupBy('place.country');
 
-        let statistic: FlightStatisticDto = await builder.getRawOne();
-        statistic = FlightService.statisticDataConverter(statistic);
+        flightBuilder = FlightService.addQueryParams(flightBuilder, query);
+        countryBuilder = FlightService.addQueryParams(countryBuilder, query);
+
+        let statistic: FlightStatisticDto = await flightBuilder.getRawOne();
+        let countryStatistic: CountryDto[] = await countryBuilder.getRawMany();
+
+        statistic = FlightService.statisticDataConverter(statistic, countryStatistic, false);
 
         if (query.years && query.years === "1") {
-            let builderYears = this.flightRepository.createQueryBuilder('flight')
+            let flightBuilderYears = this.flightRepository.createQueryBuilder('flight')
             .select('EXTRACT(YEAR FROM "flight"."date")', "year")
             .addSelect('count(flight.id)', "nbFlights")
             .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
@@ -102,20 +114,34 @@ export class FlightService {
             .groupBy('EXTRACT(YEAR FROM "flight"."date")')
             .orderBy('year', "ASC");
 
-            builderYears = FlightService.addQueryParams(builderYears, query);
+            let countryBuilderYears = this.flightRepository.createQueryBuilder('flight')
+                .select('EXTRACT(YEAR FROM "flight"."date")', "year")
+                .addSelect('place.country', "code")
+                .addSelect("count(place.country)", "count")
+                .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
+                .leftJoin('flight.start', 'place', 'place.id = flight.start_id')
+                .where(`user.id = ${token.userId}`)
+                .groupBy('EXTRACT(YEAR FROM "flight"."date"), place.country')
+                .orderBy('year', "ASC");
 
-            const statisticList: FlightStatisticDto[] = await builderYears.getRawMany();
-            statisticList.forEach(statElement => {
-                FlightService.statisticDataConverter(statElement);
+            flightBuilderYears = FlightService.addQueryParams(flightBuilderYears, query);
+            countryBuilderYears = FlightService.addQueryParams(countryBuilderYears, query);
+
+            const flightStatisticList: FlightStatisticDto[] = await flightBuilderYears.getRawMany();
+            const countryStatisticList: CountryDto[] = await countryBuilderYears.getRawMany();
+
+            flightStatisticList.forEach(flightStatElement => {
+                FlightService.statisticDataConverter(flightStatElement, countryStatisticList, true);
             })
-            statisticList.splice(0, 0, statistic);
-            return statisticList;
+            flightStatisticList.splice(0, 0, statistic);
+
+            return flightStatisticList;
         }
 
         return statistic;
     }
 
-    private static statisticDataConverter(statistic: any): any {
+    private static statisticDataConverter(statistic: FlightStatisticDto, countryStatistic: CountryDto[], yearFilter: boolean): any {
         statistic.nbFlights = Number(statistic.nbFlights);
         statistic.time = Number(statistic.time);
         statistic.average = Number(statistic.average);
@@ -123,6 +149,12 @@ export class FlightService {
         statistic.nbLandingplaces = Number(statistic.nbLandingplaces);
         statistic.totalDistance = Number(statistic.totalDistance).toFixed(2);
         statistic.bestDistance = Number(statistic.bestDistance).toFixed(2);
+
+        if (yearFilter) {
+            countryStatistic = countryStatistic.filter(statItem => statItem.year===statistic.year)
+        }
+        statistic.countries = countryStatistic;
+
         return statistic;
     }
 
