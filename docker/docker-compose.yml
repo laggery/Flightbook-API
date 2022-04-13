@@ -2,6 +2,7 @@ version: '3.1'
 
 volumes:
   postgres-data:
+  minio-data:
 
 services:
   db:
@@ -21,6 +22,18 @@ services:
     restart: always
     ports:
       - 8180:8080
+
+  minio:
+    image: minio/minio:latest
+    environment:
+      MINIO_ACCESS_KEY: flightbook_dev
+      MINIO_SECRET_KEY: flightbook_dev_secret
+    volumes:
+      - minio-data:/data
+    ports: 
+      - 9000:9000
+      - 9001:9001
+    command: server /data --console-address ":9001"
 
   pgadmin:
     image: dpage/pgadmin4:latest
