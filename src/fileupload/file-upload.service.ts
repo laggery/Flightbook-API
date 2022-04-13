@@ -12,7 +12,8 @@ import {
 @Injectable()
 export class FileUploadService {
 
-  private bucket = "flightbook-bucket";
+  private bucket = process.env.AWS_BUCKET;
+  private env = process.env.ENV || "local";
   private s3: S3Client;
 
   constructor() {
@@ -25,9 +26,11 @@ export class FileUploadService {
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
       }
     });
-  }
 
-  private env = process.env.ENV || "local";
+    if (this.env == "local") {
+      this.s3.config.forcePathStyle = true;
+    }
+  }
 
   async fileUpload(file: Express.Multer.File, userId: number) {
 
