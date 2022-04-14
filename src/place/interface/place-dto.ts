@@ -14,4 +14,7 @@ export class PlaceDto {
     @ApiPropertyOptional()
     @Expose()
     readonly country?: string;
+    @ApiPropertyOptional()
+    @Expose()
+    readonly notes?: string;
 }

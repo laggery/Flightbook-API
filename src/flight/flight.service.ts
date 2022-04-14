@@ -82,8 +82,8 @@ export class FlightService {
             .where(`user.id = ${token.userId}`);
 
         let countryBuilder = this.flightRepository.createQueryBuilder('flight')
-            .select('place.country', "code")
-            .addSelect("count(place.country)", "count")
+            .select('COALESCE("place"."country",\'unknown\')', "code")
+            .addSelect('count(COALESCE("place"."country",\'\'))', "count")
             .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
             .leftJoin('flight.start', 'place', 'place.id = flight.start_id')
             .where(`user.id = ${token.userId}`)
@@ -116,8 +116,8 @@ export class FlightService {
 
             let countryBuilderYears = this.flightRepository.createQueryBuilder('flight')
                 .select('EXTRACT(YEAR FROM "flight"."date")', "year")
-                .addSelect('place.country', "code")
-                .addSelect("count(place.country)", "count")
+                .addSelect('COALESCE("place"."country",\'unknown\')', "code")
+                .addSelect('count(COALESCE("place"."country",\'\'))', "count")
                 .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
                 .leftJoin('flight.start', 'place', 'place.id = flight.start_id')
                 .where(`user.id = ${token.userId}`)

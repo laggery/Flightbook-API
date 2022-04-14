@@ -51,6 +51,7 @@ export class PlaceFacade {
 
         place.name = placeDto.name;
         place.altitude = placeDto.altitude;
+        place.notes = placeDto.notes;
         place.country = placeDto.country;
         const placeResp: Place = await this.placeService.updatePlace(place);
         return plainToClass(PlaceDto, placeResp);
