@@ -1,4 +1,4 @@
-import {CountryDto} from "./country-dto";
+import { CountryDto } from "./country-dto";
 
 export class FlightStatisticDto {
     public year: string;

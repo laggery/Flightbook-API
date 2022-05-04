@@ -8,7 +8,7 @@ export class addPlaceNotes1649909314458 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`ALTER TABLE "notes" DROP COLUMN "notes"`);
+        await queryRunner.query(`ALTER TABLE "place" DROP COLUMN "notes"`);
     }
 
 }

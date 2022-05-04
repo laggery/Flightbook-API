@@ -6,7 +6,7 @@ import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { Glider } from 'src/glider/glider.entity';
 import { Place } from 'src/place/place.entity';
 import { PagerDto } from 'src/interface/pager-dto';
-import {CountryDto} from "./interface/country-dto";
+import { CountryDto } from "./interface/country-dto";
 
 @Injectable()
 export class FlightService {
