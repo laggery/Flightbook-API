@@ -4,6 +4,7 @@ import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeor
 import { Flight } from "../flight/flight.entity";
 import { Glider } from "../glider/glider.entity";
 import { Place } from "../place/place.entity";
+import { LoginType } from "./login-type";
 
 @Index("idx_16606_idx_e12875dfb3b1d92d7d7c5377e2", ["email"], { unique: true })
 @Index("idx_16409_idx_e12875dfb3b1d92d7d7c5377e2", ["email"], { unique: true })
@@ -22,8 +23,8 @@ export class User {
   @Column("character varying", { name: "salt", nullable: true, length: 255 })
   salt: string | null;
 
-  @Column("character varying", { name: "password", length: 255 })
-  password: string;
+  @Column("character varying", { name: "password", length: 255, nullable: true })
+  password: string | null;
 
   @Column("timestamp with time zone", { name: "last_login", nullable: true })
   lastLogin: Date | null;
@@ -49,6 +50,15 @@ export class User {
 
   @Column("character varying", { name: "token", nullable: true, length: 60 })
   token: string | null;
+
+  @Column("character varying", { name: "login_type", length: 25, default: () => LoginType.LOCAL })
+  loginType: LoginType;
+
+  @Column("character varying", { name: "sociallogin_id", length: 100, nullable: true})
+  socialloginId: string | null;
+
+  @Column("boolean", { name: "enabled", default: true })
+  enabled: boolean;
 
   @OneToMany(() => Flight, (flight) => flight.user)
   flights: Flight[];
