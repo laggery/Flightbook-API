@@ -1,4 +1,5 @@
 import { Exclude, Expose } from "class-transformer";
+import { LoginType } from "../login-type";
 
 @Exclude()
 export class UserReadDto {
@@ -8,4 +9,6 @@ export class UserReadDto {
     readonly firstname: string;
     @Expose()
     readonly lastname: string;
+    @Expose()
+    readonly loginType: LoginType;
 }
