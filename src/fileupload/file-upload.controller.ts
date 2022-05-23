@@ -43,6 +43,13 @@ export class FileUploadController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiParam({name: 'filename', required: true, schema: { oneOf: [{type: 'string'}]}})
+  @Get('upload/url/:filename')
+  async getSignedFileUploadUrl(@Request() req, @Param('filename') filename) {
+    return this.fileUploadService.getSignedFileUploadUrl(filename, req.user.userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('copy')
   async copyFile(@Request() req, @Body() copyFile: CopyFileDto) {
     return this.fileUploadService.copyFile(req.user.userId, copyFile);

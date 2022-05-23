@@ -31,9 +31,16 @@ DATABASE_SYNCHRONIZE=false
 DATABASE_SCHEMA=public
 DATABASE_SSL=false
 
+AWS_S3_ENDPOINT=http://localhost
+AWS_BUCKET=flightbook-bucket
+AWS_ACCESS_KEY_ID=flightbook_dev
+AWS_SECRET_ACCESS_KEY=flightbook_dev_secret
+
 JWT_SECRET=mySecret
 TOKEN_EXPIRATION=1000h
 ```
+
+Open minio http://localhost:9001/ and create a new bucket with name `flightbook-bucket`
 
 Start nestjs app
 ```

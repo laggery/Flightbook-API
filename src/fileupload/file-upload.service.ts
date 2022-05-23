@@ -8,6 +8,7 @@ import {
   GetObjectCommand,
   DeleteObjectCommand
 } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 @Injectable()
 export class FileUploadService {
@@ -46,6 +47,28 @@ export class FileUploadService {
       const command = new PutObjectCommand(params);
 
       await this.s3.send(command);
+    } catch (error) {
+      throw new S3Exception();
+    }
+  }
+
+  async getSignedFileUploadUrl(filename: string, userId: number) {
+
+    try {
+      const params = {
+        Bucket: this.bucket,
+        Key: `${this.env}/${userId}/${filename}`,
+        ContentType: 'igc',
+        ACL: 'private'
+      };
+
+      const command = new PutObjectCommand(params);
+
+      const signedUrl = await getSignedUrl(this.s3, command, {
+        expiresIn: 600 // In seconds
+      });
+
+      return {url: signedUrl};
     } catch (error) {
       throw new S3Exception();
     }
