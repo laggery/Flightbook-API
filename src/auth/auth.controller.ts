@@ -17,6 +17,11 @@ export class AuthController {
         return this.authFacade.login(req.user);
     }
 
+    @Post('google/login/:token')
+    async googleLogin(@Param('token') token: string) {
+        return this.authFacade.googleLogin(token);
+    }
+
     @Get('refresh/:token')
     async refresh(@Param('token') token) {
         return this.authFacade.refresh(token);

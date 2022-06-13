@@ -10,6 +10,7 @@ import { JwtStrategy } from './strategy/jwt.strategy';
 import { AuthFacade } from './auth.facade';
 import { EmailService } from 'src/email/email.service';
 import { HttpModule } from '@nestjs/axios';
+import { UserFacade } from 'src/user/user.facade';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { HttpModule } from '@nestjs/axios';
       signOptions: { expiresIn: process.env.TOKEN_EXPIRATION },
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, AuthFacade, EmailService],
+  providers: [AuthService, LocalStrategy, JwtStrategy, AuthFacade, EmailService, UserFacade],
   controllers: [AuthController],
   exports: [AuthService],
 })

@@ -1,4 +1,4 @@
-import { Controller, Post, Request, Body, Put, UseGuards, Get } from '@nestjs/common';
+import { Controller, Post, Request, Body, Put, UseGuards, Get, Delete, HttpCode } from '@nestjs/common';
 import { UserFacade } from './user.facade';
 import { UserWriteDto } from './interface/user-write-dto';
 import { UserReadDto } from './interface/user-read-dto';
@@ -32,6 +32,13 @@ export class UserController {
     @Put()
     updateUser(@Request() req, @Body() userWriteDto: UserWriteDto): Promise<UserReadDto> {
         return this.userFacade.updateUser(req.user.userId, userWriteDto);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete()
+    @HttpCode(204)
+    disableUser(@Request() req): Promise<UserReadDto> {
+        return this.userFacade.disableUser(req.user.userId);
     }
 
     @UseGuards(JwtAuthGuard)
