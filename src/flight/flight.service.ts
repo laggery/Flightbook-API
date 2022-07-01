@@ -6,7 +6,6 @@ import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { Glider } from 'src/glider/glider.entity';
 import { Place } from 'src/place/place.entity';
 import { PagerDto } from 'src/interface/pager-dto';
-import { CountryDto } from "./interface/country-dto";
 
 @Injectable()
 export class FlightService {
@@ -81,21 +80,11 @@ export class FlightService {
             .leftJoin('flight.glider', 'glider', 'glider.id = flight.glider_id')
             .where(`user.id = ${token.userId}`);
 
-        let countryBuilder = this.flightRepository.createQueryBuilder('flight')
-            .select('COALESCE("place"."country",\'unknown\')', "code")
-            .addSelect('count(COALESCE("place"."country",\'\'))', "count")
-            .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
-            .leftJoin('flight.start', 'place', 'place.id = flight.start_id')
-            .where(`user.id = ${token.userId}`)
-            .groupBy('place.country');
-
         flightBuilder = FlightService.addQueryParams(flightBuilder, query);
-        countryBuilder = FlightService.addQueryParams(countryBuilder, query);
 
         let statistic: FlightStatisticDto = await flightBuilder.getRawOne();
-        let countryStatistic: CountryDto[] = await countryBuilder.getRawMany();
 
-        statistic = FlightService.statisticDataConverter(statistic, countryStatistic, false);
+        statistic = FlightService.statisticDataConverter(statistic);
 
         if (query.years && query.years === "1") {
             let flightBuilderYears = this.flightRepository.createQueryBuilder('flight')
@@ -114,24 +103,12 @@ export class FlightService {
             .groupBy('EXTRACT(YEAR FROM "flight"."date")')
             .orderBy('year', "ASC");
 
-            let countryBuilderYears = this.flightRepository.createQueryBuilder('flight')
-                .select('EXTRACT(YEAR FROM "flight"."date")', "year")
-                .addSelect('COALESCE("place"."country",\'unknown\')', "code")
-                .addSelect('count(COALESCE("place"."country",\'\'))', "count")
-                .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
-                .leftJoin('flight.start', 'place', 'place.id = flight.start_id')
-                .where(`user.id = ${token.userId}`)
-                .groupBy('EXTRACT(YEAR FROM "flight"."date"), place.country')
-                .orderBy('year', "ASC");
-
             flightBuilderYears = FlightService.addQueryParams(flightBuilderYears, query);
-            countryBuilderYears = FlightService.addQueryParams(countryBuilderYears, query);
 
             const flightStatisticList: FlightStatisticDto[] = await flightBuilderYears.getRawMany();
-            const countryStatisticList: CountryDto[] = await countryBuilderYears.getRawMany();
 
             flightStatisticList.forEach(flightStatElement => {
-                FlightService.statisticDataConverter(flightStatElement, countryStatisticList, true);
+                FlightService.statisticDataConverter(flightStatElement);
             })
             flightStatisticList.splice(0, 0, statistic);
 
@@ -141,7 +118,7 @@ export class FlightService {
         return statistic;
     }
 
-    private static statisticDataConverter(statistic: FlightStatisticDto, countryStatistic: CountryDto[], yearFilter: boolean): any {
+    private static statisticDataConverter(statistic: FlightStatisticDto): any {
         statistic.nbFlights = Number(statistic.nbFlights);
         statistic.time = Number(statistic.time);
         statistic.average = Number(statistic.average);
@@ -149,12 +126,6 @@ export class FlightService {
         statistic.nbLandingplaces = Number(statistic.nbLandingplaces);
         statistic.totalDistance = Number(statistic.totalDistance).toFixed(2);
         statistic.bestDistance = Number(statistic.bestDistance).toFixed(2);
-
-        if (yearFilter) {
-            countryStatistic = countryStatistic.filter(statItem => statItem.year===statistic.year)
-        }
-        statistic.countries = countryStatistic;
-
         return statistic;
     }
 
