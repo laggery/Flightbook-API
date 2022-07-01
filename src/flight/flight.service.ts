@@ -67,7 +67,7 @@ export class FlightService {
     }
 
     async getStatistic(token: any, query: any): Promise<FlightStatisticDto | FlightStatisticDto[]> {
-        let flightBuilder = this.flightRepository.createQueryBuilder('flight')
+        let builder = this.flightRepository.createQueryBuilder('flight')
             .select('count(flight.id)', "nbFlights")
             .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
             .addSelect('Sum(flight.price)', "income")
@@ -80,45 +80,42 @@ export class FlightService {
             .leftJoin('flight.glider', 'glider', 'glider.id = flight.glider_id')
             .where(`user.id = ${token.userId}`);
 
-        flightBuilder = FlightService.addQueryParams(flightBuilder, query);
+        builder = FlightService.addQueryParams(builder, query);
 
-        let statistic: FlightStatisticDto = await flightBuilder.getRawOne();
-
+        let statistic: FlightStatisticDto = await builder.getRawOne();
         statistic = FlightService.statisticDataConverter(statistic);
 
         if (query.years && query.years === "1") {
-            let flightBuilderYears = this.flightRepository.createQueryBuilder('flight')
-            .select('EXTRACT(YEAR FROM "flight"."date")', "year")
-            .addSelect('count(flight.id)', "nbFlights")
-            .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
-            .addSelect('Sum(flight.price)', "income")
-            .addSelect('Sum(flight.km)', "totalDistance")
-            .addSelect('Max(flight.km)', "bestDistance")
-            .addSelect('EXTRACT(epoch FROM Avg(flight.time))', "average")
-            .addSelect('count(DISTINCT(flight.start_id))', "nbStartplaces")
-            .addSelect('count(DISTINCT(flight.landing_id))', "nbLandingplaces")
-            .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
-            .leftJoin('flight.glider', 'glider', 'glider.id = flight.glider_id')
-            .where(`user.id = ${token.userId}`)
-            .groupBy('EXTRACT(YEAR FROM "flight"."date")')
-            .orderBy('year', "ASC");
+            let builderYears = this.flightRepository.createQueryBuilder('flight')
+                .select('EXTRACT(YEAR FROM "flight"."date")', "year")
+                .addSelect('count(flight.id)', "nbFlights")
+                .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
+                .addSelect('Sum(flight.price)', "income")
+                .addSelect('Sum(flight.km)', "totalDistance")
+                .addSelect('Max(flight.km)', "bestDistance")
+                .addSelect('EXTRACT(epoch FROM Avg(flight.time))', "average")
+                .addSelect('count(DISTINCT(flight.start_id))', "nbStartplaces")
+                .addSelect('count(DISTINCT(flight.landing_id))', "nbLandingplaces")
+                .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
+                .leftJoin('flight.glider', 'glider', 'glider.id = flight.glider_id')
+                .where(`user.id = ${token.userId}`)
+                .groupBy('EXTRACT(YEAR FROM "flight"."date")')
+                .orderBy('year', "ASC");
 
-            flightBuilderYears = FlightService.addQueryParams(flightBuilderYears, query);
+            builderYears = FlightService.addQueryParams(builderYears, query);
 
-            const flightStatisticList: FlightStatisticDto[] = await flightBuilderYears.getRawMany();
-
-            flightStatisticList.forEach(flightStatElement => {
-                FlightService.statisticDataConverter(flightStatElement);
+            const statisticList: FlightStatisticDto[] = await builderYears.getRawMany();
+            statisticList.forEach(statElement => {
+                FlightService.statisticDataConverter(statElement);
             })
-            flightStatisticList.splice(0, 0, statistic);
-
-            return flightStatisticList;
+            statisticList.splice(0, 0, statistic);
+            return statisticList;
         }
 
         return statistic;
     }
 
-    private static statisticDataConverter(statistic: FlightStatisticDto): any {
+    private static statisticDataConverter(statistic: any): any {
         statistic.nbFlights = Number(statistic.nbFlights);
         statistic.time = Number(statistic.time);
         statistic.average = Number(statistic.average);
