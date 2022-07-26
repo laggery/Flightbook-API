@@ -5,7 +5,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { FlightModule } from './flight/flight.module';
 import { Connection } from 'typeorm';
-import { FlightController } from './flight/flight.controller';
 import { PlaceModule } from './place/place.module';
 import { UserModule } from './user/user.module';
 import { APP_FILTER } from '@nestjs/core';
@@ -22,6 +21,8 @@ import { SchoolModule } from './school/school.module';
 import { EnrollmentModule } from './enrollment/enrollment.module';
 import { HttpModule } from '@nestjs/axios';
 import { ControlSheetModule } from './control-sheet/control-sheet.module';
+import { AppointmentModule } from './agenda/appointment/appointment.module';
+import { SubscriptionModule } from './agenda/subscription/subscription.module';
 
 @Module({
   imports: [
@@ -38,7 +39,9 @@ import { ControlSheetModule } from './control-sheet/control-sheet.module';
     StudentModule,
     SchoolModule,
     EnrollmentModule,
-    ControlSheetModule
+    ControlSheetModule,
+    AppointmentModule,
+    SubscriptionModule
   ],
   controllers: [AppController],
   providers: [

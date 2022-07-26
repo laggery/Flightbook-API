@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, HttpCode, Param, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Headers, HttpCode, Param, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { SchoolGuard } from 'src/auth/guard/school.guard';
 import { EnrollmentDto } from 'src/enrollment/interface/enrollment-dto';
@@ -9,6 +9,9 @@ import { StudentFacade } from 'src/student/student.facade';
 import { SchoolDto } from './interface/school-dto';
 import { SchoolFacade } from './school.facade';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {AppointmentDto} from "../agenda/appointment/interface/appointment-dto";
+import {SubscriptionDto} from "../agenda/subscription/interface/subscription-dto";
+import { AppointmentFacade } from 'src/agenda/appointment/appointment.facade';
 
 @Controller('schools')
 @ApiTags('School')
@@ -18,7 +21,8 @@ export class SchoolController {
     constructor(
         private schoolFacade: SchoolFacade,
         private studentFacade: StudentFacade,
-        private studentEnrollmentFacade: EnrollmentFacade
+        private studentEnrollmentFacade: EnrollmentFacade,
+        private appointmentFacade: AppointmentFacade
     ) { }
 
     @UseGuards(JwtAuthGuard)
@@ -46,5 +50,29 @@ export class SchoolController {
     @HttpCode(204)
     postStudentsEnrollment(@Headers('origin') origin: string, @Param('id') id: number, @Body() studentEnrollmentWriteDto: EnrollmentWriteDto): Promise<EnrollmentDto> {
         return this.studentEnrollmentFacade.createStudentEnrollment(id, studentEnrollmentWriteDto, origin);
+    }
+
+    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @Post('/:id/appointments')
+    postAppointment(@Param('id') id: number, @Body() appointmentDto: AppointmentDto): Promise<AppointmentDto> {
+        return this.appointmentFacade.createAppointment(id, appointmentDto);
+    }
+
+    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @Post('/:id/appointments/:appointment_id')
+    putAppointment(@Param('id') id: number, @Param('appointment_id') appointmentId: number, @Body() appointmentDto: AppointmentDto): Promise<AppointmentDto> {
+        return this.appointmentFacade.updateAppointment(appointmentId, id, appointmentDto);
+    }
+
+    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @Get('/:id/appointments')
+    getAppointments(@Param('id') id: number, @Query() query): Promise<AppointmentDto[]> {
+        return this.appointmentFacade.getAppointmentsBySchoolId(id, query);
+    }
+
+    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @Get('/:id/appointments/:appointment_id/subscriptions')
+    getAppointmentSubscriptions(@Param('id') id: number, @Param('appointment_id') appointmentId: number): Promise<SubscriptionDto[]> {
+        return null;
     }
 }

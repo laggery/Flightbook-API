@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppointmentModule } from 'src/agenda/appointment/appointment.module';
 import { EnrollmentModule } from 'src/enrollment/enrollment.module';
 import { StudentModule } from 'src/student/student.module';
 import { TeamMemberModule } from 'src/team-member/team-member.module';
@@ -15,7 +16,8 @@ import { SchoolService } from './school.service';
     forwardRef(() => StudentModule), 
     TypeOrmModule.forFeature([School]), 
     TeamMemberModule,
-    EnrollmentModule
+    EnrollmentModule,
+    forwardRef(() => AppointmentModule)
   ],
   controllers: [SchoolController],
   providers: [SchoolFacade, SchoolService],
