@@ -21,6 +21,7 @@ export class AppointmentService {
     
     async getAppointmentsBySchoolId(schoolId: number, query: any): Promise<Appointment[]> {
         const options: any = {
+            relations: ["instructor", "takeOffCoordinator"],
             where: {
                 school: {
                     id: schoolId

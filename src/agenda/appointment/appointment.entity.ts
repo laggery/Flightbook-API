@@ -13,10 +13,10 @@ export class Appointment {
     @Column("timestamp", { name: 'scheduling', nullable: false })
     scheduling: Date;
 
-    @Column("character varying", { name: "meeting_point" })
+    @Column("character varying", { name: "meeting_point", nullable: false })
     meetingPoint: string;
 
-    @Column("integer", { name: "max_people" })
+    @Column("integer", { name: "max_people", nullable: true })
     maxPeople: number | null;
 
     @Column("character varying", {

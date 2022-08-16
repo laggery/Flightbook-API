@@ -5,6 +5,14 @@ import { UserReadDto } from 'src/user/interface/user-read-dto';
 
 export class AppointmentMapper {
 
+    public static toAppointmentDtoList(appointments: Appointment[]): AppointmentDto[] {
+        const appointmentDtoList = [];
+        appointments.forEach((appointment: Appointment) => {
+            appointmentDtoList.push(this.toAppointmentDto(appointment));
+        })
+        return appointmentDtoList
+    }
+
     public static toAppointmentDto(appointment: Appointment): AppointmentDto {
         const appointmentDto: AppointmentDto = plainToInstance(AppointmentDto, appointment);
         const instructor = appointment.instructor;

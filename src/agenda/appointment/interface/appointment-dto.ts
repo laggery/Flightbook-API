@@ -26,7 +26,9 @@ export class AppointmentDto {
     readonly description: string;
 
     @Expose()
-    @ApiProperty()
+    @ApiProperty({
+        enum: State
+    })
     readonly state: State;
 
     @Expose()

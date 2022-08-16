@@ -44,14 +44,15 @@ export class AppointmentFacade {
         return AppointmentMapper.toAppointmentDto(appointmentResp);
     }
 
-    getAppointmentsBySchoolId(schoolId: number, query: any): Promise<AppointmentDto[]> {
-        return this.appointmentService.getAppointmentsBySchoolId(schoolId, {});
+    async getAppointmentsBySchoolId(schoolId: number, query: any): Promise<AppointmentDto[]> {
+        const appointments = await this.appointmentService.getAppointmentsBySchoolId(schoolId, {});
+        return AppointmentMapper.toAppointmentDtoList(appointments);
     }
 
     private async appointmentValidityCheck(appointmentDto: AppointmentDto, schoolId: number, appointment: Appointment) {
-        const { scheduling, meetingPoint, state, school, instructor, takeOffCoordinator } = appointmentDto;
+        const { scheduling, meetingPoint, state, instructor, takeOffCoordinator } = appointmentDto;
 
-        if (!scheduling || !meetingPoint || !state || !school || !instructor) {
+        if (!scheduling || !meetingPoint || !state || !instructor) {
             throw AppointmentException.invalidAppointment();
         }
 
