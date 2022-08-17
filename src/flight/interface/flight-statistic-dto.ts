@@ -6,6 +6,6 @@ export class FlightStatisticDto {
     public average: number;
     public nbStartplaces: number;
     public nbLandingplaces: number;
-    public totalDistance: string;
-    public bestDistance: string;
+    public totalDistance: number;
+    public bestDistance: number;
 }
