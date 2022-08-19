@@ -33,6 +33,14 @@ export class Place {
   @Column("integer", { name: "altitude", nullable: true })
   altitude: number | null;
 
+  @Expose()
+  @Column("character varying", { name: "country", nullable: true })
+  country: string | null;
+
+  @Expose()
+  @Column("character varying", { name: "notes", nullable: true })
+  notes: string | null;
+
   @OneToMany(() => Flight, (flight) => flight.start)
   start: Flight[];
 

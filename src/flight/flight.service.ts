@@ -87,20 +87,20 @@ export class FlightService {
 
         if (query.years && query.years === "1") {
             let builderYears = this.flightRepository.createQueryBuilder('flight')
-            .select('EXTRACT(YEAR FROM "flight"."date")', "year")
-            .addSelect('count(flight.id)', "nbFlights")
-            .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
-            .addSelect('Sum(flight.price)', "income")
-            .addSelect('Sum(flight.km)', "totalDistance")
-            .addSelect('Max(flight.km)', "bestDistance")
-            .addSelect('EXTRACT(epoch FROM Avg(flight.time))', "average")
-            .addSelect('count(DISTINCT(flight.start_id))', "nbStartplaces")
-            .addSelect('count(DISTINCT(flight.landing_id))', "nbLandingplaces")
-            .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
-            .leftJoin('flight.glider', 'glider', 'glider.id = flight.glider_id')
-            .where(`user.id = ${token.userId}`)
-            .groupBy('EXTRACT(YEAR FROM "flight"."date")')
-            .orderBy('year', "ASC");
+                .select('EXTRACT(YEAR FROM "flight"."date")', "year")
+                .addSelect('count(flight.id)', "nbFlights")
+                .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
+                .addSelect('Sum(flight.price)', "income")
+                .addSelect('Sum(flight.km)', "totalDistance")
+                .addSelect('Max(flight.km)', "bestDistance")
+                .addSelect('EXTRACT(epoch FROM Avg(flight.time))', "average")
+                .addSelect('count(DISTINCT(flight.start_id))', "nbStartplaces")
+                .addSelect('count(DISTINCT(flight.landing_id))', "nbLandingplaces")
+                .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
+                .leftJoin('flight.glider', 'glider', 'glider.id = flight.glider_id')
+                .where(`user.id = ${token.userId}`)
+                .groupBy('EXTRACT(YEAR FROM "flight"."date")')
+                .orderBy('year', "ASC");
 
             builderYears = FlightService.addQueryParams(builderYears, query);
 
