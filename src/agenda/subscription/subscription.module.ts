@@ -10,6 +10,7 @@ import { SubscriptionService } from './subscription.service';
     TypeOrmModule.forFeature([Subscription]), 
   ],
   controllers: [SubscriptionController],
-  providers: [SubscriptionFacade, SubscriptionService]
+  providers: [SubscriptionFacade, SubscriptionService],
+  exports: [SubscriptionService]
 })
 export class SubscriptionModule {}

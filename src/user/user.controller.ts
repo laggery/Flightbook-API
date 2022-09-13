@@ -48,8 +48,8 @@ export class UserController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Get('schools')
-    getSchoolsByUserId(@Request() req): Promise<SchoolDto[]> {
+    @Get('instructor/schools')
+    getSchoolsByUserIdAsInstructor(@Request() req): Promise<SchoolDto[]> {
         return this.teamMemberFacade.getSchoolsByUserId(req.user.userId);
     }
 }

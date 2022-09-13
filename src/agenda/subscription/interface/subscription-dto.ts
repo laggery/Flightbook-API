@@ -10,10 +10,6 @@ export class SubscriptionDto {
     id: number;
 
     @Expose()
-    @ApiPropertyOptional()
-    comment: string;
-
-    @Expose()
     @ApiProperty()
     user: UserReadDto;
 

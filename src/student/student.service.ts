@@ -22,6 +22,18 @@ export class StudentService {
         return this.studentRepository.find(options);
     }
 
+    async getStudentsById(userId: number): Promise<Student[]> {
+        let options: any = {
+            relations: ["user", "school"],
+            where: {
+                user: {
+                    id: userId
+                }
+            }
+        };
+        return this.studentRepository.find(options);
+    }
+
     async saveStudent(student: Student): Promise<Student | undefined> {
         return await this.studentRepository.save(student);
     }

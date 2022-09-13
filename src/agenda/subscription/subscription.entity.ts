@@ -9,13 +9,6 @@ export class Subscription {
     @Column("integer", { primary: true, name: "id" })
     id: number;
 
-    @Column("character varying", {
-        name: "comment",
-        nullable: true,
-        length: 2000,
-    })
-    comment: string | null;
-
     @ManyToOne(() => Appointment, (appointment) => appointment.subscriptions, {
         onDelete: "RESTRICT",
         onUpdate: "RESTRICT",

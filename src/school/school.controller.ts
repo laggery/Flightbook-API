@@ -80,8 +80,8 @@ export class SchoolController {
     }
 
     @UseGuards(JwtAuthGuard, SchoolGuard)
-    @Get('/:id/appointments/:appointment_id/subscriptions')
-    getAppointmentSubscriptions(@Param('id') id: number, @Param('appointment_id') appointmentId: number): Promise<SubscriptionDto[]> {
-        return null;
+    @Get('/:id/appointments/:appointment_id/students')
+    getAppointmentSubscriptions(@Param('id') id: number, @Param('appointment_id') appointmentId: number): Promise<StudentDto[]> {
+        return this.studentFacade.getStudentsByAppointmentId(appointmentId);
     }
 }

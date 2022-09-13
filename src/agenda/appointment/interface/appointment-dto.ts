@@ -3,6 +3,7 @@ import {State} from "../state";
 import {SchoolDto} from "../../../school/interface/school-dto";
 import {UserReadDto} from "../../../user/interface/user-read-dto";
 import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
+import { SubscriptionDto } from "src/agenda/subscription/interface/subscription-dto";
 
 @Exclude()
 export class AppointmentDto {
@@ -42,4 +43,8 @@ export class AppointmentDto {
     @Expose()
     @ApiProperty()
     takeOffCoordinator: UserReadDto;
+
+    @Expose()
+    @ApiProperty()
+    subscriptions: SubscriptionDto[];
 }
