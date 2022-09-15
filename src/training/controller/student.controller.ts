@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { SchoolDto } from 'src/training/school/interface/school-dto';
 import { StudentFacade } from 'src/training/student/student.facade';
@@ -8,6 +9,7 @@ import { ControlSheetFacade } from '../control-sheet/control-sheet.facade';
 import { ControlSheetDto } from '../control-sheet/interface/control-sheet-dto';
 
 @Controller('student')
+@ApiTags('Student')
 export class StudentController {
 
     constructor(

@@ -15,8 +15,10 @@ import { StudentDto } from '../student/interface/student-dto';
 import { UserReadDto } from 'src/user/interface/user-read-dto';
 import { EnrollmentWriteDto } from 'src/training/enrollment/interface/enrollment-write-dto';
 import { EnrollmentDto } from 'src/training/enrollment/interface/enrollment-dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('instructor')
+@ApiTags('Instructor')
 export class InstructorController {
 
     constructor(
