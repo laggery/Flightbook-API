@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Inject, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { TeamMember } from 'src/team-member/team-member.entity';
-import { TeamMemberService } from 'src/team-member/team-member.service';
+import { TeamMember } from 'src/training/team-member/team-member.entity';
+import { TeamMemberService } from 'src/training/team-member/team-member.service';
 
 @Injectable()
 export class SchoolGuard implements CanActivate {

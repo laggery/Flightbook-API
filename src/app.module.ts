@@ -16,13 +16,8 @@ import { AuthModule } from './auth/auth.module';
 import { EmailService } from './email/email.service';
 import {dbConfig} from './db/db-config';
 import { FileUploadModule } from './fileupload/file-upload.module';
-import { StudentModule } from './student/student.module';
-import { SchoolModule } from './school/school.module';
-import { EnrollmentModule } from './enrollment/enrollment.module';
 import { HttpModule } from '@nestjs/axios';
-import { ControlSheetModule } from './control-sheet/control-sheet.module';
-import { AppointmentModule } from './agenda/appointment/appointment.module';
-import { SubscriptionModule } from './agenda/subscription/subscription.module';
+import { TrainingModule } from './training/training.module';
 
 @Module({
   imports: [
@@ -36,12 +31,7 @@ import { SubscriptionModule } from './agenda/subscription/subscription.module';
     GliderModule,
     NewsModule,
     HttpModule,
-    StudentModule,
-    SchoolModule,
-    EnrollmentModule,
-    ControlSheetModule,
-    AppointmentModule,
-    SubscriptionModule
+    TrainingModule
   ],
   controllers: [AppController],
   providers: [
