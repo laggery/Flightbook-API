@@ -17,8 +17,7 @@ import { EnrollmentWriteDto } from 'src/training/enrollment/interface/enrollment
 import { EnrollmentDto } from 'src/training/enrollment/interface/enrollment-dto';
 import { ApiTags } from '@nestjs/swagger';
 import { PagerEntityDto } from 'src/interface/pager-entity-dto';
-import { EmailService } from 'src/email/email.service';
-import { EmailBodyDto } from 'src/email/email-body-dto';
+import { I18n, I18nContext } from 'nestjs-i18n';
 
 @Controller('instructor')
 @ApiTags('Instructor')
@@ -73,9 +72,9 @@ export class InstructorController {
 
     @UseGuards(JwtAuthGuard, SchoolGuard)
     @Post('/schools/:id/appointments')
-    async postAppointment(@Param('id') id: number, @Body() appointmentDto: AppointmentDto): Promise<AppointmentDto> {
+    async postAppointment(@I18n() i18n: I18nContext, @Param('id') id: number, @Body() appointmentDto: AppointmentDto): Promise<AppointmentDto> {
         const students = await this.studentFacade.getStudentsBySchoolId(id);
-        return this.appointmentFacade.createAppointment(id, appointmentDto, students);
+        return this.appointmentFacade.createAppointment(id, appointmentDto, students, i18n);
     }
 
     @UseGuards(JwtAuthGuard, SchoolGuard)

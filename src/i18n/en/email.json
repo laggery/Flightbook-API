@@ -1,0 +1,12 @@
+{
+    "appointment": {
+        "new": {
+            "subject": "{school}: New appointment on: {date}",
+            "content": "<p>Appointment information</p><ul> <li>Date: {date}</li><li>Meeting point: {meetingPoint}</li><li>Description: {description}</li><li>Max participants: {maxPeople}</li></ul>"
+        },
+        "unsubscribe": {
+            "subject": "{name}: Unsubscribe from {date}",
+            "content": "<p>{name} has cancelled participation from {date}</p>"
+        } 
+    }
+}

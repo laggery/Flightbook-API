@@ -18,6 +18,7 @@ import { PagerEntityDto } from 'src/interface/pager-entity-dto';
 import { StudentDto } from '../student/interface/student-dto';
 import { EmailService } from 'src/email/email.service';
 import { SchoolDto } from '../school/interface/school-dto';
+import { I18nContext } from 'nestjs-i18n';
 
 @Injectable()
 export class AppointmentFacade {
@@ -30,12 +31,12 @@ export class AppointmentFacade {
         private emailService: EmailService
     ) { }
 
-    async createAppointment(schoolId: number, appointmentDto: AppointmentDto, students: StudentDto[]): Promise<AppointmentDto> {
+    async createAppointment(schoolId: number, appointmentDto: AppointmentDto, students: StudentDto[], i18n: I18nContext): Promise<AppointmentDto> {
         let appointment: Appointment = plainToInstance(Appointment, appointmentDto);
         await this.appointmentValidityCheck(appointmentDto, schoolId, appointment);
 
         const appointmentResp: Appointment = await this.appointmentService.saveAppointment(appointment);
-        this.emailService.sendAppointmentEmail(students, appointment);
+        this.emailService.sendNewAppointmentEmail(students, appointment, i18n);
         return AppointmentMapper.toAppointmentDto(appointmentResp);
     }
 
@@ -78,7 +79,7 @@ export class AppointmentFacade {
         return AppointmentMapper.toAppointmentDto(appointmentResp);
     }
 
-    async deleteSubscriptionFromAppointment(appointmentId: number, userId: number, school: SchoolDto): Promise<AppointmentDto> {
+    async deleteSubscriptionFromAppointment(appointmentId: number, userId: number, school: SchoolDto, i18n: I18nContext): Promise<AppointmentDto> {
         const appointment: Appointment = await this.appointmentService.getAppointmentById(appointmentId);
         if (appointment.subscriptions) {
             const subscriptionToDelete = appointment.subscriptions.find((subscription: Subscription) => {
@@ -88,7 +89,7 @@ export class AppointmentFacade {
             });
 
             this.subscriptionService.removeSubscription(subscriptionToDelete);
-            this.emailService.sendUnsubscribeEmail(school, subscriptionToDelete);
+            this.emailService.sendUnsubscribeEmail(school, appointment, subscriptionToDelete, i18n);
         }
         return AppointmentMapper.toAppointmentDto(appointment);
     }

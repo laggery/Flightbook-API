@@ -18,11 +18,24 @@ import {dbConfig} from './db/db-config';
 import { FileUploadModule } from './fileupload/file-upload.module';
 import { HttpModule } from '@nestjs/axios';
 import { TrainingModule } from './training/training.module';
+import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
+import * as path from 'path';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(dbConfig),
+    I18nModule.forRoot({
+      fallbackLanguage: 'en',
+      loaderOptions: {
+        path: path.join(__dirname, '/i18n/'),
+        watch: true,
+      },
+      resolvers: [
+        { use: QueryResolver, options: ['lang'] },
+        AcceptLanguageResolver,
+      ],
+    }),
     AuthModule,
     FlightModule,
     FileUploadModule,

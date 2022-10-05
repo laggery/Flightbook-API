@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { I18n, I18nContext } from 'nestjs-i18n';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { SchoolDto } from 'src/training/school/interface/school-dto';
 import { StudentFacade } from 'src/training/student/student.facade';
@@ -61,7 +62,7 @@ export class StudentController {
     @UseGuards(JwtAuthGuard)
     @Delete('schools/:schoolId/appointments/:appointmentId/subscriptions')
     @HttpCode(204)
-    async deleteAppointmentSubscription(@Param('schoolId') schoolId: number, @Param('appointmentId') appointmentId: number, @Request() req): Promise<AppointmentDto> {
+    async deleteAppointmentSubscription(@I18n() i18n: I18nContext, @Param('schoolId') schoolId: number, @Param('appointmentId') appointmentId: number, @Request() req): Promise<AppointmentDto> {
         const schools = await this.studentFacade.getSchoolsByUserId(req.user.userId)
         const studentInSchool = schools.find((school: SchoolDto) => {
             if (school.id == schoolId) {
@@ -73,7 +74,7 @@ export class StudentController {
             throw new UnauthorizedException();
         }
 
-        return this.appointmentFacade.deleteSubscriptionFromAppointment(appointmentId, req.user.userId, studentInSchool);
+        return this.appointmentFacade.deleteSubscriptionFromAppointment(appointmentId, req.user.userId, studentInSchool, i18n);
     }
 
     @UseGuards(JwtAuthGuard)
