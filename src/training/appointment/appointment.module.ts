@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { EmailService } from 'src/email/email.service';
 import { SchoolModule } from 'src/training/school/school.module';
 import { UserModule } from 'src/user/user.module';
 import { SubscriptionModule } from '../subscription/subscription.module';
@@ -15,7 +16,7 @@ import { AppointmentService } from './appointment.service';
     SubscriptionModule
   ],
   controllers: [],
-  providers: [AppointmentFacade, AppointmentService],
+  providers: [AppointmentFacade, AppointmentService, EmailService],
   exports: [AppointmentFacade, AppointmentService]
 })
 export class AppointmentModule {}

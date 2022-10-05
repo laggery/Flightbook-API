@@ -2,6 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { EmailBodyDto } from './email-body-dto';
 
 import * as nodemailer from 'nodemailer';
+import { StudentDto } from 'src/training/student/interface/student-dto';
+import { SchoolDto } from 'src/training/school/interface/school-dto';
+import { Appointment } from 'src/training/appointment/appointment.entity';
+import moment = require('moment');
+import { Subscription } from 'src/training/subscription/subscription.entity';
 
 @Injectable()
 export class EmailService {
@@ -40,5 +45,40 @@ export class EmailService {
 
         transporter.close();
         return true;
+    }
+
+    sendAppointmentEmail(students: StudentDto[], appointment: Appointment) {
+        if (students.length <= 0) {
+            return;
+        }
+
+        const email = new EmailBodyDto();
+        email.toAddress = "";
+        students.forEach((student: StudentDto) => {
+            email.toAddress += student.user.email + ";"
+        });
+
+        email.subject = `${appointment.school.name}: New appointment on ${moment(appointment.scheduling).format('DD.MM.YYYY HH:mm')}`;
+        let description = appointment.description || "-";
+        description = description.replace(new RegExp("[\r\n]", "gm"), "</br>");
+        const maxPeople = appointment.maxPeople || "-";
+        email.content = `<p>Appointment information</p>
+        <ul>
+            <li>Date: ${moment(appointment.scheduling).format('DD.MM.YYYY HH:mm')}</li>
+            <li>Meeting point: ${appointment.meetingPoint}</li>
+            <li>Description: ${description}</li>
+            <li>Max participants: ${maxPeople}</li>
+        </ul>`;
+
+        this.sendEmail(email);
+    }
+
+    sendUnsubscribeEmail(school: SchoolDto, subscription: Subscription) {
+        const email = new EmailBodyDto();
+        email.toAddress = school.email;
+        email.subject = `${subscription.user.firstname} ${subscription.user.lastname} has cancelled participation`;
+        email.content = `<p>${subscription.user.firstname} ${subscription.user.lastname} has cancelled participation</p>`
+
+        this.sendEmail(email);
     }
 }

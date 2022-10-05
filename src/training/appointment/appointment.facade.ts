@@ -14,6 +14,10 @@ import { AppointmentMapper } from './appointment.mapper';
 import { Subscription } from '../subscription/subscription.entity';
 import { SubscriptionException } from '../subscription/exception/subscription.exception';
 import { SubscriptionService } from '../subscription/subscription.service';
+import { PagerEntityDto } from 'src/interface/pager-entity-dto';
+import { StudentDto } from '../student/interface/student-dto';
+import { EmailService } from 'src/email/email.service';
+import { SchoolDto } from '../school/interface/school-dto';
 
 @Injectable()
 export class AppointmentFacade {
@@ -22,14 +26,16 @@ export class AppointmentFacade {
         private appointmentService: AppointmentService,
         private subscriptionService: SubscriptionService,
         private schoolService: SchoolService,
-        private userService: UserService
+        private userService: UserService,
+        private emailService: EmailService
     ) { }
 
-    async createAppointment(schoolId: number, appointmentDto: AppointmentDto): Promise<AppointmentDto> {
+    async createAppointment(schoolId: number, appointmentDto: AppointmentDto, students: StudentDto[]): Promise<AppointmentDto> {
         let appointment: Appointment = plainToInstance(Appointment, appointmentDto);
         await this.appointmentValidityCheck(appointmentDto, schoolId, appointment);
 
         const appointmentResp: Appointment = await this.appointmentService.saveAppointment(appointment);
+        this.emailService.sendAppointmentEmail(students, appointment);
         return AppointmentMapper.toAppointmentDto(appointmentResp);
     }
 
@@ -72,7 +78,7 @@ export class AppointmentFacade {
         return AppointmentMapper.toAppointmentDto(appointmentResp);
     }
 
-    async deleteSubscriptionFromAppointment(appointmentId: number, userId: number): Promise<AppointmentDto> {
+    async deleteSubscriptionFromAppointment(appointmentId: number, userId: number, school: SchoolDto): Promise<AppointmentDto> {
         const appointment: Appointment = await this.appointmentService.getAppointmentById(appointmentId);
         if (appointment.subscriptions) {
             const subscriptionToDelete = appointment.subscriptions.find((subscription: Subscription) => {
@@ -82,13 +88,21 @@ export class AppointmentFacade {
             });
 
             this.subscriptionService.removeSubscription(subscriptionToDelete);
+            this.emailService.sendUnsubscribeEmail(school, subscriptionToDelete);
         }
         return AppointmentMapper.toAppointmentDto(appointment);
     }
 
-    async getAppointmentsBySchoolId(schoolId: number, query: any): Promise<AppointmentDto[]> {
-        const appointments = await this.appointmentService.getAppointmentsBySchoolId(schoolId, query);
-        return AppointmentMapper.toAppointmentDtoList(appointments);
+    async getAppointmentsBySchoolId(schoolId: number, query: any): Promise<PagerEntityDto<AppointmentDto[]>> {
+        const appointmentsPager = await this.appointmentService.getAppointmentsBySchoolId(schoolId, query);
+        const entityPager = new PagerEntityDto<AppointmentDto[]>();
+        entityPager.entity = AppointmentMapper.toAppointmentDtoList(appointmentsPager[0]);
+        entityPager.itemCount = appointmentsPager[0].length;
+        entityPager.totalItems = appointmentsPager[1];
+        entityPager.itemsPerPage = (query?.limit) ? Number(query.limit) : entityPager.itemCount;
+        entityPager.totalPages =  (query?.limit) ?  Math.ceil(entityPager.totalItems / Number(query.limit)) : entityPager.totalItems;
+        entityPager.currentPage = (query?.offset) ? (query.offset >= entityPager.totalItems ? null : Math.floor(parseInt(query.offset) / parseInt(query.limit)) + 1) : 1;
+        return entityPager;
     }
 
     async getAppointmentById(id: number): Promise<AppointmentDto> {

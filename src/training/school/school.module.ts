@@ -15,8 +15,7 @@ import { SchoolService } from './school.service';
     forwardRef(() => StudentModule), 
     TypeOrmModule.forFeature([School]), 
     TeamMemberModule,
-    forwardRef(() => EnrollmentModule),
-    forwardRef(() => AppointmentModule)
+    forwardRef(() => EnrollmentModule)
   ],
   controllers: [],
   providers: [SchoolFacade, SchoolService],

@@ -28,7 +28,7 @@ export class AppointmentService {
         return appointment;
     }
 
-    async getAppointmentsBySchoolId(schoolId: number, query: any): Promise<Appointment[]> {
+    async getAppointmentsBySchoolId(schoolId: number, query: any): Promise<[Appointment[], number]> {
         const options: any = {
             relations: ["subscriptions", "subscriptions.user", "instructor", "takeOffCoordinator"],
             where: {
@@ -68,12 +68,12 @@ export class AppointmentService {
             options.where.state = state;
         }
 
-        let appointments = await this.appointmentRepository.find(options);
-        appointments.forEach((appointment: Appointment) => {
+        let entityNumber: [Appointment[], number] = await this.appointmentRepository.findAndCount(options);
+        entityNumber[0].forEach((appointment: Appointment) => {
             appointment.subscriptions = this.orderSubscriptionByTimestampAsc(appointment.subscriptions);
         })
 
-        return appointments;
+        return entityNumber;
     }
 
     // @TODO Can be removed after migrate to typeorm 0.3.x and added order by for sub objects

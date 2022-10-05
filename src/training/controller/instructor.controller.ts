@@ -16,6 +16,9 @@ import { UserReadDto } from 'src/user/interface/user-read-dto';
 import { EnrollmentWriteDto } from 'src/training/enrollment/interface/enrollment-write-dto';
 import { EnrollmentDto } from 'src/training/enrollment/interface/enrollment-dto';
 import { ApiTags } from '@nestjs/swagger';
+import { PagerEntityDto } from 'src/interface/pager-entity-dto';
+import { EmailService } from 'src/email/email.service';
+import { EmailBodyDto } from 'src/email/email-body-dto';
 
 @Controller('instructor')
 @ApiTags('Instructor')
@@ -70,8 +73,9 @@ export class InstructorController {
 
     @UseGuards(JwtAuthGuard, SchoolGuard)
     @Post('/schools/:id/appointments')
-    postAppointment(@Param('id') id: number, @Body() appointmentDto: AppointmentDto): Promise<AppointmentDto> {
-        return this.appointmentFacade.createAppointment(id, appointmentDto);
+    async postAppointment(@Param('id') id: number, @Body() appointmentDto: AppointmentDto): Promise<AppointmentDto> {
+        const students = await this.studentFacade.getStudentsBySchoolId(id);
+        return this.appointmentFacade.createAppointment(id, appointmentDto, students);
     }
 
     @UseGuards(JwtAuthGuard, SchoolGuard)
@@ -82,7 +86,7 @@ export class InstructorController {
 
     @UseGuards(JwtAuthGuard, SchoolGuard)
     @Get('/schools/:id/appointments')
-    getAppointments(@Param('id') id: number, @Query() query): Promise<AppointmentDto[]> {
+    getAppointments(@Param('id') id: number, @Query() query): Promise<PagerEntityDto<AppointmentDto[]>> {
         return this.appointmentFacade.getAppointmentsBySchoolId(id, query);
     }
 

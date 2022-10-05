@@ -38,7 +38,7 @@ export class StudentController {
             throw new UnauthorizedException();
         }
 
-        return this.appointmentFacade.getAppointmentsBySchoolId(schoolId, query);
+        return await (await this.appointmentFacade.getAppointmentsBySchoolId(schoolId, query)).entity;
     }
 
     @UseGuards(JwtAuthGuard)
@@ -50,6 +50,10 @@ export class StudentController {
                 return true;
             }
         });
+
+        if (!studentInSchool) {
+            throw new UnauthorizedException();
+        }
 
         return this.appointmentFacade.addSubscriptionToAppointment(appointmentId, req.user.userId);
     }
@@ -65,7 +69,11 @@ export class StudentController {
             }
         });
 
-        return this.appointmentFacade.deleteSubscriptionFromAppointment(appointmentId, req.user.userId);
+        if (!studentInSchool) {
+            throw new UnauthorizedException();
+        }
+
+        return this.appointmentFacade.deleteSubscriptionFromAppointment(appointmentId, req.user.userId, studentInSchool);
     }
 
     @UseGuards(JwtAuthGuard)
