@@ -1,6 +1,6 @@
 FROM node:lts-alpine as dist
 WORKDIR /tmp/
-COPY package.json package-lock.json tsconfig.json tsconfig.build.json ./
+COPY package.json package-lock.json tsconfig.json tsconfig.build.json nest-cli.json ./
 COPY src/ src/
 RUN npm install
 RUN npm run build
