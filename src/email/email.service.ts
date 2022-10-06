@@ -2,6 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { EmailBodyDto } from './email-body-dto';
 
 import * as nodemailer from 'nodemailer';
+import { StudentDto } from 'src/training/student/interface/student-dto';
+import { SchoolDto } from 'src/training/school/interface/school-dto';
+import { Appointment } from 'src/training/appointment/appointment.entity';
+import moment = require('moment');
+import { Subscription } from 'src/training/subscription/subscription.entity';
+import { I18nContext } from 'nestjs-i18n';
 
 @Injectable()
 export class EmailService {
@@ -40,5 +46,56 @@ export class EmailService {
 
         transporter.close();
         return true;
+    }
+
+    sendNewAppointmentEmail(students: StudentDto[], appointment: Appointment, i18n: I18nContext) {
+        if (students.length <= 0) {
+            return;
+        }
+
+        const email = new EmailBodyDto();
+        email.toAddress = "";
+        students.forEach((student: StudentDto) => {
+            email.toAddress += student.user.email + ";"
+        });
+
+        email.subject = i18n.t('email.appointment.new.subject', {
+            args: { 
+                school: appointment.school.name,
+                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm')
+            }
+        });
+        let description = appointment.description || "-";
+        description = description.replace(new RegExp("[\r\n]", "gm"), "</br>");
+        const maxPeople = appointment.maxPeople || "-";
+        email.content = i18n.t('email.appointment.new.content', {
+            args: {
+                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm'),
+                meetingPoint: appointment.meetingPoint,
+                description: description,
+                maxPeople: maxPeople
+            }
+        });
+
+        this.sendEmail(email);
+    }
+
+    sendUnsubscribeEmail(school: SchoolDto, appointment: Appointment, subscription: Subscription, i18n: I18nContext) {
+        const email = new EmailBodyDto();
+        email.toAddress = school.email;
+        email.subject = i18n.t('email.appointment.unsubscribe.subject', {
+            args: { 
+                name: `${subscription.user.firstname} ${subscription.user.lastname}`,
+                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm')
+            }
+        });
+        email.content = i18n.t('email.appointment.unsubscribe.content', {
+            args: { 
+                name: `${subscription.user.firstname} ${subscription.user.lastname}`,
+                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm')
+            }
+        });
+
+        this.sendEmail(email);
     }
 }

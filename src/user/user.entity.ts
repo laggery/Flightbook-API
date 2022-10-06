@@ -1,10 +1,12 @@
-import { Student } from "src/student/student.entity";
-import { TeamMember } from "src/team-member/team-member.entity";
+import { Student } from "src/training/student/student.entity";
+import { TeamMember } from "src/training/team-member/team-member.entity";
 import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Flight } from "../flight/flight.entity";
 import { Glider } from "../glider/glider.entity";
 import { Place } from "../place/place.entity";
 import { LoginType } from "./login-type";
+import {Appointment} from "../training/appointment/appointment.entity";
+import { Subscription } from "src/training/subscription/subscription.entity";
 
 @Index("idx_16606_idx_e12875dfb3b1d92d7d7c5377e2", ["email"], { unique: true })
 @Index("idx_16409_idx_e12875dfb3b1d92d7d7c5377e2", ["email"], { unique: true })
@@ -74,4 +76,13 @@ export class User {
 
   @OneToMany(() => Student, (student) => student.user)
   students: Student[];
+
+  @OneToMany(() => Appointment, (appointment) => appointment.instructor)
+  instructors: Appointment[];
+
+  @OneToMany(() => Appointment, (appointment) => appointment.takeOffCoordinator)
+  takeOffCoordinators: Appointment[];
+
+  @OneToMany(() => Subscription, (subscription) => subscription.user)
+  subscriptions: Subscription[];
 }

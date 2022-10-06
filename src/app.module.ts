@@ -5,7 +5,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { FlightModule } from './flight/flight.module';
 import { Connection } from 'typeorm';
-import { FlightController } from './flight/flight.controller';
 import { PlaceModule } from './place/place.module';
 import { UserModule } from './user/user.module';
 import { APP_FILTER } from '@nestjs/core';
@@ -17,16 +16,26 @@ import { AuthModule } from './auth/auth.module';
 import { EmailService } from './email/email.service';
 import {dbConfig} from './db/db-config';
 import { FileUploadModule } from './fileupload/file-upload.module';
-import { StudentModule } from './student/student.module';
-import { SchoolModule } from './school/school.module';
-import { EnrollmentModule } from './enrollment/enrollment.module';
 import { HttpModule } from '@nestjs/axios';
-import { ControlSheetModule } from './control-sheet/control-sheet.module';
+import { TrainingModule } from './training/training.module';
+import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
+import * as path from 'path';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot(dbConfig),
+    I18nModule.forRoot({
+      fallbackLanguage: 'en',
+      loaderOptions: {
+        path: path.join(__dirname, '/i18n/'),
+        watch: true,
+      },
+      resolvers: [
+        { use: QueryResolver, options: ['lang'] },
+        AcceptLanguageResolver,
+      ],
+    }),
     AuthModule,
     FlightModule,
     FileUploadModule,
@@ -35,10 +44,7 @@ import { ControlSheetModule } from './control-sheet/control-sheet.module';
     GliderModule,
     NewsModule,
     HttpModule,
-    StudentModule,
-    SchoolModule,
-    EnrollmentModule,
-    ControlSheetModule
+    TrainingModule
   ],
   controllers: [AppController],
   providers: [
