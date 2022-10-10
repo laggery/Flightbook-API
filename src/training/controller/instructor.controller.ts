@@ -15,12 +15,13 @@ import { StudentDto } from '../student/interface/student-dto';
 import { UserReadDto } from 'src/user/interface/user-read-dto';
 import { EnrollmentWriteDto } from 'src/training/enrollment/interface/enrollment-write-dto';
 import { EnrollmentDto } from 'src/training/enrollment/interface/enrollment-dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PagerEntityDto } from 'src/interface/pager-entity-dto';
 import { I18n, I18nContext } from 'nestjs-i18n';
 
 @Controller('instructor')
 @ApiTags('Instructor')
+@ApiBearerAuth('jwt')
 export class InstructorController {
 
     constructor(

@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { SchoolDto } from 'src/training/school/interface/school-dto';
@@ -11,6 +11,7 @@ import { ControlSheetDto } from '../control-sheet/interface/control-sheet-dto';
 
 @Controller('student')
 @ApiTags('Student')
+@ApiBearerAuth('jwt')
 export class StudentController {
 
     constructor(

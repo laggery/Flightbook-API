@@ -10,7 +10,7 @@ export class Appointment {
     @Column("integer", { primary: true, name: "id" })
     id: number;
 
-    @Column("timestamp", { name: 'scheduling', nullable: false })
+    @Column("timestamptz", { name: 'scheduling', nullable: false })
     scheduling: Date;
 
     @Column("character varying", { name: "meeting_point", nullable: false })
