@@ -19,6 +19,11 @@ export class NotificationsService {
         const tokens = students.filter((student: Student) => student.user.notificationToken)
             .map((student: Student) => student.user.notificationToken);
 
+        if (tokens.length == 0) {
+            Logger.debug("no notification to send");
+            return
+        }
+
         const body = i18n.t('notification.appointment.new.body', {
             args: {
                 school: appointment.school.name,
