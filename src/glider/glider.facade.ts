@@ -8,7 +8,7 @@ import { User } from 'src/user/user.entity';
 import * as moment from 'moment';
 import { InvalidDateException } from './exception/invalid-date-exception';
 import { PagerDto } from 'src/interface/pager-dto';
-import { checkIfDateIsValid } from '../util/date-utils';
+import { checkIfDateIsValid } from '../shared/util/date-utils';
 
 @Injectable()
 export class GliderFacade {

@@ -1,11 +1,9 @@
-import { Controller, Post, Request, Body, Put, UseGuards, Get, Delete, HttpCode } from '@nestjs/common';
+import { Controller, Post, Request, Body, Put, UseGuards, Get, Delete, HttpCode, Param } from '@nestjs/common';
 import { UserFacade } from './user.facade';
 import { UserWriteDto } from './interface/user-write-dto';
 import { UserReadDto } from './interface/user-read-dto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { UserPasswordWriteDto } from './interface/user-password-write-dto';
-import { SchoolDto } from 'src/training/school/interface/school-dto';
-import { TeamMemberFacade } from 'src/training/team-member/team-member.facade';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('users')
@@ -14,8 +12,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 export class UserController {
 
     constructor(
-        private userFacade: UserFacade,
-        private teamMemberFacade: TeamMemberFacade) { }
+        private userFacade: UserFacade) { }
 
     @UseGuards(JwtAuthGuard)
     @Get()
@@ -45,5 +42,12 @@ export class UserController {
     @Put('password/change')
     updateUserPassword(@Request() req, @Body() userPasswordWriteDto: UserPasswordWriteDto): Promise<UserReadDto> {
         return this.userFacade.updatePassword(req.user.userId, userPasswordWriteDto);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Put('notification/:notificationToken')
+    @HttpCode(204)
+    updateUserNotificationToken(@Request() req, @Param('notificationToken') notificationToken: string): Promise<UserReadDto> {
+        return this.userFacade.updateNotificationToken(req.user.userId, notificationToken);
     }
 }

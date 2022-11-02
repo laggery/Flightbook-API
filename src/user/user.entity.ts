@@ -62,6 +62,9 @@ export class User {
   @Column("boolean", { name: "enabled", default: true })
   enabled: boolean;
 
+  @Column("character varying", { name: "notification_token", nullable: true, length: 1000 })
+  notificationToken: string | null;
+
   @OneToMany(() => Flight, (flight) => flight.user)
   flights: Flight[];
 
@@ -85,4 +88,16 @@ export class User {
 
   @OneToMany(() => Subscription, (subscription) => subscription.user)
   subscriptions: Subscription[];
+
+  clearToken() {
+    this.token = null;
+  }
+
+  updateNotificationToken(notificationToken: string) {
+    this.notificationToken = notificationToken;
+  }
+
+  clearNotificationToken() {
+    this.notificationToken = null;
+  }
 }

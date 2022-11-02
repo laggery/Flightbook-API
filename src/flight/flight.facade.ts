@@ -14,7 +14,7 @@ import { Glider } from 'src/glider/glider.entity';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { PagerDto } from 'src/interface/pager-dto';
 import moment = require('moment');
-import { checkIfDateIsValid } from '../util/date-utils';
+import { checkIfDateIsValid } from '../shared/util/date-utils';
 import { FileUploadService } from 'src/fileupload/file-upload.service';
 
 @Injectable()

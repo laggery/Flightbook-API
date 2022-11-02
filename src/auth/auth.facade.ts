@@ -32,7 +32,8 @@ export class AuthFacade {
 
     async logout(token: any) {
         const user: User = await this.userService.getUserById(token.userId);
-        user.token = null;
+        user.clearToken();
+        user.clearNotificationToken();
         await this.userService.saveUser(user);
     }
 

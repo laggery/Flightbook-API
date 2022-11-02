@@ -74,8 +74,7 @@ export class InstructorController {
     @UseGuards(JwtAuthGuard, SchoolGuard)
     @Post('/schools/:id/appointments')
     async postAppointment(@I18n() i18n: I18nContext, @Param('id') id: number, @Body() appointmentDto: AppointmentDto): Promise<AppointmentDto> {
-        const students = await this.studentFacade.getStudentsBySchoolId(id);
-        return this.appointmentFacade.createAppointment(id, appointmentDto, students, i18n);
+        return this.appointmentFacade.createAppointment(id, appointmentDto, i18n);
     }
 
     @UseGuards(JwtAuthGuard, SchoolGuard)

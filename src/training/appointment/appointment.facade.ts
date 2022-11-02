@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { AppointmentDto } from "./interface/appointment-dto";
 import { plainToInstance } from "class-transformer";
 import { Appointment } from "./appointment.entity";
@@ -15,28 +15,35 @@ import { Subscription } from '../subscription/subscription.entity';
 import { SubscriptionException } from '../subscription/exception/subscription.exception';
 import { SubscriptionService } from '../subscription/subscription.service';
 import { PagerEntityDto } from 'src/interface/pager-entity-dto';
-import { StudentDto } from '../student/interface/student-dto';
 import { EmailService } from 'src/email/email.service';
 import { SchoolDto } from '../school/interface/school-dto';
 import { I18nContext } from 'nestjs-i18n';
+import { NotificationsService } from 'src/shared/services/notifications.service';
+import { StudentService } from '../student/student.service';
 
 @Injectable()
 export class AppointmentFacade {
 
     constructor(
         private appointmentService: AppointmentService,
+        private studentService: StudentService,
         private subscriptionService: SubscriptionService,
         private schoolService: SchoolService,
         private userService: UserService,
-        private emailService: EmailService
+        private emailService: EmailService,
+        private notificationsService: NotificationsService
     ) { }
 
-    async createAppointment(schoolId: number, appointmentDto: AppointmentDto, students: StudentDto[], i18n: I18nContext): Promise<AppointmentDto> {
+    async createAppointment(schoolId: number, appointmentDto: AppointmentDto, i18n: I18nContext): Promise<AppointmentDto> {
         let appointment: Appointment = plainToInstance(Appointment, appointmentDto);
         await this.appointmentValidityCheck(appointmentDto, schoolId, appointment);
 
         const appointmentResp: Appointment = await this.appointmentService.saveAppointment(appointment);
-        this.emailService.sendNewAppointmentEmail(students, appointment, i18n);
+
+        const students = await this.studentService.getStudentsBySchoolId(schoolId);
+        this.emailService.sendNewAppointment(students, appointment, i18n);
+        this.notificationsService.sendNewAppointment(students, appointment, i18n);
+
         return AppointmentMapper.toAppointmentDto(appointmentResp);
     }
 
@@ -101,7 +108,7 @@ export class AppointmentFacade {
         entityPager.itemCount = appointmentsPager[0].length;
         entityPager.totalItems = appointmentsPager[1];
         entityPager.itemsPerPage = (query?.limit) ? Number(query.limit) : entityPager.itemCount;
-        entityPager.totalPages =  (query?.limit) ?  Math.ceil(entityPager.totalItems / Number(query.limit)) : entityPager.totalItems;
+        entityPager.totalPages = (query?.limit) ? Math.ceil(entityPager.totalItems / Number(query.limit)) : entityPager.totalItems;
         entityPager.currentPage = (query?.offset) ? (query.offset >= entityPager.totalItems ? null : Math.floor(parseInt(query.offset) / parseInt(query.limit)) + 1) : 1;
         return entityPager;
     }

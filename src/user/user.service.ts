@@ -25,6 +25,21 @@ export class UserService {
         return this.userRepository.findOne({ token: token });
     }
 
+    async getUserByNotificationToken(notificationToken: string): Promise<User | undefined> {
+        return this.userRepository.findOne({ notificationToken: notificationToken });
+    }
+
+    async clearNotificationTokens(tokens: string[]) {
+        tokens.forEach(async (token: string) => {
+            const user = await this.getUserByNotificationToken(token);
+            if (user) {
+                user.clearNotificationToken();
+                this.saveUser(user);
+            }
+        });
+        
+    }
+
     async saveUser(user: User): Promise<User | undefined> {
         user.email = user.email.toLowerCase();
         return this.userRepository.save(user);

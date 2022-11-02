@@ -8,7 +8,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { TeamMemberModule } from 'src/training/team-member/team-member.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), AuthModule, TeamMemberModule],
+  imports: [TypeOrmModule.forFeature([User]), AuthModule],
   providers: [UserService, UserFacade],
   exports: [UserService],
   controllers: [UserController],

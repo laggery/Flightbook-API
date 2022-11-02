@@ -1,0 +1,8 @@
+{
+    "appointment": {
+        "new": {
+            "title": "Neuer Termin",
+            "body": "{school} \r\n Datum: {date} \r\n Treffpunkt: {meetingPoint}"
+        }
+    }
+}

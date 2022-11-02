@@ -5,7 +5,9 @@ import helmet from 'helmet'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule,{
+    logger: process.env.ENV == "prod" ? ['log', 'error', 'warn'] : ['error', 'warn', 'log', 'debug', 'verbose']
+  });
   app.enableCors();
   app.use(helmet());
   app.useGlobalPipes(new ValidationPipe());

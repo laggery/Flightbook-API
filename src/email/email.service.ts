@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { EmailBodyDto } from './email-body-dto';
 
 import * as nodemailer from 'nodemailer';
-import { StudentDto } from 'src/training/student/interface/student-dto';
 import { SchoolDto } from 'src/training/school/interface/school-dto';
 import { Appointment } from 'src/training/appointment/appointment.entity';
 import moment = require('moment');
 import { Subscription } from 'src/training/subscription/subscription.entity';
 import { I18nContext } from 'nestjs-i18n';
+import { Student } from 'src/training/student/student.entity';
 
 @Injectable()
 export class EmailService {
@@ -48,14 +48,14 @@ export class EmailService {
         return true;
     }
 
-    sendNewAppointmentEmail(students: StudentDto[], appointment: Appointment, i18n: I18nContext) {
+    sendNewAppointment(students: Student[], appointment: Appointment, i18n: I18nContext) {
         if (students.length <= 0) {
             return;
         }
 
         const email = new EmailBodyDto();
         email.toAddress = "";
-        students.forEach((student: StudentDto) => {
+        students.forEach((student: Student) => {
             email.toAddress += student.user.email + ";"
         });
 

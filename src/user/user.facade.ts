@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserWriteDto } from './interface/user-write-dto';
 import { User } from './user.entity';
@@ -96,6 +96,26 @@ export class UserFacade {
         }
 
         user.password = await this.authService.hashPassword(userPasswordWriteDto.newPassword);
+
+        const userResp: User = await this.userService.saveUser(user);
+        return plainToClass(UserReadDto, userResp);
+    }
+
+    async updateNotificationToken(id: number, notificationToken: string): Promise<any> {
+        const user: User = await this.userService.getUserById(id);
+
+        if (!user) {
+            throw new UnauthorizedException();
+        }
+
+        // Check if notification token already exists
+        const userToClean: User = await this.userService.getUserByNotificationToken(notificationToken);
+        if (userToClean) {
+            userToClean.clearNotificationToken();
+            this.userService.saveUser(userToClean);
+        }
+
+        user.updateNotificationToken(notificationToken);
 
         const userResp: User = await this.userService.saveUser(user);
         return plainToClass(UserReadDto, userResp);
