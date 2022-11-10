@@ -2,7 +2,11 @@
     "appointment": {
         "new": {
             "title": "Neuer Termin",
-            "body": "{school} \r\n Datum: {date} \r\n Treffpunkt: {meetingPoint}"
+            "body": "{school}\r\nDatum: {date}\r\nTreffpunkt: {meetingPoint}"
+        },
+        "subscription": {
+            "subject": "Anmeldung",
+            "content": "{school} hat dich für den Termin vom {date} angemeldet"
         }
     }
 }

@@ -10,6 +10,7 @@ import { StudentDto } from './interface/student-dto';
 import { StudentUserReadDto } from './interface/student-user-read-dto';
 import { Student } from './student.entity';
 import { StudentService } from './student.service';
+import { StudentException } from './exception/student.exception';
 
 @Injectable()
 export class StudentFacade {
@@ -56,8 +57,19 @@ export class StudentFacade {
         return studentDtoList;
     }
 
+    async removeStudent(id: number, schoolId: number) {
+        const student = await this.studentService.getStudentsByIdAndSchoolId(id, schoolId)
+        if (!student) {
+            throw StudentException.notFoundException();
+        }
+        this.studentService.removeStudent(student)
+        const studentDto = new StudentDto();
+        studentDto.user = plainToClass(StudentUserReadDto, student.user);
+        return studentDto;
+    }
+
     async getSchoolsByUserId(id: number): Promise<SchoolDto[]>  {
-        const students = await this.studentService.getStudentsById(id);
+        const students = await this.studentService.getStudentById(id);
         const schoolsDto: SchoolDto[] = [];
         
         students.forEach((student: Student) => {

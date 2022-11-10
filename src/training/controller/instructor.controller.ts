@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, HttpCode, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Headers, HttpCode, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { StudentGuard } from 'src/auth/guard/student.guard';
 import { ControlSheetDto } from 'src/training/control-sheet/interface/control-sheet-dto';
@@ -56,6 +56,13 @@ export class InstructorController {
     @Get('/schools/:id/students')
     getStudents(@Request() req, @Param('id') id: number): Promise<StudentDto[]> {
         return this.studentFacade.getStudentsBySchoolId(id);
+    }
+
+    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @Delete('/schools/:id/students/:studendId')
+    @HttpCode(204)
+    removeStudent(@Request() req, @Param('id') schoolId: number, @Param('studendId') studendId: number): Promise<StudentDto> {
+        return this.studentFacade.removeStudent(studendId, schoolId);
     }
 
     @UseGuards(JwtAuthGuard, SchoolGuard)

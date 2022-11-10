@@ -45,9 +45,9 @@ export class UserController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Put('notification/:notificationToken')
+    @Put('notification/token')
     @HttpCode(204)
-    updateUserNotificationToken(@Request() req, @Param('notificationToken') notificationToken: string): Promise<UserReadDto> {
-        return this.userFacade.updateNotificationToken(req.user.userId, notificationToken);
+    updateUserNotificationToken(@Request() req, @Body() notificationToken: any): Promise<UserReadDto> {
+        return this.userFacade.updateNotificationToken(req.user.userId, notificationToken.token);
     }
 }

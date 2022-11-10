@@ -4,6 +4,10 @@
             "subject": "{school}: Neuer Termin am: {date}",
             "content": "<p>Informationen zum Termin</p><ul> <li>Datum: {date}</li><li>Treffpunkt: {meetingPoint}</li><li>Beschreibung: {description}</li><li>Max Teilnehmer: {maxPeople}</li></ul>"
         },
+        "subscription": {
+            "subject": "{school}: Anmeldung: {date}",
+            "content": "<p>{school} hat dich für den Termin vom {date} angemeldet</p><p>Informationen zum Termin</p><ul> <li>Datum: {date}</li><li>Treffpunkt: {meetingPoint}</li><li>Beschreibung: {description}</li><li>Max Teilnehmer: {maxPeople}</li></ul>"
+        },
         "unsubscribe": {
             "subject": "{name}: Abmeldung von {date}",
             "content": "<p>{name} hat sich für den Termin vom {date} abgemeldet</p>"

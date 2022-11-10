@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { EmailBodyDto } from './email-body-dto';
 
 import * as nodemailer from 'nodemailer';
@@ -17,8 +17,8 @@ export class EmailService {
 
     async sendEmail(body: EmailBodyDto): Promise<any> {
         if (process.env.ENV != "dev" && process.env.ENV != "prod") {
-            console.info("block sending email");
-            console.debug("body: " + body.toString());
+            Logger.log("block sending email");
+            Logger.debug("body", body);
             return true;
         }
         const transporter = nodemailer.createTransport({
@@ -69,6 +69,38 @@ export class EmailService {
         description = description.replace(new RegExp("[\r\n]", "gm"), "</br>");
         const maxPeople = appointment.maxPeople || "-";
         email.content = i18n.t('email.appointment.new.content', {
+            args: {
+                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm'),
+                meetingPoint: appointment.meetingPoint,
+                description: description,
+                maxPeople: maxPeople
+            }
+        });
+
+        this.sendEmail(email);
+    }
+
+    sendAppointmentSubscription(students: Student[], appointment: Appointment, i18n: I18nContext) {
+        if (students.length <= 0) {
+            return;
+        }
+
+        const email = new EmailBodyDto();
+        email.toAddress = "";
+        students.forEach((student: Student) => {
+            email.toAddress += student.user.email + ";"
+        });
+
+        email.subject = i18n.t('email.appointment.subscription.subject', {
+            args: { 
+                school: appointment.school.name,
+                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm')
+            }
+        });
+        let description = appointment.description || "-";
+        description = description.replace(new RegExp("[\r\n]", "gm"), "</br>");
+        const maxPeople = appointment.maxPeople || "-";
+        email.content = i18n.t('email.appointment.subscription.content', {
             args: {
                 date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm'),
                 meetingPoint: appointment.meetingPoint,

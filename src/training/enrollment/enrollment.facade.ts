@@ -7,7 +7,6 @@ import { SchoolService } from 'src/training/school/school.service';
 import { Student } from 'src/training/student/student.entity';
 import { StudentService } from 'src/training/student/student.service';
 import { UserService } from 'src/user/user.service';
-import { StudentAlreadyExistsException } from '../student/exception/student-already-exists-exception';
 import { EnrollmentDto } from './interface/enrollment-dto';
 import { EnrollmentWriteDto } from './interface/enrollment-write-dto';
 import { Enrollment } from './enrollment.entity';
@@ -19,6 +18,7 @@ import { TeamMember } from 'src/training/team-member/team-member.entity';
 import { EnrollmentNotFoundException } from './exception/enrollment-not-found-exception';
 import { TeamMemberAlreadyExistsException } from '../team-member/exception/team-member-already-exists-exception';
 import { EnrollmentNotAllowedException } from './exception/enrollment-not-allowed-exception';
+import { StudentException } from '../student/exception/student.exception';
 
 @Injectable()
 export class EnrollmentFacade {
@@ -37,7 +37,7 @@ export class EnrollmentFacade {
             const students = await this.studenService.getStudentsBySchoolId(schoolId);
             const foundStudent = students.find((student: Student) => student.user.id === user.id);
             if (foundStudent) {
-                throw new StudentAlreadyExistsException();
+                throw StudentException.alreadyExistsException();
             }
         }
 
@@ -142,7 +142,7 @@ export class EnrollmentFacade {
             const students = await this.studenService.getStudentsBySchoolId(enrollment.school.id);
             const foundStudent = students.find((student: Student) => student.user.email === enrollment.email);
             if (foundStudent) {
-                throw new StudentAlreadyExistsException();
+                throw StudentException.alreadyExistsException();
             }
 
             const student = new Student();

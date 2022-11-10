@@ -34,8 +34,47 @@ export class NotificationsService {
         const multicastMessage: MulticastMessage = {
             notification: {
                 title: i18n.t('notification.appointment.new.title'),
-                body: body,
-                imageUrl: "https://raw.githubusercontent.com/laggery/Flightbook-MobileApp/master/src/assets/icons/icon-512x512.png"
+                body: body
+            },
+            tokens: tokens
+        }
+        const tokensToDelete: string[] = [];
+        try {
+            const batchResponse: BatchResponse = await getMessaging().sendMulticast(multicastMessage, process.env.ENV != "prod");
+            Logger.debug(batchResponse);
+            batchResponse.responses.forEach((response: SendResponse, index: number) => {
+                if (!response.success) {
+                    tokensToDelete.push(tokens[index]);
+                }
+            });
+        } catch (e: any) {
+            Logger.error("Firebase sendMulticast error", e);
+        }
+
+        this.userService.clearNotificationTokens(tokensToDelete);
+    }
+
+    async sendAppointmentSubscription(students: Student[], appointment, i18n) {
+
+        const tokens = students.filter((student: Student) => student.user.notificationToken)
+            .map((student: Student) => student.user.notificationToken);
+
+        if (tokens.length == 0) {
+            Logger.debug("no notification to send");
+            return
+        }
+
+        const body = i18n.t('notification.appointment.subscription.body', {
+            args: {
+                school: appointment.school.name,
+                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm'),
+                meetingPoint: appointment.meetingPoint
+            }
+        });
+        const multicastMessage: MulticastMessage = {
+            notification: {
+                title: i18n.t('notification.appointment.subscription.title'),
+                body: body
             },
             tokens: tokens
         }

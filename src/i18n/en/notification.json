@@ -2,7 +2,11 @@
     "appointment": {
         "new": {
             "title": "New appointment",
-            "body": "{school} \r\n Date: {date} \r\n Meeting point: {meetingPoint}"
+            "body": "{school}\r\nDate: {date}\r\nMeeting point: {meetingPoint}"
+        },
+        "subscription": {
+            "subject": "Subscription",
+            "content": "{school} has registered you for the date of {date}"
         }
     }
 }

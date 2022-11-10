@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AppointmentDto } from "./interface/appointment-dto";
 import { plainToInstance } from "class-transformer";
 import { Appointment } from "./appointment.entity";
@@ -20,6 +20,8 @@ import { SchoolDto } from '../school/interface/school-dto';
 import { I18nContext } from 'nestjs-i18n';
 import { NotificationsService } from 'src/shared/services/notifications.service';
 import { StudentService } from '../student/student.service';
+import { SubscriptionDto } from '../subscription/interface/subscription-dto';
+import { Student } from '../student/student.entity';
 
 @Injectable()
 export class AppointmentFacade {
@@ -41,6 +43,20 @@ export class AppointmentFacade {
         const appointmentResp: Appointment = await this.appointmentService.saveAppointment(appointment);
 
         const students = await this.studentService.getStudentsBySchoolId(schoolId);
+
+        if (appointment.subscriptions.length > 0) {
+            const addedStudents = [];
+            appointment.subscriptions.forEach((subscription: Subscription) => {
+                const index = students.findIndex((student: Student) => student.user.email === subscription.user.email);
+                if (index !== -1) {
+                    addedStudents.push(students[index]);
+                    students.splice(index, 1);
+                }
+            });
+            this.emailService.sendAppointmentSubscription(addedStudents, appointment, i18n);
+            this.notificationsService.sendAppointmentSubscription(addedStudents, appointment, i18n);
+        }
+
         this.emailService.sendNewAppointment(students, appointment, i18n);
         this.notificationsService.sendNewAppointment(students, appointment, i18n);
 
@@ -57,6 +73,23 @@ export class AppointmentFacade {
         appointment.scheduling = appointmentDto.scheduling;
         appointment.state = appointmentDto.state;
         appointment.timestamp = new Date();
+
+        // Clear removed subscriptions
+        appointment.subscriptions.forEach((subscription: Subscription) => {
+            const subscriptionDto = appointmentDto.subscriptions.find((subscriptionDto: SubscriptionDto) => subscriptionDto.user.email === subscription.user.email);
+            if (!subscriptionDto) {
+                appointment.removeUserSubscription(subscription.user.email);
+                this.subscriptionService.removeSubscription(subscription);
+            }
+        });
+
+        // add new subscriptions
+        appointmentDto.subscriptions.forEach((subscriptionDto: SubscriptionDto) => {
+            if (!appointment.findSubscription(subscriptionDto.user.email)) {
+                const subscription: Subscription = plainToInstance(Subscription, subscriptionDto);
+                appointment.subscriptions.push(subscription);
+            }
+        });
 
         const appointmentResp: Appointment = await this.appointmentService.saveAppointment(appointment);
         return AppointmentMapper.toAppointmentDto(appointmentResp);

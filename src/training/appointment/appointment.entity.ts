@@ -58,4 +58,15 @@ export class Appointment {
         default: () => "CURRENT_TIMESTAMP",
     })
     timestamp: Date;
+
+    findSubscription(email: string) {
+        return this.subscriptions.find((subscription: Subscription) => subscription.user.email === email);
+    }
+
+    removeUserSubscription(email: string) {
+        const index = this.subscriptions.findIndex((subscription: Subscription) => subscription.user.email === email);
+        if (index !== -1) {
+            this.subscriptions.splice(index, 1);
+        }
+    }
 }

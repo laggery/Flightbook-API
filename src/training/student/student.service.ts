@@ -22,7 +22,7 @@ export class StudentService {
         return this.studentRepository.find(options);
     }
 
-    async getStudentsById(userId: number): Promise<Student[]> {
+    async getStudentById(userId: number): Promise<Student[]> {
         let options: any = {
             relations: ["user", "school"],
             where: {
@@ -34,7 +34,38 @@ export class StudentService {
         return this.studentRepository.find(options);
     }
 
+    async getStudentByEmail(email: string): Promise<Student[]> {
+        let options: any = {
+            relations: ["user", "school"],
+            where: {
+                user: {
+                    email: email
+                }
+            }
+        };
+        return this.studentRepository.find(options);
+    }
+
+    async getStudentsByIdAndSchoolId(userId: number, schoolId: number): Promise<Student> {
+        let options: any = {
+            relations: ["user", "school"],
+            where: {
+                user: {
+                    id: userId
+                },
+                school: {
+                    id: schoolId
+                }
+            }
+        };
+        return this.studentRepository.findOne(options);
+    }
+
     async saveStudent(student: Student): Promise<Student | undefined> {
         return await this.studentRepository.save(student);
+    }
+
+    async removeStudent(student: Student): Promise<Student | undefined> {
+        return await this.studentRepository.remove(student);
     }
 }
