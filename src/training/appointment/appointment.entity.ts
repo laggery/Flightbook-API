@@ -63,10 +63,13 @@ export class Appointment {
         return this.subscriptions.find((subscription: Subscription) => subscription.user.email === email);
     }
 
-    removeUserSubscription(email: string) {
-        const index = this.subscriptions.findIndex((subscription: Subscription) => subscription.user.email === email);
+    removeUserSubscription(userId: number): Subscription {
+        const index = this.subscriptions.findIndex((subscription: Subscription) => subscription.user.id === userId);
         if (index !== -1) {
+            const subscription = this.subscriptions[index];
             this.subscriptions.splice(index, 1);
+            return subscription;
         }
+        return null;
     }
 }

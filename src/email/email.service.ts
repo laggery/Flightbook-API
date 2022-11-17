@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { EmailBodyDto } from './email-body-dto';
 
 import * as nodemailer from 'nodemailer';
@@ -8,6 +8,7 @@ import moment = require('moment');
 import { Subscription } from 'src/training/subscription/subscription.entity';
 import { I18nContext } from 'nestjs-i18n';
 import { Student } from 'src/training/student/student.entity';
+import { Enrollment } from 'src/training/enrollment/enrollment.entity';
 
 @Injectable()
 export class EmailService {
@@ -46,6 +47,38 @@ export class EmailService {
 
         transporter.close();
         return true;
+    }
+
+    async sendStudentEnrollement(enrollment: Enrollment, origin: string) {
+        const emailBody = new EmailBodyDto();
+        emailBody.toAddress = enrollment.email;
+        emailBody.subject = "Share flightbook";
+        emailBody.content = `<p>Hello</p>
+        <p>${ enrollment.school.name } invite you to share your flightbook. You can accept this invitation by follow the link below.</p>
+        <p>Link : ${origin}/enrollments/${enrollment.token}</p>
+        <p>The link expire ${moment(enrollment.expireAt).format('DD.MM.YYYY HH:mm')}`;
+
+        try {
+            await this.sendEmail(emailBody);
+        } catch (e) {
+            throw new HttpException("Email service is unavailable", 503);
+        }
+    }
+
+    async sendTeamMemberEnrollement(enrollment: Enrollment, origin: string) {
+        const emailBody = new EmailBodyDto();
+        emailBody.toAddress = enrollment.email;
+        emailBody.subject = `Team member ${enrollment.school.name}`;
+        emailBody.content = `<p>Hello</p>
+        <p>${ enrollment.school.name } invite you to be member of his team. You can accept this invitation by follow the link below.</p>
+        <p>Link : ${origin}/enrollments/${enrollment.token}</p>
+        <p>The link expire ${moment(enrollment.expireAt).format('DD.MM.YYYY HH:mm')}`;
+
+        try {
+            await this.sendEmail(emailBody);
+        } catch (e) {
+            throw new HttpException("Email service is unavailable", 503);
+        }
     }
 
     sendNewAppointment(students: Student[], appointment: Appointment, i18n: I18nContext) {
@@ -125,6 +158,32 @@ export class EmailService {
             args: { 
                 name: `${subscription.user.firstname} ${subscription.user.lastname}`,
                 date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm')
+            }
+        });
+
+        this.sendEmail(email);
+    }
+
+    sendInformWaitingStudent(school: SchoolDto, appointment: Appointment, subscription: Subscription, i18n: I18nContext) {
+        console.log(appointment);
+        const email = new EmailBodyDto();
+        email.toAddress = subscription.user.email;
+        
+        email.subject = i18n.t('email.appointment.informWaitingStudent.subject', {
+            args: { 
+                school: school.name,
+                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm')
+            }
+        });
+        let description = appointment.description || "-";
+        description = description.replace(new RegExp("[\r\n]", "gm"), "</br>");
+        const maxPeople = appointment.maxPeople || "-";
+        email.content = i18n.t('email.appointment.informWaitingStudent.content', {
+            args: {
+                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm'),
+                meetingPoint: appointment.meetingPoint,
+                description: description,
+                maxPeople: maxPeople
             }
         });
 

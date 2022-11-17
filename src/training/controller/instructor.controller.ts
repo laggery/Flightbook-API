@@ -12,12 +12,12 @@ import { EnrollmentFacade } from 'src/training/enrollment/enrollment.facade';
 import { AppointmentFacade } from '../appointment/appointment.facade';
 import { SchoolDto } from 'src/training/school/interface/school-dto';
 import { StudentDto } from '../student/interface/student-dto';
-import { UserReadDto } from 'src/user/interface/user-read-dto';
 import { EnrollmentWriteDto } from 'src/training/enrollment/interface/enrollment-write-dto';
 import { EnrollmentDto } from 'src/training/enrollment/interface/enrollment-dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PagerEntityDto } from 'src/interface/pager-entity-dto';
 import { I18n, I18nContext } from 'nestjs-i18n';
+import { TeamMemberDto } from '../team-member/interface/team-member-dto';
 
 @Controller('instructor')
 @ApiTags('Instructor')
@@ -28,7 +28,7 @@ export class InstructorController {
         private studentFacade: StudentFacade,
         private schoolFacade: SchoolFacade,
         private teamMembersFacade: TeamMemberFacade,
-        private studentEnrollmentFacade: EnrollmentFacade,
+        private enrollmentFacade: EnrollmentFacade,
         private appointmentFacade: AppointmentFacade
     ){}
 
@@ -67,15 +67,29 @@ export class InstructorController {
 
     @UseGuards(JwtAuthGuard, SchoolGuard)
     @Get('/schools/:id/team-members')
-    getTeamMembers(@Request() req, @Param('id') id: number): Promise<UserReadDto[]> {
-        return this.teamMembersFacade.getUsersBySchoolId(id);
+    getTeamMembers(@Request() req, @Param('id') id: number): Promise<TeamMemberDto[]> {
+        return this.teamMembersFacade.getTeamMembersBySchoolId(id);
     }
 
     @UseGuards(JwtAuthGuard, SchoolGuard)
     @Post('/schools/:id/students/enrollment')
     @HttpCode(204)
-    postStudentsEnrollment(@Headers('origin') origin: string, @Param('id') id: number, @Body() studentEnrollmentWriteDto: EnrollmentWriteDto): Promise<EnrollmentDto> {
-        return this.studentEnrollmentFacade.createStudentEnrollment(id, studentEnrollmentWriteDto, origin);
+    postStudentsEnrollment(@Headers('origin') origin: string, @Param('id') id: number, @Body() enrollmentWriteDto: EnrollmentWriteDto): Promise<EnrollmentDto> {
+        return this.enrollmentFacade.createStudentEnrollment(id, enrollmentWriteDto, origin);
+    }
+
+    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @Post('/schools/:id/team-members/enrollment')
+    @HttpCode(204)
+    postTeamMemberEnrollment(@Headers('origin') origin: string, @Param('id') id: number, @Body() enrollmentWriteDto: EnrollmentWriteDto): Promise<EnrollmentDto> {
+        return this.enrollmentFacade.createTeamMemberEnrollment(id, enrollmentWriteDto, origin);
+    }
+
+    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @Delete('/schools/:id/team-members/:teamMemberId')
+    @HttpCode(204)
+    deleteTeamMember(@Param('id') id: number, @Param('teamMemberId') teamMemberId: number): Promise<TeamMemberDto>{
+        return this.teamMembersFacade.deleteTeamMember(teamMemberId);
     }
 
     @UseGuards(JwtAuthGuard, SchoolGuard)

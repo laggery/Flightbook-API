@@ -11,6 +11,10 @@
         "unsubscribe": {
             "subject": "{name}: Unsubscribe from {date}",
             "content": "<p>{name} has cancelled participation from {date}</p>"
-        } 
+        },
+        "informWaitingStudent": {
+            "subject": "{school}: Registration for: {date}",
+            "content": "<p>Someone has unsubscribed for the appointment from {date}. You can now participate.</p><p>Appointment information</p><ul><li>Date: {date}</li><li>Meeting point: {meetingPoint}</li><li>Description: {description}</li><li>Max participants: {maxPeople}</li></ul>"
+        }
     }
 }

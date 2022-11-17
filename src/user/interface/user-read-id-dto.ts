@@ -2,7 +2,7 @@ import { Exclude, Expose } from "class-transformer";
 import { LoginType } from "src/user/login-type";
 
 @Exclude()
-export class StudentUserReadDto {
+export class UserReadIdDto {
     @Expose()
     readonly id: number;
     @Expose()

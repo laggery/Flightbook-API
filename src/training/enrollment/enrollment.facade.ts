@@ -1,7 +1,6 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { plainToClass } from 'class-transformer';
-import { EmailBodyDto } from 'src/email/email-body-dto';
 import { EmailService } from 'src/email/email.service';
 import { SchoolService } from 'src/training/school/school.service';
 import { Student } from 'src/training/student/student.entity';
@@ -11,14 +10,13 @@ import { EnrollmentDto } from './interface/enrollment-dto';
 import { EnrollmentWriteDto } from './interface/enrollment-write-dto';
 import { Enrollment } from './enrollment.entity';
 import { EnrollmentService } from './enrollment.service';
-import * as moment from 'moment';
 import { EnrollmentType } from './enrollment-type';
 import { TeamMemberService } from 'src/training/team-member/team-member.service';
 import { TeamMember } from 'src/training/team-member/team-member.entity';
 import { EnrollmentNotFoundException } from './exception/enrollment-not-found-exception';
-import { TeamMemberAlreadyExistsException } from '../team-member/exception/team-member-already-exists-exception';
 import { EnrollmentNotAllowedException } from './exception/enrollment-not-allowed-exception';
 import { StudentException } from '../student/exception/student.exception';
+import { TeamMemberException } from '../team-member/exception/team-member.exception';
 
 @Injectable()
 export class EnrollmentFacade {
@@ -44,7 +42,7 @@ export class EnrollmentFacade {
         const enrollmentList = await this.enrollmentService.getStudentsEnrollmentByEmailAndSchoolId(enrollmentWriteDto.email, schoolId);
         for (const enrollment of enrollmentList){
             if (new Date() < new Date(enrollment.expireAt)) {
-                await this.sendMail(enrollment, origin);
+                await this.emailService.sendStudentEnrollement(enrollment, origin);
                 return plainToClass(EnrollmentDto, enrollment);
             }
         }
@@ -67,25 +65,50 @@ export class EnrollmentFacade {
 
         const enrollmentResp = this.enrollmentService.saveEnrollment(enrollment);
 
-        await this.sendMail(enrollment, origin);
+        await this.emailService.sendStudentEnrollement(enrollment, origin);
 
         return plainToClass(EnrollmentDto, enrollmentResp);
     }
 
-    async sendMail(enrollment: Enrollment, origin: string) {
-        const emailBody = new EmailBodyDto();
-        emailBody.toAddress = enrollment.email;
-        emailBody.subject = "Share flightbook";
-        emailBody.content = `<p>Hello</p>
-        <p>${ enrollment.school.name } invite you to share your flightbook. You can accept this invitation by follow the link below.</p>
-        <p>Link : ${origin}/enrollments/${enrollment.token}</p>
-        <p>The link expire ${moment(enrollment.expireAt).format('DD.MM.YYYY HH:mm')}`;
-
-        try {
-            await this.emailService.sendEmail(emailBody);
-        } catch (e) {
-            throw new HttpException("Email service is unavailable", 503);
+    async createTeamMemberEnrollment(schoolId: number, enrollmentWriteDto: EnrollmentWriteDto, origin: string): Promise<EnrollmentDto> {
+        const user = await this.userService.getUserByEmail(enrollmentWriteDto.email);
+        if (user) {
+            const teamMembers = await this.teamMemberService.getTeamMembersBySchoolId(schoolId);
+            const foundStudent = teamMembers.find((teamMember: TeamMember) => teamMember.user.id === user.id);
+            if (foundStudent) {
+                throw TeamMemberException.alreadyExistsException();
+            }
         }
+
+        const enrollmentList = await this.enrollmentService.getTeamMemberEnrollmentByEmailAndSchoolId(enrollmentWriteDto.email, schoolId);
+        for (const enrollment of enrollmentList){
+            if (new Date() < new Date(enrollment.expireAt)) {
+                await this.emailService.sendTeamMemberEnrollement(enrollment, origin);
+                return plainToClass(EnrollmentDto, enrollment);
+            }
+        }
+
+        let uuid;
+        do {
+            uuid = randomStringGenerator();
+        } while (await this.enrollmentService.getEnrollmentByToken(uuid));
+
+        const enrollment = new Enrollment();
+        enrollment.type = EnrollmentType.TEAM_MEMBER;
+        enrollment.email = enrollmentWriteDto.email;
+        enrollment.school = await this.schoolService.getSchoolById(schoolId);
+        enrollment.token = uuid;
+
+        const expireAtDate = new Date();
+        expireAtDate.setDate(expireAtDate.getDate() + 7);
+
+        enrollment.expireAt = expireAtDate;
+
+        const enrollmentResp = this.enrollmentService.saveEnrollment(enrollment);
+
+        await this.emailService.sendTeamMemberEnrollement(enrollment, origin);
+
+        return plainToClass(EnrollmentDto, enrollmentResp);
     }
     
     async getEnrollmentByToken(token: string): Promise<EnrollmentDto> {
@@ -153,7 +176,7 @@ export class EnrollmentFacade {
             const teamMembers = await this.teamMemberService.getTeamMembersBySchoolId(enrollment.school.id);
             const foundTeamMember = teamMembers.find((teamMember: TeamMember) => teamMember.user.email === enrollment.email);
             if (foundTeamMember) {
-                throw new TeamMemberAlreadyExistsException();
+                throw TeamMemberException.alreadyExistsException();
             }
 
             const teamMember = new TeamMember();

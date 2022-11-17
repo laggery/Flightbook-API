@@ -30,6 +30,20 @@ export class EnrollmentService {
         return this.enrollmentRepository.find(options);
     }
 
+    async getTeamMemberEnrollmentByEmailAndSchoolId(email: string, schoolId: number): Promise<Enrollment[]> {
+        let options: any = {
+            relations: ["school"],
+            where: {
+                email: email,
+                school: {
+                    id: schoolId
+                },
+                type: EnrollmentType.TEAM_MEMBER
+            }
+        };
+        return this.enrollmentRepository.find(options);
+    }
+
     async getEnrollmentByToken(token: string): Promise<Enrollment> {
         return this.enrollmentRepository.findOne(
             {

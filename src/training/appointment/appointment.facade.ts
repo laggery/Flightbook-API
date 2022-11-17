@@ -78,7 +78,7 @@ export class AppointmentFacade {
         appointment.subscriptions.forEach((subscription: Subscription) => {
             const subscriptionDto = appointmentDto.subscriptions.find((subscriptionDto: SubscriptionDto) => subscriptionDto.user.email === subscription.user.email);
             if (!subscriptionDto) {
-                appointment.removeUserSubscription(subscription.user.email);
+                appointment.removeUserSubscription(subscription.user.id);
                 this.subscriptionService.removeSubscription(subscription);
             }
         });
@@ -122,11 +122,13 @@ export class AppointmentFacade {
     async deleteSubscriptionFromAppointment(appointmentId: number, userId: number, school: SchoolDto, i18n: I18nContext): Promise<AppointmentDto> {
         const appointment: Appointment = await this.appointmentService.getAppointmentById(appointmentId);
         if (appointment.subscriptions) {
-            const subscriptionToDelete = appointment.subscriptions.find((subscription: Subscription) => {
-                if (subscription.user.id == userId) {
-                    return true;
-                }
-            });
+            const subscriptionToDelete = appointment.removeUserSubscription(userId);
+
+            // Inform waiting student
+            if (appointment.maxPeople && appointment.subscriptions.length >= appointment.maxPeople ) {
+                const subscriptionToInform = appointment.subscriptions[appointment.subscriptions.length - 1];
+                this.emailService.sendInformWaitingStudent(school, appointment, subscriptionToInform, i18n);
+            }
 
             this.subscriptionService.removeSubscription(subscriptionToDelete);
             this.emailService.sendUnsubscribeEmail(school, appointment, subscriptionToDelete, i18n);

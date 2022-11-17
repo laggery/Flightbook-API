@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { SchoolDto } from 'src/training/school/interface/school-dto';
-import { UserReadDto } from 'src/user/interface/user-read-dto';
+import { UserReadIdDto } from 'src/user/interface/user-read-id-dto';
+import { TeamMemberException } from './exception/team-member.exception';
+import { TeamMemberDto } from './interface/team-member-dto';
 import { TeamMember } from './team-member.entity';
 import { TeamMemberService } from './team-member.service';
 
@@ -22,14 +24,33 @@ export class TeamMemberFacade {
         return schoolsDto;
     }
 
-    async getUsersBySchoolId(id: number): Promise<UserReadDto[]>  {
+    async getTeamMembersBySchoolId(id: number): Promise<TeamMemberDto[]>  {
         const teamMembers = await this.teamMemberService.getTeamMembersBySchoolId(id);
-        const usersDto: UserReadDto[] = [];
-        
+        const teamMemberDtoList: TeamMemberDto[] = [];
+
         teamMembers.forEach((teamMember: TeamMember) => {
-            usersDto.push(new UserReadDto(teamMember.user.email, teamMember.user.firstname, teamMember.user.lastname));
+            const teamMemberDto = plainToClass(TeamMemberDto, teamMember);
+            teamMemberDto.user = plainToClass(UserReadIdDto, teamMember.user);
+            teamMemberDtoList.push(teamMemberDto);
         });
 
-        return usersDto;
+        return teamMemberDtoList;
+    }
+
+    async deleteTeamMember(id: number) : Promise<TeamMemberDto> {
+        const teamMember = await this.teamMemberService.getTeamMemberById(id)
+        if (!teamMember) {
+            throw TeamMemberException.notFoundException();
+        }
+
+        if (teamMember.admin) {
+            throw new UnauthorizedException();
+        }
+
+        this.teamMemberService.removeTeamMember(teamMember)
+        const teamMemberDto = plainToClass(TeamMemberDto, teamMember);
+        teamMemberDto.user = plainToClass(UserReadIdDto, teamMember.user);
+
+        return teamMemberDto;
     }
 }

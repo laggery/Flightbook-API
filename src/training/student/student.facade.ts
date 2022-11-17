@@ -7,10 +7,10 @@ import { FlightFacade } from 'src/flight/flight.facade';
 import { FlightDto } from 'src/flight/interface/flight-dto';
 import { SchoolDto } from 'src/training/school/interface/school-dto';
 import { StudentDto } from './interface/student-dto';
-import { StudentUserReadDto } from './interface/student-user-read-dto';
 import { Student } from './student.entity';
 import { StudentService } from './student.service';
 import { StudentException } from './exception/student.exception';
+import { UserReadIdDto } from 'src/user/interface/user-read-id-dto';
 
 @Injectable()
 export class StudentFacade {
@@ -26,7 +26,7 @@ export class StudentFacade {
         const studentDtoList: StudentDto[] = [];
         for (const student of students){
             let studentDto = new StudentDto();
-            studentDto.user = plainToClass(StudentUserReadDto, student.user);
+            studentDto.user = plainToClass(UserReadIdDto, student.user);
             studentDto.statistic = await this.flightFacade.getStatistic({userId: student.user.id}, {});
             const flightList = await this.flightFacade.getFlights({userId: student.user.id}, {limit: 1})
 
@@ -44,7 +44,7 @@ export class StudentFacade {
         const studentDtoList: StudentDto[] = [];
         for (const subscription of appointment.subscriptions){
             let studentDto = new StudentDto();
-            studentDto.user = plainToClass(StudentUserReadDto, subscription.user);
+            studentDto.user = plainToClass(UserReadIdDto, subscription.user);
             studentDto.statistic = await this.flightFacade.getStatistic({userId: subscription.user.id}, {});
             const flightList = await this.flightFacade.getFlights({userId: subscription.user.id}, {limit: 1})
 
@@ -64,7 +64,7 @@ export class StudentFacade {
         }
         this.studentService.removeStudent(student)
         const studentDto = new StudentDto();
-        studentDto.user = plainToClass(StudentUserReadDto, student.user);
+        studentDto.user = plainToClass(UserReadIdDto, student.user);
         return studentDto;
     }
 
