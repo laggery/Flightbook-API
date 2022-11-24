@@ -5,8 +5,16 @@
             "body": "{school}\r\nDatum: {date}\r\nTreffpunkt: {meetingPoint}"
         },
         "subscription": {
-            "subject": "Anmeldung",
-            "content": "{school} hat dich für den Termin vom {date} angemeldet"
+            "title": "Anmeldung",
+            "body": "{school} hat dich für den Termin vom {date} angemeldet"
+        },
+        "stateChanged": {
+            "title": "Terminstatus wurde geändert",
+            "body": "{school}:\r\nTerminstatus vom {date} wurde geändert."
+        },
+        "informWaitingStudent": {
+            "title": "{school}: Anmeldung",
+            "body": "Jemand hat sich für den Termin vom {date} abgemeldet. Sie können jetzt teilnehmen."
         }
     }
 }

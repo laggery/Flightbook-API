@@ -100,8 +100,8 @@ export class InstructorController {
 
     @UseGuards(JwtAuthGuard, SchoolGuard)
     @Put('/schools/:id/appointments/:appointment_id')
-    putAppointment(@Param('id') id: number, @Param('appointment_id') appointmentId: number, @Body() appointmentDto: AppointmentDto): Promise<AppointmentDto> {
-        return this.appointmentFacade.updateAppointment(appointmentId, id, appointmentDto);
+    putAppointment(@I18n() i18n: I18nContext, @Param('id') id: number, @Param('appointment_id') appointmentId: number, @Body() appointmentDto: AppointmentDto): Promise<AppointmentDto> {
+        return this.appointmentFacade.updateAppointment(appointmentId, id, appointmentDto, i18n);
     }
 
     @UseGuards(JwtAuthGuard, SchoolGuard)

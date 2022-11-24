@@ -165,7 +165,6 @@ export class EmailService {
     }
 
     sendInformWaitingStudent(school: SchoolDto, appointment: Appointment, subscription: Subscription, i18n: I18nContext) {
-        console.log(appointment);
         const email = new EmailBodyDto();
         email.toAddress = subscription.user.email;
         

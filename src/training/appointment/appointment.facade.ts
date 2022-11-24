@@ -63,9 +63,11 @@ export class AppointmentFacade {
         return AppointmentMapper.toAppointmentDto(appointmentResp);
     }
 
-    async updateAppointment(id: number, schoolId: number, appointmentDto: AppointmentDto): Promise<AppointmentDto> {
+    async updateAppointment(id: number, schoolId: number, appointmentDto: AppointmentDto, i18n: I18nContext): Promise<AppointmentDto> {
         let appointment: Appointment = await this.appointmentService.getAppointmentById(id);
         await this.appointmentValidityCheck(appointmentDto, schoolId, appointment);
+
+        const previousState = appointment.state;
 
         appointment.description = appointmentDto.description;
         appointment.maxPeople = appointmentDto.maxPeople;
@@ -90,6 +92,10 @@ export class AppointmentFacade {
                 appointment.subscriptions.push(subscription);
             }
         });
+
+        if (previousState != appointmentDto.state) {
+            this.notificationsService.sendAppointmentStateChanged(appointment, i18n);
+        }
 
         const appointmentResp: Appointment = await this.appointmentService.saveAppointment(appointment);
         return AppointmentMapper.toAppointmentDto(appointmentResp);
@@ -122,12 +128,15 @@ export class AppointmentFacade {
     async deleteSubscriptionFromAppointment(appointmentId: number, userId: number, school: SchoolDto, i18n: I18nContext): Promise<AppointmentDto> {
         const appointment: Appointment = await this.appointmentService.getAppointmentById(appointmentId);
         if (appointment.subscriptions) {
+            const nbSubscription = appointment.subscriptions.length;
+            const isUserOnWaintingList = appointment.isUserOnWaintingList(userId);
             const subscriptionToDelete = appointment.removeUserSubscription(userId);
 
             // Inform waiting student
-            if (appointment.maxPeople && appointment.subscriptions.length >= appointment.maxPeople ) {
-                const subscriptionToInform = appointment.subscriptions[appointment.subscriptions.length - 1];
+            if (subscriptionToDelete && !isUserOnWaintingList && nbSubscription > appointment.maxPeople ) {
+                const subscriptionToInform = appointment.subscriptions[appointment.maxPeople - 1];
                 this.emailService.sendInformWaitingStudent(school, appointment, subscriptionToInform, i18n);
+                this.notificationsService.sendInformWaitingStudent(appointment, subscriptionToInform, i18n);
             }
 
             this.subscriptionService.removeSubscription(subscriptionToDelete);

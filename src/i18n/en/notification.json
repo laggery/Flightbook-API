@@ -5,8 +5,16 @@
             "body": "{school}\r\nDate: {date}\r\nMeeting point: {meetingPoint}"
         },
         "subscription": {
-            "subject": "Subscription",
-            "content": "{school} has registered you for the date of {date}"
+            "title": "Subscription",
+            "body": "{school} has registered you for the date of {date}"
+        },
+        "stateChanged": {
+            "subject": "Appointment state has changed",
+            "content": "{school}:\r\nThe appointment state of {date} changed."
+        },
+        "informWaitingStudent": {
+            "title": "{school}: Registration for: {date}",
+            "body": "Someone has unsubscribed for the appointment from {date}. You can now participate."
         }
     }
 }

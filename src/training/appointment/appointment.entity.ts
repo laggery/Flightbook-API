@@ -63,6 +63,14 @@ export class Appointment {
         return this.subscriptions.find((subscription: Subscription) => subscription.user.email === email);
     }
 
+    isUserOnWaintingList(userId: number) {
+        const index = this.subscriptions.findIndex((subscription: Subscription) => subscription.user.id === userId);
+        if (this.maxPeople && index + 1 > this.maxPeople) {
+            return true;
+        }
+        return false;
+    }
+
     removeUserSubscription(userId: number): Subscription {
         const index = this.subscriptions.findIndex((subscription: Subscription) => subscription.user.id === userId);
         if (index !== -1) {

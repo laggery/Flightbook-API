@@ -19,7 +19,7 @@ export class AppointmentService {
 
     async getAppointmentById(id: number): Promise<Appointment> {
         let appointment = await this.appointmentRepository.findOneOrFail({
-            relations: ["subscriptions", "subscriptions.user"],
+            relations: ["subscriptions", "subscriptions.user", "school"],
             where: {
                 id: id
             }

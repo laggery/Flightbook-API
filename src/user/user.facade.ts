@@ -110,7 +110,7 @@ export class UserFacade {
 
         // Check if notification token already exists
         const userToClean: User = await this.userService.getUserByNotificationToken(notificationToken);
-        if (userToClean) {
+        if (userToClean && userToClean.id != id) {
             userToClean.clearNotificationToken();
             this.userService.saveUser(userToClean);
         }

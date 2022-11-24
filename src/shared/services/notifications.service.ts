@@ -4,23 +4,31 @@ import * as moment from 'moment';
 import { BatchResponse, getMessaging, MulticastMessage, SendResponse } from 'firebase-admin/messaging';
 import { UserService } from 'src/user/user.service';
 import { Student } from 'src/training/student/student.entity';
+import { Appointment } from 'src/training/appointment/appointment.entity';
+import { Subscription } from 'src/training/subscription/subscription.entity';
+
+export enum NotificationType {
+    APPOINTMENT = "APPOINTMENT"
+  }
 
 @Injectable()
 export class NotificationsService {
-    constructor(private userService: UserService) {
+    constructor(
+        private userService: UserService
+    ) {
         const firebaseCredentials = JSON.parse(process.env.FIREBASE_CREDENTIAL_JSON);
         initializeApp({
             credential: cert(firebaseCredentials)
         });
     }
 
-    async sendNewAppointment(students: Student[], appointment, i18n) {
+    async sendNewAppointment(students: Student[], appointment: Appointment, i18n) {
 
         const tokens = students.filter((student: Student) => student.user.notificationToken)
             .map((student: Student) => student.user.notificationToken);
 
         if (tokens.length == 0) {
-            Logger.debug("no notification to send");
+            Logger.debug("no notification to send for new appointment");
             return
         }
 
@@ -35,6 +43,11 @@ export class NotificationsService {
             notification: {
                 title: i18n.t('notification.appointment.new.title'),
                 body: body
+            },
+            data: {
+                type: NotificationType.APPOINTMENT,
+                schoolId: `${appointment.school.id}`,
+                appointmentId: `${appointment.id}`
             },
             tokens: tokens
         }
@@ -54,13 +67,13 @@ export class NotificationsService {
         this.userService.clearNotificationTokens(tokensToDelete);
     }
 
-    async sendAppointmentSubscription(students: Student[], appointment, i18n) {
+    async sendAppointmentSubscription(students: Student[], appointment: Appointment, i18n) {
 
         const tokens = students.filter((student: Student) => student.user.notificationToken)
             .map((student: Student) => student.user.notificationToken);
 
         if (tokens.length == 0) {
-            Logger.debug("no notification to send");
+            Logger.debug("no notification to send for new appointment subscription");
             return
         }
 
@@ -76,6 +89,11 @@ export class NotificationsService {
                 title: i18n.t('notification.appointment.subscription.title'),
                 body: body
             },
+            data: {
+                type: NotificationType.APPOINTMENT,
+                schoolId: `${appointment.school.id}`,
+                appointmentId: `${appointment.id}`
+            },
             tokens: tokens
         }
         const tokensToDelete: string[] = [];
@@ -85,6 +103,98 @@ export class NotificationsService {
             batchResponse.responses.forEach((response: SendResponse, index: number) => {
                 if (!response.success) {
                     tokensToDelete.push(tokens[index]);
+                }
+            });
+        } catch (e: any) {
+            Logger.error("Firebase sendMulticast error", e);
+        }
+
+        this.userService.clearNotificationTokens(tokensToDelete);
+    }
+
+    async sendAppointmentStateChanged(appointment: Appointment, i18n) {
+
+        const tokens = appointment.subscriptions.filter((subscription: Subscription) => subscription.user.notificationToken)
+            .map((subscription: Subscription) => subscription.user.notificationToken);
+
+        if (tokens.length == 0) {
+            Logger.debug("no notification to send for appointment state change");
+            return
+        }
+
+        const body = i18n.t('notification.appointment.stateChanged.body', {
+            args: {
+                school: appointment.school.name,
+                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm')
+            }
+        });
+        const multicastMessage: MulticastMessage = {
+            notification: {
+                title: i18n.t('notification.appointment.stateChanged.title'),
+                body: body
+            },
+            data: {
+                type: NotificationType.APPOINTMENT,
+                schoolId: `${appointment.school.id}`,
+                appointmentId: `${appointment.id}`
+            },
+            tokens: tokens
+        }
+        const tokensToDelete: string[] = [];
+        try {
+            const batchResponse: BatchResponse = await getMessaging().sendMulticast(multicastMessage, process.env.ENV != "prod");
+            Logger.debug(batchResponse);
+            batchResponse.responses.forEach((response: SendResponse, index: number) => {
+                if (!response.success) {
+                    tokensToDelete.push(tokens[index]);
+                }
+            });
+        } catch (e: any) {
+            Logger.error("Firebase sendMulticast error", e);
+        }
+
+        this.userService.clearNotificationTokens(tokensToDelete);
+    }
+
+
+    async sendInformWaitingStudent(appointment: Appointment, subscription: Subscription, i18n) {
+
+        if (!subscription.user.notificationToken) {
+            Logger.debug("no notification to send for inform waiting student");
+            return
+        }
+
+        const body = i18n.t('notification.appointment.informWaitingStudent.body', {
+            args: {
+                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm')
+            }
+        });
+
+        const title = i18n.t('notification.appointment.informWaitingStudent.title', {
+            args: {
+                school: appointment.school.name,
+                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm')
+            }
+        });
+        const multicastMessage: MulticastMessage = {
+            notification: {
+                title: title,
+                body: body
+            },
+            data: {
+                type: NotificationType.APPOINTMENT,
+                schoolId: `${appointment.school.id}`,
+                appointmentId: `${appointment.id}`
+            },
+            tokens: [subscription.user.notificationToken]
+        }
+        const tokensToDelete: string[] = [];
+        try {
+            const batchResponse: BatchResponse = await getMessaging().sendMulticast(multicastMessage, process.env.ENV != "prod");
+            Logger.debug(batchResponse);
+            batchResponse.responses.forEach((response: SendResponse, index: number) => {
+                if (!response.success) {
+                    tokensToDelete.push(subscription.user.notificationToken);
                 }
             });
         } catch (e: any) {
