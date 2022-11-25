@@ -133,7 +133,7 @@ export class AppointmentFacade {
             const subscriptionToDelete = appointment.removeUserSubscription(userId);
 
             // Inform waiting student
-            if (subscriptionToDelete && !isUserOnWaintingList && nbSubscription > appointment.maxPeople ) {
+            if (appointment.maxPeople && subscriptionToDelete && !isUserOnWaintingList && nbSubscription > appointment.maxPeople ) {
                 const subscriptionToInform = appointment.subscriptions[appointment.maxPeople - 1];
                 this.emailService.sendInformWaitingStudent(school, appointment, subscriptionToInform, i18n);
                 this.notificationsService.sendInformWaitingStudent(appointment, subscriptionToInform, i18n);

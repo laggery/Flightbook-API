@@ -44,6 +44,23 @@ export class StudentController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get('schools/:schoolId/appointments/:appointmentId')
+    async getAppointment(@Param('schoolId') schoolId: number, @Param('appointmentId') appointmentId: number, @Query() query, @Request() req): Promise<AppointmentDto> {
+        const schools = await this.studentFacade.getSchoolsByUserId(req.user.userId)
+        const studentInSchool = schools.find((school: SchoolDto) => {
+            if (school.id == schoolId) {
+                return true;
+            }
+        });
+
+        if (!studentInSchool) {
+            throw new UnauthorizedException();
+        }
+
+        return this.appointmentFacade.getAppointmentById(appointmentId);
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Post('schools/:schoolId/appointments/:appointmentId/subscriptions')
     async addSubscriptions(@Param('schoolId') schoolId: number, @Param('appointmentId') appointmentId: number, @Request() req): Promise<AppointmentDto> {
         const schools = await this.studentFacade.getSchoolsByUserId(req.user.userId)
