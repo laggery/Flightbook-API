@@ -35,7 +35,7 @@ export class NotificationsService {
         const body = i18n.t('notification.appointment.new.body', {
             args: {
                 school: appointment.school.name,
-                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm'),
+                date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm'),
                 meetingPoint: appointment.meetingPoint
             }
         });
@@ -80,7 +80,7 @@ export class NotificationsService {
         const body = i18n.t('notification.appointment.subscription.body', {
             args: {
                 school: appointment.school.name,
-                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm'),
+                date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm'),
                 meetingPoint: appointment.meetingPoint
             }
         });
@@ -125,7 +125,7 @@ export class NotificationsService {
         const body = i18n.t('notification.appointment.stateChanged.body', {
             args: {
                 school: appointment.school.name,
-                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm')
+                date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm')
             }
         });
         const multicastMessage: MulticastMessage = {
@@ -166,14 +166,14 @@ export class NotificationsService {
 
         const body = i18n.t('notification.appointment.informWaitingStudent.body', {
             args: {
-                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm')
+                date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm')
             }
         });
 
         const title = i18n.t('notification.appointment.informWaitingStudent.title', {
             args: {
                 school: appointment.school.name,
-                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm')
+                date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm')
             }
         });
         const multicastMessage: MulticastMessage = {

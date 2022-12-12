@@ -56,7 +56,7 @@ export class EmailService {
         emailBody.content = `<p>Hello</p>
         <p>${ enrollment.school.name } invite you to share your flightbook. You can accept this invitation by follow the link below.</p>
         <p>Link : ${origin}/enrollments/${enrollment.token}</p>
-        <p>The link expire ${moment(enrollment.expireAt).format('DD.MM.YYYY HH:mm')}`;
+        <p>The link expire ${moment(enrollment.expireAt).utc().format('DD.MM.YYYY HH:mm')}`;
 
         try {
             await this.sendEmail(emailBody);
@@ -72,7 +72,7 @@ export class EmailService {
         emailBody.content = `<p>Hello</p>
         <p>${ enrollment.school.name } invite you to be member of his team. You can accept this invitation by follow the link below.</p>
         <p>Link : ${origin}/enrollments/${enrollment.token}</p>
-        <p>The link expire ${moment(enrollment.expireAt).format('DD.MM.YYYY HH:mm')}`;
+        <p>The link expire ${moment(enrollment.expireAt).utc().format('DD.MM.YYYY HH:mm')}`;
 
         try {
             await this.sendEmail(emailBody);
@@ -95,7 +95,7 @@ export class EmailService {
         email.subject = i18n.t('email.appointment.new.subject', {
             args: { 
                 school: appointment.school.name,
-                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm')
+                date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm')
             }
         });
         let description = appointment.description || "-";
@@ -103,7 +103,7 @@ export class EmailService {
         const maxPeople = appointment.maxPeople || "-";
         email.content = i18n.t('email.appointment.new.content', {
             args: {
-                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm'),
+                date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm'),
                 meetingPoint: appointment.meetingPoint,
                 description: description,
                 maxPeople: maxPeople
@@ -127,7 +127,7 @@ export class EmailService {
         email.subject = i18n.t('email.appointment.subscription.subject', {
             args: { 
                 school: appointment.school.name,
-                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm')
+                date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm')
             }
         });
         let description = appointment.description || "-";
@@ -135,7 +135,7 @@ export class EmailService {
         const maxPeople = appointment.maxPeople || "-";
         email.content = i18n.t('email.appointment.subscription.content', {
             args: {
-                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm'),
+                date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm'),
                 meetingPoint: appointment.meetingPoint,
                 description: description,
                 maxPeople: maxPeople
@@ -147,17 +147,17 @@ export class EmailService {
 
     sendUnsubscribeEmail(school: SchoolDto, appointment: Appointment, subscription: Subscription, i18n: I18nContext) {
         const email = new EmailBodyDto();
-        email.toAddress = school.email;
+        email.toAddress = appointment.instructor.email;
         email.subject = i18n.t('email.appointment.unsubscribe.subject', {
             args: { 
                 name: `${subscription.user.firstname} ${subscription.user.lastname}`,
-                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm')
+                date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm')
             }
         });
         email.content = i18n.t('email.appointment.unsubscribe.content', {
             args: { 
                 name: `${subscription.user.firstname} ${subscription.user.lastname}`,
-                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm')
+                date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm')
             }
         });
 
@@ -171,7 +171,7 @@ export class EmailService {
         email.subject = i18n.t('email.appointment.informWaitingStudent.subject', {
             args: { 
                 school: school.name,
-                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm')
+                date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm')
             }
         });
         let description = appointment.description || "-";
@@ -179,7 +179,7 @@ export class EmailService {
         const maxPeople = appointment.maxPeople || "-";
         email.content = i18n.t('email.appointment.informWaitingStudent.content', {
             args: {
-                date: moment(appointment.scheduling).format('DD.MM.YYYY HH:mm'),
+                date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm'),
                 meetingPoint: appointment.meetingPoint,
                 description: description,
                 maxPeople: maxPeople
