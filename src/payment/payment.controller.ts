@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, HttpCode, Param, Post, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Headers, HttpCode, Param, Post, Request, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { PaymentStatusDto } from './interface/payment-status-dto';
@@ -15,8 +15,8 @@ export class PaymentController {
 
     @UseGuards(JwtAuthGuard)
     @Get('stripe/session/:enrollmentToken')
-    stripePayment(@Headers('origin') origin: string, @Request() req, @Param('enrollmentToken') enrollmentToken: string): Promise<any> {
-        return this.paymentFacade.getStripeSession(origin, req.user.userId, enrollmentToken);
+    stripePayment(@Headers('accept-language') acceptLanguage: string, @Headers('origin') origin: string, @Request() req, @Param('enrollmentToken') enrollmentToken: string): Promise<any> {
+        return this.paymentFacade.getStripeSession(origin, req.user.userId, enrollmentToken, acceptLanguage);
     }
 
     @Post('stripe/webhook')

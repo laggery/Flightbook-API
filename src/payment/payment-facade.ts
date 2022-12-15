@@ -10,7 +10,7 @@ import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class PaymentFacade {
-    stripe: any;
+    stripe: Stripe;
     endpointSecret: string;
 
     constructor(
@@ -24,11 +24,11 @@ export class PaymentFacade {
         this.endpointSecret = env.STRIPE_ENDPOINT_SECRET;
     }
 
-    async getStripeSession(origin: string, userId: number, enrollmentToken: string): Promise<any> {
+    async getStripeSession(origin: string, userId: number, enrollmentToken: string, lang: string): Promise<any> {
         const user = await this.userService.getUserById(userId);
-        
 
         const session = await this.stripe.checkout.sessions.create({
+            locale: lang as Stripe.Checkout.SessionCreateParams.Locale,
             payment_method_types: ['card'],
             line_items: [{
                 price: env.STRIPE_PRICE,
@@ -37,10 +37,10 @@ export class PaymentFacade {
             mode: 'subscription',
             success_url: `${origin}/enrollments/${enrollmentToken}/success`,
             cancel_url: `${origin}/enrollments/${enrollmentToken}/cancel`,
-            client_reference_id: userId,
+            client_reference_id: userId.toString(),
             customer_email: user.email
         });
-        return { id: session.id };
+        return { id: session.id, url: session.url };
     }
 
     async hasUserPayed(id: number): Promise<PaymentStatusDto> {
