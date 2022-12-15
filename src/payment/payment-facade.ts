@@ -1,11 +1,12 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { PaymentStatusDto } from './interface/payment-status-dto';
 import Stripe from 'stripe';
 import { UserService } from 'src/user/user.service';
 import { env } from 'process';
 import { PaymentException } from './exception/payment.exception';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class PaymentFacade {
@@ -14,7 +15,8 @@ export class PaymentFacade {
 
     constructor(
         private readonly httpService: HttpService,
-        private readonly userService: UserService
+        private readonly userService: UserService,
+        private readonly emailService: EmailService
     ) {
         this.stripe = new Stripe(env.STRIPE_SECRET_KEY, {
             apiVersion: '2022-11-15',
@@ -69,12 +71,11 @@ export class PaymentFacade {
 
     async stripeWebhook(request: any) {
         const sig = request.headers['stripe-signature'];
-        console.log(sig)
 
         let event;
 
         try {
-            event = this.stripe.webhooks.constructEvent(request.body, sig, this.endpointSecret);
+            event = this.stripe.webhooks.constructEvent(request.rawBody, sig, this.endpointSecret);
         } catch (err) {
             PaymentException.invalidSignature();
         }
@@ -87,17 +88,22 @@ export class PaymentFacade {
                     app_user_id: `${session.client_reference_id}`,
                     fetch_token: session.subscription
                 }
-                await firstValueFrom(this.httpService.post(
-                    `${env.REVENUECAT_URL}/v1/receipts`,
-                    revenuecatData,
-                    {
-                        headers: {
-                            'Content-Type': "application/json",
-                            'X-Platform': 'stripe',
-                            'Authorization': `Bearer ${env.REVENUECAT_AUTH}`
+                try {
+                    await firstValueFrom(this.httpService.post(
+                        `${env.REVENUECAT_URL}/v1/receipts`,
+                        revenuecatData,
+                        {
+                            headers: {
+                                'Content-Type': "application/json",
+                                'X-Platform': 'stripe',
+                                'Authorization': `Bearer ${env.REVENUECAT_AUTH}`
+                            }
                         }
-                    }
-                ));
+                    ));
+                } catch (exception) {
+                    this.emailService.sendErrorMessageToAdmin("Revenuecat request failed", `<ul><li>app_user_id: ${session.client_reference_id}</li>li>fetch_token: ${session.subscription}</li></ul>`)
+                }
+                
                 break;
         }
     }
