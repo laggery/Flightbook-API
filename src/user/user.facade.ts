@@ -18,7 +18,7 @@ export class UserFacade {
     constructor(
         private userService: UserService,
         private authService: AuthService
-    ) { }
+    ) {}
 
     async getCurrentUser(id: number): Promise<any> {
         const user: User = await this.userService.getUserById(id);
@@ -50,7 +50,7 @@ export class UserFacade {
 
         const user = plainToClass(User, userWriteDto);
         user.loginType = loginType;
-        user.socialloginId= socialLoginId;
+        user.socialloginId = socialLoginId;
 
         const userResp: User = await this.userService.saveUser(user);
         return userResp;
@@ -63,7 +63,7 @@ export class UserFacade {
 
         const user: User = await this.userService.getUserById(id);
 
-        if (user.loginType != LoginType.LOCAL){
+        if (user.loginType != LoginType.LOCAL) {
             throw new BadRequestException();
         }
 
