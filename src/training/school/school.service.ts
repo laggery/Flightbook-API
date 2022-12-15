@@ -16,10 +16,10 @@ export class SchoolService {
     }
 
     async getSchoolByName(name: string): Promise<School> {
-        return this.schoolRepository.findOne({ name: name });
+        return this.schoolRepository.findOneBy({ name: name });
     }
 
     async getSchoolById(id: number): Promise<School> {
-        return this.schoolRepository.findOne({ id: id });
+        return this.schoolRepository.findOneBy({ id: id });
     }
 }

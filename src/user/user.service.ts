@@ -12,7 +12,7 @@ export class UserService {
     ) { }
 
     async getUserById(id: number): Promise<User> {
-        return this.userRepository.findOneOrFail(id);
+        return this.userRepository.findOneByOrFail({id: id});
     }
 
     async getUserByEmail(email: string): Promise<User | undefined> {
@@ -22,11 +22,11 @@ export class UserService {
     }
 
     async getUserByToken(token: string): Promise<User | undefined> {
-        return this.userRepository.findOne({ token: token });
+        return this.userRepository.findOneBy({ token: token });
     }
 
     async getUserByNotificationToken(notificationToken: string): Promise<User | undefined> {
-        return this.userRepository.findOne({ notificationToken: notificationToken });
+        return this.userRepository.findOneBy({ notificationToken: notificationToken });
     }
 
     async clearNotificationTokens(tokens: string[]) {
