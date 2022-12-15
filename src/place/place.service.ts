@@ -84,11 +84,11 @@ export class PlaceService {
     }
 
     async getPlaceById(token: any, id: number) {
-        return this.placeRepository.findOneOrFail({ id: id, user: { id: token.userId } });
+        return this.placeRepository.findOneByOrFail({ id: id, user: { id: token.userId } });
     }
 
     async getPlaceByName(token: any, name: string) {
-        return this.placeRepository.findOne({ name: name, user: { id: token.userId } });
+        return this.placeRepository.findOneBy({ name: name, user: { id: token.userId } });
     }
 
     async getPlacesByName(token: any, query: any, name: string) {

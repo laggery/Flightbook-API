@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { Flight } from './flight.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder, getManager } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { Glider } from 'src/glider/glider.entity';
 import { Place } from 'src/place/place.entity';
@@ -34,7 +34,7 @@ export class FlightService {
         if (query && query.limit) { sqlRequest = sqlRequest + ` LIMIT ${query.limit}`}
         if (query && query.offset) { sqlRequest = sqlRequest + ` OFFSET ${query.offset}`}
 
-        const res: [] = await getManager().query(sqlRequest);
+        const res: [] = await this.flightRepository.query(sqlRequest);
 
         const list: Flight[] = [];
         res.forEach((raw: Record<string, any>) => {
@@ -135,7 +135,7 @@ export class FlightService {
     }
 
     async getFlightById(token: any, id: number): Promise<Flight> {
-        return this.flightRepository.findOneOrFail({ id: id, user: { id: token.userId } });
+        return this.flightRepository.findOneByOrFail({ id: id, user: { id: token.userId } });
     }
 
     async getFlightsPager(token: any, query: any): Promise<PagerDto> {
