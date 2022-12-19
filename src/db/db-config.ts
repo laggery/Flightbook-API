@@ -1,4 +1,7 @@
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
+import { AltitudeFlight } from "src/training/control-sheet/altitude-flight.entity";
+import { Theory } from "src/training/control-sheet/theory.entity";
+import { TrainingHill } from "src/training/control-sheet/training-hill.entity";
 
 const dbConfigBase: any = {
     type: 'postgres',
@@ -8,8 +11,12 @@ const dbConfigBase: any = {
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE_NAME,
     schema: process.env.DATABASE_SCHEMA || "public",
-    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-    // autoLoadEntities: true,
+    entities: [
+        TrainingHill,
+        AltitudeFlight,
+        Theory
+    ],
+    autoLoadEntities: true,
     synchronize: process.env.DATABASE_SYNCHRONIZE === "true",
     migrations: [__dirname + '/../db/migrations/*{.ts,.js}'],
     migrationsTableName: 'db_migrations',

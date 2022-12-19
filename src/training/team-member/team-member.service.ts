@@ -13,7 +13,10 @@ export class TeamMemberService {
 
     async getTeamMembersBySchoolId(schoolId: number): Promise<TeamMember[]> {
         let options: any = {
-            relations: ["user", "school"],
+            relations: {
+                user: true,
+                school: true
+            },
             where: {
                 school: {
                     id: schoolId
@@ -25,7 +28,10 @@ export class TeamMemberService {
 
     async getTeamMemberById(id: number): Promise<TeamMember>  {
         let options: any = {
-            relations: ["user", "school"],
+            relations: {
+                user: true,
+                school: true
+            },
             where: {
                 id: id
             }
@@ -35,9 +41,14 @@ export class TeamMemberService {
 
     async getTeamMembersByUserId(id: number): Promise<TeamMember[]>  {
         let options: any = {
-            relations: ["user", "school"],
+            relations: {
+                user: true,
+                school: true
+            },
             where: {
-                user: id
+                user: {
+                    id: id
+                }
             }
         };
         return this.teamMemberRepository.find(options);

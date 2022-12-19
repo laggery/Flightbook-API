@@ -19,7 +19,13 @@ export class AppointmentService {
 
     async getAppointmentById(id: number): Promise<Appointment> {
         let appointment = await this.appointmentRepository.findOneOrFail({
-            relations: ["subscriptions", "subscriptions.user", "instructor", "school"],
+            relations: {
+                subscriptions:{
+                    user: true
+                },
+                instructor: true,
+                school: true
+            },
             where: {
                 id: id
             }
@@ -30,7 +36,13 @@ export class AppointmentService {
 
     async getAppointmentsBySchoolId(schoolId: number, query: any): Promise<[Appointment[], number]> {
         const options: any = {
-            relations: ["subscriptions", "subscriptions.user", "instructor", "takeOffCoordinator"],
+            relations: {
+                subscriptions:{
+                    user: true
+                },
+                instructor: true,
+                takeOffCoordinator: true
+            },
             where: {
                 school: {
                     id: schoolId
