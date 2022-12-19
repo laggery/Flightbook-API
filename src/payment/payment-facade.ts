@@ -84,11 +84,20 @@ export class PaymentFacade {
         switch (event.type) {
             case 'checkout.session.completed':
                 const session = event.data.object;
-                const revenuecatData = {
-                    app_user_id: `${session.client_reference_id}`,
-                    fetch_token: session.subscription
-                }
                 try {
+                    const user = await this.userService.getUserById(session.client_reference_id);
+                    const revenuecatData = {
+                        app_user_id: `${session.client_reference_id}`,
+                        fetch_token: session.subscription,
+                        attributes: {
+                            $email: {
+                                value: user.email
+                            },
+                            $displayName: {
+                                value: `${user.firstname} ${user.lastname}`
+                            }
+                        }
+                    }
                     await firstValueFrom(this.httpService.post(
                         `${env.REVENUECAT_URL}/v1/receipts`,
                         revenuecatData,
@@ -96,14 +105,14 @@ export class PaymentFacade {
                             headers: {
                                 'Content-Type': "application/json",
                                 'X-Platform': 'stripe',
-                                'Authorization': `Bearer ${env.REVENUECAT_AUTH}`
+                                'Authorization': `Bearer ${env.REVENUECAT_STRIPE_PUBLIC_KEY}`
                             }
                         }
                     ));
                 } catch (exception) {
                     this.emailService.sendErrorMessageToAdmin("Revenuecat request failed", `<ul><li>app_user_id: ${session.client_reference_id}</li>li>fetch_token: ${session.subscription}</li></ul>`)
                 }
-                
+
                 break;
         }
     }

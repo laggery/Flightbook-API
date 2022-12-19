@@ -21,7 +21,7 @@ export class PaymentController {
 
     @Post('stripe/webhook')
     @HttpCode(204)
-    async hasUserPayed(@Request() req) {
+    async stripeWebhook(@Request() req) {
         await this.paymentFacade.stripeWebhook(req);
     }
 
