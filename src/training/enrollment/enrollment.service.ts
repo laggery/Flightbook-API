@@ -18,7 +18,9 @@ export class EnrollmentService {
 
     async getStudentsEnrollmentByEmailAndSchoolId(email: string, schoolId: number): Promise<Enrollment[]> {
         let options: any = {
-            relations: ["school"],
+            relations: {
+                school: true
+            },
             where: {
                 email: email,
                 school: {
@@ -32,7 +34,9 @@ export class EnrollmentService {
 
     async getTeamMemberEnrollmentByEmailAndSchoolId(email: string, schoolId: number): Promise<Enrollment[]> {
         let options: any = {
-            relations: ["school"],
+            relations: {
+                school: true
+            },
             where: {
                 email: email,
                 school: {
@@ -47,7 +51,9 @@ export class EnrollmentService {
     async getEnrollmentByToken(token: string): Promise<Enrollment> {
         return this.enrollmentRepository.findOne(
             {
-                relations: ["school"],
+                relations: {
+                    school: true
+                },
                 where: {
                     token: token
                 }

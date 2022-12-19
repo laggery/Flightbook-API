@@ -12,7 +12,10 @@ export class StudentService {
 
     async getStudentsBySchoolId(schoolId: number): Promise<Student[]> {
         let options: any = {
-            relations: ["user", "school"],
+            relations: {
+                user: true,
+                school: true
+            },
             where: {
                 school: {
                     id: schoolId
@@ -24,7 +27,10 @@ export class StudentService {
 
     async getStudentById(userId: number): Promise<Student[]> {
         let options: any = {
-            relations: ["user", "school"],
+            relations: {
+                user: true,
+                school: true
+            },
             where: {
                 user: {
                     id: userId
@@ -36,7 +42,10 @@ export class StudentService {
 
     async getStudentByEmail(email: string): Promise<Student[]> {
         let options: any = {
-            relations: ["user", "school"],
+            relations: {
+                user: true,
+                school: true
+            },
             where: {
                 user: {
                     email: email
@@ -48,7 +57,10 @@ export class StudentService {
 
     async getStudentsByIdAndSchoolId(userId: number, schoolId: number): Promise<Student> {
         let options: any = {
-            relations: ["user", "school"],
+            relations: {
+                user: true,
+                school: true
+            },
             where: {
                 user: {
                     id: userId

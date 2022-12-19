@@ -13,7 +13,11 @@ export class ControlSheetService{
 
     async getControlSheetByUserId(userId: number) {
         let options: any = {
-            relations: ["theory", "altitudeFlight", "trainingHill"],
+            relations: {
+                theory: true,
+                altitudeFlight: true,
+                trainingHill: true
+            },
             where: {
                 user: {
                     id: userId
