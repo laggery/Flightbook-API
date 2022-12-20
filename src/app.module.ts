@@ -19,6 +19,7 @@ import { FileUploadModule } from './fileupload/file-upload.module';
 import { HttpModule } from '@nestjs/axios';
 import { TrainingModule } from './training/training.module';
 import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
+import { PaymentModule } from './payment/payment.module';
 import * as path from 'path';
 
 @Module({
@@ -44,7 +45,8 @@ import * as path from 'path';
     GliderModule,
     NewsModule,
     HttpModule,
-    TrainingModule
+    TrainingModule,
+    PaymentModule
   ],
   controllers: [AppController],
   providers: [

@@ -9,6 +9,7 @@ import { Subscription } from 'src/training/subscription/subscription.entity';
 import { I18nContext } from 'nestjs-i18n';
 import { Student } from 'src/training/student/student.entity';
 import { Enrollment } from 'src/training/enrollment/enrollment.entity';
+import { env } from 'process';
 
 @Injectable()
 export class EmailService {
@@ -185,6 +186,15 @@ export class EmailService {
                 maxPeople: maxPeople
             }
         });
+
+        this.sendEmail(email);
+    }
+
+    sendErrorMessageToAdmin(subject: string, content: string) {
+        const email = new EmailBodyDto();
+        email.toAddress = env.EMAIL_FROM;
+        email.subject = subject;
+        email.content = content;
 
         this.sendEmail(email);
     }

@@ -6,7 +6,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule,{
-    logger: process.env.ENV == "prod" ? ['log', 'error', 'warn'] : ['error', 'warn', 'log', 'debug', 'verbose']
+    logger: process.env.ENV == "prod" ? ['log', 'error', 'warn'] : ['error', 'warn', 'log', 'debug', 'verbose'],
+    rawBody: true
   });
   app.enableCors();
   app.use(helmet());
