@@ -51,13 +51,18 @@ export class EmailService {
     }
 
     async sendStudentEnrollement(enrollment: Enrollment, origin: string) {
+        const i18n = I18nContext.current();
         const emailBody = new EmailBodyDto();
         emailBody.toAddress = enrollment.email;
-        emailBody.subject = "Share flightbook";
-        emailBody.content = `<p>Hello</p>
-        <p>${ enrollment.school.name } invite you to share your flightbook. You can accept this invitation by follow the link below.</p>
-        <p>Link : ${origin}/enrollments/${enrollment.token}</p>
-        <p>The link expire ${moment(enrollment.expireAt).utc().format('DD.MM.YYYY HH:mm')}`;
+        emailBody.subject = i18n.t('email.enrollment.student.subject', { lang: enrollment.school.language });
+        emailBody.content = i18n.t('email.enrollment.student.content', {
+            lang: enrollment.school.language,
+            args: {
+                school: enrollment.school.name,
+                link: `${origin}/enrollments/${enrollment.token}`,
+                date: moment(enrollment.expireAt).utc().format('DD.MM.YYYY HH:mm')
+            }
+        });
 
         try {
             await this.sendEmail(emailBody);
@@ -67,14 +72,24 @@ export class EmailService {
     }
 
     async sendTeamMemberEnrollement(enrollment: Enrollment, origin: string) {
+        const i18n = I18nContext.current();
         const emailBody = new EmailBodyDto();
         emailBody.toAddress = enrollment.email;
-        emailBody.subject = `Team member ${enrollment.school.name}`;
-        emailBody.content = `<p>Hello</p>
-        <p>${ enrollment.school.name } invite you to be member of his team. You can accept this invitation by follow the link below.</p>
-        <p>Link : ${origin}/enrollments/${enrollment.token}</p>
-        <p>The link expire ${moment(enrollment.expireAt).utc().format('DD.MM.YYYY HH:mm')}`;
-
+        emailBody.subject = i18n.t('email.enrollment.teamMember.subject', {
+            lang: enrollment.school.language,
+            args: {
+                school: enrollment.school.name
+            }
+        });
+        emailBody.content = i18n.t('email.enrollment.teamMember.content', {
+            lang: enrollment.school.language,
+            args: {
+                school: enrollment.school.name,
+                link: `${origin}/enrollments/${enrollment.token}`,
+                date: moment(enrollment.expireAt).utc().format('DD.MM.YYYY HH:mm')
+            }
+        });
+        
         try {
             await this.sendEmail(emailBody);
         } catch (e) {
@@ -82,7 +97,7 @@ export class EmailService {
         }
     }
 
-    sendNewAppointment(students: Student[], appointment: Appointment, i18n: I18nContext) {
+    sendNewAppointment(students: Student[], appointment: Appointment) {
         if (students.length <= 0) {
             return;
         }
@@ -93,7 +108,10 @@ export class EmailService {
             email.toAddress += student.user.email + ";"
         });
 
+        const i18n = I18nContext.current();
+
         email.subject = i18n.t('email.appointment.new.subject', {
+            lang: appointment.school.language,
             args: { 
                 school: appointment.school.name,
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm')
@@ -103,6 +121,7 @@ export class EmailService {
         description = description.replace(new RegExp("[\r\n]", "gm"), "</br>");
         const maxPeople = appointment.maxPeople || "-";
         email.content = i18n.t('email.appointment.new.content', {
+            lang: appointment.school.language,
             args: {
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm'),
                 meetingPoint: appointment.meetingPoint,
@@ -114,7 +133,7 @@ export class EmailService {
         this.sendEmail(email);
     }
 
-    sendAppointmentSubscription(students: Student[], appointment: Appointment, i18n: I18nContext) {
+    sendAppointmentSubscription(students: Student[], appointment: Appointment) {
         if (students.length <= 0) {
             return;
         }
@@ -125,7 +144,10 @@ export class EmailService {
             email.toAddress += student.user.email + ";"
         });
 
+        const i18n = I18nContext.current();
+
         email.subject = i18n.t('email.appointment.subscription.subject', {
+            lang: appointment.school.language,
             args: { 
                 school: appointment.school.name,
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm')
@@ -135,6 +157,7 @@ export class EmailService {
         description = description.replace(new RegExp("[\r\n]", "gm"), "</br>");
         const maxPeople = appointment.maxPeople || "-";
         email.content = i18n.t('email.appointment.subscription.content', {
+            lang: appointment.school.language,
             args: {
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm'),
                 meetingPoint: appointment.meetingPoint,
@@ -146,16 +169,20 @@ export class EmailService {
         this.sendEmail(email);
     }
 
-    sendUnsubscribeEmail(school: SchoolDto, appointment: Appointment, subscription: Subscription, i18n: I18nContext) {
+    sendUnsubscribeEmail(school: SchoolDto, appointment: Appointment, subscription: Subscription) {
+        const i18n = I18nContext.current();
         const email = new EmailBodyDto();
+
         email.toAddress = appointment.instructor.email;
         email.subject = i18n.t('email.appointment.unsubscribe.subject', {
+            lang: school.language,
             args: { 
                 name: `${subscription.user.firstname} ${subscription.user.lastname}`,
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm')
             }
         });
         email.content = i18n.t('email.appointment.unsubscribe.content', {
+            lang: school.language,
             args: { 
                 name: `${subscription.user.firstname} ${subscription.user.lastname}`,
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm')
@@ -165,11 +192,13 @@ export class EmailService {
         this.sendEmail(email);
     }
 
-    sendInformWaitingStudent(school: SchoolDto, appointment: Appointment, subscription: Subscription, i18n: I18nContext) {
+    sendInformWaitingStudent(school: SchoolDto, appointment: Appointment, subscription: Subscription) {
+        const i18n = I18nContext.current();
         const email = new EmailBodyDto();
+
         email.toAddress = subscription.user.email;
-        
         email.subject = i18n.t('email.appointment.informWaitingStudent.subject', {
+            lang: school.language,
             args: { 
                 school: school.name,
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm')
@@ -179,6 +208,7 @@ export class EmailService {
         description = description.replace(new RegExp("[\r\n]", "gm"), "</br>");
         const maxPeople = appointment.maxPeople || "-";
         email.content = i18n.t('email.appointment.informWaitingStudent.content', {
+            lang: school.language,
             args: {
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm'),
                 meetingPoint: appointment.meetingPoint,

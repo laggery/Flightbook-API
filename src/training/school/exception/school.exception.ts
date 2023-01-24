@@ -3,7 +3,7 @@ import {ConflictException, UnprocessableEntityException} from "@nestjs/common";
 export class SchoolException {
 
     public static invalidException() {
-        throw new UnprocessableEntityException("Invalid school: name, address1, plz, city, phone and email must be provided")
+        throw new UnprocessableEntityException("Invalid school: name, address1, plz, city, phone, email and a language must be provided")
     }
 
     public static invalidIdException() {

@@ -17,7 +17,7 @@ export class SchoolFacade {
 
     async createSchool(token: any, schoolDto: SchoolDto): Promise<SchoolDto> {
         // Check name, address1, plz, city, phone, email
-        if (!schoolDto.name || !schoolDto.address1 || !schoolDto.plz || !schoolDto.city || !schoolDto.phone || !schoolDto.email) {
+        if (!schoolDto.name || !schoolDto.address1 || !schoolDto.plz || !schoolDto.city || !schoolDto.phone || !schoolDto.email || !schoolDto.language) {
             throw SchoolException.invalidException();
         }
 

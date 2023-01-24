@@ -29,4 +29,7 @@ export class SchoolDto {
     @IsEmail()
     @Expose()
     readonly email: string;
+    @ApiProperty()
+    @Expose()
+    readonly language: string;
 }

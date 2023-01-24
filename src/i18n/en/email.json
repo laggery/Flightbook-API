@@ -16,5 +16,15 @@
             "subject": "{school}: Registration for: {date}",
             "content": "<p>Someone has unsubscribed for the appointment from {date}. You can now participate.</p><p>Appointment information</p><ul><li>Date: {date}</li><li>Meeting point: {meetingPoint}</li><li>Description: {description}</li><li>Max participants: {maxPeople}</li></ul>"
         }
+    },
+    "enrollment": {
+        "student": {
+            "subject": "Share flightbook",
+            "content": "<p>Hello</p><p>{school} invite you to share your flightbook. You can accept this invitation by follow the link below.</p><p>Link : <a href='{link}'>{link}</a></p><p>The link expire {date}</p>"
+        },
+        "teamMember": {
+            "subject": "Team member {school}",
+            "content": "<p>{school} invite you to be member of his team. You can accept this invitation by follow the link below.</p><p>Link: <a href='{link}'>{link}</a></p><p>The link expire {date}</p>"
+        }
     }
 }

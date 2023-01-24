@@ -31,6 +31,9 @@ export class School {
   @Column("character varying", { name: "email", length: 255 })
   email: string;
 
+  @Column("character varying", { name: "language", length: 2 })
+  language: string;
+
   @OneToMany(() => TeamMember, (teamMember) => teamMember.school, { cascade: ['insert', 'update'] })
   teamMembers: TeamMember[];
 

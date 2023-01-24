@@ -6,6 +6,7 @@ import { UserService } from 'src/user/user.service';
 import { Student } from 'src/training/student/student.entity';
 import { Appointment } from 'src/training/appointment/appointment.entity';
 import { Subscription } from 'src/training/subscription/subscription.entity';
+import { I18nContext } from 'nestjs-i18n';
 
 export enum NotificationType {
     APPOINTMENT = "APPOINTMENT"
@@ -22,7 +23,7 @@ export class NotificationsService {
         });
     }
 
-    async sendNewAppointment(students: Student[], appointment: Appointment, i18n) {
+    async sendNewAppointment(students: Student[], appointment: Appointment) {
 
         const tokens = students.filter((student: Student) => student.user.notificationToken)
             .map((student: Student) => student.user.notificationToken);
@@ -32,7 +33,10 @@ export class NotificationsService {
             return
         }
 
+        const i18n = I18nContext.current();
+
         const body = i18n.t('notification.appointment.new.body', {
+            lang: appointment.school.language,
             args: {
                 school: appointment.school.name,
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm'),
@@ -41,7 +45,7 @@ export class NotificationsService {
         });
         const multicastMessage: MulticastMessage = {
             notification: {
-                title: i18n.t('notification.appointment.new.title'),
+                title: i18n.t('notification.appointment.new.title', { lang: appointment.school.language }),
                 body: body
             },
             data: {
@@ -67,7 +71,7 @@ export class NotificationsService {
         this.userService.clearNotificationTokens(tokensToDelete);
     }
 
-    async sendAppointmentSubscription(students: Student[], appointment: Appointment, i18n) {
+    async sendAppointmentSubscription(students: Student[], appointment: Appointment) {
 
         const tokens = students.filter((student: Student) => student.user.notificationToken)
             .map((student: Student) => student.user.notificationToken);
@@ -77,7 +81,10 @@ export class NotificationsService {
             return
         }
 
+        const i18n = I18nContext.current();
+
         const body = i18n.t('notification.appointment.subscription.body', {
+            lang: appointment.school.language,
             args: {
                 school: appointment.school.name,
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm'),
@@ -86,7 +93,7 @@ export class NotificationsService {
         });
         const multicastMessage: MulticastMessage = {
             notification: {
-                title: i18n.t('notification.appointment.subscription.title'),
+                title: i18n.t('notification.appointment.subscription.title', { lang: appointment.school.language }),
                 body: body
             },
             data: {
@@ -112,7 +119,7 @@ export class NotificationsService {
         this.userService.clearNotificationTokens(tokensToDelete);
     }
 
-    async sendAppointmentStateChanged(appointment: Appointment, i18n) {
+    async sendAppointmentStateChanged(appointment: Appointment) {
 
         const tokens = appointment.subscriptions.filter((subscription: Subscription) => subscription.user.notificationToken)
             .map((subscription: Subscription) => subscription.user.notificationToken);
@@ -122,7 +129,10 @@ export class NotificationsService {
             return
         }
 
+        const i18n = I18nContext.current();
+
         const body = i18n.t('notification.appointment.stateChanged.body', {
+            lang: appointment.school.language,
             args: {
                 school: appointment.school.name,
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm')
@@ -130,7 +140,7 @@ export class NotificationsService {
         });
         const multicastMessage: MulticastMessage = {
             notification: {
-                title: i18n.t('notification.appointment.stateChanged.title'),
+                title: i18n.t('notification.appointment.stateChanged.title', { lang: appointment.school.language }),
                 body: body
             },
             data: {
@@ -157,20 +167,24 @@ export class NotificationsService {
     }
 
 
-    async sendInformWaitingStudent(appointment: Appointment, subscription: Subscription, i18n) {
+    async sendInformWaitingStudent(appointment: Appointment, subscription: Subscription) {
 
         if (!subscription.user.notificationToken) {
             Logger.debug("no notification to send for inform waiting student");
             return
         }
 
+        const i18n = I18nContext.current();
+
         const body = i18n.t('notification.appointment.informWaitingStudent.body', {
+            lang: appointment.school.language,
             args: {
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm')
             }
         });
 
         const title = i18n.t('notification.appointment.informWaitingStudent.title', {
+            lang: appointment.school.language,
             args: {
                 school: appointment.school.name,
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm')

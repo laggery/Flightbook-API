@@ -16,5 +16,15 @@
             "subject": "{school}: Anmeldung: {date}",
             "content": "<p>Jemand hat sich für den Termin vom {date} abgemeldet. Sie können jetzt teilnehmen.</p><p>Informationen zum Termin</p><ul> <li>Datum: {date}</li><li>Treffpunkt: {meetingPoint}</li><li>Beschreibung: {description}</li><li>Max Teilnehmer: {maxPeople}</li></ul>"
         }
+    },
+    "enrollment": {
+        "student": {
+            "subject": "Flugbuch teilen",
+            "content": "<p>Hallo</p><p>{school} ladet Sie ein, Ihr Flugbuch zu teilen. Sie können diese Einladung annehmen, indem Sie dem untenstehenden Link folgen.</p><p>Link : <a href='{link}'>{link}</a></p><p>Der Link läuft am {date} ab</p>"
+        },
+        "teamMember": {
+            "subject": "Mitglied des Teams {school}",
+            "content": "<p>{school} ladet Sie ein, Mitglied seines Teams zu werden. Sie können diese Einladung annehmen, indem Sie dem untenstehenden Link folgen.</p><p>Link: <a href='{link}'>{link}</a></p><p>Der Link läuft am {date} ab</p>"
+        }
     }
 }

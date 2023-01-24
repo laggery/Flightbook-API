@@ -1,0 +1,20 @@
+{
+    "appointment": {
+        "new": {
+            "title": "Nouveau rendez-vous",
+            "body": "{school}\r\nDate: {date}\r\nPoint de rencontre: {meetingPoint}"
+        },
+        "subscription": {
+            "title": "Inscription",
+            "body": "{school} t'a inscrit au rendez-vous du {date}"
+        },
+        "stateChanged": {
+            "title": "Statut du rendez-vous a été changé",
+            "body": "{school}:\r\nStatut rendez-vous du {date} a été changé."
+        },
+        "informWaitingStudent": {
+            "title": "{school}: Inscription",
+            "body": "Quelqu'un s'est désinscrit pour le rendez-vous du {date}. Vous pouvez maintenant participer."
+        }
+    }
+}

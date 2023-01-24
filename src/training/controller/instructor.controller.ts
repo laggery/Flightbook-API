@@ -16,7 +16,6 @@ import { EnrollmentWriteDto } from 'src/training/enrollment/interface/enrollment
 import { EnrollmentDto } from 'src/training/enrollment/interface/enrollment-dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PagerEntityDto } from 'src/interface/pager-entity-dto';
-import { I18n, I18nContext } from 'nestjs-i18n';
 import { TeamMemberDto } from '../team-member/interface/team-member-dto';
 
 @Controller('instructor')
@@ -94,14 +93,14 @@ export class InstructorController {
 
     @UseGuards(JwtAuthGuard, SchoolGuard)
     @Post('/schools/:id/appointments')
-    async postAppointment(@I18n() i18n: I18nContext, @Param('id') id: number, @Body() appointmentDto: AppointmentDto): Promise<AppointmentDto> {
-        return this.appointmentFacade.createAppointment(id, appointmentDto, i18n);
+    async postAppointment(@Param('id') id: number, @Body() appointmentDto: AppointmentDto): Promise<AppointmentDto> {
+        return this.appointmentFacade.createAppointment(id, appointmentDto);
     }
 
     @UseGuards(JwtAuthGuard, SchoolGuard)
     @Put('/schools/:id/appointments/:appointment_id')
-    putAppointment(@I18n() i18n: I18nContext, @Param('id') id: number, @Param('appointment_id') appointmentId: number, @Body() appointmentDto: AppointmentDto): Promise<AppointmentDto> {
-        return this.appointmentFacade.updateAppointment(appointmentId, id, appointmentDto, i18n);
+    putAppointment(@Param('id') id: number, @Param('appointment_id') appointmentId: number, @Body() appointmentDto: AppointmentDto): Promise<AppointmentDto> {
+        return this.appointmentFacade.updateAppointment(appointmentId, id, appointmentDto);
     }
 
     @UseGuards(JwtAuthGuard, SchoolGuard)

@@ -17,7 +17,6 @@ import { SubscriptionService } from '../subscription/subscription.service';
 import { PagerEntityDto } from 'src/interface/pager-entity-dto';
 import { EmailService } from 'src/email/email.service';
 import { SchoolDto } from '../school/interface/school-dto';
-import { I18nContext } from 'nestjs-i18n';
 import { NotificationsService } from 'src/shared/services/notifications.service';
 import { StudentService } from '../student/student.service';
 import { SubscriptionDto } from '../subscription/interface/subscription-dto';
@@ -36,7 +35,7 @@ export class AppointmentFacade {
         private notificationsService: NotificationsService
     ) { }
 
-    async createAppointment(schoolId: number, appointmentDto: AppointmentDto, i18n: I18nContext): Promise<AppointmentDto> {
+    async createAppointment(schoolId: number, appointmentDto: AppointmentDto): Promise<AppointmentDto> {
         let appointment: Appointment = plainToInstance(Appointment, appointmentDto);
         await this.appointmentValidityCheck(appointmentDto, schoolId, appointment);
 
@@ -53,17 +52,17 @@ export class AppointmentFacade {
                     students.splice(index, 1);
                 }
             });
-            this.emailService.sendAppointmentSubscription(addedStudents, appointment, i18n);
-            this.notificationsService.sendAppointmentSubscription(addedStudents, appointment, i18n);
+            this.emailService.sendAppointmentSubscription(addedStudents, appointment);
+            this.notificationsService.sendAppointmentSubscription(addedStudents, appointment);
         }
 
-        this.emailService.sendNewAppointment(students, appointment, i18n);
-        this.notificationsService.sendNewAppointment(students, appointment, i18n);
+        this.emailService.sendNewAppointment(students, appointment);
+        this.notificationsService.sendNewAppointment(students, appointment);
 
         return AppointmentMapper.toAppointmentDto(appointmentResp);
     }
 
-    async updateAppointment(id: number, schoolId: number, appointmentDto: AppointmentDto, i18n: I18nContext): Promise<AppointmentDto> {
+    async updateAppointment(id: number, schoolId: number, appointmentDto: AppointmentDto): Promise<AppointmentDto> {
         let appointment: Appointment = await this.appointmentService.getAppointmentById(id);
         await this.appointmentValidityCheck(appointmentDto, schoolId, appointment);
 
@@ -94,7 +93,7 @@ export class AppointmentFacade {
         });
 
         if (previousState != appointmentDto.state) {
-            this.notificationsService.sendAppointmentStateChanged(appointment, i18n);
+            this.notificationsService.sendAppointmentStateChanged(appointment);
         }
 
         const appointmentResp: Appointment = await this.appointmentService.saveAppointment(appointment);
@@ -125,7 +124,7 @@ export class AppointmentFacade {
         return AppointmentMapper.toAppointmentDto(appointmentResp);
     }
 
-    async deleteSubscriptionFromAppointment(appointmentId: number, userId: number, school: SchoolDto, i18n: I18nContext): Promise<AppointmentDto> {
+    async deleteSubscriptionFromAppointment(appointmentId: number, userId: number, school: SchoolDto): Promise<AppointmentDto> {
         const appointment: Appointment = await this.appointmentService.getAppointmentById(appointmentId);
         if (appointment.subscriptions) {
             const nbSubscription = appointment.subscriptions.length;
@@ -135,12 +134,12 @@ export class AppointmentFacade {
             // Inform waiting student
             if (appointment.maxPeople && subscriptionToDelete && !isUserOnWaintingList && nbSubscription > appointment.maxPeople ) {
                 const subscriptionToInform = appointment.subscriptions[appointment.maxPeople - 1];
-                this.emailService.sendInformWaitingStudent(school, appointment, subscriptionToInform, i18n);
-                this.notificationsService.sendInformWaitingStudent(appointment, subscriptionToInform, i18n);
+                this.emailService.sendInformWaitingStudent(school, appointment, subscriptionToInform);
+                this.notificationsService.sendInformWaitingStudent(appointment, subscriptionToInform);
             }
 
             this.subscriptionService.removeSubscription(subscriptionToDelete);
-            this.emailService.sendUnsubscribeEmail(school, appointment, subscriptionToDelete, i18n);
+            this.emailService.sendUnsubscribeEmail(school, appointment, subscriptionToDelete);
         }
         return AppointmentMapper.toAppointmentDto(appointment);
     }
