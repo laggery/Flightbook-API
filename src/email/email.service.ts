@@ -120,10 +120,12 @@ export class EmailService {
         let description = appointment.description || "-";
         description = description.replace(new RegExp("[\r\n]", "gm"), "</br>");
         const maxPeople = appointment.maxPeople || "-";
+        const type = email.content = i18n.t('email.appointment.type', { lang: appointment.school.language});
         email.content = i18n.t('email.appointment.new.content', {
             lang: appointment.school.language,
             args: {
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm'),
+                type: appointment.type ? `<li>${type}: ${appointment.type.name}</li>` : "",
                 meetingPoint: appointment.meetingPoint,
                 description: description,
                 maxPeople: maxPeople
@@ -156,10 +158,12 @@ export class EmailService {
         let description = appointment.description || "-";
         description = description.replace(new RegExp("[\r\n]", "gm"), "</br>");
         const maxPeople = appointment.maxPeople || "-";
+        const type = email.content = i18n.t('email.appointment.type', { lang: appointment.school.language});
         email.content = i18n.t('email.appointment.subscription.content', {
             lang: appointment.school.language,
             args: {
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm'),
+                type: appointment.type ? `<li>${type}: ${appointment.type.name}</li>` : "",
                 meetingPoint: appointment.meetingPoint,
                 description: description,
                 maxPeople: maxPeople
@@ -207,10 +211,12 @@ export class EmailService {
         let description = appointment.description || "-";
         description = description.replace(new RegExp("[\r\n]", "gm"), "</br>");
         const maxPeople = appointment.maxPeople || "-";
+        const type = email.content = i18n.t('email.appointment.type', { lang: appointment.school.language});
         email.content = i18n.t('email.appointment.informWaitingStudent.content', {
             lang: school.language,
             args: {
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm'),
+                type: appointment.type ? `<li>${type}: ${appointment.type.name}</li>` : "",
                 meetingPoint: appointment.meetingPoint,
                 description: description,
                 maxPeople: maxPeople

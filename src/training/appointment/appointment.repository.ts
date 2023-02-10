@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, LessThanOrEqual, MoreThanOrEqual, Repository, SelectQueryBuilder } from 'typeorm';
+import { Between, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Subscription } from '../subscription/subscription.entity';
 import { Appointment } from './appointment.entity';
 import { State } from './state';
 
 @Injectable()
-export class AppointmentService {
+export class AppointmentRepository {
 
     constructor(
         @InjectRepository(Appointment)
@@ -24,7 +24,8 @@ export class AppointmentService {
                     user: true
                 },
                 instructor: true,
-                school: true
+                school: true,
+                type: true
             },
             where: {
                 id: id
@@ -41,7 +42,8 @@ export class AppointmentService {
                     user: true
                 },
                 instructor: true,
-                takeOffCoordinator: true
+                takeOffCoordinator: true,
+                type: true
             },
             where: {
                 school: {

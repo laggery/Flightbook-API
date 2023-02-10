@@ -12,6 +12,9 @@ export class ControlSheetService{
     ) { }
 
     async getControlSheetByUserId(userId: number) {
+        if (!userId) {
+            return undefined;
+        }
         let options: any = {
             relations: {
                 theory: true,

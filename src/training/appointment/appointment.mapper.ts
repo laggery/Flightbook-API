@@ -4,6 +4,7 @@ import { Appointment } from "./appointment.entity";
 import { UserReadDto } from 'src/user/interface/user-read-dto';
 import { Subscription } from "../subscription/subscription.entity";
 import { SubscriptionDto } from "../subscription/interface/subscription-dto";
+import { AppointmentType } from "./appointment-type.entity";
 
 export class AppointmentMapper {
 
@@ -16,7 +17,7 @@ export class AppointmentMapper {
     }
 
     public static toAppointmentDto(appointment: Appointment): AppointmentDto {
-        const {takeOffCoordinator, subscriptions, instructor} = appointment;
+        const {takeOffCoordinator, subscriptions, instructor, type} = appointment;
         const appointmentDto: AppointmentDto = plainToInstance(AppointmentDto, appointment);
 
         if(instructor) {
@@ -27,6 +28,12 @@ export class AppointmentMapper {
             appointmentDto.takeOffCoordinator = new UserReadDto(takeOffCoordinator.email, takeOffCoordinator.firstname, takeOffCoordinator.lastname);
         } else {
             delete appointmentDto.takeOffCoordinator;
+        }
+
+        if (type) {
+            appointmentDto.type = plainToInstance(AppointmentType, type);
+        } else {
+            delete appointmentDto.type;
         }
 
         if (subscriptions) {

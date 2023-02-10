@@ -56,6 +56,9 @@ export class StudentService {
     }
 
     async getStudentsByIdAndSchoolId(userId: number, schoolId: number): Promise<Student> {
+        if (!userId || !schoolId) {
+            return undefined;
+        }
         let options: any = {
             relations: {
                 user: true,

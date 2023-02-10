@@ -1,12 +1,13 @@
 {
     "appointment": {
+        "type": "Type",
         "new": {
             "subject": "{school}: New appointment on: {date}",
-            "content": "<p>Appointment information</p><ul><li>Date: {date}</li><li>Meeting point: {meetingPoint}</li><li>Description: {description}</li><li>Max participants: {maxPeople}</li></ul>"
+            "content": "<p>Appointment information</p><ul><li>Date: {date}</li>{type}<li>Meeting point: {meetingPoint}</li><li>Description: {description}</li><li>Max participants: {maxPeople}</li></ul>"
         },
         "subscription": {
             "subject": "{school}: Subscription: {date}",
-            "content": "<p>{school} has registered you for the date of {date}</p><p>Appointment information</p><ul><li>Date: {date}</li><li>Meeting point: {meetingPoint}</li><li>Description: {description}</li><li>Max participants: {maxPeople}</li></ul>"
+            "content": "<p>{school} has registered you for the date of {date}</p><p>Appointment information</p><ul><li>Date: {date}</li>{type}<li>Meeting point: {meetingPoint}</li><li>Description: {description}</li><li>Max participants: {maxPeople}</li></ul>"
         },
         "unsubscribe": {
             "subject": "{name}: Unsubscribe from {date}",
@@ -14,7 +15,7 @@
         },
         "informWaitingStudent": {
             "subject": "{school}: Registration for: {date}",
-            "content": "<p>Someone has unsubscribed for the appointment from {date}. You can now participate.</p><p>Appointment information</p><ul><li>Date: {date}</li><li>Meeting point: {meetingPoint}</li><li>Description: {description}</li><li>Max participants: {maxPeople}</li></ul>"
+            "content": "<p>Someone has unsubscribed for the appointment from {date}. You can now participate.</p><p>Appointment information</p><ul><li>Date: {date}</li>{type}<li>Meeting point: {meetingPoint}</li><li>Description: {description}</li><li>Max participants: {maxPeople}</li></ul>"
         }
     },
     "enrollment": {

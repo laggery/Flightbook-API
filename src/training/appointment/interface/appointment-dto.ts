@@ -4,6 +4,7 @@ import {SchoolDto} from "../../school/interface/school-dto";
 import {UserReadDto} from "../../../user/interface/user-read-dto";
 import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
 import { SubscriptionDto } from "src/training/subscription/interface/subscription-dto";
+import { AppointmentTypeDto } from "./appointment-type-dto";
 
 @Exclude()
 export class AppointmentDto {
@@ -47,4 +48,8 @@ export class AppointmentDto {
     @Expose()
     @ApiProperty()
     subscriptions: SubscriptionDto[];
+
+    @Expose()
+    @ApiProperty()
+    type: AppointmentTypeDto;
 }

@@ -16,16 +16,25 @@ export class UserService {
     }
 
     async getUserByEmail(email: string): Promise<User | undefined> {
+        if (!email) {
+            return undefined;
+        }
         return this.userRepository.findOne({ where: {
             email: ILike(email)
         } });
     }
 
     async getUserByToken(token: string): Promise<User | undefined> {
+        if (!token) {
+            return undefined;
+        }
         return this.userRepository.findOneBy({ token: token });
     }
 
     async getUserByNotificationToken(notificationToken: string): Promise<User | undefined> {
+        if (!notificationToken) {
+            return undefined;
+        }
         return this.userRepository.findOneBy({ notificationToken: notificationToken });
     }
 

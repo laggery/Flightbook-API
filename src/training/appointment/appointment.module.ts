@@ -6,20 +6,35 @@ import { SchoolModule } from 'src/training/school/school.module';
 import { UserModule } from 'src/user/user.module';
 import { StudentModule } from '../student/student.module';
 import { SubscriptionModule } from '../subscription/subscription.module';
+import { AppointmentType } from './appointment-type.entity';
+import { AppointmentTypeFacade } from './appointment-type.facade';
+import { AppointmentTypeRepository } from './appointment-type.repository';
 import { Appointment } from './appointment.entity';
 import { AppointmentFacade } from './appointment.facade';
-import { AppointmentService } from './appointment.service';
+import { AppointmentRepository } from './appointment.repository';
 
 @Module({
   imports: [
     UserModule,
-    TypeOrmModule.forFeature([Appointment]),
+    TypeOrmModule.forFeature([Appointment, AppointmentType]),
     forwardRef(() => SchoolModule),
     SubscriptionModule,
     StudentModule
   ],
   controllers: [],
-  providers: [AppointmentFacade, AppointmentService, EmailService, NotificationsService],
-  exports: [AppointmentFacade, AppointmentService]
+  providers: [
+    AppointmentFacade,
+    AppointmentRepository,
+    AppointmentTypeRepository,
+    AppointmentTypeFacade,
+    EmailService,
+    NotificationsService
+  ],
+  exports: [
+    AppointmentFacade,
+    AppointmentRepository,
+    AppointmentTypeRepository,
+    AppointmentTypeFacade
+  ]
 })
 export class AppointmentModule {}

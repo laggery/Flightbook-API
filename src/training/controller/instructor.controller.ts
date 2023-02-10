@@ -17,6 +17,8 @@ import { EnrollmentDto } from 'src/training/enrollment/interface/enrollment-dto'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PagerEntityDto } from 'src/interface/pager-entity-dto';
 import { TeamMemberDto } from '../team-member/interface/team-member-dto';
+import { AppointmentTypeFacade } from '../appointment/appointment-type.facade';
+import { AppointmentTypeDto } from '../appointment/interface/appointment-type-dto';
 
 @Controller('instructor')
 @ApiTags('Instructor')
@@ -28,7 +30,8 @@ export class InstructorController {
         private schoolFacade: SchoolFacade,
         private teamMembersFacade: TeamMemberFacade,
         private enrollmentFacade: EnrollmentFacade,
-        private appointmentFacade: AppointmentFacade
+        private appointmentFacade: AppointmentFacade,
+        private appointmentTypeFacade: AppointmentTypeFacade
     ){}
 
     @UseGuards(JwtAuthGuard)
@@ -113,6 +116,24 @@ export class InstructorController {
     @Get('/schools/:id/appointments/:appointment_id/students')
     getAppointmentSubscriptions(@Param('id') id: number, @Param('appointment_id') appointmentId: number): Promise<StudentDto[]> {
         return this.studentFacade.getStudentsByAppointmentId(appointmentId);
+    }
+
+    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @Get('/schools/:id/appointment-types')
+    getAppointmentType(@Param('id') id: number, @Query() query): Promise<AppointmentTypeDto[]> {
+        return this.appointmentTypeFacade.getAppointmentTypesBySchoolId(id, query);
+    }
+
+    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @Post('/schools/:id/appointment-types')
+    postAppointmentType(@Param('id') id: number, @Body() appointmentTypeDto: AppointmentTypeDto): Promise<AppointmentTypeDto> {
+        return this.appointmentTypeFacade.createAppointmentType(id, appointmentTypeDto);
+    }
+
+    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @Put('/schools/:id/appointment-types/:appointmentTypes_id')
+    putAppointmentType(@Param('id') id: number, @Param('appointmentTypes_id') appointmentTypeId: number, @Body() appointmentTypeDto: AppointmentTypeDto): Promise<AppointmentTypeDto> {
+        return this.appointmentTypeFacade.updateAppointmentType(appointmentTypeId, id, appointmentTypeDto);
     }
 
     @UseGuards(JwtAuthGuard, StudentGuard)

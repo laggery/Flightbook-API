@@ -27,6 +27,9 @@ export class TeamMemberService {
     }
 
     async getTeamMemberById(id: number): Promise<TeamMember>  {
+        if (!id) {
+            return undefined;
+        }
         let options: any = {
             relations: {
                 user: true,

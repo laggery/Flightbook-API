@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AppointmentDto } from "./interface/appointment-dto";
 import { plainToInstance } from "class-transformer";
 import { Appointment } from "./appointment.entity";
-import { AppointmentService } from "./appointment.service";
+import { AppointmentRepository } from "./appointment.repository";
 import { School } from "../school/school.entity";
 import { SchoolService } from "../school/school.service";
 import { AppointmentException } from "./exception/appointment.exception";
@@ -21,12 +21,15 @@ import { NotificationsService } from 'src/shared/services/notifications.service'
 import { StudentService } from '../student/student.service';
 import { SubscriptionDto } from '../subscription/interface/subscription-dto';
 import { Student } from '../student/student.entity';
+import { AppointmentType } from './appointment-type.entity';
+import { AppointmentTypeRepository } from './appointment-type.repository';
 
 @Injectable()
 export class AppointmentFacade {
 
     constructor(
-        private appointmentService: AppointmentService,
+        private appointmentRepository: AppointmentRepository,
+        private appointmentTypeRepository: AppointmentTypeRepository,
         private studentService: StudentService,
         private subscriptionService: SubscriptionService,
         private schoolService: SchoolService,
@@ -39,7 +42,7 @@ export class AppointmentFacade {
         let appointment: Appointment = plainToInstance(Appointment, appointmentDto);
         await this.appointmentValidityCheck(appointmentDto, schoolId, appointment);
 
-        const appointmentResp: Appointment = await this.appointmentService.saveAppointment(appointment);
+        const appointmentResp: Appointment = await this.appointmentRepository.saveAppointment(appointment);
 
         const students = await this.studentService.getStudentsBySchoolId(schoolId);
 
@@ -63,7 +66,7 @@ export class AppointmentFacade {
     }
 
     async updateAppointment(id: number, schoolId: number, appointmentDto: AppointmentDto): Promise<AppointmentDto> {
-        let appointment: Appointment = await this.appointmentService.getAppointmentById(id);
+        let appointment: Appointment = await this.appointmentRepository.getAppointmentById(id);
         await this.appointmentValidityCheck(appointmentDto, schoolId, appointment);
 
         const previousState = appointment.state;
@@ -96,12 +99,12 @@ export class AppointmentFacade {
             this.notificationsService.sendAppointmentStateChanged(appointment);
         }
 
-        const appointmentResp: Appointment = await this.appointmentService.saveAppointment(appointment);
+        const appointmentResp: Appointment = await this.appointmentRepository.saveAppointment(appointment);
         return AppointmentMapper.toAppointmentDto(appointmentResp);
     }
 
     async addSubscriptionToAppointment(appointmentId: number, userId: number): Promise<AppointmentDto> {
-        const appointment: Appointment = await this.appointmentService.getAppointmentById(appointmentId);
+        const appointment: Appointment = await this.appointmentRepository.getAppointmentById(appointmentId);
         const user: User = await this.userService.getUserById(userId);
         const subscription = new Subscription();
         subscription.user = user
@@ -120,12 +123,12 @@ export class AppointmentFacade {
         }
         appointment.subscriptions.push(subscription);
 
-        const appointmentResp: Appointment = await this.appointmentService.saveAppointment(appointment);
+        const appointmentResp: Appointment = await this.appointmentRepository.saveAppointment(appointment);
         return AppointmentMapper.toAppointmentDto(appointmentResp);
     }
 
     async deleteSubscriptionFromAppointment(appointmentId: number, userId: number, school: SchoolDto): Promise<AppointmentDto> {
-        const appointment: Appointment = await this.appointmentService.getAppointmentById(appointmentId);
+        const appointment: Appointment = await this.appointmentRepository.getAppointmentById(appointmentId);
         if (appointment.subscriptions) {
             const nbSubscription = appointment.subscriptions.length;
             const isUserOnWaintingList = appointment.isUserOnWaintingList(userId);
@@ -145,7 +148,7 @@ export class AppointmentFacade {
     }
 
     async getAppointmentsBySchoolId(schoolId: number, query: any): Promise<PagerEntityDto<AppointmentDto[]>> {
-        const appointmentsPager = await this.appointmentService.getAppointmentsBySchoolId(schoolId, query);
+        const appointmentsPager = await this.appointmentRepository.getAppointmentsBySchoolId(schoolId, query);
         const entityPager = new PagerEntityDto<AppointmentDto[]>();
         entityPager.entity = AppointmentMapper.toAppointmentDtoList(appointmentsPager[0]);
         entityPager.itemCount = appointmentsPager[0].length;
@@ -157,12 +160,12 @@ export class AppointmentFacade {
     }
 
     async getAppointmentById(id: number): Promise<AppointmentDto> {
-        const appointment = await this.appointmentService.getAppointmentById(id);
+        const appointment = await this.appointmentRepository.getAppointmentById(id);
         return AppointmentMapper.toAppointmentDto(appointment);
     }
 
     private async appointmentValidityCheck(appointmentDto: AppointmentDto, schoolId: number, appointment: Appointment) {
-        const { scheduling, meetingPoint, state, instructor, takeOffCoordinator } = appointmentDto;
+        const { scheduling, meetingPoint, state, instructor, takeOffCoordinator, type } = appointmentDto;
 
         if (!scheduling || !meetingPoint || !state || !instructor) {
             throw AppointmentException.invalidAppointment();
@@ -190,6 +193,16 @@ export class AppointmentFacade {
             appointment.takeOffCoordinator = takeOffCoordinatorEntity;
         } else {
             appointment.takeOffCoordinator = null;
+        }
+
+        if (type && type.id) {
+            const typeEntity: AppointmentType = await this.appointmentTypeRepository.getAppointmentTypesById(type.id);
+            if (!typeEntity) {
+                AppointmentException.invalidAppointmentTypeId();
+            }
+            appointment.type = typeEntity;
+        } else {
+            appointment.type = null;
         }
     }
 }

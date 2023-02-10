@@ -3,6 +3,7 @@ import {State} from "./state";
 import {Subscription} from "../subscription/subscription.entity";
 import {School} from "../school/school.entity";
 import {User} from "../../user/user.entity";
+import { AppointmentType } from "./appointment-type.entity";
 
 @Entity("appointment")
 export class Appointment {
@@ -58,6 +59,13 @@ export class Appointment {
         default: () => "CURRENT_TIMESTAMP",
     })
     timestamp: Date;
+
+    @ManyToOne(() => AppointmentType, (appointmentType) => appointmentType.appointments, {
+        onDelete: "RESTRICT",
+        onUpdate: "RESTRICT",
+    })
+    @JoinColumn([{ name: "appointment_type_id", referencedColumnName: "id" }])
+    type: AppointmentType | null;
 
     findSubscription(email: string) {
         return this.subscriptions.find((subscription: Subscription) => subscription.user.email === email);

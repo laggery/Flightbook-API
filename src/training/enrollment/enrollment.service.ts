@@ -49,6 +49,9 @@ export class EnrollmentService {
     }
 
     async getEnrollmentByToken(token: string): Promise<Enrollment> {
+        if (!token) {
+            return undefined;
+        }
         return this.enrollmentRepository.findOne(
             {
                 relations: {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
-import { AppointmentService } from 'src/training/appointment/appointment.service';
+import { AppointmentRepository } from 'src/training/appointment/appointment.repository';
 import { ControlSheetFacade } from 'src/training/control-sheet/control-sheet.facade';
 import { ControlSheetDto } from 'src/training/control-sheet/interface/control-sheet-dto';
 import { FlightFacade } from 'src/flight/flight.facade';
@@ -17,7 +17,7 @@ export class StudentFacade {
 
     constructor(
         private studentService: StudentService,
-        private appointmentService: AppointmentService,
+        private appointmentService: AppointmentRepository,
         private flightFacade: FlightFacade,
         private controlSheetFacade: ControlSheetFacade) { }
 

@@ -3,6 +3,7 @@ import { Student } from "src/training/student/student.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { TeamMember } from "../team-member/team-member.entity";
 import {Appointment} from "../appointment/appointment.entity";
+import { AppointmentType } from "../appointment/appointment-type.entity";
 
 @Entity("school")
 export class School {
@@ -45,4 +46,7 @@ export class School {
 
   @OneToMany(() => Appointment, (appointment) => appointment.school, { cascade: ['insert', 'update'] })
   appointments: Appointment[];
+
+  @OneToMany(() => AppointmentType, (appointmentType) => appointmentType.school, { cascade: ['insert', 'update'] })
+  appointmentTypes: AppointmentType[];
 }
