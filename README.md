@@ -58,6 +58,11 @@ Start nestjs app
 npm run start:dev
 ```
 
+## Db migration scripts
+```
+npm run migration:generate --name=appointmentType
+```
+
 ## Security
 If you discover security related issues, please email yannick.lagger@flightbook.ch instead of using the issue tracker.
 
