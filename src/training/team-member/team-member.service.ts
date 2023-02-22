@@ -64,4 +64,25 @@ export class TeamMemberService {
     async removeTeamMember(teamMember: TeamMember): Promise<TeamMember | undefined> {
         return await this.teamMemberRepository.remove(teamMember);
     }
+
+    async getTeamMembersByUserIdAndSchoolId(schoolId: number, userId: number): Promise<TeamMember>  {
+        if (!schoolId || !userId) {
+            return undefined;
+        }
+        let options: any = {
+            relations: {
+                user: true,
+                school: true
+            },
+            where: {
+                user: {
+                    id: userId
+                },
+                school: {
+                    id: schoolId
+                }
+            }
+        };
+        return this.teamMemberRepository.findOne(options);
+    }
 }

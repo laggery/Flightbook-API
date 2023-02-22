@@ -53,4 +53,13 @@ export class TeamMemberFacade {
 
         return teamMemberDto;
     }
+
+    async isUserTeamMemberFromSchool(schoolId: number, userId: number) {
+        const teamMember = await this.teamMemberService.getTeamMembersByUserIdAndSchoolId(schoolId, userId);
+        if (teamMember) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

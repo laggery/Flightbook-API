@@ -7,6 +7,7 @@ import { AppointmentFacade } from '../appointment/appointment.facade';
 import { AppointmentDto } from '../appointment/interface/appointment-dto';
 import { ControlSheetFacade } from '../control-sheet/control-sheet.facade';
 import { ControlSheetDto } from '../control-sheet/interface/control-sheet-dto';
+import { TeamMemberFacade } from '../team-member/team-member.facade';
 
 @Controller('student')
 @ApiTags('Student')
@@ -16,7 +17,8 @@ export class StudentController {
     constructor(
         private studentFacade: StudentFacade,
         private appointmentFacade: AppointmentFacade,
-        private controlSheetFacade: ControlSheetFacade
+        private controlSheetFacade: ControlSheetFacade,
+        private teamMemberFacade: TeamMemberFacade
     ){}
 
     @UseGuards(JwtAuthGuard)
@@ -92,6 +94,12 @@ export class StudentController {
         }
 
         return this.appointmentFacade.deleteSubscriptionFromAppointment(appointmentId, req.user.userId, studentInSchool);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('schools/:schoolId/enrollment/free')
+    hasFreeEnrollment(@Param('schoolId') schoolId: number, @Request() req): Promise<any> {
+        return this.teamMemberFacade.isUserTeamMemberFromSchool(schoolId, req.user.userId);
     }
 
     @UseGuards(JwtAuthGuard)
