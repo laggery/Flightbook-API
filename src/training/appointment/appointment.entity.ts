@@ -54,6 +54,9 @@ export class Appointment {
     @JoinColumn([{ name: "takeoff_coordinator_id", referencedColumnName: "id" }])
     takeOffCoordinator: User | null;
 
+    @Column("character varying", { name: "takeoff_coordinator", nullable: true })
+    takeOffCoordinatorText: string;
+
     @Column("timestamp", {
         name: "timestamp",
         default: () => "CURRENT_TIMESTAMP",

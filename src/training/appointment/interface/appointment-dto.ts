@@ -47,6 +47,10 @@ export class AppointmentDto {
 
     @Expose()
     @ApiProperty()
+    takeOffCoordinatorText: string;
+
+    @Expose()
+    @ApiProperty()
     subscriptions: SubscriptionDto[];
 
     @Expose()

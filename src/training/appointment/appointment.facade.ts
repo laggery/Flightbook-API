@@ -76,11 +76,12 @@ export class AppointmentFacade {
         appointment.meetingPoint = appointmentDto.meetingPoint;
         appointment.scheduling = appointmentDto.scheduling;
         appointment.state = appointmentDto.state;
+        appointment.takeOffCoordinatorText = appointmentDto.takeOffCoordinatorText == "" ? null : appointmentDto.takeOffCoordinatorText;
         appointment.timestamp = new Date();
 
         // Clear removed subscriptions
         appointment.subscriptions.forEach((subscription: Subscription) => {
-            const subscriptionDto = appointmentDto.subscriptions.find((subscriptionDto: SubscriptionDto) => subscriptionDto.user.email === subscription.user.email);
+            const subscriptionDto = appointmentDto.subscriptions.find((subscriptionDto: SubscriptionDto) => subscriptionDto.user?.email === subscription.user.email);
             if (!subscriptionDto) {
                 appointment.removeUserSubscription(subscription.user.id);
                 this.subscriptionService.removeSubscription(subscription);
