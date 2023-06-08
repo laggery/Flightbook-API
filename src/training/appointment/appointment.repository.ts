@@ -4,6 +4,7 @@ import { Between, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Subscription } from '../subscription/subscription.entity';
 import { Appointment } from './appointment.entity';
 import { State } from './state';
+import { GuestSubscription } from '../subscription/guest-subscription.entity';
 
 @Injectable()
 export class AppointmentRepository {
@@ -23,6 +24,7 @@ export class AppointmentRepository {
                 subscriptions:{
                     user: true
                 },
+                guestSubscriptions: true,
                 instructor: true,
                 school: true,
                 type: true
@@ -41,6 +43,7 @@ export class AppointmentRepository {
                 subscriptions:{
                     user: true
                 },
+                guestSubscriptions: true,
                 instructor: true,
                 takeOffCoordinator: true,
                 type: true
@@ -85,6 +88,7 @@ export class AppointmentRepository {
         let entityNumber: [Appointment[], number] = await this.appointmentRepository.findAndCount(options);
         entityNumber[0].forEach((appointment: Appointment) => {
             appointment.subscriptions = this.orderSubscriptionByTimestampAsc(appointment.subscriptions);
+            appointment.guestSubscriptions = this.orderGuestSubscriptionById(appointment.guestSubscriptions);
         })
 
         return entityNumber;
@@ -93,5 +97,10 @@ export class AppointmentRepository {
     // @TODO Can be removed after migrate to typeorm 0.3.x and added order by for sub objects
     private orderSubscriptionByTimestampAsc(subscriptions: Subscription[]): Subscription[] {
         return subscriptions.sort((a: Subscription, b: Subscription) => a.timestamp.getTime() - b.timestamp.getTime());
+    }
+
+    // @TODO Can be removed after migrate to typeorm 0.3.x and added order by for sub objects
+    private orderGuestSubscriptionById(subscriptions: GuestSubscription[]): GuestSubscription[] {
+        return subscriptions.sort((a: GuestSubscription, b: GuestSubscription) => a.id - b.id);
     }
 }

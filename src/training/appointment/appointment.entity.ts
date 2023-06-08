@@ -4,6 +4,7 @@ import {Subscription} from "../subscription/subscription.entity";
 import {School} from "../school/school.entity";
 import {User} from "../../user/user.entity";
 import { AppointmentType } from "./appointment-type.entity";
+import { GuestSubscription } from "../subscription/guest-subscription.entity";
 
 @Entity("appointment")
 export class Appointment {
@@ -39,6 +40,9 @@ export class Appointment {
 
     @OneToMany(() => Subscription, (subscription) => subscription.appointment, { cascade: ['insert', 'update'] })
     subscriptions: Subscription[];
+
+    @OneToMany(() => GuestSubscription, (guestSubscription) => guestSubscription.appointment, { cascade: ['insert', 'update', 'remove'] })
+    guestSubscriptions: GuestSubscription[];
 
     @ManyToOne(() => User, (user) => user.instructors, {
         onDelete: "RESTRICT",
@@ -88,6 +92,20 @@ export class Appointment {
             const subscription = this.subscriptions[index];
             this.subscriptions.splice(index, 1);
             return subscription;
+        }
+        return null;
+    }
+
+    findGuestSubscription(guestId: number) {
+        return this.guestSubscriptions.find((guestSubscription: GuestSubscription) => guestSubscription.id === guestId);
+    }
+
+    removeGuestUserSubscription(guestId: number): GuestSubscription {
+        const index = this.guestSubscriptions.findIndex((guestSubscription: GuestSubscription) => guestSubscription.id === guestId);
+        if (index !== -1) {
+            const guestSubscription = this.guestSubscriptions[index];
+            this.guestSubscriptions.splice(index, 1);
+            return guestSubscription;
         }
         return null;
     }

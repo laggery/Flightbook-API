@@ -2,6 +2,7 @@ import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 import { AltitudeFlight } from "src/training/control-sheet/altitude-flight.entity";
 import { Theory } from "src/training/control-sheet/theory.entity";
 import { TrainingHill } from "src/training/control-sheet/training-hill.entity";
+import { GuestSubscription } from "src/training/subscription/guest-subscription.entity";
 
 const dbConfigBase: any = {
     type: 'postgres',
@@ -14,7 +15,8 @@ const dbConfigBase: any = {
     entities: [
         TrainingHill,
         AltitudeFlight,
-        Theory
+        Theory,
+        GuestSubscription
     ],
     autoLoadEntities: true,
     synchronize: process.env.DATABASE_SYNCHRONIZE === "true",

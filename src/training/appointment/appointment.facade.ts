@@ -23,6 +23,8 @@ import { SubscriptionDto } from '../subscription/interface/subscription-dto';
 import { Student } from '../student/student.entity';
 import { AppointmentType } from './appointment-type.entity';
 import { AppointmentTypeRepository } from './appointment-type.repository';
+import { GuestSubscription } from '../subscription/guest-subscription.entity';
+import { GuestSubscriptionDto } from '../subscription/interface/guest-subscription-dto';
 
 @Injectable()
 export class AppointmentFacade {
@@ -93,6 +95,26 @@ export class AppointmentFacade {
             if (!appointment.findSubscription(subscriptionDto.user.email)) {
                 const subscription: Subscription = plainToInstance(Subscription, subscriptionDto);
                 appointment.subscriptions.push(subscription);
+            }
+        });
+
+        // Update or clear removed guestsubscriptions
+        appointment.guestSubscriptions.forEach((guestSubscription: GuestSubscription) => {
+            const guestSubscriptionDto = appointmentDto.guestSubscriptions.find((guestSubscriptionDto: GuestSubscriptionDto) => guestSubscriptionDto.id === guestSubscription.id);
+            if (guestSubscriptionDto) {
+                guestSubscription.firstname = guestSubscriptionDto.firstname;
+                guestSubscription.lastname = guestSubscriptionDto.lastname;
+            } else {
+                appointment.removeGuestUserSubscription(guestSubscription.id);
+                this.subscriptionService.removeGuestSubscription(guestSubscription);
+            }
+        });
+
+        // add new subscriptions
+        appointmentDto.guestSubscriptions.forEach((guestSubscriptionDto: GuestSubscriptionDto) => {
+            if (!appointment.findGuestSubscription(guestSubscriptionDto.id)) {
+                const guestSubscription: GuestSubscription = plainToInstance(GuestSubscription, guestSubscriptionDto);
+                appointment.guestSubscriptions.push(guestSubscription);
             }
         });
 
