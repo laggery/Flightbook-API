@@ -1,5 +1,4 @@
 {
-    "debug.node.autoAttach": "on",
     "rest-client.environmentVariables": {
         "local": {
             "baseUrl": "http://localhost:8282"
