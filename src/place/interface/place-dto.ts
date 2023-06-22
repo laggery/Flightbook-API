@@ -1,20 +1,24 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Exclude, Expose } from "class-transformer";
+import { Position } from "geojson";
 
 @Exclude()
 export class PlaceDto {
     @Expose()
-    readonly id: number;
+    id: number;
     @ApiProperty()
     @Expose()
-    readonly name: string;
+    name: string;
     @ApiPropertyOptional()
     @Expose()
-    readonly altitude?: number;
+    altitude?: number;
     @ApiPropertyOptional()
     @Expose()
-    readonly country?: string;
+    coordinates?: Position;
     @ApiPropertyOptional()
     @Expose()
-    readonly notes?: string;
+    country?: string;
+    @ApiPropertyOptional()
+    @Expose()
+    notes?: string;
 }

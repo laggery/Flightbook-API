@@ -6,7 +6,7 @@ volumes:
 
 services:
   db:
-    image: postgres:12
+    image: postgis/postgis:13-3.3
     restart: always
     environment:
       POSTGRES_USER: flightbook_dev

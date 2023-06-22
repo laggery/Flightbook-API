@@ -7,6 +7,7 @@ import { Place } from './place.entity';
 import { plainToClass } from 'class-transformer';
 import { PlaceAlreadyExistsException } from './exception/place-already-exists-exception';
 import { PagerDto } from 'src/interface/pager-dto';
+import { PlaceMapper } from './place.mapper';
 
 @Injectable()
 export class PlaceFacade {
@@ -14,7 +15,7 @@ export class PlaceFacade {
 
     async getPlaces(token: any, query: any): Promise<PlaceDto[]> {
         const list: Place[] = await this.placeService.getPlaces(token, query);
-        return plainToClass(PlaceDto, list);
+        return PlaceMapper.toPlaceDtoList(list);
     }
 
     async getPlacesPager(token: any, query: any): Promise<PagerDto> {
@@ -23,7 +24,7 @@ export class PlaceFacade {
 
     async getPlacesByName(token: any,  query: any, name: string): Promise<PlaceDto[]> {
         const list: Place[] = await this.placeService.getPlacesByName(token, query, name);
-        return plainToClass(PlaceDto, list);
+        return PlaceMapper.toPlaceDtoList(list);
     }
 
     async createPlace(token: any, placeDto: PlaceDto): Promise<PlaceDto> {
@@ -31,6 +32,12 @@ export class PlaceFacade {
         const place: Place = plainToClass(Place, placeDto);
         place.id = null;
         place.user = user;
+        if (placeDto.coordinates && placeDto.coordinates != null) {
+            place.point = {
+                type: "Point",
+                coordinates: placeDto.coordinates
+            }
+        }
 
         // Check if name already existe for this user
         if (await this.placeService.getPlaceByName(token, place.name)) {
@@ -38,7 +45,7 @@ export class PlaceFacade {
         }
 
         const placeResp: Place = await this.placeService.addPlace(place);
-        return plainToClass(PlaceDto, placeResp);
+        return PlaceMapper.toPlaceDto(placeResp);
     }
 
     async updatePlace(token: any, id: number, placeDto: PlaceDto): Promise<PlaceDto> {
@@ -53,18 +60,29 @@ export class PlaceFacade {
         place.altitude = placeDto.altitude;
         place.notes = placeDto.notes;
         place.country = placeDto.country;
+        if (placeDto.coordinates && placeDto.coordinates != null) {
+            if (!place.point) {
+                place.point = {
+                    type: "Point",
+                    coordinates: placeDto.coordinates
+                }
+            } else {
+                place.point.coordinates = placeDto.coordinates;
+            }
+        }
+        
         const placeResp: Place = await this.placeService.updatePlace(place);
-        return plainToClass(PlaceDto, placeResp);
+        return PlaceMapper.toPlaceDto(placeResp);
     }
 
     async removePlace(token: any, id: number): Promise<PlaceDto> {
         const place: Place = await this.placeService.getPlaceById(token, id);
         const placeResp: Place = await this.placeService.removePlace(place);
-        return plainToClass(PlaceDto, placeResp);
+        return PlaceMapper.toPlaceDto(placeResp);
     }
 
     async getPlaceByName(token: any, name: string): Promise<PlaceDto | undefined> {
         const place: Place = await this.placeService.getPlaceByName(token, name);
-        return plainToClass(PlaceDto, place);
+        return PlaceMapper.toPlaceDto(place);
     }
 }

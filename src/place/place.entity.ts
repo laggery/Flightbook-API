@@ -6,6 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  Point,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { User } from "../user/user.entity";
@@ -32,6 +33,10 @@ export class Place {
   @Expose()
   @Column("integer", { name: "altitude", nullable: true })
   altitude: number | null;
+
+  @Expose()
+  @Column("geometry", { name: "coordinates", nullable: true })
+  point: Point | null;
 
   @Expose()
   @Column("character varying", { name: "country", nullable: true })

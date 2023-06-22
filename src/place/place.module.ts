@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Place } from './place.entity';
 import { PlaceFacade } from './place.facade';
 import { UserModule } from 'src/user/user.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports: [UserModule, TypeOrmModule.forFeature([Place])],
+  imports: [UserModule, TypeOrmModule.forFeature([Place]), HttpModule],
   controllers: [PlaceController],
   providers: [PlaceService, PlaceFacade],
   exports: [PlaceFacade]
