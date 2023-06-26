@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PlaceService } from './place.service';
 import { UserService } from '../user/user.service';
 import { PlaceDto } from './interface/place-dto';
@@ -8,10 +8,16 @@ import { plainToClass } from 'class-transformer';
 import { PlaceAlreadyExistsException } from './exception/place-already-exists-exception';
 import { PagerDto } from 'src/interface/pager-dto';
 import { PlaceMapper } from './place.mapper';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class PlaceFacade {
-    constructor(private placeService: PlaceService, private userService: UserService) { }
+    constructor(
+        private placeService: PlaceService,
+        private userService: UserService,
+        private readonly httpService: HttpService
+    ) { }
 
     async getPlaces(token: any, query: any): Promise<PlaceDto[]> {
         const list: Place[] = await this.placeService.getPlaces(token, query);
@@ -84,5 +90,24 @@ export class PlaceFacade {
     async getPlaceByName(token: any, name: string): Promise<PlaceDto | undefined> {
         const place: Place = await this.placeService.getPlaceByName(token, name);
         return PlaceMapper.toPlaceDto(place);
+    }
+
+    async getPlaceMetadata(query: any): Promise<PlaceDto> {
+        const placeDto = new PlaceDto();
+        try {
+            const altResp = await firstValueFrom(this.httpService.get(`https://api.opentopodata.org/v1/srtm30m?locations=${query.lat},${query.lng}`));
+            placeDto.altitude = altResp.data.results[0]?.elevation;
+        } catch (exception) {
+            Logger.debug("Altitude request error", exception);
+        }
+
+        try {
+            const countryResp: any = await firstValueFrom(this.httpService.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${query.lat}&lon=${query.lng}`));
+            placeDto.country = countryResp?.data?.address?.country_code;
+        } catch (exception) {
+            Logger.debug("Country request error", exception);
+        }
+
+        return placeDto;
     }
 }

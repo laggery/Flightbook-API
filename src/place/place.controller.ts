@@ -4,8 +4,6 @@ import { PlaceFacade } from './place.facade';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { PagerDto } from 'src/interface/pager-dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
 
 @Controller('places')
 @ApiTags('Place')
@@ -13,19 +11,13 @@ import { firstValueFrom } from 'rxjs';
 export class PlaceController {
 
     constructor(
-        private placeFacade: PlaceFacade,
-        private readonly httpService: HttpService
-    ) { }
+        private placeFacade: PlaceFacade
+    ) {}
 
     @UseGuards(JwtAuthGuard)
-    @Get("elevation")
-    async getElevationByCoordinates(@Request() req, @Query() query) {
-        try {
-            const resp = await firstValueFrom(this.httpService.get(`https://api.opentopodata.org/v1/srtm30m?locations=${query.lat},${query.lng}`));
-            return resp.data.results[0];
-        } catch (exceptiom) {
-            return null;
-        }
+    @Get("metadata")
+    getElevationByCoordinates(@Request() req, @Query() query): Promise<PlaceDto> {
+        return this.placeFacade.getPlaceMetadata(query);
     }
 
     @UseGuards(JwtAuthGuard)
