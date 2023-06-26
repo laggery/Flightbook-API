@@ -16,7 +16,7 @@ export class PlaceMapper {
     public static toPlaceDto(place: Place): PlaceDto {
         const placeDto: PlaceDto = plainToInstance(PlaceDto, place);
 
-        if (place.point) {
+        if (place?.point) {
             placeDto.coordinates = place.point.coordinates;
         }
 
