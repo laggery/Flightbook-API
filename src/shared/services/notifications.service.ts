@@ -57,7 +57,7 @@ export class NotificationsService {
         }
         const tokensToDelete: string[] = [];
         try {
-            const batchResponse: BatchResponse = await getMessaging().sendMulticast(multicastMessage, process.env.ENV != "prod");
+            const batchResponse: BatchResponse = await getMessaging().sendEachForMulticast(multicastMessage, process.env.ENV != "prod");
             Logger.debug(batchResponse);
             batchResponse.responses.forEach((response: SendResponse, index: number) => {
                 if (!response.success) {
@@ -65,7 +65,7 @@ export class NotificationsService {
                 }
             });
         } catch (e: any) {
-            Logger.error("Firebase sendMulticast error", e);
+            Logger.error("Firebase sendEachForMulticast error", e);
         }
 
         this.userService.clearNotificationTokens(tokensToDelete);
@@ -105,7 +105,7 @@ export class NotificationsService {
         }
         const tokensToDelete: string[] = [];
         try {
-            const batchResponse: BatchResponse = await getMessaging().sendMulticast(multicastMessage, process.env.ENV != "prod");
+            const batchResponse: BatchResponse = await getMessaging().sendEachForMulticast(multicastMessage, process.env.ENV != "prod");
             Logger.debug(batchResponse);
             batchResponse.responses.forEach((response: SendResponse, index: number) => {
                 if (!response.success) {
@@ -113,7 +113,7 @@ export class NotificationsService {
                 }
             });
         } catch (e: any) {
-            Logger.error("Firebase sendMulticast error", e);
+            Logger.error("Firebase sendEachForMulticast error", e);
         }
 
         this.userService.clearNotificationTokens(tokensToDelete);
@@ -152,7 +152,7 @@ export class NotificationsService {
         }
         const tokensToDelete: string[] = [];
         try {
-            const batchResponse: BatchResponse = await getMessaging().sendMulticast(multicastMessage, process.env.ENV != "prod");
+            const batchResponse: BatchResponse = await getMessaging().sendEachForMulticast(multicastMessage, process.env.ENV != "prod");
             Logger.debug(batchResponse);
             batchResponse.responses.forEach((response: SendResponse, index: number) => {
                 if (!response.success) {
@@ -160,7 +160,7 @@ export class NotificationsService {
                 }
             });
         } catch (e: any) {
-            Logger.error("Firebase sendMulticast error", e);
+            Logger.error("Firebase sendEachForMulticast error", e);
         }
 
         this.userService.clearNotificationTokens(tokensToDelete);
@@ -204,7 +204,7 @@ export class NotificationsService {
         }
         const tokensToDelete: string[] = [];
         try {
-            const batchResponse: BatchResponse = await getMessaging().sendMulticast(multicastMessage, process.env.ENV != "prod");
+            const batchResponse: BatchResponse = await getMessaging().sendEachForMulticast(multicastMessage, process.env.ENV != "prod");
             Logger.debug(batchResponse);
             batchResponse.responses.forEach((response: SendResponse, index: number) => {
                 if (!response.success) {
@@ -212,7 +212,7 @@ export class NotificationsService {
                 }
             });
         } catch (e: any) {
-            Logger.error("Firebase sendMulticast error", e);
+            Logger.error("Firebase sendEachForMulticast error", e);
         }
 
         this.userService.clearNotificationTokens(tokensToDelete);

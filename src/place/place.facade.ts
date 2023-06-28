@@ -98,14 +98,14 @@ export class PlaceFacade {
             const altResp = await firstValueFrom(this.httpService.get(`https://api.opentopodata.org/v1/srtm30m?locations=${query.lat},${query.lng}`));
             placeDto.altitude = altResp.data.results[0]?.elevation;
         } catch (exception) {
-            Logger.debug("Altitude request error", exception);
+            Logger.warn("Altitude request error", exception);
         }
 
         try {
             const countryResp: any = await firstValueFrom(this.httpService.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${query.lat}&lon=${query.lng}`));
             placeDto.country = countryResp?.data?.address?.country_code;
         } catch (exception) {
-            Logger.debug("Country request error", exception);
+            Logger.warn("Country request error", exception);
         }
 
         return placeDto;
