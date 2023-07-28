@@ -30,4 +30,11 @@ export class PaymentController {
     async paymentStatus(@Request() req): Promise<PaymentStatusDto> {
         return await this.paymentFacade.hasUserPayed(req.user.userId);
     }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('cancel')
+    @HttpCode(204)
+    async cancelSubscription(@Request() req) {
+        await this.paymentFacade.cancelSubscription(req.user.userId);
+    }
 }

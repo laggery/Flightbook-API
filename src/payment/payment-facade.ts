@@ -1,12 +1,13 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, subscribeOn } from 'rxjs';
 import { PaymentStatusDto } from './interface/payment-status-dto';
 import Stripe from 'stripe';
 import { UserService } from 'src/user/user.service';
 import { env } from 'process';
 import { PaymentException } from './exception/payment.exception';
 import { EmailService } from 'src/email/email.service';
+import { PaymentState } from './paymentState';
 
 @Injectable()
 export class PaymentFacade {
@@ -43,6 +44,35 @@ export class PaymentFacade {
         return { id: session.id, url: session.url };
     }
 
+    async cancelSubscription(id: number) {
+        // TODO Check store (Stripe, IOs, Android) -> not yet necessary
+        
+        const user = await this.userService.getUserById(id);
+        if (!user.email || user.email == null || user.email == undefined || user.email == '') {
+            return;
+        }
+
+        const stripeCustomerList = await this.stripe.customers.list({email: user.email});
+
+        if (stripeCustomerList.data.length <= 0) {
+            this.emailService.sendErrorMessageToAdmin("Error: Cancel payment subscription", `<p>Manually cancel Stripe subscription for the following user:</p><ul><li>id: ${user.id}</li><li>email: ${user.email}</li><li>firstname: ${user.firstname}</li><li>lastname: ${user.lastname}</li></ul>`)
+            return
+        }
+
+        const stripeCustomer = stripeCustomerList.data[0];
+        const stripeSubscriptionList = await this.stripe.subscriptions.list({customer: stripeCustomer.id});
+
+        if (stripeSubscriptionList.data.length <= 0) {
+            return
+        }
+
+        const stripeSubscription = stripeSubscriptionList.data[0];
+
+        this.emailService.sendErrorMessageToAdmin("Cancel payment subscription", `<ul><li>id: ${user.id}</li><li>email: ${user.email}</li><li>firstname: ${user.firstname}</li><li>lastname: ${user.lastname}</li><li>Stripe customer id: ${stripeCustomer.id}</li><li>Stripe subscription id: ${stripeSubscription.id}</li></ul>`)
+
+        await this.stripe.subscriptions.cancel(stripeSubscription.id);
+    }
+
     async hasUserPayed(id: number): Promise<PaymentStatusDto> {
         const response = await firstValueFrom(this.httpService.get(
             `${env.REVENUECAT_URL}/v1/subscribers/${id}`,
@@ -58,13 +88,18 @@ export class PaymentFacade {
 
         let paymentStatusDto = new PaymentStatusDto();
         paymentStatusDto.store = response.data.subscriber.subscriptions[productSubscription?.product_identifier]?.store;
+        paymentStatusDto.active = false;
+        paymentStatusDto.state = PaymentState.NONE;
 
         if (productSubscription && new Date <= new Date(productSubscription.expires_date)) {
             paymentStatusDto.expires_date = productSubscription.expires_date;
             paymentStatusDto.purchase_date = productSubscription.purchase_date;
             paymentStatusDto.active = true;
-        } else {
-            paymentStatusDto.active = false;
+            paymentStatusDto.state = PaymentState.ACTIVE;
+
+            if (productSubscription.unsubscribe_detected_at != undefined) {
+                paymentStatusDto.state = PaymentState.CANCELED;
+            }
         }
         return paymentStatusDto;
     }
@@ -110,7 +145,7 @@ export class PaymentFacade {
                         }
                     ));
                 } catch (exception) {
-                    this.emailService.sendErrorMessageToAdmin("Revenuecat request failed", `<ul><li>app_user_id: ${session.client_reference_id}</li>li>fetch_token: ${session.subscription}</li></ul>`)
+                    this.emailService.sendErrorMessageToAdmin("Revenuecat request failed", `<ul><li>app_user_id: ${session.client_reference_id}</li><li>fetch_token: ${session.subscription}</li></ul>`)
                 }
 
                 break;
