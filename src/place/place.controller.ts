@@ -4,6 +4,7 @@ import { PlaceFacade } from './place.facade';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { PagerDto } from 'src/interface/pager-dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { FeatureCollection } from 'geojson';
 
 @Controller('places')
 @ApiTags('Place')
@@ -18,6 +19,12 @@ export class PlaceController {
     @Get("metadata")
     getElevationByCoordinates(@Request() req, @Query() query): Promise<PlaceDto> {
         return this.placeFacade.getPlaceMetadata(query);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get("openstreetmap/:name")
+    searchOpenstreetmapPlace(@Query() query, @Param('name') name: string): Promise<FeatureCollection> {
+        return this.placeFacade.searchOpenstreetmapPlace(name);
     }
 
     @UseGuards(JwtAuthGuard)

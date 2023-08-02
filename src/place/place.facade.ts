@@ -10,6 +10,7 @@ import { PagerDto } from 'src/interface/pager-dto';
 import { PlaceMapper } from './place.mapper';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import { FeatureCollection } from 'geojson';
 
 @Injectable()
 export class PlaceFacade {
@@ -109,5 +110,18 @@ export class PlaceFacade {
         }
 
         return placeDto;
+    }
+
+    async searchOpenstreetmapPlace(name: string): Promise<FeatureCollection> {
+        try {
+            const altResp =  await firstValueFrom(this.httpService.get(`https://nominatim.openstreetmap.org/search?q=${encodeURI(name)}&format=geojson&limit=1`));
+            return altResp.data;
+        } catch (exception) {
+            Logger.warn("Openstreetmap search place error", exception);
+            return {
+                features: [],
+                type: "FeatureCollection"
+            }
+        }
     }
 }
