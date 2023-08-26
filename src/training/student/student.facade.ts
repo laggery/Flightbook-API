@@ -11,6 +11,7 @@ import { Student } from './student.entity';
 import { StudentService } from './student.service';
 import { StudentException } from './exception/student.exception';
 import { UserReadIdDto } from 'src/user/interface/user-read-id-dto';
+import { StudentArchived } from './studentArchived.entity';
 
 @Injectable()
 export class StudentFacade {
@@ -62,7 +63,16 @@ export class StudentFacade {
         if (!student) {
             throw StudentException.notFoundException();
         }
-        this.studentService.removeStudent(student)
+
+        const updateResult = await this.studentService.updateStudentArchivedByIdAndSchoolId(student.user.id, student.school.id);
+        if (updateResult?.affected == 0) {
+            const studentArchived = new StudentArchived();
+            studentArchived.school = student.school;
+            studentArchived.user = student.user;
+            await this.studentService.saveStudentArchived(studentArchived);
+        }
+        
+        await this.studentService.removeStudent(student);
         const studentDto = new StudentDto();
         studentDto.user = plainToClass(UserReadIdDto, student.user);
         return studentDto;
