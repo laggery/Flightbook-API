@@ -6,6 +6,7 @@ import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { Glider } from 'src/glider/glider.entity';
 import { Place } from 'src/place/place.entity';
 import { PagerDto } from 'src/interface/pager-dto';
+import { PagerEntityDto } from 'src/interface/pager-entity-dto';
 
 @Injectable()
 export class FlightService {
@@ -197,6 +198,10 @@ export class FlightService {
 
         if (query && query.description) {
             builder.andWhere(`flight.description ILIKE '%${query.description}%'`);
+        }
+
+        if (query && query.timestamp) {
+            builder.andWhere(`flight.timestamp <= '${new Date(query.timestamp).toISOString()}'`);
         }
         return builder
     }

@@ -9,14 +9,14 @@ import {
     Put,
     Param,
     Delete,
-    HttpCode,
+    HttpCode
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { FlightDto } from './interface/flight-dto';
 import { FlightFacade } from './flight.facade';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { PagerDto } from 'src/interface/pager-dto';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 @Controller('flights')
 @ApiTags('Flight')
 @ApiBearerAuth('jwt')
@@ -24,6 +24,7 @@ export class FlightController {
 
     constructor(private flightFacade: FlightFacade) { }
 
+    @ApiOperation({deprecated: true})
     @UseGuards(JwtAuthGuard)
     @Get()
     getFlights(@Request() req, @Query() query): Promise<FlightDto[]> {

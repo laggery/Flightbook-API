@@ -3,7 +3,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "t
 import { School } from "../school/school.entity";
 
 @Entity("student_archived")
-export class StudentArchived {
+export class ArchivedStudent {
   @PrimaryGeneratedColumn()
   @Column("integer", { primary: true, name: "id" })
   id: number;

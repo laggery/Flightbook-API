@@ -3,7 +3,7 @@ import { FlightService } from './flight.service';
 import { UserService } from 'src/user/user.service';
 import { FlightDto } from './interface/flight-dto';
 import { Flight } from './flight.entity';
-import { plainToClass } from 'class-transformer';
+import { plainToClass, plainToInstance } from 'class-transformer';
 import { User } from 'src/user/user.entity';
 import { PlaceFacade } from 'src/place/place.facade';
 import { Place } from 'src/place/place.entity';
@@ -16,6 +16,7 @@ import { PagerDto } from 'src/interface/pager-dto';
 import moment = require('moment');
 import { checkIfDateIsValid } from '../shared/util/date-utils';
 import { FileUploadService } from 'src/fileupload/file-upload.service';
+import { PagerEntityDto } from 'src/interface/pager-entity-dto';
 
 @Injectable()
 export class FlightFacade {
@@ -30,11 +31,21 @@ export class FlightFacade {
 
     async getFlights(token: any, query: any): Promise<FlightDto[]> {
         const list: Flight[] = await this.flightService.getFlights(token, query);
-        return plainToClass(FlightDto, list);
+        return plainToInstance(FlightDto, list);
     }
 
-    async getFlightsPager(token: any, query: any): Promise<PagerDto> {
-        return this.flightService.getFlightsPager(token, query);
+    async getFlightsPager(token: any, query: any): Promise<PagerEntityDto<FlightDto[]>> {
+        const promiseList = [];
+        promiseList.push(this.flightService.getFlightsPager(token, query));
+        if (!query.limit) {
+            query.limit = 100;
+        }
+        promiseList.push(this.flightService.getFlights(token, query));
+
+        let response = await Promise.all(promiseList);
+        const pagerDto = response[0] as PagerEntityDto<FlightDto[]>;
+        pagerDto.entity = plainToInstance(FlightDto, response[1] as Flight[]);
+        return pagerDto;
     }
 
     async getStatistic(token: any, query: any): Promise<FlightStatisticDto | FlightStatisticDto[]> {

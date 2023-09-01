@@ -8,10 +8,10 @@ import { TeamMemberModule } from 'src/training/team-member/team-member.module';
 import { SchoolModule } from 'src/training/school/school.module';
 import { ControlSheetModule } from 'src/training/control-sheet/control-sheet.module';
 import { AppointmentModule } from 'src/training/appointment/appointment.module';
-import { StudentArchived } from './studentArchived.entity';
+import { ArchivedStudent } from './studentArchived.entity';
 
 @Module({
-    imports: [FlightModule, TypeOrmModule.forFeature([Student, StudentArchived]), TeamMemberModule, ControlSheetModule, forwardRef(() => SchoolModule), forwardRef(() => AppointmentModule)],  
+    imports: [FlightModule, TypeOrmModule.forFeature([Student, ArchivedStudent]), TeamMemberModule, ControlSheetModule, forwardRef(() => SchoolModule), forwardRef(() => AppointmentModule)],  
     providers: [StudentService, StudentFacade],
     exports: [StudentService, StudentFacade],
     controllers: []
