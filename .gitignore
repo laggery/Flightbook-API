@@ -1,3 +1,6 @@
+#sonar
+.scannerwork
+
 # env file
 .env
 

@@ -29,7 +29,7 @@ export class StudentFacade {
         for (const student of students){
             let studentDto = new StudentDto();
             studentDto.user = plainToClass(UserReadIdDto, student.user);
-            studentDto.statistic = await this.flightFacade.getStatistic({userId: student.user.id}, {});
+            studentDto.statistic = await this.flightFacade.getGlobalStatistic({userId: student.user.id}, {});
             const flightList = await this.flightFacade.getFlights({userId: student.user.id}, {limit: 1})
 
             if (flightList.length >= 1) {
@@ -47,7 +47,7 @@ export class StudentFacade {
         for (const student of students){
             let studentDto = new StudentDto();
             studentDto.user = plainToClass(UserReadIdDto, student.user);
-            studentDto.statistic = await this.flightFacade.getStatistic({userId: student.user.id}, {timestamp: student.timestamp});
+            studentDto.statistic = await this.flightFacade.getGlobalStatistic({userId: student.user.id}, {timestamp: student.timestamp});
             const flightList = await this.flightFacade.getFlights({userId: student.user.id}, {timestamp: student.timestamp,limit: 1})
 
             if (flightList.length >= 1) {
@@ -65,7 +65,7 @@ export class StudentFacade {
         for (const subscription of appointment.subscriptions){
             let studentDto = new StudentDto();
             studentDto.user = plainToClass(UserReadIdDto, subscription.user);
-            studentDto.statistic = await this.flightFacade.getStatistic({userId: subscription.user.id}, {});
+            studentDto.statistic = await this.flightFacade.getGlobalStatistic({userId: subscription.user.id}, {});
             const flightList = await this.flightFacade.getFlights({userId: subscription.user.id}, {limit: 1})
 
             if (flightList.length >= 1) {

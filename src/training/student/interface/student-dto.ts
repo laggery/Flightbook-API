@@ -4,6 +4,6 @@ import { UserReadIdDto } from "src/user/interface/user-read-id-dto";
 
 export class StudentDto {
     public user: UserReadIdDto;
-    public statistic: FlightStatisticDto | FlightStatisticDto[];
+    public statistic: FlightStatisticDto;
     public lastFlight: FlightDto;
 }

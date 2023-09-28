@@ -12,11 +12,11 @@ import { InvalidGliderException } from './exception/invalid-glider-exception';
 import { GliderFacade } from 'src/glider/glider.facade';
 import { Glider } from 'src/glider/glider.entity';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
-import { PagerDto } from 'src/interface/pager-dto';
 import moment = require('moment');
 import { checkIfDateIsValid } from '../shared/util/date-utils';
 import { FileUploadService } from 'src/fileupload/file-upload.service';
 import { PagerEntityDto } from 'src/interface/pager-entity-dto';
+import { StatisticType } from './statistic-type';
 
 @Injectable()
 export class FlightFacade {
@@ -48,8 +48,32 @@ export class FlightFacade {
         return pagerDto;
     }
 
-    async getStatistic(token: any, query: any): Promise<FlightStatisticDto | FlightStatisticDto[]> {
-        return this.flightService.getStatistic(token, query);
+    async getStatisticV1(token: any, query: any): Promise<FlightStatisticDto | FlightStatisticDto[]> {
+        const statList: FlightStatisticDto[] = [];
+        statList.push(await this.flightService.getGlobalStatistic(token, query));
+        if (query.years && query.years === "1") {
+            statList.push(...await this.flightService.getStatisticYears(token, query))
+            return statList;
+        }
+    
+        return statList[0];
+    }
+
+    async getStatisticV2(token: any, query: any): Promise<FlightStatisticDto[]> {
+        if (!query.type || query.type == StatisticType.YEARLY) {
+            return this.flightService.getStatisticYears(token, query);
+        } else if (query.type == StatisticType.MONTHLY) {
+            return this.flightService.getStatisticMonth(token, query);
+        } else if (query.type == StatisticType.GLOBAL) {
+            const list: FlightStatisticDto[] = []
+            list.push(await this.flightService.getGlobalStatistic(token, query));
+            return list;
+        }
+        return [];
+    }
+
+    async getGlobalStatistic(token: any, query: any): Promise<FlightStatisticDto> {
+        return this.flightService.getGlobalStatistic(token, query);
     }
 
     async createFlight(token: any, flightDto: FlightDto): Promise<FlightDto> {

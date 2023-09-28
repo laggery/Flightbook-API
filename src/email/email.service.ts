@@ -42,7 +42,7 @@ export class EmailService {
                 html: body.content
             });
         } catch (err) {
-            console.log(err);
+            Logger.error("Error sending email", err);
             throw err;
         }
 

@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { Flight } from './flight.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
+import { EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { Glider } from 'src/glider/glider.entity';
 import { Place } from 'src/place/place.entity';
@@ -13,7 +13,9 @@ export class FlightService {
 
     constructor(
         @InjectRepository(Flight)
-        private readonly flightRepository: Repository<Flight>
+        private readonly flightRepository: Repository<Flight>,
+        @InjectEntityManager()
+        private readonly entityManager: EntityManager,
     ) { }
 
     // @hack for use ROW_NUMBER function from mysql with typeorm
@@ -67,64 +69,124 @@ export class FlightService {
         return list;
     }
 
-    async getStatistic(token: any, query: any): Promise<FlightStatisticDto | FlightStatisticDto[]> {
+    async getGlobalStatistic(token: any, query: any): Promise<FlightStatisticDto> {
         let builder = this.flightRepository.createQueryBuilder('flight')
-            .select('count(flight.id)', "nbFlights")
+            .select('count(flight.id)::int', "nbFlights")
             .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
             .addSelect('Sum(flight.price)', "income")
             .addSelect('Sum(flight.km)', "totalDistance")
             .addSelect('Max(flight.km)', "bestDistance")
             .addSelect('EXTRACT(epoch FROM Avg(flight.time))', "average")
-            .addSelect('count(DISTINCT(flight.start_id))', "nbStartplaces")
-            .addSelect('count(DISTINCT(flight.landing_id))', "nbLandingplaces")
+            .addSelect('count(DISTINCT(flight.start_id))::int', "nbStartplaces")
+            .addSelect('count(DISTINCT(flight.landing_id))::int', "nbLandingplaces")
             .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
             .leftJoin('flight.glider', 'glider', 'glider.id = flight.glider_id')
             .where(`user.id = ${token.userId}`);
 
         builder = FlightService.addQueryParams(builder, query);
-
-        let statistic: FlightStatisticDto = await builder.getRawOne();
-        statistic = FlightService.statisticDataConverter(statistic);
-
-        if (query.years && query.years === "1") {
-            let builderYears = this.flightRepository.createQueryBuilder('flight')
-                .select('EXTRACT(YEAR FROM "flight"."date")', "year")
-                .addSelect('count(flight.id)', "nbFlights")
-                .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
-                .addSelect('Sum(flight.price)', "income")
-                .addSelect('Sum(flight.km)', "totalDistance")
-                .addSelect('Max(flight.km)', "bestDistance")
-                .addSelect('EXTRACT(epoch FROM Avg(flight.time))', "average")
-                .addSelect('count(DISTINCT(flight.start_id))', "nbStartplaces")
-                .addSelect('count(DISTINCT(flight.landing_id))', "nbLandingplaces")
-                .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
-                .leftJoin('flight.glider', 'glider', 'glider.id = flight.glider_id')
-                .where(`user.id = ${token.userId}`)
-                .groupBy('EXTRACT(YEAR FROM "flight"."date")')
-                .orderBy('year', "ASC");
-
-            builderYears = FlightService.addQueryParams(builderYears, query);
-
-            const statisticList: FlightStatisticDto[] = await builderYears.getRawMany();
-            statisticList.forEach(statElement => {
-                FlightService.statisticDataConverter(statElement);
-            })
-            statisticList.splice(0, 0, statistic);
-            return statisticList;
-        }
-
-        return statistic;
+        return builder.getRawOne();
     }
 
-    private static statisticDataConverter(statistic: any): any {
-        statistic.nbFlights = Number(statistic.nbFlights);
-        statistic.time = Number(statistic.time);
-        statistic.average = Number(statistic.average);
-        statistic.nbStartplaces = Number(statistic.nbStartplaces);
-        statistic.nbLandingplaces = Number(statistic.nbLandingplaces);
-        statistic.totalDistance = Number(statistic.totalDistance).toFixed(2);
-        statistic.bestDistance = Number(statistic.bestDistance).toFixed(2);
-        return statistic;
+    async getStatisticYears(token: any, query: any): Promise<FlightStatisticDto[]> {
+        let maxdate = this.flightRepository.createQueryBuilder("flight")
+        .select("max(date) + interval '1 year'")
+        .where(`flight.user_id = ${token.userId}`)
+        .leftJoin('flight.glider', 'glider');
+        maxdate = FlightService.addQueryParams(maxdate, query);
+
+        let mindate = this.flightRepository.createQueryBuilder("flight")
+        .select("min(date)")
+        .where(`flight.user_id = ${token.userId}`)
+        .leftJoin('flight.glider', 'glider');
+        mindate = FlightService.addQueryParams(mindate, query);
+
+        let builder = this.entityManager.connection.createQueryBuilder()
+            .select("'yearly'", "type")
+            .addSelect("to_char(year, 'YYYY')", "year")
+            .addSelect("coalesce(nb_flight, 0)", "nbFlights")
+            .addSelect("coalesce(time, 0)", "time")
+            .addSelect("coalesce(income, 0)", "income")
+            .addSelect("coalesce(average, 0)", "average")
+            .addSelect("coalesce(total_distance, 0)", "totalDistance")
+            .addSelect("coalesce(best_distance, 0)", "bestDistance")
+            .addFrom((qb) => {
+                return qb.select(`date_trunc('year',generate_series((${mindate.getSql()})::DATE, (${maxdate.getSql()})::DATE, '1 year'))`, "year")
+                .fromDummy();
+            }, "m")
+            .leftJoin((qb) => {
+                let builder = qb.select("date_trunc('year',date)", "sub_year")
+                        .addSelect("COUNT(*)::int", "nb_flight")
+                        .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
+                        .addSelect("Sum(price)", "income")
+                        .addSelect('EXTRACT(epoch FROM Avg(flight.time))', "average")
+                        .addSelect('Sum(flight.km)', "total_distance")
+                        .addSelect('Max(flight.km)', "best_distance")
+                        .addFrom(Flight, "flight")
+                        .where(`flight.user_id = ${token.userId}`)
+                        .leftJoin('flight.glider', 'glider')
+                        .groupBy('sub_year');
+
+                builder = FlightService.addQueryParams(builder, query);
+
+                return builder;
+                
+            }, "counts", "m.year = counts.sub_year")
+            .orderBy("year")
+            .take(900);
+
+        return builder.getRawMany<FlightStatisticDto>();
+    }
+
+    async getStatisticMonth(token: any, query: any): Promise<FlightStatisticDto[]> {
+
+        let maxdate = this.flightRepository.createQueryBuilder("flight")
+        .select("max(date) + interval '1 month'")
+        .where(`flight.user_id = ${token.userId}`)
+        .leftJoin('flight.glider', 'glider');;
+        maxdate = FlightService.addQueryParams(maxdate, query);
+
+        let mindate = this.flightRepository.createQueryBuilder("flight")
+        .select("min(date)")
+        .where(`flight.user_id = ${token.userId}`)
+        .leftJoin('flight.glider', 'glider');;
+        mindate = FlightService.addQueryParams(mindate, query);
+
+        let builder = this.entityManager.connection.createQueryBuilder()
+            .select("'monthly'", "type")
+            .addSelect("to_char(year_month, 'YYYY')", "year")
+            .addSelect("to_char(year_month, 'MM')", "month")
+            .addSelect("coalesce(nb_flight, 0)", "nbFlights")
+            .addSelect("coalesce(time, 0)", "time")
+            .addSelect("coalesce(income, 0)", "income")
+            .addSelect("coalesce(average, 0)", "average")
+            .addSelect("coalesce(total_distance, 0)", "totalDistance")
+            .addSelect("coalesce(best_distance, 0)", "bestDistance")
+            .addFrom((qb) => {
+                return qb.select(`date_trunc('month',generate_series((${mindate.getSql()})::DATE, (${maxdate.getSql()})::DATE, '1 month'))`, "year_month")
+                .fromDummy();
+            }, "m")
+            .leftJoin((qb) => {
+                let builder = qb.select("date_trunc('month',date)", "sub_year_month")
+                        .addSelect("COUNT(*)::int", "nb_flight")
+                        .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
+                        .addSelect("Sum(price)", "income")
+                        .addSelect('EXTRACT(epoch FROM Avg(flight.time))', "average")
+                        .addSelect('Sum(flight.km)', "total_distance")
+                        .addSelect('Max(flight.km)', "best_distance")
+                        .addFrom(Flight, "flight")
+                        .where(`flight.user_id = ${token.userId}`)
+                        .leftJoin('flight.glider', 'glider')
+                        .groupBy('sub_year_month');
+
+                builder = FlightService.addQueryParams(builder, query);
+
+                return builder;
+                
+            }, "counts", "m.year_month = counts.sub_year_month")
+            .orderBy("year_month")
+            .take(900);
+
+        return builder.getRawMany<FlightStatisticDto>();
     }
 
     async saveFlight(flight: Flight): Promise<Flight | undefined> {
@@ -159,7 +221,7 @@ export class FlightService {
         return pagerDto;
     }
 
-    private static addQueryParams(builder: SelectQueryBuilder<Flight>, query: any): SelectQueryBuilder<Flight> {
+    private static addQueryParams(builder: SelectQueryBuilder<any>, query: any): SelectQueryBuilder<any> {
         if (query && query.limit) {
             if (Number.isNaN(Number(query.limit))) {
                 throw new BadRequestException("limit is not a number");

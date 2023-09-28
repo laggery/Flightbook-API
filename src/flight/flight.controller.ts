@@ -41,7 +41,7 @@ export class FlightController {
     @ApiQuery({ name: 'years', required: false })
     @Get('statistic')
     getStatistic(@Request() req, @Query() query): Promise<FlightStatisticDto | FlightStatisticDto[]> {
-        return this.flightFacade.getStatistic(req.user, query);
+        return this.flightFacade.getStatisticV1(req.user, query);
     }
 
     @UseGuards(JwtAuthGuard)

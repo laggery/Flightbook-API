@@ -1,5 +1,7 @@
 export class FlightStatisticDto {
+    public type: string;
     public year: string;
+    public month: string;
     public nbFlights: number;
     public time: number;
     public income: number;
