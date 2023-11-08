@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { firstValueFrom, subscribeOn } from 'rxjs';
 import { PaymentStatusDto } from './interface/payment-status-dto';
 import Stripe from 'stripe';
@@ -8,6 +8,7 @@ import { env } from 'process';
 import { PaymentException } from './exception/payment.exception';
 import { EmailService } from 'src/email/email.service';
 import { PaymentState } from './paymentState';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class PaymentFacade {
@@ -55,6 +56,7 @@ export class PaymentFacade {
         const stripeCustomerList = await this.stripe.customers.list({email: user.email});
 
         if (stripeCustomerList.data.length <= 0) {
+            Logger.error(`Cancel payment subscription error for user id ${user.id} email: ${user.email} firstname: ${user.firstname} lastname: ${user.lastname}`)
             this.emailService.sendErrorMessageToAdmin("Error: Cancel payment subscription", `<p>Manually cancel Stripe subscription for the following user:</p><ul><li>id: ${user.id}</li><li>email: ${user.email}</li><li>firstname: ${user.firstname}</li><li>lastname: ${user.lastname}</li></ul>`)
             return
         }
@@ -104,6 +106,25 @@ export class PaymentFacade {
         return paymentStatusDto;
     }
 
+    async updatePaymentUser(user: User, oldEmail: string) {
+        try {
+            // TODO Check store (Stripe, IOs, Android) -> not yet necessary
+            const customers = await this.stripe.customers.list({
+                email: oldEmail,
+            });
+
+            customers.data.forEach((customer: Stripe.Customer) => {
+                this.stripe.customers.update(
+                    customer.id,
+                    {email: user.email}
+                );
+            });
+        } catch (e: any) {
+            Logger.error(`Error update payment email for user id ${user.id} with old email ${oldEmail} and new email ${user.email}`);
+            this.emailService.sendErrorMessageToAdmin('Error update payment email', `Error update payment email for user id ${user.id} with old email ${oldEmail} and new email ${user.email}`);
+        }
+    }
+
     async stripeWebhook(request: any) {
         const sig = request.headers['stripe-signature'];
 
@@ -148,6 +169,15 @@ export class PaymentFacade {
                     this.emailService.sendErrorMessageToAdmin("Revenuecat request failed", `<ul><li>app_user_id: ${session.client_reference_id}</li><li>fetch_token: ${session.subscription}</li></ul>`)
                 }
 
+                break;
+
+            case 'invoice.upcoming':
+                const invoiceUpcoming = event.data.object;
+                const email = invoiceUpcoming.customer_email;
+                const user = await this.userService.getUserByEmail(email);
+                if (user) {
+                    this.emailService.sendInvoiceUpcoming(user);
+                }
                 break;
         }
     }

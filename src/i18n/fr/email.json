@@ -27,5 +27,11 @@
             "subject": "Membre de l'équipe {school}",
             "content": "<p>{school} vous invite à faire partie de son équipe. Vous pouvez accepter cette invitation en suivant le lien ci-dessous.</p><p> Lien: <a href='{link}'>{link}</a></p><p>Le lien expire le {date}</p>"
         }
+    },
+    "payment": {
+        "invoiceUpcoming": {
+            "subject": "Prochaine facture",
+            "content": "<p>Bonjour</p><p>Votre abonnement sera automatiquement renouvelé dans 30 jours. Vous serez débité d'un montant de 12.- CHF.</p><p>Vous pouvez résilier votre abonnement à tout moment dans l'application sous \"Paramètres\".</p><p> Nous serions heureux de continuer à pouvoir vous compter parmi nos clients à l'avenir.</p><p>Salutations</br>Equipe Flightbook</p>"
+        }
     }
 }

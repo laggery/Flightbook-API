@@ -8,6 +8,7 @@ import { EmailService } from 'src/email/email.service';
 @Module({
   imports: [HttpModule, UserModule],
   controllers: [PaymentController],
-  providers: [PaymentFacade, EmailService]
+  providers: [PaymentFacade, EmailService],
+  exports: [PaymentFacade]
 })
 export class PaymentModule {}

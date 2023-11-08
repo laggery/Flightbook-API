@@ -11,6 +11,7 @@ import { AuthFacade } from './auth.facade';
 import { EmailService } from 'src/email/email.service';
 import { HttpModule } from '@nestjs/axios';
 import { UserFacade } from 'src/user/user.facade';
+import { PaymentFacade } from 'src/payment/payment-facade';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { UserFacade } from 'src/user/user.facade';
       signOptions: { expiresIn: process.env.TOKEN_EXPIRATION },
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, AuthFacade, EmailService, UserFacade],
+  providers: [AuthService, LocalStrategy, JwtStrategy, AuthFacade, EmailService, UserFacade, PaymentFacade],
   controllers: [AuthController],
   exports: [AuthService],
 })

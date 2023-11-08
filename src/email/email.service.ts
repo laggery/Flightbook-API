@@ -10,6 +10,7 @@ import { I18nContext } from 'nestjs-i18n';
 import { Student } from 'src/training/student/student.entity';
 import { Enrollment } from 'src/training/enrollment/enrollment.entity';
 import { env } from 'process';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class EmailService {
@@ -211,7 +212,7 @@ export class EmailService {
         let description = appointment.description || "-";
         description = description.replace(new RegExp("[\r\n]", "gm"), "</br>");
         const maxPeople = appointment.maxPeople || "-";
-        const type = email.content = i18n.t('email.appointment.type', { lang: appointment.school.language});
+        const type = i18n.t('email.appointment.type', { lang: appointment.school.language});
         email.content = i18n.t('email.appointment.informWaitingStudent.content', {
             lang: school.language,
             args: {
@@ -223,6 +224,28 @@ export class EmailService {
             }
         });
 
+        this.sendEmail(email);
+    }
+
+    sendInvoiceUpcoming(user: User) {
+        const i18n = I18nContext.current();
+        const email = new EmailBodyDto();
+
+        email.toAddress = user.email;
+        email.subject = "Bevorstehende Rechnung / Prochaine facture"
+        email.content = `<p>Guten Tag</p>
+        <p>Ihr Abonnement wird in 30 Tagen automatisch verlängert. Sie werden mit einem Betrag von CHF 12.- belastet.</p>
+        <p>Das Abonnement kann jederzeit in der Applikation unter \"Einstellungen\" gekündet werden.</p>
+        <p>Wir würden uns freuen, Sie auch in Zukunft zu unseren Kunden zählen zu können.</p>
+        <p>Freundliche Grüsse</br>
+        Flightbook Team</p>
+        <p>------------------------------------</p>
+        <p>Bonjour</p>
+        <p>Votre abonnement sera automatiquement renouvelé dans 30 jours. Vous serez débité d'un montant de 12.- CHF.</p>
+        <p>Vous pouvez résilier votre abonnement à tout moment dans l'application sous \"Paramètres\".</p>
+        <p> Nous serions heureux de continuer à pouvoir vous compter parmi nos clients à l'avenir.</p>
+        <p>Salutations</br>
+        Equipe Flightbook</p>`
         this.sendEmail(email);
     }
 

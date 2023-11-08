@@ -11,13 +11,15 @@ import { UserPasswordWriteDto } from './interface/user-password-write-dto';
 import { InvalidPasswordException } from './exception/invalid-password-exception';
 import { InvalidOldPasswordException } from './exception/invalid-oldpassword-exception';
 import { LoginType } from './login-type';
+import { PaymentFacade } from 'src/payment/payment-facade';
 
 @Injectable()
 export class UserFacade {
 
     constructor(
         private userService: UserService,
-        private authService: AuthService
+        private authService: AuthService,
+        private paymentFacade: PaymentFacade
     ) {}
 
     async getCurrentUser(id: number): Promise<any> {
@@ -62,6 +64,7 @@ export class UserFacade {
         }
 
         const user: User = await this.userService.getUserById(id);
+        const oldEmail = user.email;
 
         if (user.loginType != LoginType.LOCAL) {
             throw new BadRequestException();
@@ -80,6 +83,10 @@ export class UserFacade {
         user.lastname = userWriteDto.lastname;
 
         const userResp: User = await this.userService.saveUser(user);
+
+        if (oldEmail !== userResp.email) {
+            this.paymentFacade.updatePaymentUser(userResp, oldEmail);
+        }
         return plainToClass(UserReadDto, userResp);
     }
 
