@@ -14,7 +14,7 @@ import { Subscription } from "src/training/subscription/subscription.entity";
 @Index("idx_16606_email", ["email"], { unique: true })
 @Index("idx_16606_primary", ["id"], { unique: true })
 @Index("idx_16409_primary", ["id"], { unique: true })
-@Entity("app_user", { schema: "public" })
+@Entity("app_user")
 export class User {
   @PrimaryGeneratedColumn({ type: "integer", name: "id" })
   id: number;

@@ -2,7 +2,7 @@ import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 
 @Index("idx_16400_primary", ["id"], { unique: true })
 @Index("idx_16597_primary", ["id"], { unique: true })
-@Entity("news", { schema: "public" })
+@Entity("news")
 export class News {
   @PrimaryGeneratedColumn({ type: "integer", name: "id" })
   id: number;

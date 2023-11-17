@@ -11,7 +11,7 @@ const dbConfigBase: any = {
     username: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE_NAME,
-    schema: process.env.DATABASE_SCHEMA || "public",
+    schema: process.env.DATABASE_SCHEMA || "data",
     entities: [
         TrainingHill,
         AltitudeFlight,

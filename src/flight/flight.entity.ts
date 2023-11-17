@@ -14,7 +14,7 @@ import { Igc } from "./interface/igc";
 @Index("idx_16389_start_id", ["startId"], {})
 @Index("idx_16586_user_id", ["userId"], {})
 @Index("idx_16389_user_id", ["userId"], {})
-@Entity("flight", { schema: "public" })
+@Entity("flight")
 export class Flight {
   @PrimaryGeneratedColumn({ type: "integer", name: "id" })
   id: number;

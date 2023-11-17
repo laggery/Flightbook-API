@@ -6,7 +6,6 @@ import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { Glider } from 'src/glider/glider.entity';
 import { Place } from 'src/place/place.entity';
 import { PagerDto } from 'src/interface/pager-dto';
-import { PagerEntityDto } from 'src/interface/pager-entity-dto';
 
 @Injectable()
 export class FlightService {
@@ -33,7 +32,7 @@ export class FlightService {
         builder.addOrderBy('flight.timestamp', 'DESC');
 
         let sqlRequest = builder.getSql();
-        sqlRequest = sqlRequest.replace('FROM "public"."flight" "flight"', ` FROM (Select ROW_NUMBER() OVER (ORDER BY flight.date ASC) flight_number, flight.* from flight where user_id = ${token.userId}) as flight`)
+        sqlRequest = sqlRequest.replace('FROM "data"."flight" "flight"', ` FROM (Select ROW_NUMBER() OVER (ORDER BY flight.date ASC) flight_number, flight.* from flight where user_id = ${token.userId}) as flight`)
         if (query && query.limit) { sqlRequest = sqlRequest + ` LIMIT ${query.limit}`}
         if (query && query.offset) { sqlRequest = sqlRequest + ` OFFSET ${query.offset}`}
 

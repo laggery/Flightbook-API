@@ -17,7 +17,7 @@ import { Flight } from "../flight/flight.entity";
 @Index("idx_16603_primary", ["id"], { unique: true })
 @Index("idx_16603_user_id", ["userId"], {})
 @Index("idx_16406_user_id", ["userId"], {})
-@Entity("place", { schema: "public" })
+@Entity("place")
 export class Place {
   @Expose()
   @PrimaryGeneratedColumn({ type: "integer", name: "id" })

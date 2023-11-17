@@ -11,7 +11,7 @@ const datasource = new DataSource({
     username: env.DATABASE_USER,
     password: env.DATABASE_PASSWORD,
     database: env.DATABASE_NAME,
-    schema: "public",
+    schema: "data",
     entities: [cwd() + '/src/**/*.entity.ts'],
     migrations: [cwd() + '/src/db/migrations/*.ts'],
     migrationsTableName: 'db_migrations',
