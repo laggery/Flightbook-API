@@ -1,4 +1,4 @@
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException, ConflictException, UnprocessableEntityException } from "@nestjs/common";
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, ConflictException, UnprocessableEntityException, Logger } from "@nestjs/common";
 import { Response } from 'express';
 import { QueryFailedError } from "typeorm";
 
@@ -11,6 +11,7 @@ export class QueryFailedErrorFilter implements ExceptionFilter {
                 error = new ConflictException("Entity cannot be deleted or updated because it is used by another entity");
                 break;
             default:
+                Logger.error(exception, exception.query, "Database error");
                 error = new UnprocessableEntityException("Database error");
         }
         

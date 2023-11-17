@@ -32,7 +32,7 @@ export class FlightService {
         builder.addOrderBy('flight.timestamp', 'DESC');
 
         let sqlRequest = builder.getSql();
-        sqlRequest = sqlRequest.replace('FROM "data"."flight" "flight"', ` FROM (Select ROW_NUMBER() OVER (ORDER BY flight.date ASC) flight_number, flight.* from flight where user_id = ${token.userId}) as flight`)
+        sqlRequest = sqlRequest.replace('FROM "data"."flight" "flight"', ` FROM (Select ROW_NUMBER() OVER (ORDER BY flight.date ASC) flight_number, flight.* from data.flight where user_id = ${token.userId}) as flight`)
         if (query && query.limit) { sqlRequest = sqlRequest + ` LIMIT ${query.limit}`}
         if (query && query.offset) { sqlRequest = sqlRequest + ` OFFSET ${query.offset}`}
 
