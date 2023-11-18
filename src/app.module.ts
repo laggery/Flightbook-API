@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { FlightModule } from './flight/flight.module';
-import { Connection } from 'typeorm';
 import { PlaceModule } from './place/place.module';
 import { UserModule } from './user/user.module';
 import { APP_FILTER } from '@nestjs/core';
@@ -63,7 +62,7 @@ import * as path from 'path';
   ],
 })
 export class AppModule {
-  constructor(private readonly connection: Connection) { }
+  constructor() { }
 
   configure(consumer: MiddlewareConsumer) {}
 }
