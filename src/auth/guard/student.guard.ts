@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Student } from 'src/training/student/student.entity';
-import { StudentService } from 'src/training/student/student.service';
+import { StudentRepository } from 'src/training/student/student.repository';
 import { TeamMember } from 'src/training/team-member/team-member.entity';
 import { TeamMemberService } from 'src/training/team-member/team-member.service';
 
@@ -10,7 +10,7 @@ export class StudentGuard implements CanActivate {
 
   constructor(
     private readonly teamMemberService: TeamMemberService,
-    private readonly studentService: StudentService
+    private readonly studentRepository: StudentRepository
   ) {}
 
   canActivate(
@@ -24,7 +24,7 @@ export class StudentGuard implements CanActivate {
     return new Promise<boolean>((resolve, reject) => {
       this.teamMemberService.getTeamMembersByUserId(request.user.userId).then((res: TeamMember[]) => {
         res.forEach((teamMember: TeamMember) => {
-          promiseList.push(this.studentService.getStudentsBySchoolId(teamMember.school.id));
+          promiseList.push(this.studentRepository.getStudentsBySchoolId(teamMember.school.id));
         });
 
 
@@ -32,7 +32,7 @@ export class StudentGuard implements CanActivate {
           let findPermission = false;
           studentsBySchool.forEach(element => {
             element.forEach((student: Student) => {
-              if (student.user.id == studentId) {
+              if (student.id == studentId) {
                 findPermission = true;
               }
             })

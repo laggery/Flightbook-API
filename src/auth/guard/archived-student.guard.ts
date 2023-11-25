@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { Student } from 'src/training/student/student.entity';
-import { StudentService } from 'src/training/student/student.service';
+import { StudentRepository } from 'src/training/student/student.repository';
+import { ArchivedStudent } from 'src/training/student/studentArchived.entity';
 import { TeamMember } from 'src/training/team-member/team-member.entity';
 import { TeamMemberService } from 'src/training/team-member/team-member.service';
 
@@ -10,7 +10,7 @@ export class ArchivedStudentGuard implements CanActivate {
 
   constructor(
     private readonly teamMemberService: TeamMemberService,
-    private readonly studentService: StudentService
+    private readonly studentRepository: StudentRepository
   ) {}
 
   canActivate(
@@ -18,21 +18,21 @@ export class ArchivedStudentGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
     const params = request.params;
-    const studentId = params.studentId;
+    const studentId = params.id;
 
     const promiseList = [];
     return new Promise<boolean>((resolve, reject) => {
       this.teamMemberService.getTeamMembersByUserId(request.user.userId).then((res: TeamMember[]) => {
         res.forEach((teamMember: TeamMember) => {
-          promiseList.push(this.studentService.getArchivedStudentsBySchoolId(teamMember.school.id));
+          promiseList.push(this.studentRepository.getArchivedStudentsBySchoolId(teamMember.school.id));
         });
 
 
         Promise.all(promiseList).then((studentsBySchool: any) => {
           let findPermission = false;
           studentsBySchool.forEach(element => {
-            element.forEach((student: Student) => {
-              if (student.user.id == studentId) {
+            element.forEach((student: ArchivedStudent) => {
+              if (student.id == studentId) {
                 findPermission = true;
               }
             })

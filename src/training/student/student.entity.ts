@@ -1,6 +1,7 @@
 import { User } from "src/user/user.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { School } from "../school/school.entity";
+import { Note } from "../note/note.entity";
 
 @Entity("student")
 export class Student {
@@ -27,4 +28,7 @@ export class Student {
     default: () => "CURRENT_TIMESTAMP",
   })
   timestamp: Date;
+
+  @OneToMany(() => Note, (note) => note.student)
+  notes: Note[];
 }

@@ -5,13 +5,37 @@ import { Student } from './student.entity';
 import { ArchivedStudent } from './studentArchived.entity';
 
 @Injectable()
-export class StudentService {
+export class StudentRepository {
     constructor(
         @InjectRepository(Student)
         private readonly studentRepository: Repository<Student>,
         @InjectRepository(ArchivedStudent)
         private readonly studentArchivedRepository: Repository<ArchivedStudent>
     ) { }
+
+    async getStudentById(id: number): Promise<Student> {
+        return this.studentRepository.findOneOrFail({
+            relations: {
+                user: true,
+                school: true
+            },
+            where: {
+                id
+            }
+        });
+    }
+
+    async getArchivedStudentById(id: number): Promise<Student> {
+        return this.studentArchivedRepository.findOneOrFail({
+            relations: {
+                user: true,
+                school: true
+            },
+            where: {
+                id
+            }
+        });
+    }
 
     async getStudentsBySchoolId(schoolId: number): Promise<Student[]> {
         let options: any = {
@@ -28,7 +52,7 @@ export class StudentService {
         return this.studentRepository.find(options);
     }
 
-    async getStudentById(userId: number): Promise<Student[]> {
+    async getStudentByUserId(userId: number): Promise<Student[]> {
         let options: any = {
             relations: {
                 user: true,
@@ -58,54 +82,16 @@ export class StudentService {
         return this.studentRepository.find(options);
     }
 
-    async getStudentsByIdAndSchoolId(userId: number, schoolId: number): Promise<Student> {
-        if (!userId || !schoolId) {
-            return undefined;
-        }
-        let options: any = {
-            relations: {
-                user: true,
-                school: true
-            },
-            where: {
-                user: {
-                    id: userId
-                },
-                school: {
-                    id: schoolId
-                }
-            }
-        };
-        return this.studentRepository.findOne(options);
-    }
-
-    async getArchivedStudentsByIdAndSchoolId(userId: number, schoolId: number): Promise<Student> {
-        if (!userId || !schoolId) {
-            return undefined;
-        }
-        let options: any = {
-            relations: {
-                user: true,
-                school: true
-            },
-            where: {
-                user: {
-                    id: userId
-                },
-                school: {
-                    id: schoolId
-                }
-            }
-        };
-        return this.studentArchivedRepository.findOne(options);
-    }
-
     async saveStudent(student: Student): Promise<Student | undefined> {
         return await this.studentRepository.save(student);
     }
 
     async removeStudent(student: Student): Promise<Student | undefined> {
         return await this.studentRepository.remove(student);
+    }
+
+    async removeArchivedStudent(student: ArchivedStudent): Promise<Student | undefined> {
+        return await this.studentArchivedRepository.remove(student);
     }
 
     async getArchivedStudentsBySchoolId(schoolId: number): Promise<ArchivedStudent[]> {
@@ -123,20 +109,15 @@ export class StudentService {
         return this.studentArchivedRepository.find(options);
     }
 
-    async updateArchivedStudentByIdAndSchoolId(userId: number, schoolId: number): Promise<UpdateResult> {
-        if (!userId || !schoolId) {
-            return undefined;
-        }
-        let options: any = {
+    async getArchivedStudentByUserIdAndSchoolId(userId: number, schoolId: number): Promise<ArchivedStudent> {
+        return this.studentArchivedRepository.findOneBy({
             user: {
                 id: userId
             },
             school: {
                 id: schoolId
             }
-
-        };
-        return this.studentArchivedRepository.update(options, { timestamp: () => "now()" });
+        });
     }
 
     async saveArchivedStudent(student: ArchivedStudent): Promise<ArchivedStudent | undefined> {

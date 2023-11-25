@@ -11,6 +11,7 @@ import { SchoolModule } from './school/school.module';
 import { StudentModule } from './student/student.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { TeamMemberModule } from './team-member/team-member.module';
+import { NoteModule } from './note/note.module';
 
 @Module({
     imports: [
@@ -21,7 +22,8 @@ import { TeamMemberModule } from './team-member/team-member.module';
       StudentModule,
       TeamMemberModule,
       SchoolModule,
-      EnrollmentModule
+      EnrollmentModule,
+      NoteModule
     ],
     controllers: [
         InstructorController,

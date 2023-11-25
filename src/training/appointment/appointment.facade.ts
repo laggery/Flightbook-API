@@ -18,7 +18,7 @@ import { PagerEntityDto } from 'src/interface/pager-entity-dto';
 import { EmailService } from 'src/email/email.service';
 import { SchoolDto } from '../school/interface/school-dto';
 import { NotificationsService } from 'src/shared/services/notifications.service';
-import { StudentService } from '../student/student.service';
+import { StudentRepository } from '../student/student.repository';
 import { SubscriptionDto } from '../subscription/interface/subscription-dto';
 import { Student } from '../student/student.entity';
 import { AppointmentType } from './appointment-type.entity';
@@ -32,7 +32,7 @@ export class AppointmentFacade {
     constructor(
         private appointmentRepository: AppointmentRepository,
         private appointmentTypeRepository: AppointmentTypeRepository,
-        private studentService: StudentService,
+        private studentRepository: StudentRepository,
         private subscriptionService: SubscriptionService,
         private schoolService: SchoolService,
         private userService: UserService,
@@ -46,7 +46,7 @@ export class AppointmentFacade {
 
         const appointmentResp: Appointment = await this.appointmentRepository.saveAppointment(appointment);
 
-        const students = await this.studentService.getStudentsBySchoolId(schoolId);
+        const students = await this.studentRepository.getStudentsBySchoolId(schoolId);
 
         if (appointment.subscriptions.length > 0) {
             const addedStudents = [];

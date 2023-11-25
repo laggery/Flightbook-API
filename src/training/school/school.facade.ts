@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { plainToClass } from 'class-transformer';
+import { plainToClass, plainToInstance } from 'class-transformer';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { TeamMember } from '../team-member/team-member.entity';
@@ -22,8 +22,9 @@ export class SchoolFacade {
         }
 
         const user: User = await this.userService.getUserById(token.userId);
-        const school: School = plainToClass(School, schoolDto);
+        const school: School = plainToInstance(School, schoolDto);
         school.id = null;
+        school.address2 = schoolDto.address2 === '' ? null : schoolDto.address2;
 
         // Check if name already existe for this user
         if (await this.schoolService.getSchoolByName(school.name)) {
