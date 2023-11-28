@@ -1,20 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Student } from './student.entity';
-import { ArchivedStudent } from './studentArchived.entity';
 
 @Injectable()
-export class StudentRepository {
+export class StudentRepository extends Repository<Student> {
     constructor(
         @InjectRepository(Student)
-        private readonly studentRepository: Repository<Student>,
-        @InjectRepository(ArchivedStudent)
-        private readonly studentArchivedRepository: Repository<ArchivedStudent>
-    ) { }
+        private readonly repository: Repository<Student>
+    ) {
+        super(repository.target, repository.manager, repository.queryRunner);
+    }
 
     async getStudentById(id: number): Promise<Student> {
-        return this.studentRepository.findOneOrFail({
+        return this.repository.findOneOrFail({
             relations: {
                 user: true,
                 school: true
@@ -25,19 +24,7 @@ export class StudentRepository {
         });
     }
 
-    async getArchivedStudentById(id: number): Promise<Student> {
-        return this.studentArchivedRepository.findOneOrFail({
-            relations: {
-                user: true,
-                school: true
-            },
-            where: {
-                id
-            }
-        });
-    }
-
-    async getStudentsBySchoolId(schoolId: number): Promise<Student[]> {
+    async getStudentsBySchoolId(schoolId: number, archived?: boolean): Promise<Student[]> {
         let options: any = {
             relations: {
                 user: true,
@@ -49,7 +36,10 @@ export class StudentRepository {
                 }
             }
         };
-        return this.studentRepository.find(options);
+        if (archived != undefined) {
+            options.where.isArchived = archived;
+        }
+        return this.repository.find(options);
     }
 
     async getStudentByUserId(userId: number): Promise<Student[]> {
@@ -64,7 +54,7 @@ export class StudentRepository {
                 }
             }
         };
-        return this.studentRepository.find(options);
+        return this.repository.find(options);
     }
 
     async getStudentByEmail(email: string): Promise<Student[]> {
@@ -79,48 +69,6 @@ export class StudentRepository {
                 }
             }
         };
-        return this.studentRepository.find(options);
-    }
-
-    async saveStudent(student: Student): Promise<Student | undefined> {
-        return await this.studentRepository.save(student);
-    }
-
-    async removeStudent(student: Student): Promise<Student | undefined> {
-        return await this.studentRepository.remove(student);
-    }
-
-    async removeArchivedStudent(student: ArchivedStudent): Promise<Student | undefined> {
-        return await this.studentArchivedRepository.remove(student);
-    }
-
-    async getArchivedStudentsBySchoolId(schoolId: number): Promise<ArchivedStudent[]> {
-        let options: any = {
-            relations: {
-                user: true,
-                school: true
-            },
-            where: {
-                school: {
-                    id: schoolId
-                }
-            }
-        };
-        return this.studentArchivedRepository.find(options);
-    }
-
-    async getArchivedStudentByUserIdAndSchoolId(userId: number, schoolId: number): Promise<ArchivedStudent> {
-        return this.studentArchivedRepository.findOneBy({
-            user: {
-                id: userId
-            },
-            school: {
-                id: schoolId
-            }
-        });
-    }
-
-    async saveArchivedStudent(student: ArchivedStudent): Promise<ArchivedStudent | undefined> {
-        return await this.studentArchivedRepository.save(student);
+        return this.repository.find(options);
     }
 }

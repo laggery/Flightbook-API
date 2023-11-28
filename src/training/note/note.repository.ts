@@ -24,18 +24,11 @@ export class NoteRepository extends Repository<Note> {
         }});
     }
 
-    async getNotesByArchivedStudentId(studentId: number): Promise<Note[]> {
-        return this.findBy({ archivedStudent: {
-            id: studentId
-        }});
-    }
-
     async getNotesPager(studentId: number, query: any): Promise<PagerEntityDto<Note[]>> {
         const pagerDto = new PagerEntityDto<Note[]>();
 
         let builder = this.createQueryBuilder('note')
             .where(`note.student_id = ${studentId}`)
-            .orWhere(`note.archivedstudent_id = ${studentId}`)
             .orderBy({
                 date: 'DESC'
             });

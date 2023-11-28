@@ -29,6 +29,9 @@ export class Student {
   })
   timestamp: Date;
 
+  @Column("boolean", { name: "isArchived", default: () => "false" })
+  isArchived: boolean;
+
   @OneToMany(() => Note, (note) => note.student)
   notes: Note[];
 }

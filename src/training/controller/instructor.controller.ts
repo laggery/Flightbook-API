@@ -19,7 +19,6 @@ import { PagerEntityDto } from 'src/interface/pager-entity-dto';
 import { TeamMemberDto } from '../team-member/interface/team-member-dto';
 import { AppointmentTypeFacade } from '../appointment/appointment-type.facade';
 import { AppointmentTypeDto } from '../appointment/interface/appointment-type-dto';
-import { ArchivedStudentGuard } from 'src/auth/guard/archived-student.guard';
 import { NoteDto } from '../note/interface/note-dto';
 import { NoteFacade } from '../note/note.facade';
 
@@ -60,21 +59,8 @@ export class InstructorController {
 
     @UseGuards(JwtAuthGuard, SchoolGuard)
     @Get('/schools/:id/students')
-    getStudents(@Request() req, @Param('id') id: number): Promise<StudentDto[]> {
-        return this.studentFacade.getStudentsBySchoolId(id);
-    }
-
-    @UseGuards(JwtAuthGuard, SchoolGuard)
-    @Get('/schools/:id/students/archived')
-    getArchivedStudents(@Request() req, @Param('id') id: number): Promise<StudentDto[]> {
-        return this.studentFacade.getArchivedStudentsBySchoolId(id);
-    }
-
-    @UseGuards(JwtAuthGuard, SchoolGuard)
-    @Delete('/schools/:id/students/:studendId')
-    @HttpCode(204)
-    removeStudent(@Request() req, @Param('id') schoolId: number, @Param('studendId') studendId: number): Promise<StudentDto> {
-        return this.studentFacade.removeStudent(studendId);
+    getStudents(@Query('archived') archived: boolean, @Param('id') id: number): Promise<StudentDto[]> {
+        return this.studentFacade.getStudentsBySchoolId(id, archived);
     }
 
     @UseGuards(JwtAuthGuard, SchoolGuard)
@@ -147,27 +133,22 @@ export class InstructorController {
     }
 
     @UseGuards(JwtAuthGuard, StudentGuard)
+    @Delete('/students/:id')
+    @HttpCode(204)
+    removeStudent(@Request() req, @Param('id') studendId: number): Promise<StudentDto> {
+        return this.studentFacade.archiveStudent(studendId);
+    }
+
+    @UseGuards(JwtAuthGuard, StudentGuard)
     @Get('/students/:id/flights')
     getStudentFlights(@Request() req, @Query() query, @Param('id') id: number): Promise<PagerEntityDto<FlightDto[]>> {
         return this.studentFacade.getStudentFlightsByStudentId(id, query);
     }
 
-    @UseGuards(JwtAuthGuard, ArchivedStudentGuard)
-    @Get('/students/archived/:id/flights')
-    getArchivedStudentDetail(@Request() req, @Query() query, @Param('id') studentId: number): Promise<PagerEntityDto<FlightDto[]>> {
-        return this.studentFacade.getArchivedStudentFlightsByStudentId(studentId, query);
-    }
-
     @UseGuards(JwtAuthGuard, StudentGuard)
     @Get('/students/:id/control-sheet')
     getControlSheet(@Request() req, @Param('id') id: number): Promise<ControlSheetDto> {
-        return this.studentFacade.getStudentControlSheetByStudentId(id, false);
-    }
-
-    @UseGuards(JwtAuthGuard, ArchivedStudentGuard)
-    @Get('/students/archived/:id/control-sheet')
-    getControlSheetArchivedStudent(@Request() req, @Param('id') id: number): Promise<ControlSheetDto> {
-        return this.studentFacade.getStudentControlSheetByStudentId(id, true);
+        return this.studentFacade.getStudentControlSheetByStudentId(id);
     }
 
     @UseGuards(JwtAuthGuard, StudentGuard)
@@ -199,11 +180,5 @@ export class InstructorController {
     @HttpCode(204)
     removeNote(@Request() req, id: number, @Param('noteId') noteId: number, @Param('studendId') studendId: number) {
         this.noteFacade.removeNote(noteId);
-    }
-
-    @UseGuards(JwtAuthGuard, ArchivedStudentGuard)
-    @Get('/students/archived/:id/notes')
-    getArchivedNotes(@Request() req, @Query() query, @Param('id') id: number): Promise<PagerEntityDto<NoteDto[]>> {
-        return this.noteFacade.getNotesByStudentId(id, query);
     }
 }

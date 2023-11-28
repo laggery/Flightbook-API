@@ -1,6 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Student } from "../student/student.entity";
-import { ArchivedStudent } from "../student/studentArchived.entity";
 
 @Entity("note")
 export class Note {
@@ -23,13 +22,6 @@ export class Note {
   })
   @JoinColumn([{ name: "student_id", referencedColumnName: "id" }])
   student: Student;
-
-  @ManyToOne(() => ArchivedStudent, (archivedStudent) => archivedStudent.notes, {
-    onDelete: "RESTRICT",
-    onUpdate: "RESTRICT",
-  })
-  @JoinColumn([{ name: "archivedstudent_id", referencedColumnName: "id" }])
-  archivedStudent: ArchivedStudent;
 
   @UpdateDateColumn({ 
     type: 'timestamp with time zone',

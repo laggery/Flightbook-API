@@ -46,7 +46,7 @@ export class AppointmentFacade {
 
         const appointmentResp: Appointment = await this.appointmentRepository.saveAppointment(appointment);
 
-        const students = await this.studentRepository.getStudentsBySchoolId(schoolId);
+        const students = await this.studentRepository.getStudentsBySchoolId(schoolId, false);
 
         if (appointment.subscriptions.length > 0) {
             const addedStudents = [];

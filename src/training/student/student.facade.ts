@@ -11,9 +11,8 @@ import { Student } from './student.entity';
 import { StudentRepository } from './student.repository';
 import { StudentException } from './exception/student.exception';
 import { UserReadIdDto } from 'src/user/interface/user-read-id-dto';
-import { ArchivedStudent } from './studentArchived.entity';
 import { PagerEntityDto } from 'src/interface/pager-entity-dto';
-import { NoteRepository } from '../note/note.repository';
+import { StudentMapper } from './student.mapper';
 
 @Injectable()
 export class StudentFacade {
@@ -22,18 +21,21 @@ export class StudentFacade {
         private studentRepository: StudentRepository,
         private appointmentService: AppointmentRepository,
         private flightFacade: FlightFacade,
-        private controlSheetFacade: ControlSheetFacade,
-        private noteRepository: NoteRepository) { }
+        private controlSheetFacade: ControlSheetFacade) { }
 
-    async getStudentsBySchoolId(id: number): Promise<StudentDto[]> {
-        const students = await this.studentRepository.getStudentsBySchoolId(id);
+    async getStudentsBySchoolId(id: number, archived: boolean): Promise<StudentDto[]> {
+        const students = await this.studentRepository.getStudentsBySchoolId(id, archived);
         const studentDtoList: StudentDto[] = [];
         for (const student of students) {
-            let studentDto = new StudentDto();
-            studentDto.id = student.id;
-            studentDto.user = plainToClass(UserReadIdDto, student.user);
-            studentDto.statistic = await this.flightFacade.getGlobalStatistic({ userId: student.user.id }, {});
-            const flightList = await this.flightFacade.getFlights({ userId: student.user.id }, { limit: 1 })
+            let query: any = {
+                limit: 1
+            };
+            if (student.isArchived) {
+                query.timestamp = student.timestamp;
+            }
+
+            let studentDto = StudentMapper.toStudentDto(student, await this.flightFacade.getGlobalStatistic({ userId: student.user.id }, query));
+            const flightList = await this.flightFacade.getFlights({ userId: student.user.id }, query)
 
             if (flightList.length >= 1) {
                 studentDto.lastFlight = flightList[0];
@@ -44,25 +46,7 @@ export class StudentFacade {
         return studentDtoList;
     }
 
-    async getArchivedStudentsBySchoolId(id: number): Promise<StudentDto[]> {
-        const students = await this.studentRepository.getArchivedStudentsBySchoolId(id);
-        const studentDtoList: StudentDto[] = [];
-        for (const student of students) {
-            let studentDto = new StudentDto();
-            studentDto.id = student.id;
-            studentDto.user = plainToClass(UserReadIdDto, student.user);
-            studentDto.statistic = await this.flightFacade.getGlobalStatistic({ userId: student.user.id }, { timestamp: student.timestamp });
-            const flightList = await this.flightFacade.getFlights({ userId: student.user.id }, { timestamp: student.timestamp, limit: 1 })
-
-            if (flightList.length >= 1) {
-                studentDto.lastFlight = flightList[0];
-            }
-
-            studentDtoList.push(studentDto);
-        }
-        return studentDtoList;
-    }
-
+    // @TODO Improve -> search student entity by user id
     async getStudentsByAppointmentId(appointmentId: number): Promise<StudentDto[]> {
         const appointment = await this.appointmentService.getAppointmentById(appointmentId);
         const studentDtoList: StudentDto[] = [];
@@ -81,42 +65,27 @@ export class StudentFacade {
         return studentDtoList;
     }
 
-    async removeStudent(studentId: number) {
+    async archiveStudent(studentId: number) {
         const student = await this.studentRepository.getStudentById(studentId);
         if (!student) {
             throw StudentException.notFoundException();
         }
 
-        let archivedStudentEntity = await this.studentRepository.getArchivedStudentByUserIdAndSchoolId(student.user.id, student.school.id);
-        if (archivedStudentEntity) {
-            archivedStudentEntity.timestamp = new Date();
-        } else {
-            archivedStudentEntity = new ArchivedStudent();
-            archivedStudentEntity.school = student.school;
-            archivedStudentEntity.user = student.user;
-        }
+        student.isArchived = true;
+        student.timestamp = new Date();
 
-        archivedStudentEntity = await this.studentRepository.saveArchivedStudent(archivedStudentEntity);
-
-        const notes = await this.noteRepository.getNotesByStudentId(student.id);
-        for (const note of notes) {
-            note.archivedStudent = archivedStudentEntity;
-            note.student = null;
-            await this.noteRepository.save(note);
-        }
-
-        await this.studentRepository.removeStudent(student);
-        const studentDto = new StudentDto();
-        studentDto.user = plainToClass(UserReadIdDto, student.user);
-        return studentDto;
+        const studentResp = await this.studentRepository.save(student);
+        return StudentMapper.toStudentDto(studentResp, await this.flightFacade.getGlobalStatistic({ userId: studentResp.user.id }, {timestamp: studentResp.timestamp}));
     }
 
-    async getSchoolsByUserId(id: number): Promise<SchoolDto[]> {
+    async getActiveSchoolsByUserId(id: number): Promise<SchoolDto[]> {
         const students = await this.studentRepository.getStudentByUserId(id);
         const schoolsDto: SchoolDto[] = [];
 
         students.forEach((student: Student) => {
-            schoolsDto.push(plainToClass(SchoolDto, student.school));
+            if (!student.isArchived){
+                schoolsDto.push(plainToClass(SchoolDto, student.school));
+            }
         });
 
         return schoolsDto;
@@ -127,24 +96,15 @@ export class StudentFacade {
         if (!student) {
             throw StudentException.notFoundException();
         }
+        if (student.isArchived) {
+            query.timestamp = student.timestamp;
+        }
         return await this.flightFacade.getFlightsPager({ userId: student.user.id }, query);
     }
 
-    async getArchivedStudentFlightsByStudentId(studentId: number, query: any): Promise<PagerEntityDto<FlightDto[]>> {
-        const archivedStudent = await this.studentRepository.getArchivedStudentById(studentId);
-        if (archivedStudent) {
-            query.timestamp = archivedStudent.timestamp
-            return await this.flightFacade.getFlightsPager({ userId: archivedStudent.user.id }, query);
-        }
-    }
+    async getStudentControlSheetByStudentId(studentId: number): Promise<ControlSheetDto> {
+        const student = await this.studentRepository.getStudentById(studentId);
 
-    async getStudentControlSheetByStudentId(studentId: number, isArchived: boolean): Promise<ControlSheetDto> {
-        let student;
-        if (isArchived) {
-            student = await this.studentRepository.getArchivedStudentById(studentId);
-        } else {
-            student = await this.studentRepository.getStudentById(studentId);
-        }
         if (!student) {
             throw StudentException.notFoundException();
         }

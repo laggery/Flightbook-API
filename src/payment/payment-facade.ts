@@ -103,6 +103,7 @@ export class PaymentFacade {
                 paymentStatusDto.state = PaymentState.CANCELED;
             }
         }
+        paymentStatusDto.active = true;
         return paymentStatusDto;
     }
 

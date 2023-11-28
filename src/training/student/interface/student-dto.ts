@@ -7,4 +7,5 @@ export class StudentDto {
     public user: UserReadIdDto;
     public statistic: FlightStatisticDto;
     public lastFlight: FlightDto;
+    public isArchived: boolean;
 }

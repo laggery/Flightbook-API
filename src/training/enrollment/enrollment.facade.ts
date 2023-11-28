@@ -34,7 +34,7 @@ export class EnrollmentFacade {
     async createStudentEnrollment(schoolId: number, enrollmentWriteDto: EnrollmentWriteDto, origin: string): Promise<EnrollmentDto> {
         const user = await this.userService.getUserByEmail(enrollmentWriteDto.email);
         if (user) {
-            const students = await this.studentRepository.getStudentsBySchoolId(schoolId);
+            const students = await this.studentRepository.getStudentsBySchoolId(schoolId, false);
             const foundStudent = students.find((student: Student) => student.user.id === user.id);
             if (foundStudent) {
                 throw StudentException.alreadyExistsException();
@@ -125,7 +125,7 @@ export class EnrollmentFacade {
 
         // check if user is already student or team member
         if (EnrollmentType.STUDENT == enrollment.type) {
-            const students = await this.studentRepository.getStudentsBySchoolId(enrollment.school.id);
+            const students = await this.studentRepository.getStudentsBySchoolId(enrollment.school.id, false);
             const foundStudent = students.find((student: Student) => student.user.email === enrollment.email);
             if (foundStudent) {
                 return null;
@@ -166,26 +166,17 @@ export class EnrollmentFacade {
         if (EnrollmentType.STUDENT == enrollment.type) {
             const students = await this.studentRepository.getStudentsBySchoolId(enrollment.school.id);
             const foundStudent = students.find((student: Student) => student.user.email === enrollment.email);
-            if (foundStudent) {
+            if (foundStudent && !foundStudent.isArchived) {
                 throw StudentException.alreadyExistsException();
-            }
-
-            const student = new Student();
-            student.school = enrollment.school;
-            student.user = user;
-            const studentEntity = await this.studentRepository.saveStudent(student);
-
-            // Check if user has already been archived
-            const archivedStudent = await this.studentRepository.getArchivedStudentsBySchoolId(enrollment.school.id);
-            const foundarchivedStudent = archivedStudent.find((student: Student) => student.user.email === enrollment.email);
-            if (foundarchivedStudent) {
-                const notes = await this.noteRepository.getNotesByArchivedStudentId(foundarchivedStudent.id);
-                for (const note of notes) {
-                    note.archivedStudent = null;
-                    note.student = studentEntity;
-                    await this.noteRepository.save(note);
-                }
-                await this.studentRepository.removeArchivedStudent(foundarchivedStudent);
+            } else if (foundStudent) {
+                foundStudent.isArchived = false;
+                foundStudent.timestamp = new Date(); 
+                await this.studentRepository.save(foundStudent);
+            } else {
+                const student = new Student();
+                student.school = enrollment.school;
+                student.user = user;
+                const studentEntity = await this.studentRepository.save(student);
             }
         } else {
             const teamMembers = await this.teamMemberService.getTeamMembersBySchoolId(enrollment.school.id);

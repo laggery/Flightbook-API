@@ -24,13 +24,13 @@ export class StudentController {
     @UseGuards(JwtAuthGuard)
     @Get('schools')
     getSchoolsByUserId(@Request() req): Promise<SchoolDto[]> {
-        return this.studentFacade.getSchoolsByUserId(req.user.userId);
+        return this.studentFacade.getActiveSchoolsByUserId(req.user.userId);
     }
 
     @UseGuards(JwtAuthGuard)
     @Get('schools/:schoolId/appointments')
     async getAppointments(@Param('schoolId') schoolId: number, @Query() query, @Request() req): Promise<AppointmentDto[]> {
-        const schools = await this.studentFacade.getSchoolsByUserId(req.user.userId)
+        const schools = await this.studentFacade.getActiveSchoolsByUserId(req.user.userId)
         const studentInSchool = schools.find((school: SchoolDto) => {
             if (school.id == schoolId) {
                 return true;
@@ -47,7 +47,7 @@ export class StudentController {
     @UseGuards(JwtAuthGuard)
     @Get('schools/:schoolId/appointments/:appointmentId')
     async getAppointment(@Param('schoolId') schoolId: number, @Param('appointmentId') appointmentId: number, @Query() query, @Request() req): Promise<AppointmentDto> {
-        const schools = await this.studentFacade.getSchoolsByUserId(req.user.userId)
+        const schools = await this.studentFacade.getActiveSchoolsByUserId(req.user.userId)
         const studentInSchool = schools.find((school: SchoolDto) => {
             if (school.id == schoolId) {
                 return true;
@@ -64,7 +64,7 @@ export class StudentController {
     @UseGuards(JwtAuthGuard)
     @Post('schools/:schoolId/appointments/:appointmentId/subscriptions')
     async addSubscriptions(@Param('schoolId') schoolId: number, @Param('appointmentId') appointmentId: number, @Request() req): Promise<AppointmentDto> {
-        const schools = await this.studentFacade.getSchoolsByUserId(req.user.userId)
+        const schools = await this.studentFacade.getActiveSchoolsByUserId(req.user.userId)
         const studentInSchool = schools.find((school: SchoolDto) => {
             if (school.id == schoolId) {
                 return true;
@@ -82,7 +82,7 @@ export class StudentController {
     @Delete('schools/:schoolId/appointments/:appointmentId/subscriptions')
     @HttpCode(204)
     async deleteAppointmentSubscription(@Param('schoolId') schoolId: number, @Param('appointmentId') appointmentId: number, @Request() req): Promise<AppointmentDto> {
-        const schools = await this.studentFacade.getSchoolsByUserId(req.user.userId)
+        const schools = await this.studentFacade.getActiveSchoolsByUserId(req.user.userId)
         const studentInSchool = schools.find((school: SchoolDto) => {
             if (school.id == schoolId) {
                 return true;
