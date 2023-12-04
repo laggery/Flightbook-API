@@ -64,7 +64,7 @@ export class FlightController {
 
     @UseGuards(JwtAuthGuard)
     @Put(':id')
-    updatePlace(@Request() req, @Param('id') id: number, @Body() flightDto: FlightDto) {
+    updateFlight(@Request() req, @Param('id') id: number, @Body() flightDto: FlightDto) {
         return this.flightFacade.updateFlight(req.user, id, flightDto);
     }
 

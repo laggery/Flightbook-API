@@ -146,6 +146,12 @@ export class InstructorController {
     }
 
     @UseGuards(JwtAuthGuard, StudentGuard)
+    @Put('/students/:id/flights/:flightId')
+    updateStudentFlight(@Request() req, @Param('id') id: number, @Param('flightId') flightId: number, @Body() flightDto: FlightDto): Promise<FlightDto> {
+        return this.studentFacade.updateStudentFlight(id, flightId, flightDto);
+    }
+
+    @UseGuards(JwtAuthGuard, StudentGuard)
     @Get('/students/:id/control-sheet')
     getControlSheet(@Request() req, @Param('id') id: number): Promise<ControlSheetDto> {
         return this.studentFacade.getStudentControlSheetByStudentId(id);

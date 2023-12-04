@@ -102,6 +102,15 @@ export class StudentFacade {
         return await this.flightFacade.getFlightsPager({ userId: student.user.id }, query);
     }
 
+    async updateStudentFlight(studentId: number, flightId: number, flightDto: FlightDto): Promise<FlightDto> {
+        const student = await this.studentRepository.getStudentById(studentId);
+        if (!student) {
+            throw StudentException.notFoundException();
+        }
+
+        return await this.flightFacade.updateFlightAlone({ userId: student.user.id }, flightId, flightDto);
+    }
+
     async getStudentControlSheetByStudentId(studentId: number): Promise<ControlSheetDto> {
         const student = await this.studentRepository.getStudentById(studentId);
 

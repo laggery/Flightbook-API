@@ -1,5 +1,5 @@
 import { Injectable, Req } from '@nestjs/common';
-import { FlightService } from './flight.service';
+import { FlightRepository } from './flight.repository';
 import { UserService } from 'src/user/user.service';
 import { FlightDto } from './interface/flight-dto';
 import { Flight } from './flight.entity';
@@ -7,8 +7,6 @@ import { plainToClass, plainToInstance } from 'class-transformer';
 import { User } from 'src/user/user.entity';
 import { PlaceFacade } from 'src/place/place.facade';
 import { Place } from 'src/place/place.entity';
-import { InvalidDateException } from './exception/invalid-date-exception';
-import { InvalidGliderException } from './exception/invalid-glider-exception';
 import { GliderFacade } from 'src/glider/glider.facade';
 import { Glider } from 'src/glider/glider.entity';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
@@ -17,12 +15,13 @@ import { checkIfDateIsValid } from '../shared/util/date-utils';
 import { FileUploadService } from 'src/fileupload/file-upload.service';
 import { PagerEntityDto } from 'src/interface/pager-entity-dto';
 import { StatisticType } from './statistic-type';
+import { FlightException } from './exception/flight.exception';
 
 @Injectable()
 export class FlightFacade {
 
     constructor(
-        private flightService: FlightService,
+        private flightService: FlightRepository,
         private placeFacade: PlaceFacade,
         private gliderFacade: GliderFacade,
         private userService: UserService,
@@ -85,12 +84,16 @@ export class FlightFacade {
         flight.id = null;
         flight.user = user;
 
-        const flightResp: Flight = await this.flightService.saveFlight(flight);
+        const flightResp: Flight = await this.flightService.save(flight);
         return plainToClass(FlightDto, flightResp);
     }
 
     async updateFlight(token: any, id: number, flightDto: FlightDto): Promise<FlightDto> {
         let flight: Flight = await this.flightService.getFlightById(token, id);
+
+        if (!flight) {
+            FlightException.notFoundException();
+        }
 
         flight = await this.flightValidityCheck(flightDto, flight, token);
 
@@ -100,13 +103,26 @@ export class FlightFacade {
         flight.price = flightDto.price;
         flight.igc = flightDto.igc;
 
-        const flightResp: Flight = await this.flightService.saveFlight(flight);
+        const flightResp: Flight = await this.flightService.save(flight);
+        return plainToClass(FlightDto, flightResp);
+    }
+
+    async updateFlightAlone(token: any, id: number, flightDto: FlightDto): Promise<FlightDto> {
+        let flight: Flight = await this.flightService.getFlightById(token, id);
+
+        if (!flight) {
+            FlightException.notFoundException();
+        }
+
+        flight.shvAlone = flightDto.shvAlone === undefined ? false : flightDto.shvAlone;
+
+        const flightResp: Flight = await this.flightService.save(flight);
         return plainToClass(FlightDto, flightResp);
     }
 
     async removeFlight(token: any, id: number): Promise<FlightDto> {
         const flight: Flight = await this.flightService.getFlightById(token, id);
-        const flightResp: Flight = await this.flightService.removeFlight(flight);
+        const flightResp: Flight = await this.flightService.remove(flight);
         if (flight.igc && flight.igc.filepath){
             this.fileUploadService.deleteFile(token.userId, flight.igc.filepath);
         }
@@ -117,7 +133,7 @@ export class FlightFacade {
         const { start, date, time, glider, landing } = flightDto;
 
         if (checkIfDateIsValid(date)) {
-            throw new InvalidDateException();
+            FlightException.invalidDateException();
         }
 
         // format date
@@ -127,7 +143,7 @@ export class FlightFacade {
 
         // Check if glider exist 
         if (!glider) {
-            throw new InvalidGliderException();
+            FlightException.invalidGliderException();
         }
 
         if (time && moment(time, "HH:mm").isValid()) {
@@ -141,7 +157,7 @@ export class FlightFacade {
             const gliderDto = await this.gliderFacade.getGliderById(token, glider.id)
             flight.glider = plainToClass(Glider, gliderDto);
         } catch (e) {
-            throw new InvalidGliderException();
+            FlightException.invalidGliderException();
         }
 
         // Check if start an landing exist and if not create it

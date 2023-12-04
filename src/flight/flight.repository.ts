@@ -1,50 +1,55 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { Flight } from './flight.entity';
-import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { Glider } from 'src/glider/glider.entity';
 import { Place } from 'src/place/place.entity';
 import { PagerDto } from 'src/interface/pager-dto';
 
 @Injectable()
-export class FlightService {
+export class FlightRepository extends Repository<Flight> {
 
     constructor(
         @InjectRepository(Flight)
-        private readonly flightRepository: Repository<Flight>,
-        @InjectEntityManager()
-        private readonly entityManager: EntityManager,
-    ) { }
+        private readonly repository: Repository<Flight>
+    ) {
+        super(repository.target, repository.manager, repository.queryRunner);
+    }
 
     // @hack for use ROW_NUMBER function from mysql with typeorm
     async getFlights(token: any, query: any): Promise<Flight[]> {
-        let builder: SelectQueryBuilder<Flight> = this.flightRepository.createQueryBuilder('flight')
+        let builder: SelectQueryBuilder<Flight> = this.repository.createQueryBuilder('flight')
             .addSelect('flight_number')
             .leftJoinAndSelect('flight.glider', 'glider', 'glider.id = flight.glider_id')
             .leftJoinAndSelect('flight.start', 'start', 'start.id = flight.start_id')
             .leftJoinAndSelect('flight.landing', 'landing', 'landing.id = flight.landing_id')
             .where(`flight.user_id = ${token.userId}`);
 
-        builder = FlightService.addQueryParams(builder, query);
+        builder = FlightRepository.addQueryParams(builder, query);
         builder.orderBy('flight.date', 'DESC');
         builder.addOrderBy('flight.flight_number', 'DESC');
         builder.addOrderBy('flight.timestamp', 'DESC');
 
         let sqlRequest = builder.getSql();
-        sqlRequest = sqlRequest.replace('FROM "data"."flight" "flight"', ` FROM (Select ROW_NUMBER() OVER (ORDER BY flight.date ASC) flight_number, flight.* from data.flight where user_id = ${token.userId}) as flight`)
+        sqlRequest = sqlRequest.replace('FROM "data"."flight" "flight"', ` FROM (Select ROW_NUMBER() OVER (ORDER BY flight.date ASC, flight.timestamp ASC) flight_number, flight.* from data.flight where user_id = ${token.userId}) as flight`)
         if (query && query.limit) { sqlRequest = sqlRequest + ` LIMIT ${query.limit}`}
         if (query && query.offset) { sqlRequest = sqlRequest + ` OFFSET ${query.offset}`}
 
-        const res: [] = await this.flightRepository.query(sqlRequest);
+        const res: [] = await this.repository.query(sqlRequest);
 
         const list: Flight[] = [];
-        res.forEach((raw: Record<string, any>) => {
+        res.forEach((raw: Record<string, Flight>) => {
             const data = new Flight();
             Object.keys(raw).forEach(key => {
                 if (key.startsWith('flight')) {
-                    const name = key.substring(7, key.length);
-                    data[name] = raw[key];
+                    if (key.startsWith('flight_shv_alone')) {
+                        const name = key.substring(7, key.length);
+                        data.shvAlone = Boolean(raw[key]);
+                    } else {
+                        const name = key.substring(7, key.length);
+                        data[name] = raw[key];
+                    }
                 }
                 if (key.startsWith('glider')) {
                     if (!data.glider) data.glider = new Glider();
@@ -63,13 +68,13 @@ export class FlightService {
                 }
             })
             list.push(data)
-        })
+        });
 
         return list;
     }
 
     async getGlobalStatistic(token: any, query: any): Promise<FlightStatisticDto> {
-        let builder = this.flightRepository.createQueryBuilder('flight')
+        let builder = this.repository.createQueryBuilder('flight')
             .select('count(flight.id)::int', "nbFlights")
             .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
             .addSelect('Sum(flight.price)', "income")
@@ -82,24 +87,24 @@ export class FlightService {
             .leftJoin('flight.glider', 'glider', 'glider.id = flight.glider_id')
             .where(`user.id = ${token.userId}`);
 
-        builder = FlightService.addQueryParams(builder, query);
+        builder = FlightRepository.addQueryParams(builder, query);
         return builder.getRawOne();
     }
 
     async getStatisticYears(token: any, query: any): Promise<FlightStatisticDto[]> {
-        let maxdate = this.flightRepository.createQueryBuilder("flight")
+        let maxdate = this.repository.createQueryBuilder("flight")
         .select("max(date) + interval '1 year'")
         .where(`flight.user_id = ${token.userId}`)
         .leftJoin('flight.glider', 'glider');
-        maxdate = FlightService.addQueryParams(maxdate, query);
+        maxdate = FlightRepository.addQueryParams(maxdate, query);
 
-        let mindate = this.flightRepository.createQueryBuilder("flight")
+        let mindate = this.repository.createQueryBuilder("flight")
         .select("min(date)")
         .where(`flight.user_id = ${token.userId}`)
         .leftJoin('flight.glider', 'glider');
-        mindate = FlightService.addQueryParams(mindate, query);
+        mindate = FlightRepository.addQueryParams(mindate, query);
 
-        let builder = this.entityManager.connection.createQueryBuilder()
+        let builder = this.repository.manager.createQueryBuilder()
             .select("'yearly'", "type")
             .addSelect("to_char(year, 'YYYY')", "year")
             .addSelect("coalesce(nb_flight, 0)", "nbFlights")
@@ -125,7 +130,7 @@ export class FlightService {
                         .leftJoin('flight.glider', 'glider')
                         .groupBy('sub_year');
 
-                builder = FlightService.addQueryParams(builder, query);
+                builder = FlightRepository.addQueryParams(builder, query);
 
                 return builder;
                 
@@ -138,19 +143,19 @@ export class FlightService {
 
     async getStatisticMonth(token: any, query: any): Promise<FlightStatisticDto[]> {
 
-        let maxdate = this.flightRepository.createQueryBuilder("flight")
+        let maxdate = this.repository.createQueryBuilder("flight")
         .select("max(date) + interval '1 month'")
         .where(`flight.user_id = ${token.userId}`)
         .leftJoin('flight.glider', 'glider');;
-        maxdate = FlightService.addQueryParams(maxdate, query);
+        maxdate = FlightRepository.addQueryParams(maxdate, query);
 
-        let mindate = this.flightRepository.createQueryBuilder("flight")
+        let mindate = this.repository.createQueryBuilder("flight")
         .select("min(date)")
         .where(`flight.user_id = ${token.userId}`)
         .leftJoin('flight.glider', 'glider');;
-        mindate = FlightService.addQueryParams(mindate, query);
+        mindate = FlightRepository.addQueryParams(mindate, query);
 
-        let builder = this.entityManager.connection.createQueryBuilder()
+        let builder = this.repository.manager.createQueryBuilder()
             .select("'monthly'", "type")
             .addSelect("to_char(year_month, 'YYYY')", "year")
             .addSelect("to_char(year_month, 'MM')", "month")
@@ -177,7 +182,7 @@ export class FlightService {
                         .leftJoin('flight.glider', 'glider')
                         .groupBy('sub_year_month');
 
-                builder = FlightService.addQueryParams(builder, query);
+                builder = FlightRepository.addQueryParams(builder, query);
 
                 return builder;
                 
@@ -188,28 +193,20 @@ export class FlightService {
         return builder.getRawMany<FlightStatisticDto>();
     }
 
-    async saveFlight(flight: Flight): Promise<Flight | undefined> {
-        return await this.flightRepository.save(flight);
-    }
-
-    async removeFlight(flight: Flight): Promise<Flight | undefined> {
-        return await this.flightRepository.remove(flight);
-    }
-
     async getFlightById(token: any, id: number): Promise<Flight> {
-        return this.flightRepository.findOneByOrFail({ id: id, user: { id: token.userId } });
+        return this.repository.findOneByOrFail({ id: id, user: { id: token.userId } });
     }
 
     async getFlightsPager(token: any, query: any): Promise<PagerDto> {
         const pagerDto = new PagerDto();
 
-        let builder = this.flightRepository.createQueryBuilder('flight')
+        let builder = this.repository.createQueryBuilder('flight')
             .leftJoinAndSelect('flight.glider', 'glider', 'glider.id = flight.glider_id')
             .leftJoinAndSelect('flight.start', 'start', 'start.id = flight.start_id')
             .leftJoinAndSelect('flight.landing', 'landing', 'landing.id = flight.landing_id')
             .where(`flight.user_id = ${token.userId}`);
 
-        builder = FlightService.addQueryParams(builder, query);
+        builder = FlightRepository.addQueryParams(builder, query);
         const entityNumber: [Flight[], number] = await builder.getManyAndCount();
 
         pagerDto.itemCount = entityNumber[0].length;
@@ -268,7 +265,7 @@ export class FlightService {
     }
 
     async countFlightsByPlaceId(token: any, placeId: number): Promise<any> {
-        const builder = this.flightRepository.createQueryBuilder('flight')
+        const builder = this.repository.createQueryBuilder('flight')
             .select('distinct count(flight.id)', "nbFlights")
             .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
             .where(`user.id = ${token.userId}`)
@@ -278,7 +275,7 @@ export class FlightService {
     }
 
     async countFlightsByGliderId(token: any, gliderId: number): Promise<any> {
-        const builder = this.flightRepository.createQueryBuilder('flight')
+        const builder = this.repository.createQueryBuilder('flight')
             .select('distinct count(flight.id)', "nbFlights")
             .leftJoin('flight.user', 'user', 'user.id = flight.user_id')
             .where(`user.id = ${token.userId}`)

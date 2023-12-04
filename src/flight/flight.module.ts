@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { FlightController } from './flight.controller';
-import { FlightService } from './flight.service';
+import { FlightRepository } from './flight.repository';
 import { Flight } from './flight.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FlightFacade } from './flight.facade';
@@ -13,7 +13,7 @@ import { FlightControllerV2 } from './flight.controllerV2';
 @Module({
   imports: [UserModule, TypeOrmModule.forFeature([Flight]), PlaceModule, GliderModule],
   controllers: [FlightController, FlightControllerV2],
-  providers: [FlightService, FlightFacade, FileUploadService],
-  exports: [FlightFacade, FlightService]
+  providers: [FlightRepository, FlightFacade, FileUploadService],
+  exports: [FlightFacade, FlightRepository]
 })
 export class FlightModule {}

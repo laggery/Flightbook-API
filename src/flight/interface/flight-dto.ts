@@ -36,4 +36,6 @@ export class FlightDto {
     readonly price?: number;
     @Expose()
     readonly igc?: Igc;
+    @Expose()
+    readonly shvAlone: boolean;
 }

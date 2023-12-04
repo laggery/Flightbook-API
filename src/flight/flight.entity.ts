@@ -86,4 +86,7 @@ export class Flight {
 
   @Column("jsonb", { name: "igc", nullable: true })
   igc: Igc | null;
+
+  @Column("boolean", { name: "shv_alone", default: () => "false" })
+  shvAlone: boolean;
 }
