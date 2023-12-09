@@ -2,17 +2,17 @@ import { ApiPropertyOptional } from "@nestjs/swagger";
 
 export class TheoryDto {
   @ApiPropertyOptional()
-  fluglehre: boolean;
+  fluglehre: number;
 
   @ApiPropertyOptional()
-  wetterkunde: boolean;
+  wetterkunde: number;
 
   @ApiPropertyOptional()
-  flugpraxis: boolean;
+  flugpraxis: number;
 
   @ApiPropertyOptional()
-  gesetzgebung: boolean;
+  gesetzgebung: number;
 
   @ApiPropertyOptional()
-  materialkunde: boolean;
+  materialkunde: number;
 }

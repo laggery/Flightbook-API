@@ -6,93 +6,93 @@ export class AltitudeFlight {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column("boolean", { name: "tandem", default: () => "false" })
-  tandem: boolean;
+  @Column("smallint", { name: "tandem", default: 0 })
+  tandem: number;
 
-  @Column("boolean", { name: "notlandung", default: () => "false" })
-  notlandung: boolean;
+  @Column("smallint", { name: "notlandung", default: 0 })
+  notlandung: number;
 
-  @Column("boolean", { name: "startplatzwahl", default: () => "false" })
-  startplatzwahl: boolean;
+  @Column("smallint", { name: "startplatzwahl", default: 0 })
+  startplatzwahl: number;
 
-  @Column("boolean", { name: "aufziehen", default: () => "false" })
-  aufziehen: boolean;
+  @Column("smallint", { name: "aufziehen", default: 0 })
+  aufziehen: number;
 
-  @Column("boolean", { name: "kreise", default: () => "false" })
-  kreise: boolean;
+  @Column("smallint", { name: "kreise", default: 0 })
+  kreise: number;
 
-  @Column("boolean", { name: "richtungswechsel", default: () => "false" })
-  richtungswechsel: boolean;
+  @Column("smallint", { name: "richtungswechsel", default: 0 })
+  richtungswechsel: number;
 
-  @Column("boolean", { name: "acht", default: () => "false" })
-  acht: boolean;
+  @Column("smallint", { name: "acht", default: 0 })
+  acht: number;
 
-  @Column("boolean", { name: "engekreise", default: () => "false" })
-  engekreise: boolean;
+  @Column("smallint", { name: "engekreise", default: 0 })
+  engekreise: number;
 
-  @Column("boolean", { name: "sackflug", default: () => "false" })
-  sackflug: boolean;
+  @Column("smallint", { name: "sackflug", default: 0 })
+  sackflug: number;
 
-  @Column("boolean", { name: "geschwBereich", default: () => "false" })
-  geschwBereich: boolean;
+  @Column("smallint", { name: "geschwBereich", default: 0 })
+  geschwBereich: number;
 
-  @Column("boolean", { name: "beschlunigung", default: () => "false" })
-  beschlunigung: boolean;
+  @Column("smallint", { name: "beschlunigung", default: 0 })
+  beschlunigung: number;
 
-  @Column("boolean", { name: "negativsteuerung", default: () => "false" })
-  negativsteuerung: boolean;
+  @Column("smallint", { name: "negativsteuerung", default: 0 })
+  negativsteuerung: number;
 
-  @Column("boolean", { name: "gewichtsverlagerung", default: () => "false" })
-  gewichtsverlagerung: boolean;
+  @Column("smallint", { name: "gewichtsverlagerung", default: 0 })
+  gewichtsverlagerung: number;
 
-  @Column("boolean", { name: "traggurten", default: () => "false" })
-  traggurten: boolean;
+  @Column("smallint", { name: "traggurten", default: 0 })
+  traggurten: number;
 
-  @Column("boolean", { name: "pendeln", default: () => "false" })
-  pendeln: boolean;
+  @Column("smallint", { name: "pendeln", default: 0 })
+  pendeln: number;
 
-  @Column("boolean", { name: "rollen", default: () => "false" })
-  rollen: boolean;
+  @Column("smallint", { name: "rollen", default: 0 })
+  rollen: number;
 
-  @Column("boolean", { name: "klappen", default: () => "false" })
-  klappen: boolean;
+  @Column("smallint", { name: "klappen", default: 0 })
+  klappen: number;
 
-  @Column("boolean", { name: "ohren", default: () => "false" })
-  ohren: boolean;
+  @Column("smallint", { name: "ohren", default: 0 })
+  ohren: number;
 
-  @Column("boolean", { name: "bStall", default: () => "false" })
-  bStall: boolean;
+  @Column("smallint", { name: "bStall", default: 0 })
+  bStall: number;
 
-  @Column("boolean", { name: "spirale", default: () => "false" })
-  spirale: boolean;
+  @Column("smallint", { name: "spirale", default: 0 })
+  spirale: number;
 
-  @Column("boolean", { name: "instrumente", default: () => "false" })
-  instrumente: boolean;
+  @Column("smallint", { name: "instrumente", default: 0 })
+  instrumente: number;
 
-  @Column("boolean", { name: "soaring", default: () => "false" })
-  soaring: boolean;
+  @Column("smallint", { name: "soaring", default: 0 })
+  soaring: number;
 
-  @Column("boolean", { name: "thermik", default: () => "false" })
-  thermik: boolean;
+  @Column("smallint", { name: "thermik", default: 0 })
+  thermik: number;
 
-  @Column("boolean", { name: "landevolte", default: () => "false" })
-  landevolte: boolean;
+  @Column("smallint", { name: "landevolte", default: 0 })
+  landevolte: number;
 
-  @Column("boolean", { name: "punktlandung", default: () => "false" })
-  punktlandung: boolean;
+  @Column("smallint", { name: "punktlandung", default: 0 })
+  punktlandung: number;
 
-  @Column("boolean", { name: "rueckenwindlandung", default: () => "false" })
-  rueckenwindlandung: boolean;
+  @Column("smallint", { name: "rueckenwindlandung", default: 0 })
+  rueckenwindlandung: number;
 
-  @Column("boolean", { name: "traggurtenLandung", default: () => "false" })
-  traggurtenLandung: boolean;
+  @Column("smallint", { name: "traggurtenLandung", default: 0 })
+  traggurtenLandung: number;
 
-  @Column("boolean", { name: "hanglandung", default: () => "false" })
-  hanglandung: boolean;
+  @Column("smallint", { name: "hanglandung", default: 0 })
+  hanglandung: number;
 
-  @Column("boolean", { name: "touchAndGo", default: () => "false" })
-  touchAndGo: boolean;
+  @Column("smallint", { name: "touchAndGo", default: 0 })
+  touchAndGo: number;
 
-  @Column("boolean", { name: "examProgramme", default: () => "false" })
-  examProgramme: boolean;
+  @Column("smallint", { name: "examProgramme", default: 0 })
+  examProgramme: number;
 }

@@ -2,92 +2,92 @@ import { ApiPropertyOptional } from "@nestjs/swagger";
 
 export class AltitudeFlightDto {
   @ApiPropertyOptional()
-  tandem: boolean;
+  tandem: number;
 
   @ApiPropertyOptional()
-  notlandung: boolean;
+  notlandung: number;
 
   @ApiPropertyOptional()
-  startplatzwahl: boolean;
+  startplatzwahl: number;
 
   @ApiPropertyOptional()
-  aufziehen: boolean;
+  aufziehen: number;
 
   @ApiPropertyOptional()
-  kreise: boolean;
+  kreise: number;
 
   @ApiPropertyOptional()
-  richtungswechsel: boolean;
+  richtungswechsel: number;
 
   @ApiPropertyOptional()
-  acht: boolean;
+  acht: number;
 
   @ApiPropertyOptional()
-  engekreise: boolean;
+  engekreise: number;
 
   @ApiPropertyOptional()
-  sackflug: boolean;
+  sackflug: number;
 
   @ApiPropertyOptional()
-  geschwBereich: boolean;
+  geschwBereich: number;
 
   @ApiPropertyOptional()
-  beschlunigung: boolean;
+  beschlunigung: number;
 
   @ApiPropertyOptional()
-  negativsteuerung: boolean;
+  negativsteuerung: number;
 
   @ApiPropertyOptional()
-  gewichtsverlagerung: boolean;
+  gewichtsverlagerung: number;
 
   @ApiPropertyOptional()
-  traggurten: boolean;
+  traggurten: number;
 
   @ApiPropertyOptional()
-  pendeln: boolean;
+  pendeln: number;
 
   @ApiPropertyOptional()
-  rollen: boolean;
+  rollen: number;
 
   @ApiPropertyOptional()
-  klappen: boolean;
+  klappen: number;
 
   @ApiPropertyOptional()
-  ohren: boolean;
+  ohren: number;
 
   @ApiPropertyOptional()
-  bStall: boolean;
+  bStall: number;
 
   @ApiPropertyOptional()
-  spirale: boolean;
+  spirale: number;
 
   @ApiPropertyOptional()
-  instrumente: boolean;
+  instrumente: number;
 
   @ApiPropertyOptional()
-  soaring: boolean;
+  soaring: number;
 
   @ApiPropertyOptional()
-  thermik: boolean;
+  thermik: number;
 
   @ApiPropertyOptional()
-  landevolte: boolean;
+  landevolte: number;
 
   @ApiPropertyOptional()
-  punktlandung: boolean;
+  punktlandung: number;
 
   @ApiPropertyOptional()
-  rueckenwindlandung: boolean;
+  rueckenwindlandung: number;
 
   @ApiPropertyOptional()
-  traggurtenLandung: boolean;
+  traggurtenLandung: number;
 
   @ApiPropertyOptional()
-  hanglandung: boolean;
+  hanglandung: number;
 
   @ApiPropertyOptional()
-  touchAndGo: boolean;
+  touchAndGo: number;
 
   @ApiPropertyOptional()
-  examProgramme: boolean;
+  examProgramme: number;
 }

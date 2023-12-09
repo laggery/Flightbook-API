@@ -7,57 +7,57 @@ export class TrainingHill {
   @Column("integer", { primary: true, name: "id" })
   id: number;
 
-  @Column("boolean", { name: "auslegen", default: () => "false" })
-  auslegen: boolean;
+  @Column("smallint", { name: "auslegen", default: 0 })
+  auslegen: number;
 
-  @Column("boolean", { name: "aufziehen", default: () => "false" })
-  aufziehen: boolean;
+  @Column("smallint", { name: "aufziehen", default: 0 })
+  aufziehen: number;
 
-  @Column("boolean", { name: "slalom", default: () => "false" })
-  slalom: boolean;
+  @Column("smallint", { name: "slalom", default: 0 })
+  slalom: number;
 
-  @Column("boolean", { name: "laufen_angebremst", default: () => "false" })
-  laufenAngebremst: boolean;
+  @Column("smallint", { name: "laufen_angebremst", default: 0 })
+  laufenAngebremst: number;
 
-  @Column("boolean", { name: "vorbereitung", default: () => "false" })
-  vorbereitung: boolean;
+  @Column("smallint", { name: "vorbereitung", default: 0 })
+  vorbereitung: number;
 
-  @Column("boolean", { name: "startphasen", default: () => "false" })
-  startphasen: boolean;
+  @Column("smallint", { name: "startphasen", default: 0 })
+  startphasen: number;
 
-  @Column("boolean", { name: "richtungsaenderungen", default: () => "false" })
-  richtungsaenderungen: boolean;
+  @Column("smallint", { name: "richtungsaenderungen", default: 0 })
+  richtungsaenderungen: number;
 
-  @Column("boolean", { name: "startabbruch", default: () => "false" })
-  startabbruch: boolean;
+  @Column("smallint", { name: "startabbruch", default: 0 })
+  startabbruch: number;
 
-  @Column("boolean", { name: "seitenwindstart", default: () => "false" })
-  seitenwindstart: boolean;
+  @Column("smallint", { name: "seitenwindstart", default: 0 })
+  seitenwindstart: number;
 
-  @Column("boolean", { name: "schlechtAusgelegt", default: () => "false" })
-  schlechtAusgelegt: boolean;
+  @Column("smallint", { name: "schlechtAusgelegt", default: 0 })
+  schlechtAusgelegt: number;
 
-  @Column("boolean", { name: "starts", default: () => "false" })
-  starts: boolean;
+  @Column("smallint", { name: "starts", default: 0 })
+  starts: number;
 
-  @Column("boolean", { name: "landungen", default: () => "false" })
-  landungen: boolean;
+  @Column("smallint", { name: "landungen", default: 0 })
+  landungen: number;
 
-  @Column("boolean", { name: "notlandung", default: () => "false" })
-  notlandung: boolean;
+  @Column("smallint", { name: "notlandung", default: 0 })
+  notlandung: number;
 
-  @Column("boolean", { name: "notschirm", default: () => "false" })
-  notschirm: boolean;
+  @Column("smallint", { name: "notschirm", default: 0 })
+  notschirm: number;
 
-  @Column("boolean", { name: "kurven", default: () => "false" })
-  kurven: boolean;
+  @Column("smallint", { name: "kurven", default: 0 })
+  kurven: number;
 
-  @Column("boolean", { name: "entwirren", default: () => "false" })
-  entwirren: boolean;
+  @Column("smallint", { name: "entwirren", default: 0 })
+  entwirren: number;
 
-  @Column("boolean", { name: "faltmethoden", default: () => "false" })
-  faltmethoden: boolean;
+  @Column("smallint", { name: "faltmethoden", default: 0 })
+  faltmethoden: number;
 
-  @Column("boolean", { name: "theorietest", default: () => "false" })
-  theorietest: boolean;
+  @Column("smallint", { name: "theorietest", default: 0 })
+  theorietest: number;
 }

@@ -2,56 +2,56 @@ import { ApiPropertyOptional } from "@nestjs/swagger";
 
 export class TrainingHillDto {
   @ApiPropertyOptional()
-  auslegen: boolean;
+  auslegen: number;
 
   @ApiPropertyOptional()
-  aufziehen: boolean;
+  aufziehen: number;
 
   @ApiPropertyOptional()
-  slalom: boolean;
+  slalom: number;
 
   @ApiPropertyOptional()
-  laufenAngebremst: boolean;
+  laufenAngebremst: number;
 
   @ApiPropertyOptional()
-  vorbereitung: boolean;
+  vorbereitung: number;
 
   @ApiPropertyOptional()
-  startphasen: boolean;
+  startphasen: number;
 
   @ApiPropertyOptional()
-  richtungsaenderungen: boolean;
+  richtungsaenderungen: number;
 
   @ApiPropertyOptional()
-  startabbruch: boolean;
+  startabbruch: number;
 
   @ApiPropertyOptional()
-  seitenwindstart: boolean;
+  seitenwindstart: number;
 
   @ApiPropertyOptional()
-  schlechtAusgelegt: boolean;
+  schlechtAusgelegt: number;
 
   @ApiPropertyOptional()
-  starts: boolean;
+  starts: number;
 
   @ApiPropertyOptional()
-  landungen: boolean;
+  landungen: number;
 
   @ApiPropertyOptional()
-  notlandung: boolean;
+  notlandung: number;
 
   @ApiPropertyOptional()
-  notschirm: boolean;
+  notschirm: number;
 
   @ApiPropertyOptional()
-  kurven: boolean;
+  kurven: number;
 
   @ApiPropertyOptional()
-  entwirren: boolean;
+  entwirren: number;
 
   @ApiPropertyOptional()
-  faltmethoden: boolean;
+  faltmethoden: number;
   
   @ApiPropertyOptional()
-  theorietest: boolean;
+  theorietest: number;
 }

@@ -6,18 +6,18 @@ export class Theory {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column("boolean", { name: "fluglehre", default: () => "false" })
-  fluglehre: boolean;
+  @Column("smallint", { name: "fluglehre", default: 0 })
+  fluglehre: number;
 
-  @Column("boolean", { name: "wetterkunde", default: () => "false" })
-  wetterkunde: boolean;
+  @Column("smallint", { name: "wetterkunde", default: 0 })
+  wetterkunde: number;
 
-  @Column("boolean", { name: "flugpraxis", default: () => "false" })
-  flugpraxis: boolean;
+  @Column("smallint", { name: "flugpraxis", default: 0 })
+  flugpraxis: number;
 
-  @Column("boolean", { name: "gesetzgebung", default: () => "false" })
-  gesetzgebung: boolean;
+  @Column("smallint", { name: "gesetzgebung", default: 0 })
+  gesetzgebung: number;
 
-  @Column("boolean", { name: "materialkunde", default: () => "false" })
-  materialkunde: boolean;
+  @Column("smallint", { name: "materialkunde", default: 0 })
+  materialkunde: number;
 }
