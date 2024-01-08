@@ -76,35 +76,45 @@ export class PaymentFacade {
     }
 
     async hasUserPayed(id: number): Promise<PaymentStatusDto> {
-        const response = await firstValueFrom(this.httpService.get(
-            `${env.REVENUECAT_URL}/v1/subscribers/${id}`,
-            {
-                headers: {
-                    'Content-Type': "application/json",
-                    'Authorization': `Bearer ${env.REVENUECAT_AUTH}`
+        let paymentStatusDto = new PaymentStatusDto();
+
+        try {
+            const response = await firstValueFrom(this.httpService.get(
+                `${env.REVENUECAT_URL}/v1/subscribers/${id}`,
+                {
+                    headers: {
+                        'Content-Type': "application/json",
+                        'Authorization': `Bearer ${env.REVENUECAT_AUTH}`
+                    }
+                }
+            ));
+    
+            const productSubscription = response.data.subscriber.entitlements[env.REVENUECAT_ENTITLEMENT];
+    
+            paymentStatusDto = new PaymentStatusDto();
+            paymentStatusDto.store = response.data.subscriber.subscriptions[productSubscription?.product_identifier]?.store;
+            paymentStatusDto.active = false;
+            paymentStatusDto.state = PaymentState.NONE;
+    
+            if (productSubscription && new Date <= new Date(productSubscription.expires_date)) {
+                paymentStatusDto.expires_date = productSubscription.expires_date;
+                paymentStatusDto.purchase_date = productSubscription.purchase_date;
+                paymentStatusDto.active = true;
+                paymentStatusDto.state = PaymentState.ACTIVE;
+    
+                if (productSubscription.unsubscribe_detected_at != undefined) {
+                    paymentStatusDto.state = PaymentState.CANCELED;
                 }
             }
-        ));
-
-        const productSubscription = response.data.subscriber.entitlements[env.REVENUECAT_ENTITLEMENT];
-
-        let paymentStatusDto = new PaymentStatusDto();
-        paymentStatusDto.store = response.data.subscriber.subscriptions[productSubscription?.product_identifier]?.store;
-        paymentStatusDto.active = false;
-        paymentStatusDto.state = PaymentState.NONE;
-
-        if (productSubscription && new Date <= new Date(productSubscription.expires_date)) {
-            paymentStatusDto.expires_date = productSubscription.expires_date;
-            paymentStatusDto.purchase_date = productSubscription.purchase_date;
+        } catch (e: any) {
             paymentStatusDto.active = true;
-            paymentStatusDto.state = PaymentState.ACTIVE;
-
-            if (productSubscription.unsubscribe_detected_at != undefined) {
-                paymentStatusDto.state = PaymentState.CANCELED;
-            }
+            paymentStatusDto.state = PaymentState.NONE;
+            Logger.error(`Error check payment status for user id ${id}`);
+            this.emailService.sendErrorMessageToAdmin('Error check payment status', `Error check payment status for user id ${id}`);
         }
-        paymentStatusDto.active = true;
+
         return paymentStatusDto;
+        
     }
 
     async updatePaymentUser(user: User, oldEmail: string) {
