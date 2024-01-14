@@ -158,7 +158,7 @@ export class EnrollmentFacade {
         }
 
         const user = await this.userService.getUserById(userToken.userId);
-        if (user.email != enrollment.email){
+        if (user.email != enrollment.email.toLowerCase()){
             throw new EnrollmentNotAllowedException();
         }
 
