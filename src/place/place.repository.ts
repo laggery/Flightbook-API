@@ -5,12 +5,14 @@ import { Place } from './place.entity';
 import { PagerDto } from 'src/interface/pager-dto';
 
 @Injectable()
-export class PlaceService {
+export class PlaceRepository extends Repository<Place> {
 
     constructor(
         @InjectRepository(Place)
-        private readonly placeRepository: Repository<Place>
-    ) { }
+        private readonly repository: Repository<Place>
+    ) {
+        super(repository.target, repository.manager, repository.queryRunner);
+    }
 
     async getPlaces(token: any, query: any): Promise<any> {
         const options: any = {
@@ -38,13 +40,13 @@ export class PlaceService {
             options.skip = query.offset;
         }
 
-        return await this.placeRepository.find(options);
+        return await this.repository.find(options);
     }
 
     async getPlacesPager(token: any, query: any): Promise<PagerDto> {
         const pagerDto = new PagerDto();
 
-        const builder = this.placeRepository.createQueryBuilder('place')
+        const builder = this.repository.createQueryBuilder('place')
             .where(`user_id = ${token.userId}`);
 
         if (query?.limit) {
@@ -71,24 +73,19 @@ export class PlaceService {
         return pagerDto;
     }
 
-    async addPlace(place: Place) {
-        return await this.placeRepository.save(place);
-    }
-
-    async updatePlace(place: Place) {
-        return await this.placeRepository.save(place);
-    }
-
-    async removePlace(place: Place) {
-        return await this.placeRepository.remove(place);
-    }
-
     async getPlaceById(token: any, id: number) {
-        return this.placeRepository.findOneByOrFail({ id: id, user: { id: token.userId } });
+        return this.repository.findOneByOrFail({ id: id, user: { id: token.userId } });
     }
 
     async getPlaceByName(token: any, name: string) {
-        return this.placeRepository.findOneBy({ name: name, user: { id: token.userId } });
+        return this.repository.findOneBy({ name: name, user: { id: token.userId } });
+    }
+
+    async getPlaceByNameCaseInsensitive(token: any, name: string): Promise<Place> {
+        return this.repository.createQueryBuilder("place")
+        .where("place.name ILIKE :name", { name })
+        .andWhere("place.user.id = :userId", { userId: token.userId })
+        .getOne();
     }
 
     async getPlacesByName(token: any, query: any, name: string) {
@@ -116,6 +113,6 @@ export class PlaceService {
             }
             options.skip = query.offset;
         }
-        return this.placeRepository.find(options);
+        return this.repository.find(options);
     }
 }

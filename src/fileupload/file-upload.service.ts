@@ -9,6 +9,7 @@ import {
   DeleteObjectCommand
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import {v4 as uuidv4} from 'uuid';
 
 @Injectable()
 export class FileUploadService {
@@ -128,6 +129,24 @@ export class FileUploadService {
       return HttpStatus.NO_CONTENT;
     } catch (error) {
       return error;
+    }
+  }
+
+  async uploadErrorImportFile(userId: number, file: Express.Multer.File): Promise<String> {
+    try {
+      const key = `${this.env}/import/${userId}/${uuidv4()}-${file.originalname}`
+      const params = {
+        Bucket: this.bucket,
+        Key: key,
+        ACL: 'private',
+        Body: file.buffer
+      };
+
+      const command = new PutObjectCommand(params);
+      await this.s3.send(command);
+      return key;
+    } catch (error) {
+      throw new S3Exception();
     }
   }
 }

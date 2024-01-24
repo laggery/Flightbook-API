@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { GliderService } from './glider.service';
+import { GliderRepository } from './glider.repository';
 
 describe('GliderService', () => {
-  let service: GliderService;
+  let service: GliderRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [GliderService],
+      providers: [GliderRepository],
     }).compile();
 
-    service = module.get<GliderService>(GliderService);
+    service = module.get<GliderRepository>(GliderRepository);
   });
 
   it('should be defined', () => {

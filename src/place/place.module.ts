@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PlaceController } from './place.controller';
-import { PlaceService } from './place.service';
+import { PlaceRepository } from './place.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Place } from './place.entity';
 import { PlaceFacade } from './place.facade';
@@ -10,7 +10,7 @@ import { HttpModule } from '@nestjs/axios';
 @Module({
   imports: [UserModule, TypeOrmModule.forFeature([Place]), HttpModule],
   controllers: [PlaceController],
-  providers: [PlaceService, PlaceFacade],
-  exports: [PlaceFacade]
+  providers: [PlaceRepository, PlaceFacade],
+  exports: [PlaceFacade, PlaceRepository]
 })
 export class PlaceModule {}

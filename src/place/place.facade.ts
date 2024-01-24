@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PlaceService } from './place.service';
+import { PlaceRepository } from './place.repository';
 import { UserService } from '../user/user.service';
 import { PlaceDto } from './interface/place-dto';
 import { User } from '../user/user.entity';
@@ -15,22 +15,22 @@ import { FeatureCollection } from 'geojson';
 @Injectable()
 export class PlaceFacade {
     constructor(
-        private placeService: PlaceService,
+        private placeRepository: PlaceRepository,
         private userService: UserService,
         private readonly httpService: HttpService
     ) { }
 
     async getPlaces(token: any, query: any): Promise<PlaceDto[]> {
-        const list: Place[] = await this.placeService.getPlaces(token, query);
+        const list: Place[] = await this.placeRepository.getPlaces(token, query);
         return PlaceMapper.toPlaceDtoList(list);
     }
 
     async getPlacesPager(token: any, query: any): Promise<PagerDto> {
-        return this.placeService.getPlacesPager(token, query);
+        return this.placeRepository.getPlacesPager(token, query);
     }
 
     async getPlacesByName(token: any,  query: any, name: string): Promise<PlaceDto[]> {
-        const list: Place[] = await this.placeService.getPlacesByName(token, query, name);
+        const list: Place[] = await this.placeRepository.getPlacesByName(token, query, name);
         return PlaceMapper.toPlaceDtoList(list);
     }
 
@@ -47,19 +47,19 @@ export class PlaceFacade {
         }
 
         // Check if name already existe for this user
-        if (await this.placeService.getPlaceByName(token, place.name)) {
+        if (await this.placeRepository.getPlaceByName(token, place.name)) {
             throw new PlaceAlreadyExistsException();
         }
 
-        const placeResp: Place = await this.placeService.addPlace(place);
+        const placeResp: Place = await this.placeRepository.save(place);
         return PlaceMapper.toPlaceDto(placeResp);
     }
 
     async updatePlace(token: any, id: number, placeDto: PlaceDto): Promise<PlaceDto> {
-        const place: Place = await this.placeService.getPlaceById(token, id);
+        const place: Place = await this.placeRepository.getPlaceById(token, id);
 
         // Check if name already existe for this user
-        if (place.name !== placeDto.name && await this.placeService.getPlaceByName(token, placeDto.name)) {
+        if (place.name !== placeDto.name && await this.placeRepository.getPlaceByName(token, placeDto.name)) {
             throw new PlaceAlreadyExistsException();
         }
 
@@ -78,18 +78,18 @@ export class PlaceFacade {
             }
         }
         
-        const placeResp: Place = await this.placeService.updatePlace(place);
+        const placeResp: Place = await this.placeRepository.save(place);
         return PlaceMapper.toPlaceDto(placeResp);
     }
 
     async removePlace(token: any, id: number): Promise<PlaceDto> {
-        const place: Place = await this.placeService.getPlaceById(token, id);
-        const placeResp: Place = await this.placeService.removePlace(place);
+        const place: Place = await this.placeRepository.getPlaceById(token, id);
+        const placeResp: Place = await this.placeRepository.remove(place);
         return PlaceMapper.toPlaceDto(placeResp);
     }
 
     async getPlaceByName(token: any, name: string): Promise<PlaceDto | undefined> {
-        const place: Place = await this.placeService.getPlaceByName(token, name);
+        const place: Place = await this.placeRepository.getPlaceByName(token, name);
         return PlaceMapper.toPlaceDto(place);
     }
 

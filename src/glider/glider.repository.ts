@@ -5,16 +5,18 @@ import { Repository, SelectQueryBuilder } from 'typeorm';
 import { PagerDto } from 'src/interface/pager-dto';
 
 @Injectable()
-export class GliderService {
+export class GliderRepository extends Repository<Glider> {
 
     constructor(
         @InjectRepository(Glider)
-        private readonly gliderRepository: Repository<Glider>
-    ) { }
+        private readonly repository: Repository<Glider>
+    ) {
+        super(repository.target, repository.manager, repository.queryRunner);
+    }
 
     async getGliders(token: any, query: any): Promise<Glider[]> {
 
-        let builder: SelectQueryBuilder<Glider> = this.gliderRepository.createQueryBuilder('glider')
+        let builder: SelectQueryBuilder<Glider> = this.repository.createQueryBuilder('glider')
             .addSelect('count(flight.id)', "glider_nbFlights")
             .addSelect('EXTRACT(EPOCH FROM Sum(flight.time))', "glider_time")
             .leftJoin('flight', 'flight', 'flight.glider_id = glider.id')
@@ -25,14 +27,14 @@ export class GliderService {
                 name: 'ASC'
             });
 
-        builder = GliderService.addQueryParams(builder, query);
+        builder = GliderRepository.addQueryParams(builder, query);
 
         return await builder.getMany();
     }
 
-    async getGliderByName(token: any, name: string): Promise<Glider> {
+    async getGliderBySimilarityName(token: any, name: string): Promise<Glider> {
 
-        let builder: SelectQueryBuilder<Glider> = this.gliderRepository.createQueryBuilder('glider')
+        let builder: SelectQueryBuilder<Glider> = this.repository.createQueryBuilder('glider')
             .addSelect(`similarity(name, '${name}')`)
             .where(`glider.user_id = ${token.userId}`)
             .orderBy({
@@ -43,13 +45,20 @@ export class GliderService {
         return await builder.getOne();
     }
 
+    async getGliderByName(token: any, name: string) {
+        return this.repository.createQueryBuilder("glider")
+        .where("glider.name ILIKE :name", { name })
+        .andWhere("glider.user.id = :userId", { userId: token.userId })
+        .getOne();
+    }
+
     async getGlidersPager(token: any, query: any): Promise<PagerDto> {
         const pagerDto = new PagerDto();
 
-        let builder = this.gliderRepository.createQueryBuilder('glider')
+        let builder = this.repository.createQueryBuilder('glider')
             .where(`user_id = ${token.userId}`);
 
-        builder = GliderService.addQueryParams(builder, query);
+        builder = GliderRepository.addQueryParams(builder, query);
         const entityNumber: [Glider[], number] = await builder.getManyAndCount();
 
         const [first, second] = entityNumber;
@@ -101,15 +110,7 @@ export class GliderService {
         return builder
     }
 
-    async saveGlider(glider: Glider): Promise<Glider | undefined> {
-        return await this.gliderRepository.save(glider);
-    }
-
-    async removePlace(glider: Glider): Promise<Glider | undefined> {
-        return await this.gliderRepository.remove(glider);
-    }
-
     async getGliderById(token: any, id: number): Promise<Glider> {
-        return this.gliderRepository.findOneByOrFail({ id: id, user: { id: token.userId } });
+        return this.repository.findOneByOrFail({ id: id, user: { id: token.userId } });
     }
 }

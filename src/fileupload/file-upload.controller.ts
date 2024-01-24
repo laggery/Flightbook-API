@@ -4,6 +4,7 @@ import {
   Get, HttpCode,
   Param,
   Post,
+  Query,
   Request,
   UploadedFile,
   UseGuards,
@@ -13,14 +14,23 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { FileUploadService } from './file-upload.service';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { CopyFileDto } from './interface/copyFile-dto';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ImportFacade } from 'src/import/import-facade';
+import { ImportResultDto } from 'src/import/interface/import-result-dto';
+import { ImportType } from 'src/import/import-type';
+import { ImportException } from 'src/import/exception/import.exception';
+import { EmailService } from 'src/email/email.service';
 
 @Controller('file')
 @ApiTags('File Upload')
 @ApiBearerAuth('jwt')
 export class FileUploadController {
 
-  constructor(private fileUploadService: FileUploadService) {
+  constructor(
+    private fileUploadService: FileUploadService,
+    private importFacade: ImportFacade,
+    private emailService: EmailService
+  ) {
   }
 
   @UseGuards(JwtAuthGuard)
@@ -43,7 +53,7 @@ export class FileUploadController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @ApiParam({name: 'filename', required: true, schema: { oneOf: [{type: 'string'}]}})
+  @ApiParam({ name: 'filename', required: true, schema: { oneOf: [{ type: 'string' }] } })
   @Get('upload/url/:filename')
   async getSignedFileUploadUrl(@Request() req, @Param('filename') filename) {
     return this.fileUploadService.getSignedFileUploadUrl(filename, req.user.userId);
@@ -56,18 +66,50 @@ export class FileUploadController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @ApiParam({name: 'filename', required: true, schema: { oneOf: [{type: 'string'}]}})
+  @ApiParam({ name: 'filename', required: true, schema: { oneOf: [{ type: 'string' }] } })
   @Get(':filename')
   async getFile(@Request() req, @Param('filename') filename) {
     return await this.fileUploadService.getFile(req.user.userId, filename);
   }
 
   @UseGuards(JwtAuthGuard)
-  @ApiParam({name: 'filename', required: true, schema: { oneOf: [{type: 'string'}]}})
+  @ApiParam({ name: 'filename', required: true, schema: { oneOf: [{ type: 'string' }] } })
   @Delete(':filename')
   @HttpCode(204)
   async deleteFile(@Request() req, @Param('filename') filename) {
     return await this.fileUploadService.deleteFile(req.user.userId, filename);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('import')
+  @ApiConsumes('multipart/form-data')
+  @ApiQuery({ name: 'type', required: true, enum: ImportType })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        }
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  async importData(@Request() req, @UploadedFile() file: Express.Multer.File, @Query() query): Promise<ImportResultDto> {
+    switch (query.type) {
+      case ImportType.FLUGBUCH:
+        try {
+          return await this.importFacade.importFlugbuch(file, req.user.userId);
+        } catch (e) {
+          const key = await this.fileUploadService.uploadErrorImportFile(req.user.userId, file);
+          const content = `<p>Import has failed for user id: ${req.user.userId} with object key: ${key}<p>`;
+          this.emailService.sendErrorMessageToAdmin(`${ImportType.FLUGBUCH} Import error`, content);
+          throw e;
+        }
+      default:
+        ImportException.unsupportedImportTypeException();
+    }
   }
 
 }

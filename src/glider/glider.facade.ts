@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { GliderService } from './glider.service';
+import { GliderRepository } from './glider.repository';
 import { UserService } from 'src/user/user.service';
 import { GliderDto } from './interface/glider-dto';
 import { Glider } from './glider.entity';
@@ -13,20 +13,20 @@ import { checkIfDateIsValid } from '../shared/util/date-utils';
 @Injectable()
 export class GliderFacade {
 
-    constructor(private gliderService: GliderService, private userService: UserService) { }
+    constructor(private gliderRepository: GliderRepository, private userService: UserService) { }
 
     async getGliders(token: any, query: any): Promise<GliderDto[]> {
-        const list: Glider[] = await this.gliderService.getGliders(token, query);
+        const list: Glider[] = await this.gliderRepository.getGliders(token, query);
         return plainToClass(GliderDto, list);
     }
 
     async getGliderbyName(token: any, name: string): Promise<GliderDto> {
-        const glider: Glider = await this.gliderService.getGliderByName(token, name);
+        const glider: Glider = await this.gliderRepository.getGliderBySimilarityName(token, name);
         return plainToClass(GliderDto, glider);
     }
 
     async getGlidersPager(token: any, query: any): Promise<PagerDto> {
-        return this.gliderService.getGlidersPager(token, query);
+        return this.gliderRepository.getGlidersPager(token, query);
     }
 
     async createGlider(token: any, gliderDto: GliderDto): Promise<GliderDto> {
@@ -46,7 +46,7 @@ export class GliderFacade {
         glider.id = null;
         glider.user = user;
 
-        const gliderResp: Glider = await this.gliderService.saveGlider(glider);
+        const gliderResp: Glider = await this.gliderRepository.save(glider);
         return plainToClass(GliderDto, gliderResp);
     }
 
@@ -55,7 +55,7 @@ export class GliderFacade {
         if (gliderDto.buyDate && Number.isNaN(Date.parse(gliderDto.buyDate))) {
             throw new InvalidDateException();
         }
-        const glider: Glider = await this.gliderService.getGliderById(token, id);
+        const glider: Glider = await this.gliderRepository.getGliderById(token, id);
 
         glider.brand = gliderDto.brand;
         glider.name = gliderDto.name;
@@ -67,18 +67,18 @@ export class GliderFacade {
         }
         glider.tandem = gliderDto.tandem;
         glider.archived = gliderDto.archived;
-        const gliderResp: Glider = await this.gliderService.saveGlider(glider);
+        const gliderResp: Glider = await this.gliderRepository.save(glider);
         return plainToClass(GliderDto, gliderResp);
     }
 
     async removeGlider(token: any, id: number): Promise<GliderDto> {
-        const glider: Glider = await this.gliderService.getGliderById(token, id);
-        const gliderResp: Glider = await this.gliderService.removePlace(glider);
+        const glider: Glider = await this.gliderRepository.getGliderById(token, id);
+        const gliderResp: Glider = await this.gliderRepository.remove(glider);
         return plainToClass(GliderDto, gliderResp);
     }
 
     async getGliderById(token: any, id: number): Promise<GliderDto | undefined> {
-        const glider: Glider = await this.gliderService.getGliderById(token, id);
+        const glider: Glider = await this.gliderRepository.getGliderById(token, id);
         return plainToClass(GliderDto, glider);
     }
 }
