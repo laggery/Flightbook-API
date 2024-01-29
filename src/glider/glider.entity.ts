@@ -43,6 +43,13 @@ export class Glider {
   @Column("boolean", { name: "archived", default: () => "false" })
   archived: boolean;
 
+  @Column("character varying", {
+    name: "note",
+    nullable: true,
+    length: 2000,
+  })
+  note: string | null;
+
   @OneToMany(() => Flight, (flight) => flight.glider)
   flights: Flight[];
 

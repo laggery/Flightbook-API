@@ -21,6 +21,9 @@ export class GliderDto {
     @ApiPropertyOptional()
     @Expose()
     readonly archived: boolean;
+    @ApiPropertyOptional()
+    @Expose()
+    readonly note?: string;
     @Expose()
     readonly nbFlights: number;
     @Expose()

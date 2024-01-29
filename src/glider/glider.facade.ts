@@ -67,6 +67,7 @@ export class GliderFacade {
         }
         glider.tandem = gliderDto.tandem;
         glider.archived = gliderDto.archived;
+        glider.note = gliderDto.note ? gliderDto.note : null;
         const gliderResp: Glider = await this.gliderRepository.save(glider);
         return plainToClass(GliderDto, gliderResp);
     }
