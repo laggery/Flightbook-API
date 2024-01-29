@@ -2,6 +2,7 @@ import {
   Body,
   Controller, Delete,
   Get, HttpCode,
+  Logger,
   Param,
   Post,
   Query,
@@ -102,6 +103,7 @@ export class FileUploadController {
         try {
           return await this.importFacade.importFlugbuch(file, req.user.userId);
         } catch (e) {
+          Logger.error('Import error', e.stack, 'importFacade.importFlugbuch');
           const key = await this.fileUploadService.uploadErrorImportFile(req.user.userId, file);
           const content = `<p>Import has failed for user id: ${req.user.userId} with object key: ${key}<p>`;
           this.emailService.sendErrorMessageToAdmin(`${ImportType.FLUGBUCH} Import error`, content);

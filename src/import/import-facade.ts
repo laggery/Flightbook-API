@@ -32,15 +32,16 @@ export class ImportFacade {
         let line = 1;
 
         // First we need to repair the csv file
-        let lines = file.buffer.toString('utf8').split('\r\n');
+        let lines = file.buffer.toString('utf8').split('\n');
 
         lines = lines.map(line => {
             line = line.replace(/","/g, "','")
-            .slice(1, -1)
+            .slice(1)
+            .slice(0, -1)
             .replace(/"/g, '""')
             .replace(/','/g, '","');
 
-            return line = `"${line}"`;
+            return `"${line}"`;
         });
 
         const csv = lines.join('\r\n');
