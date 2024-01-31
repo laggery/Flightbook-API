@@ -49,6 +49,11 @@ REVENUECAT_URL=https://api.revenuecat.com
 REVENUECAT_ENTITLEMENT=
 REVENUECAT_AUTH=
 REVENUECAT_STRIPE_PUBLIC_KEY=
+
+#map
+MAP_URL=
+MAP_ATTRIBUTIONS=
+MAP_CROSS_ORIGIN=
 ```
 
 Open minio http://localhost:9001/ and create a new bucket with name `flightbook-bucket`
