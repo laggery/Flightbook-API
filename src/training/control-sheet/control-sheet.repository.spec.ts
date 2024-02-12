@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ControlSheetService } from './control-sheet.service';
+import { ControlSheetRepository } from './control-sheet.repository';
 
 describe('ControlSheetService', () => {
-  let service: ControlSheetService;
+  let service: ControlSheetRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ControlSheetService],
+      providers: [ControlSheetRepository],
     }).compile();
 
-    service = module.get<ControlSheetService>(ControlSheetService);
+    service = module.get<ControlSheetRepository>(ControlSheetRepository);
   });
 
   it('should be defined', () => {

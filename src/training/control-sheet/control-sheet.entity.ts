@@ -6,6 +6,13 @@ import { TrainingHill } from "./training-hill.entity";
 
 @Entity("control_sheet")
 export class ControlSheet {
+
+constructor(){
+  this.trainingHill = new TrainingHill();
+  this.theory = new Theory();
+  this.altitudeFlight = new AltitudeFlight();
+}
+
   @PrimaryGeneratedColumn()
   @Column("integer", { primary: true, name: "id" })
   id: number;

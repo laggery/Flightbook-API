@@ -4,7 +4,7 @@ import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { AltitudeFlight } from './altitude-flight.entity';
 import { ControlSheet } from './control-sheet.entity';
-import { ControlSheetService } from './control-sheet.service';
+import { ControlSheetRepository } from './control-sheet.repository';
 import { ControlSheetDto } from './interface/control-sheet-dto';
 import { Theory } from './theory.entity';
 import { TrainingHill } from './training-hill.entity';
@@ -13,7 +13,7 @@ import { TrainingHill } from './training-hill.entity';
 export class ControlSheetFacade {
 
     constructor(
-        private readonly controlSheetService: ControlSheetService,
+        private readonly controlSheetRepository: ControlSheetRepository,
         private readonly userService: UserService
     ) { }
 
@@ -34,7 +34,7 @@ export class ControlSheetFacade {
             controlSheet.theory = new Theory();
         }
 
-        const current = await this.controlSheetService.getControlSheetByUserId(user.id);
+        const current = await this.controlSheetRepository.getControlSheetByUserId(user.id);
 
         if (current) {
             controlSheet.id = current.id;
@@ -44,12 +44,12 @@ export class ControlSheetFacade {
         }
         controlSheet.user = user;
 
-        const controlSheetResp = this.controlSheetService.save(controlSheet);
+        const controlSheetResp = this.controlSheetRepository.save(controlSheet);
         return plainToClass(ControlSheetDto, controlSheetResp);
     }
 
     async getControlSheet(token: any): Promise<ControlSheetDto> {
-        const controlSheet = await this.controlSheetService.getControlSheetByUserId(token.userId);
+        const controlSheet = await this.controlSheetRepository.getControlSheetByUserId(token.userId);
         return plainToClass(ControlSheetDto, controlSheet);
     }
 }

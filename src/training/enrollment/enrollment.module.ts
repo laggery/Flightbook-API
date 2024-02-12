@@ -11,17 +11,19 @@ import { TeamMemberModule } from 'src/training/team-member/team-member.module';
 import { HttpModule } from '@nestjs/axios';
 import { Note } from '../note/note.entity';
 import { NoteRepository } from '../note/note.repository';
+import { ControlSheetRepository } from '../control-sheet/control-sheet.repository';
+import { ControlSheet } from '../control-sheet/control-sheet.entity';
 
 @Module({
     imports: [
         HttpModule,
-        TypeOrmModule.forFeature([Enrollment, Note]),
+        TypeOrmModule.forFeature([Enrollment, Note, ControlSheet]),
         forwardRef(() => StudentModule),
         UserModule,
         forwardRef(() => SchoolModule),
         forwardRef(() => TeamMemberModule)
     ],
-    providers: [EnrollmentService, EnrollmentFacade, EmailService, NoteRepository],
+    providers: [EnrollmentService, EnrollmentFacade, EmailService, NoteRepository, ControlSheetRepository],
     exports: [EnrollmentService, EnrollmentFacade],
     controllers: []
 })

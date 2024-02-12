@@ -17,7 +17,9 @@ import { EnrollmentNotFoundException } from './exception/enrollment-not-found-ex
 import { EnrollmentNotAllowedException } from './exception/enrollment-not-allowed-exception';
 import { StudentException } from '../student/exception/student.exception';
 import { TeamMemberException } from '../team-member/exception/team-member.exception';
-import { NoteRepository } from '../note/note.repository';
+import { ControlSheetRepository } from '../control-sheet/control-sheet.repository';
+import { User } from 'src/user/user.entity';
+import { ControlSheet } from '../control-sheet/control-sheet.entity';
 
 @Injectable()
 export class EnrollmentFacade {
@@ -28,7 +30,7 @@ export class EnrollmentFacade {
         private teamMemberService: TeamMemberService,
         private schoolService: SchoolService,
         private emailService: EmailService,
-        private noteRepository: NoteRepository
+        private controlSheetRepository: ControlSheetRepository
     ) { }
 
     async createStudentEnrollment(schoolId: number, enrollmentWriteDto: EnrollmentWriteDto, origin: string): Promise<EnrollmentDto> {
@@ -172,11 +174,13 @@ export class EnrollmentFacade {
                 foundStudent.isArchived = false;
                 foundStudent.timestamp = new Date(); 
                 await this.studentRepository.save(foundStudent);
+                await this.addControlSheetToStudent(user);
             } else {
                 const student = new Student();
                 student.school = enrollment.school;
                 student.user = user;
                 const studentEntity = await this.studentRepository.save(student);
+                await this.addControlSheetToStudent(user);
             }
         } else {
             const teamMembers = await this.teamMemberService.getTeamMembersBySchoolId(enrollment.school.id);
@@ -193,5 +197,14 @@ export class EnrollmentFacade {
         }
 
         return true;
+    }
+
+    private async addControlSheetToStudent(user: User) {
+        const sheet = await this.controlSheetRepository.getControlSheetByUserId(user.id);
+        if (!sheet) {
+            const controlSheet = new ControlSheet();
+            controlSheet.user = user;
+            await this.controlSheetRepository.save(controlSheet);
+        }
     }
 }

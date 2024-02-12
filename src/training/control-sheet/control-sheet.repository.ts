@@ -4,12 +4,14 @@ import { Repository } from 'typeorm';
 import { ControlSheet } from './control-sheet.entity';
 
 @Injectable()
-export class ControlSheetService{
+export class ControlSheetRepository extends Repository<ControlSheet>{
 
     constructor(
         @InjectRepository(ControlSheet)
-        private readonly controlSheetService: Repository<ControlSheet>
-    ) { }
+        private readonly repository: Repository<ControlSheet>
+    ) {
+        super(repository.target, repository.manager, repository.queryRunner);
+    }
 
     async getControlSheetByUserId(userId: number) {
         if (!userId) {
@@ -27,10 +29,6 @@ export class ControlSheetService{
                 }
             }
         };
-        return await this.controlSheetService.findOne(options);
-    }
-
-    async save(place: ControlSheet) {
-        return await this.controlSheetService.save(place);
+        return await this.repository.findOne(options);
     }
 }

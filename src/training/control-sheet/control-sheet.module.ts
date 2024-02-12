@@ -3,12 +3,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from 'src/user/user.module';
 import { ControlSheet } from './control-sheet.entity';
 import { ControlSheetFacade } from './control-sheet.facade';
-import { ControlSheetService } from './control-sheet.service';
+import { ControlSheetRepository } from './control-sheet.repository';
 
 @Module({
   imports: [UserModule, TypeOrmModule.forFeature([ControlSheet])],
-  providers: [ControlSheetFacade, ControlSheetService],
-  exports: [ControlSheetService, ControlSheetFacade],
+  providers: [ControlSheetFacade, ControlSheetRepository],
+  exports: [ControlSheetRepository, ControlSheetFacade],
   controllers: []
 })
 export class ControlSheetModule {}
