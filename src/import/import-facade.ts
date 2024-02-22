@@ -116,7 +116,9 @@ export class ImportFacade {
             let flight = new Flight();
             flight.date = moment(record[1], 'D.M.YYYY').format('MM-DD-YYYY');
             flight.time = record[3];
-            flight.km = record[9];
+            if (record[9] != "") {
+                flight.km = record[9];
+            }    
             flight.description = record[10];
             flight.user = user;
 
