@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
-import { firstValueFrom, subscribeOn } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { PaymentStatusDto } from './interface/payment-status-dto';
 import Stripe from 'stripe';
 import { UserService } from 'src/user/user.service';
@@ -26,7 +26,7 @@ export class PaymentFacade {
         this.endpointSecret = env.STRIPE_ENDPOINT_SECRET;
     }
 
-    async getStripeSession(origin: string, userId: number, enrollmentToken: string, lang: string): Promise<any> {
+    async getStripeSession(userId: number, callbackUrl: string, lang: string): Promise<any> {
         const user = await this.userService.getUserById(userId);
 
         const session = await this.stripe.checkout.sessions.create({
@@ -37,8 +37,8 @@ export class PaymentFacade {
                 quantity: 1,
             }],
             mode: 'subscription',
-            success_url: `${origin}/enrollments/${enrollmentToken}/success`,
-            cancel_url: `${origin}/enrollments/${enrollmentToken}/cancel`,
+            success_url: `${callbackUrl}/success`,
+            cancel_url: `${callbackUrl}/cancel`,
             client_reference_id: userId.toString(),
             customer_email: user.email
         });
@@ -165,6 +165,7 @@ export class PaymentFacade {
                             }
                         }
                     }
+
                     await firstValueFrom(this.httpService.post(
                         `${env.REVENUECAT_URL}/v1/receipts`,
                         revenuecatData,

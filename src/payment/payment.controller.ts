@@ -15,8 +15,16 @@ export class PaymentController {
 
     @UseGuards(JwtAuthGuard)
     @Get('stripe/session/:enrollmentToken')
-    stripePayment(@Headers('accept-language') acceptLanguage: string, @Headers('origin') origin: string, @Request() req, @Param('enrollmentToken') enrollmentToken: string): Promise<any> {
-        return this.paymentFacade.getStripeSession(origin, req.user.userId, enrollmentToken, acceptLanguage);
+    stripePaymentInstructor(@Headers('accept-language') acceptLanguage: string, @Headers('origin') origin: string, @Request() req, @Param('enrollmentToken') enrollmentToken: string): Promise<any> {
+        const callbackUrl = `${origin}/enrollments/${enrollmentToken}`;
+        return this.paymentFacade.getStripeSession(req.user.userId, callbackUrl, acceptLanguage);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('stripe/session')
+    stripePaymentWebApp(@Headers('accept-language') acceptLanguage: string, @Headers('origin') origin: string, @Request() req): Promise<any> {
+        const callbackUrl = `${origin}/settings`;
+        return this.paymentFacade.getStripeSession(req.user.userId, callbackUrl, acceptLanguage);
     }
 
     @Post('stripe/webhook')
