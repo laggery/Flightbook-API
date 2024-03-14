@@ -188,9 +188,9 @@ export class AppointmentFacade {
     }
 
     private async appointmentValidityCheck(appointmentDto: AppointmentDto, schoolId: number, appointment: Appointment) {
-        const { scheduling, meetingPoint, state, instructor, takeOffCoordinator, type } = appointmentDto;
+        const { scheduling, state, instructor, takeOffCoordinator, type } = appointmentDto;
 
-        if (!scheduling || !meetingPoint || !state || !instructor) {
+        if (!scheduling || !state ) {
             throw AppointmentException.invalidAppointment();
         }
 
@@ -201,12 +201,14 @@ export class AppointmentFacade {
         }
         appointment.school = schoolEntity;
 
-        const instructorEntity: User = await this.userService.getUserByEmail(instructor.email);
+        if (instructor) {
+            const instructorEntity: User = await this.userService.getUserByEmail(instructor.email);
 
-        if (!instructorEntity) {
-            UserException.invalidEmailException("instructor");
+            if (!instructorEntity) {
+                UserException.invalidEmailException("instructor");
+            }
+            appointment.instructor = instructorEntity;
         }
-        appointment.instructor = instructorEntity;
 
         if (takeOffCoordinator) {
             const takeOffCoordinatorEntity: User = await this.userService.getUserByEmail(takeOffCoordinator.email);

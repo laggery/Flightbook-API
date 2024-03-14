@@ -3,7 +3,7 @@ import { UnprocessableEntityException } from "@nestjs/common";
 export class AppointmentException {
 
     public static invalidAppointment() {
-        throw new UnprocessableEntityException("Invalid appointment: scheduling date, meetingPoint, state and instructor must be provided")
+        throw new UnprocessableEntityException("Invalid appointment: scheduling date and state must be provided")
     }
 
     public static invalidAppointmentType() {
