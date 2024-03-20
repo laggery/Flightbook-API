@@ -201,13 +201,15 @@ export class AppointmentFacade {
         }
         appointment.school = schoolEntity;
 
-        if (instructor) {
+        if (instructor && instructor.email) {
             const instructorEntity: User = await this.userService.getUserByEmail(instructor.email);
 
             if (!instructorEntity) {
                 UserException.invalidEmailException("instructor");
             }
             appointment.instructor = instructorEntity;
+        } else {
+            appointment.instructor = null;
         }
 
         if (takeOffCoordinator) {
