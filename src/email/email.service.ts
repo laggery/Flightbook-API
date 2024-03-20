@@ -127,7 +127,7 @@ export class EmailService {
             args: {
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm'),
                 type: appointment.type ? `<li>${type}: ${appointment.type.name}</li>` : "",
-                meetingPoint: appointment.meetingPoint,
+                meetingPoint: appointment.meetingPoint || "-",
                 description: description,
                 maxPeople: maxPeople
             }
@@ -165,7 +165,7 @@ export class EmailService {
             args: {
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm'),
                 type: appointment.type ? `<li>${type}: ${appointment.type.name}</li>` : "",
-                meetingPoint: appointment.meetingPoint,
+                meetingPoint: appointment.meetingPoint || "-",
                 description: description,
                 maxPeople: maxPeople
             }
@@ -218,7 +218,7 @@ export class EmailService {
             args: {
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm'),
                 type: appointment.type ? `<li>${type}: ${appointment.type.name}</li>` : "",
-                meetingPoint: appointment.meetingPoint,
+                meetingPoint: appointment.meetingPoint || "-",
                 description: description,
                 maxPeople: maxPeople
             }

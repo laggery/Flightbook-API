@@ -40,7 +40,7 @@ export class NotificationsService {
             args: {
                 school: appointment.school.name,
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm'),
-                meetingPoint: appointment.meetingPoint
+                meetingPoint: appointment.meetingPoint || "-"
             }
         });
         const multicastMessage: MulticastMessage = {
@@ -88,7 +88,7 @@ export class NotificationsService {
             args: {
                 school: appointment.school.name,
                 date: moment(appointment.scheduling).utc().format('DD.MM.YYYY HH:mm'),
-                meetingPoint: appointment.meetingPoint
+                meetingPoint: appointment.meetingPoint || "-"
             }
         });
         const multicastMessage: MulticastMessage = {
