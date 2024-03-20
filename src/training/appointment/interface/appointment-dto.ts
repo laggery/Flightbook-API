@@ -17,11 +17,11 @@ export class AppointmentDto {
     readonly scheduling: Date;
 
     @Expose()
-    @ApiProperty()
+    @ApiPropertyOptional()
     readonly meetingPoint: string;
 
     @Expose()
-    @ApiProperty()
+    @ApiPropertyOptional()
     readonly maxPeople: number;
 
     @Expose()

@@ -18,7 +18,8 @@ export class AppointmentTypeRepository {
     async getAppointmentTypesBySchoolId(schoolId: number, query: any): Promise<AppointmentType[]> {
         let options: FindManyOptions<AppointmentType> = {
             relations: {
-                school: true
+                school: true,
+                instructor: true
             },
             where: {
                 school: {
