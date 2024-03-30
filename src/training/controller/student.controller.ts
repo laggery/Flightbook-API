@@ -111,6 +111,6 @@ export class StudentController {
     @UseGuards(JwtAuthGuard)
     @Post('/control-sheet')
     createUpdateControlSheet(@Request() req, @Body() controlSheetDto: ControlSheetDto): Promise<ControlSheetDto> {
-        return this.controlSheetFacade.createUpdateControlSheet(req.user, controlSheetDto);
+        return this.controlSheetFacade.studentCreateUpdateControlSheet(req.user, controlSheetDto);
     }
 }

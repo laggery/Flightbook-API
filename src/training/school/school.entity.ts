@@ -35,6 +35,9 @@ export class School {
   @Column("character varying", { name: "language", length: 2 })
   language: string;
 
+  @Column("boolean", { name: "user_can_edit_controlsheet", default: true })
+  userCanEditControlSheet: boolean; 
+
   @OneToMany(() => TeamMember, (teamMember) => teamMember.school, { cascade: ['insert', 'update'] })
   teamMembers: TeamMember[];
 

@@ -17,6 +17,9 @@ constructor(){
   @Column("integer", { primary: true, name: "id" })
   id: number;
 
+  @Column("boolean", { name: "user_can_edit", default: true })
+  userCanEdit: boolean; 
+
   @ManyToOne(() => User, (user) => user.students, {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",

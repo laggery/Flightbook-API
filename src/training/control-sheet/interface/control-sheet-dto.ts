@@ -12,6 +12,9 @@ export class ControlSheetDto {
   user: User;
 
   @ApiPropertyOptional()
+  readonly userCanEdit: boolean;
+
+  @ApiPropertyOptional()
   trainingHill: TrainingHillDto;
 
   @ApiPropertyOptional()

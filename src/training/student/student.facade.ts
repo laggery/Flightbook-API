@@ -120,11 +120,17 @@ export class StudentFacade {
         return await this.controlSheetFacade.getControlSheet({ userId: student.user.id });
     }
 
+    /**
+     * This method is used from instructors to create or update a control sheet for a student
+     * @param studentId The student id
+     * @param controlSheetDto The control sheet dto
+     * @returns new or updated control sheet dto
+     */
     async postStudentControlSheetByStudentId(studentId: number, controlSheetDto: ControlSheetDto): Promise<ControlSheetDto> {
         const student = await this.studentRepository.getStudentById(studentId);
         if (!student) {
             throw StudentException.notFoundException();
         }
-        return await this.controlSheetFacade.createUpdateControlSheet({ userId: student.user.id }, controlSheetDto);
+        return await this.controlSheetFacade.instructorCreateUpdateControlSheet({ userId: student.user.id }, controlSheetDto);
     }
 }

@@ -8,6 +8,7 @@ import { ControlSheetRepository } from './control-sheet.repository';
 import { ControlSheetDto } from './interface/control-sheet-dto';
 import { Theory } from './theory.entity';
 import { TrainingHill } from './training-hill.entity';
+import { ControlSheetException } from './exception/control-sheet.exception';
 
 @Injectable()
 export class ControlSheetFacade {
@@ -17,10 +18,25 @@ export class ControlSheetFacade {
         private readonly userService: UserService
     ) { }
 
-    async createUpdateControlSheet(token: any, controlSheetDto: ControlSheetDto): Promise<ControlSheetDto> {
+    async studentCreateUpdateControlSheet(token: any, controlSheetDto: ControlSheetDto): Promise<ControlSheetDto> {
+        const currentSheet = await this.controlSheetRepository.getControlSheetByUserId(token.userId);
+        if (currentSheet && !currentSheet.userCanEdit) {
+            ControlSheetException.forbiddenToEdit();
+        }
+        const controlSheet: ControlSheet = plainToInstance(ControlSheet, controlSheetDto);
+        controlSheet.userCanEdit = undefined;
+        return this.createUpdateControlSheet(token, controlSheet, currentSheet);
+    }
+
+    async instructorCreateUpdateControlSheet(token: any, controlSheetDto: ControlSheetDto): Promise<ControlSheetDto> {
+        const currentSheet = await this.controlSheetRepository.getControlSheetByUserId(token.userId);
+        const controlSheet: ControlSheet = plainToInstance(ControlSheet, controlSheetDto);
+        return this.createUpdateControlSheet(token, controlSheet, currentSheet);
+    }
+
+    private async createUpdateControlSheet(token: any, controlSheet: ControlSheet, currentSheet: ControlSheet): Promise<ControlSheetDto> {
 
         const user: User = await this.userService.getUserById(token.userId);
-        const controlSheet: ControlSheet = plainToInstance(ControlSheet, controlSheetDto);
 
         if (!controlSheet.altitudeFlight) {
             controlSheet.altitudeFlight = new AltitudeFlight();

@@ -32,4 +32,7 @@ export class SchoolDto {
     @ApiProperty()
     @Expose()
     readonly language: string;
+    @ApiPropertyOptional()
+    @Expose()
+    readonly userCanEditControlSheet: boolean
 }

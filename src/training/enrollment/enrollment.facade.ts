@@ -20,6 +20,7 @@ import { TeamMemberException } from '../team-member/exception/team-member.except
 import { ControlSheetRepository } from '../control-sheet/control-sheet.repository';
 import { User } from 'src/user/user.entity';
 import { ControlSheet } from '../control-sheet/control-sheet.entity';
+import { School } from '../school/school.entity';
 
 @Injectable()
 export class EnrollmentFacade {
@@ -174,13 +175,13 @@ export class EnrollmentFacade {
                 foundStudent.isArchived = false;
                 foundStudent.timestamp = new Date(); 
                 await this.studentRepository.save(foundStudent);
-                await this.addControlSheetToStudent(user);
+                await this.addControlSheetToStudent(user, enrollment.school);
             } else {
                 const student = new Student();
                 student.school = enrollment.school;
                 student.user = user;
                 const studentEntity = await this.studentRepository.save(student);
-                await this.addControlSheetToStudent(user);
+                await this.addControlSheetToStudent(user, enrollment.school);
             }
         } else {
             const teamMembers = await this.teamMemberService.getTeamMembersBySchoolId(enrollment.school.id);
@@ -199,11 +200,12 @@ export class EnrollmentFacade {
         return true;
     }
 
-    private async addControlSheetToStudent(user: User) {
+    private async addControlSheetToStudent(user: User, school: School) {
         const sheet = await this.controlSheetRepository.getControlSheetByUserId(user.id);
         if (!sheet) {
             const controlSheet = new ControlSheet();
             controlSheet.user = user;
+            controlSheet.userCanEdit = school.userCanEditControlSheet;
             await this.controlSheetRepository.save(controlSheet);
         }
     }
