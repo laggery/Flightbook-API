@@ -28,4 +28,7 @@ export class Enrollment {
 
   @Column("character varying", { name: "type", length: 25 })
   type: EnrollmentType;
+
+  @Column("boolean", { name: "is_free", default: false })
+  isFree: boolean; 
 }

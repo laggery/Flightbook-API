@@ -115,6 +115,14 @@ export class EnrollmentFacade {
 
         return plainToClass(EnrollmentDto, enrollmentResp);
     }
+
+    async isFreeEnrollment(token: string): Promise<boolean> {
+        const enrollment = await this.enrollmentService.getEnrollmentByToken(token);
+        if (!enrollment) {
+            return false;
+        }
+        return enrollment.isFree;
+    }
     
     async getEnrollmentByToken(token: string): Promise<EnrollmentDto> {
         const enrollment = await this.enrollmentService.getEnrollmentByToken(token);
