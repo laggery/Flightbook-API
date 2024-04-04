@@ -100,8 +100,8 @@ export class StudentController {
 
     @UseGuards(JwtAuthGuard)
     @Get('schools/:schoolId/enrollment/:token/free')
-    hasFreeEnrollment(@Param('schoolId') schoolId: number, @Param('token') token: string, @Request() req): Promise<any> {
-        return this.enrollmentFacade.isFreeEnrollment(token) || this.teamMemberFacade.isUserTeamMemberFromSchool(schoolId, req.user.userId);
+    async hasFreeEnrollment(@Param('schoolId') schoolId: number, @Param('token') token: string, @Request() req): Promise<any> {
+        return await this.enrollmentFacade.isFreeEnrollment(token) || await this.teamMemberFacade.isUserTeamMemberFromSchool(schoolId, req.user.userId);
     }
 
     @UseGuards(JwtAuthGuard)
