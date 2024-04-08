@@ -1,9 +1,9 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { EmailService } from 'src/email/email.service';
-import { NotificationsService } from 'src/shared/services/notifications.service';
-import { SchoolModule } from 'src/training/school/school.module';
-import { UserModule } from 'src/user/user.module';
+import { EmailService } from '../../email/email.service';
+import { NotificationsService } from '../../shared/services/notifications.service';
+import { SchoolModule } from '../../training/school/school.module';
+import { UserModule } from '../../user/user.module';
 import { StudentModule } from '../student/student.module';
 import { SubscriptionModule } from '../subscription/subscription.module';
 import { AppointmentType } from './appointment-type.entity';

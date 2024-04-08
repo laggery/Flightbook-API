@@ -1,5 +1,4 @@
 import { plainToInstance } from "class-transformer";
-import { UserReadDto } from 'src/user/interface/user-read-dto';
 import { Place } from "./place.entity";
 import { PlaceDto } from "./interface/place-dto";
 

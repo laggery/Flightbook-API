@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { GliderRepository } from './glider.repository';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 import { GliderDto } from './interface/glider-dto';
 import { Glider } from './glider.entity';
 import { plainToClass } from 'class-transformer';
-import { User } from 'src/user/user.entity';
+import { User } from '../user/user.entity';
 import * as moment from 'moment';
 import { InvalidDateException } from './exception/invalid-date-exception';
-import { PagerDto } from 'src/interface/pager-dto';
+import { PagerDto } from '../interface/pager-dto';
 import { checkIfDateIsValid } from '../shared/util/date-utils';
 
 @Injectable()

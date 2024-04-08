@@ -1,5 +1,5 @@
 import { Exclude, Expose } from "class-transformer";
-import { LoginType } from "src/user/login-type";
+import { LoginType } from "../../user/login-type";
 
 @Exclude()
 export class UserReadIdDto {

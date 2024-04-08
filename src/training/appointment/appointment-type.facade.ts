@@ -7,9 +7,9 @@ import { AppointmentType } from './appointment-type.entity';
 import { AppointmentTypeRepository } from './appointment-type.repository';
 import { AppointmentException } from './exception/appointment.exception';
 import { AppointmentTypeDto } from './interface/appointment-type-dto';
-import { User } from 'src/user/user.entity';
-import { UserService } from 'src/user/user.service';
-import { UserException } from 'src/user/exception/user.exception';
+import { User } from '../../user/user.entity';
+import { UserService } from '../../user/user.service';
+import { UserException } from '../../user/exception/user.exception';
 import { AppointmentTypeMapper } from './appointment-type.mapper';
 
 @Injectable()

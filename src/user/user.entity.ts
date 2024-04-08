@@ -1,12 +1,12 @@
-import { Student } from "src/training/student/student.entity";
-import { TeamMember } from "src/training/team-member/team-member.entity";
+import { Student } from "../training/student/student.entity";
+import { TeamMember } from "../training/team-member/team-member.entity";
 import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Flight } from "../flight/flight.entity";
 import { Glider } from "../glider/glider.entity";
 import { Place } from "../place/place.entity";
 import { LoginType } from "./login-type";
 import {Appointment} from "../training/appointment/appointment.entity";
-import { Subscription } from "src/training/subscription/subscription.entity";
+import { Subscription } from "..//training/subscription/subscription.entity";
 
 @Index("idx_16606_idx_e12875dfb3b1d92d7d7c5377e2", ["email"], { unique: true })
 @Index("idx_16409_idx_e12875dfb3b1d92d7d7c5377e2", ["email"], { unique: true })
@@ -53,7 +53,7 @@ export class User {
   @Column("character varying", { name: "token", nullable: true, length: 60 })
   token: string | null;
 
-  @Column("character varying", { name: "login_type", length: 25, default: () => LoginType.LOCAL })
+  @Column("character varying", { name: "login_type", length: 25, default: LoginType.LOCAL })
   loginType: LoginType;
 
   @Column("character varying", { name: "sociallogin_id", length: 100, nullable: true})

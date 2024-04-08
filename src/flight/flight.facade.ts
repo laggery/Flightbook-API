@@ -1,19 +1,19 @@
 import { Injectable, Req } from '@nestjs/common';
 import { FlightRepository } from './flight.repository';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 import { FlightDto } from './interface/flight-dto';
 import { Flight } from './flight.entity';
 import { plainToClass, plainToInstance } from 'class-transformer';
-import { User } from 'src/user/user.entity';
-import { PlaceFacade } from 'src/place/place.facade';
-import { Place } from 'src/place/place.entity';
-import { GliderFacade } from 'src/glider/glider.facade';
-import { Glider } from 'src/glider/glider.entity';
+import { User } from '../user/user.entity';
+import { PlaceFacade } from '../place/place.facade';
+import { Place } from '../place/place.entity';
+import { GliderFacade } from '../glider/glider.facade';
+import { Glider } from '../glider/glider.entity';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import moment = require('moment');
 import { checkIfDateIsValid } from '../shared/util/date-utils';
-import { FileUploadService } from 'src/fileupload/file-upload.service';
-import { PagerEntityDto } from 'src/interface/pager-entity-dto';
+import { FileUploadService } from '../fileupload/file-upload.service';
+import { PagerEntityDto } from '../interface/pager-entity-dto';
 import { StatisticType } from './statistic-type';
 import { FlightException } from './exception/flight.exception';
 

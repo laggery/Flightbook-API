@@ -2,15 +2,15 @@ import { HttpException, Injectable, Logger } from '@nestjs/common';
 import { EmailBodyDto } from './email-body-dto';
 
 import * as nodemailer from 'nodemailer';
-import { SchoolDto } from 'src/training/school/interface/school-dto';
-import { Appointment } from 'src/training/appointment/appointment.entity';
+import { SchoolDto } from '../training/school/interface/school-dto';
+import { Appointment } from '../training/appointment/appointment.entity';
 import moment = require('moment');
-import { Subscription } from 'src/training/subscription/subscription.entity';
+import { Subscription } from '../training/subscription/subscription.entity';
 import { I18nContext } from 'nestjs-i18n';
-import { Student } from 'src/training/student/student.entity';
-import { Enrollment } from 'src/training/enrollment/enrollment.entity';
+import { Student } from '../training/student/student.entity';
+import { Enrollment } from '../training/enrollment/enrollment.entity';
 import { env } from 'process';
-import { User } from 'src/user/user.entity';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class EmailService {

@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Exclude, Expose } from "class-transformer";
-import { UserReadIdDto } from "src/user/interface/user-read-id-dto";
+import { UserReadIdDto } from "../../../user/interface/user-read-id-dto";
 
 @Exclude()
 export class TeamMemberDto {

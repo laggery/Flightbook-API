@@ -2,12 +2,12 @@ import { Injectable, HttpException, UnauthorizedException } from '@nestjs/common
 import { User } from '../user/user.entity';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
-import { EmailBodyDto } from 'src/email/email-body-dto';
-import { EmailService } from 'src/email/email.service';
+import { EmailBodyDto } from '../email/email-body-dto';
+import { EmailService } from '../email/email.service';
 import { OAuth2Client } from 'google-auth-library';
-import { UserFacade } from 'src/user/user.facade';
-import { LoginType } from 'src/user/login-type';
-import { UserAlreadyExistsException } from 'src/user/exception/user-already-exists-exception';
+import { UserFacade } from '../user/user.facade';
+import { LoginType } from '../user/login-type';
+import { UserAlreadyExistsException } from '../user/exception/user-already-exists-exception';
 
 @Injectable()
 export class AuthFacade {

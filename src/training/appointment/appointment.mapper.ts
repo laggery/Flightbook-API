@@ -1,7 +1,7 @@
 import { AppointmentDto } from "./interface/appointment-dto";
 import { plainToInstance } from "class-transformer";
 import { Appointment } from "./appointment.entity";
-import { UserReadDto } from 'src/user/interface/user-read-dto';
+import { UserReadDto } from '../../user/interface/user-read-dto';
 import { Subscription } from "../subscription/subscription.entity";
 import { SubscriptionDto } from "../subscription/interface/subscription-dto";
 import { AppointmentType } from "./appointment-type.entity";

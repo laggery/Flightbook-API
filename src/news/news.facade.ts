@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { NewsService } from './news.service';
+import { NewsRepository } from './news.repository';
 import { News } from './news.entity';
 
 @Injectable()
 export class NewsFacade {
 
-    constructor(private newsService: NewsService) { }
+    constructor(private newsRepository: NewsRepository) { }
 
     async getNews(language: string): Promise<News[]> {
-        return this.newsService.getNews(language);
+        return this.newsRepository.getNews(language);
     }
 }

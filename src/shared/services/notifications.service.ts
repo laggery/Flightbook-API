@@ -2,10 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { initializeApp, cert } from "firebase-admin/app";
 import * as moment from 'moment';
 import { BatchResponse, getMessaging, MulticastMessage, SendResponse } from 'firebase-admin/messaging';
-import { UserService } from 'src/user/user.service';
-import { Student } from 'src/training/student/student.entity';
-import { Appointment } from 'src/training/appointment/appointment.entity';
-import { Subscription } from 'src/training/subscription/subscription.entity';
+import { UserService } from '../../user/user.service';
+import { Student } from '../../training/student/student.entity';
+import { Appointment } from '../../training/appointment/appointment.entity';
+import { Subscription } from '../../training/subscription/subscription.entity';
 import { I18nContext } from 'nestjs-i18n';
 
 export enum NotificationType {

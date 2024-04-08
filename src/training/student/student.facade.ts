@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
-import { AppointmentRepository } from 'src/training/appointment/appointment.repository';
-import { ControlSheetFacade } from 'src/training/control-sheet/control-sheet.facade';
-import { ControlSheetDto } from 'src/training/control-sheet/interface/control-sheet-dto';
-import { FlightFacade } from 'src/flight/flight.facade';
-import { FlightDto } from 'src/flight/interface/flight-dto';
-import { SchoolDto } from 'src/training/school/interface/school-dto';
+import { AppointmentRepository } from '../../training/appointment/appointment.repository';
+import { ControlSheetFacade } from '../../training/control-sheet/control-sheet.facade';
+import { ControlSheetDto } from '../../training/control-sheet/interface/control-sheet-dto';
+import { FlightFacade } from '../../flight/flight.facade';
+import { FlightDto } from '../../flight/interface/flight-dto';
+import { SchoolDto } from '../../training/school/interface/school-dto';
 import { StudentDto } from './interface/student-dto';
 import { Student } from './student.entity';
 import { StudentRepository } from './student.repository';
 import { StudentException } from './exception/student.exception';
-import { UserReadIdDto } from 'src/user/interface/user-read-id-dto';
-import { PagerEntityDto } from 'src/interface/pager-entity-dto';
+import { UserReadIdDto } from '../../user/interface/user-read-id-dto';
+import { PagerEntityDto } from '../../interface/pager-entity-dto';
 import { StudentMapper } from './student.mapper';
 
 @Injectable()

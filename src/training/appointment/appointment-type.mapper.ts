@@ -1,5 +1,5 @@
 import { plainToInstance } from "class-transformer";
-import { UserReadDto } from 'src/user/interface/user-read-dto';
+import { UserReadDto } from '../../user/interface/user-read-dto';
 import { AppointmentType } from "./appointment-type.entity";
 import { AppointmentTypeDto } from "./interface/appointment-type-dto";
 

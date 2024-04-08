@@ -4,6 +4,25 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Jest Current IT Test File",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": [
+        "${fileBasenameNoExtension}",
+        "--config",
+        "./test/it/it.jest.json",
+        "--testTimeout",
+        "10000"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
+      "windows": {
+        "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Debug Nest Framework",
       "args": ["${workspaceFolder}/src/main.ts"],
       "runtimeArgs": [

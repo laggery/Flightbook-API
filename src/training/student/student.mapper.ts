@@ -1,8 +1,8 @@
 import { plainToClass, plainToInstance } from "class-transformer";
 import { Student } from "./student.entity";
 import { StudentDto } from "./interface/student-dto";
-import { UserReadIdDto } from "src/user/interface/user-read-id-dto";
-import { FlightStatisticDto } from "src/flight/interface/flight-statistic-dto";
+import { UserReadIdDto } from "../../user/interface/user-read-id-dto";
+import { FlightStatisticDto } from "../../flight/interface/flight-statistic-dto";
 
 export class StudentMapper {
 

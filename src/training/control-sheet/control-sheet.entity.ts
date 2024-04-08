@@ -1,4 +1,4 @@
-import { User } from "src/user/user.entity";
+import { User } from "../../user/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { AltitudeFlight } from "./altitude-flight.entity";
 import { Theory } from "./theory.entity";

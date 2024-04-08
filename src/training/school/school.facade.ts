@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { plainToClass, plainToInstance } from 'class-transformer';
-import { User } from 'src/user/user.entity';
-import { UserService } from 'src/user/user.service';
+import { User } from '../../user/user.entity';
+import { UserService } from '../../user/user.service';
 import { TeamMember } from '../team-member/team-member.entity';
 import { SchoolDto } from './interface/school-dto';
 import { School } from './school.entity';

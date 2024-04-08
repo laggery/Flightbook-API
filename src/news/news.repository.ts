@@ -4,12 +4,14 @@ import { News } from './news.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class NewsService {
+export class NewsRepository extends Repository<News> {
 
     constructor(
         @InjectRepository(News)
-        private readonly placeRepository: Repository<News>
-    ) { }
+        repository: Repository<News>
+    ) {
+        super(repository.target, repository.manager, repository.queryRunner);
+    }
 
     async getNews(language: string): Promise<News[]> {
         const options: any = {
@@ -20,6 +22,6 @@ export class NewsService {
                 date: 'DESC'
             }
         };
-        return await this.placeRepository.find(options);
+        return await this.find(options);
     }
 }

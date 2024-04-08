@@ -3,12 +3,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { PaymentStatusDto } from './interface/payment-status-dto';
 import Stripe from 'stripe';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 import { env } from 'process';
 import { PaymentException } from './exception/payment.exception';
-import { EmailService } from 'src/email/email.service';
+import { EmailService } from '../email/email.service';
 import { PaymentState } from './paymentState';
-import { User } from 'src/user/user.entity';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class PaymentFacade {

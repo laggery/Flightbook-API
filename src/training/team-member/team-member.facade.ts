@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
-import { SchoolDto } from 'src/training/school/interface/school-dto';
-import { UserReadIdDto } from 'src/user/interface/user-read-id-dto';
+import { SchoolDto } from '../../training/school/interface/school-dto';
+import { UserReadIdDto } from '../../user/interface/user-read-id-dto';
 import { TeamMemberException } from './exception/team-member.exception';
 import { TeamMemberDto } from './interface/team-member-dto';
 import { TeamMember } from './team-member.entity';

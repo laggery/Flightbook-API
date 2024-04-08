@@ -1,5 +1,5 @@
-import { Enrollment } from "src/training/enrollment/enrollment.entity";
-import { Student } from "src/training/student/student.entity";
+import { Enrollment } from "../../training/enrollment/enrollment.entity";
+import { Student } from "../../training/student/student.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { TeamMember } from "../team-member/team-member.entity";
 import {Appointment} from "../appointment/appointment.entity";

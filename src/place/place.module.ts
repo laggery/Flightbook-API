@@ -4,7 +4,7 @@ import { PlaceRepository } from './place.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Place } from './place.entity';
 import { PlaceFacade } from './place.facade';
-import { UserModule } from 'src/user/user.module';
+import { UserModule } from '../user/user.module';
 import { HttpModule } from '@nestjs/axios';
 
 @Module({
