@@ -15,7 +15,6 @@
       ],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "disableOptimisticBPs": true,
       "windows": {
         "program": "${workspaceFolder}/node_modules/jest/bin/jest",
       }
@@ -35,8 +34,7 @@
       "sourceMaps": true,
       "envFile": "${workspaceFolder}/.env",
       "cwd": "${workspaceRoot}",
-      "console": "integratedTerminal",
-      "protocol": "inspector"
+      "console": "integratedTerminal"
     }
   ]
 }
