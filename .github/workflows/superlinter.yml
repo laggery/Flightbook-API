@@ -1,4 +1,4 @@
-name: master pipeline
+name: ci
 
 on:
   push:
@@ -23,6 +23,7 @@ jobs:
         name: Run tests
         run: npm run test:it
   docker:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       -
