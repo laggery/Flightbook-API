@@ -110,7 +110,7 @@ export class PaymentFacade {
             paymentStatusDto.active = true;
             paymentStatusDto.state = PaymentState.NONE;
             Logger.error(`Error check payment status for user id ${id}`);
-            this.emailService.sendErrorMessageToAdmin('Error check payment status', `Error check payment status for user id ${id}`);
+            //this.emailService.sendErrorMessageToAdmin('Error check payment status', `Error check payment status for user id ${id}`);
         }
 
         return paymentStatusDto;
