@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { User } from '../../user/user.entity';
-import { UserService } from '../../user/user.service';
+import { UserRepository } from '../../user/user.repository';
 import { TeamMember } from '../team-member/team-member.entity';
 import { SchoolDto } from './interface/school-dto';
 import { School } from './school.entity';
-import { SchoolService } from './school.service';
+import { SchoolRepository } from './school.repository';
 import {SchoolException} from "./exception/school.exception";
 
 @Injectable()
 export class SchoolFacade {
 
     constructor(
-        private schoolService: SchoolService,
-        private userService: UserService) { }
+        private schoolRepository: SchoolRepository,
+        private userRepository: UserRepository) { }
 
     async createSchool(token: any, schoolDto: SchoolDto): Promise<SchoolDto> {
         // Check name, address1, plz, city, phone, email
@@ -21,13 +21,13 @@ export class SchoolFacade {
             throw SchoolException.invalidException();
         }
 
-        const user: User = await this.userService.getUserById(token.userId);
+        const user: User = await this.userRepository.getUserById(token.userId);
         const school: School = plainToInstance(School, schoolDto);
         school.id = null;
         school.address2 = schoolDto.address2 === '' ? null : schoolDto.address2;
 
         // Check if name already existe for this user
-        if (await this.schoolService.getSchoolByName(school.name)) {
+        if (await this.schoolRepository.getSchoolByName(school.name)) {
             throw SchoolException.alreadyExistsException();
         }
 
@@ -37,7 +37,7 @@ export class SchoolFacade {
         member.user = user;
         school.teamMembers = [member];
 
-        const schoolResp: School = await this.schoolService.saveSchool(school);
+        const schoolResp: School = await this.schoolRepository.save(school);
         return plainToClass(SchoolDto, schoolResp);
     }
 
@@ -50,10 +50,10 @@ export class SchoolFacade {
         // Check that user is admin from the school
         
 
-        const school: School = await this.schoolService.getSchoolById(id);
+        const school: School = await this.schoolRepository.getSchoolById(id);
 
         // Check if name already existe for this user
-        if (school.name !== schoolDto.name && await this.schoolService.getSchoolByName(schoolDto.name)) {
+        if (school.name !== schoolDto.name && await this.schoolRepository.getSchoolByName(schoolDto.name)) {
             throw SchoolException.alreadyExistsException();
         }
 
@@ -65,12 +65,12 @@ export class SchoolFacade {
         school.phone = schoolDto.phone;
         school.email = schoolDto.email;
 
-        const schoolResp: School = await this.schoolService.saveSchool(school);
+        const schoolResp: School = await this.schoolRepository.save(school);
         return plainToClass(SchoolDto, schoolResp);
     }
 
     async getSchoolById(id: number): Promise<SchoolDto | undefined> {
-        const school: School = await this.schoolService.getSchoolById(id);
+        const school: School = await this.schoolRepository.getSchoolById(id);
         return plainToClass(SchoolDto, school);
     }
 }

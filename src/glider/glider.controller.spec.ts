@@ -1,15 +1,16 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { TestBed } from '@automock/jest';
 import { GliderController } from './glider.controller';
+import { GliderFacade } from './glider.facade';
 
 describe('Glider Controller', () => {
   let controller: GliderController;
+  let facade: jest.Mocked<GliderFacade>;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [GliderController],
-    }).compile();
+  beforeAll(async () => {
+    const { unit, unitRef } = TestBed.create(GliderController).compile();
 
-    controller = module.get<GliderController>(GliderController);
+    controller = unit;
+    facade = unitRef.get(GliderFacade);
   });
 
   it('should be defined', () => {

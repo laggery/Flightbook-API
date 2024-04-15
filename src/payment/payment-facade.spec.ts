@@ -1,18 +1,25 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { PaymentFacade } from './payment-facade';
+import { UserRepository } from '../user/user.repository';
+import { HttpService } from '@nestjs/axios';
+import { EmailService } from '../email/email.service';
+import { TestBed } from '@automock/jest';
 
-describe('PaymentFacade', () => {
-  let provider: PaymentFacade;
+describe('Payment Facade', () => {
+  let facade: PaymentFacade,
+      userRepository: jest.Mocked<UserRepository>,
+      httpService: jest.Mocked<HttpService>,
+      emailService: jest.Mocked<EmailService>;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [PaymentFacade],
-    }).compile();
+  beforeAll(async () => {
+    const { unit, unitRef } = TestBed.create(PaymentFacade).compile();
 
-    provider = module.get<PaymentFacade>(PaymentFacade);
+    facade = unit;
+    httpService = unitRef.get(HttpService);
+    userRepository = unitRef.get(UserRepository);
+    emailService = unitRef.get(EmailService);
   });
 
   it('should be defined', () => {
-    expect(provider).toBeDefined();
+    expect(facade).toBeDefined();
   });
 });

@@ -4,22 +4,24 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
 
 @Injectable()
-export class UserService {
+export class UserRepository extends Repository<User> {
 
     constructor(
         @InjectRepository(User)
-        private readonly userRepository: Repository<User>
-    ) { }
+        private readonly repository: Repository<User>
+    ) {
+        super(repository.target, repository.manager, repository.queryRunner);
+    }
 
     async getUserById(id: number): Promise<User> {
-        return this.userRepository.findOneByOrFail({id: id});
+        return this.findOneByOrFail({id: id});
     }
 
     async getUserByEmail(email: string): Promise<User | undefined> {
         if (!email) {
             return undefined;
         }
-        return this.userRepository.findOne({ where: {
+        return this.findOne({ where: {
             email: ILike(email)
         } });
     }
@@ -28,14 +30,14 @@ export class UserService {
         if (!token) {
             return undefined;
         }
-        return this.userRepository.findOneBy({ token: token });
+        return this.findOneBy({ token: token });
     }
 
     async getUserByNotificationToken(notificationToken: string): Promise<User | undefined> {
         if (!notificationToken) {
             return undefined;
         }
-        return this.userRepository.findOneBy({ notificationToken: notificationToken });
+        return this.findOneBy({ notificationToken: notificationToken });
     }
 
     async clearNotificationTokens(tokens: string[]) {
@@ -51,6 +53,6 @@ export class UserService {
 
     async saveUser(user: User): Promise<User | undefined> {
         user.email = user.email.toLowerCase();
-        return this.userRepository.save(user);
+        return this.save(user);
     }
 }

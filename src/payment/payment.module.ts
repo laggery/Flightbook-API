@@ -3,7 +3,7 @@ import { PaymentController } from './payment.controller';
 import { PaymentFacade } from './payment-facade';
 import { HttpModule } from '@nestjs/axios';
 import { UserModule } from '../user/user.module';
-import { EmailService } from 'src/email/email.service';
+import { EmailService } from '../email/email.service';
 
 @Module({
   imports: [HttpModule, UserModule],

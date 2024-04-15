@@ -1,15 +1,16 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
+import { AuthFacade } from './auth.facade';
+import { TestBed } from '@automock/jest';
 
 describe('Auth Controller', () => {
   let controller: AuthController;
+  let authFacade: jest.Mocked<AuthFacade>;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [AuthController],
-    }).compile();
+  beforeAll(async () => {
+    const { unit, unitRef } = TestBed.create(AuthController).compile();
 
-    controller = module.get<AuthController>(AuthController);
+    controller = unit;
+    authFacade = unitRef.get(AuthFacade);
   });
 
   it('should be defined', () => {

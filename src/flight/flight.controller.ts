@@ -11,11 +11,11 @@ import {
     Delete,
     HttpCode
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { FlightDto } from './interface/flight-dto';
 import { FlightFacade } from './flight.facade';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
-import { PagerDto } from 'src/interface/pager-dto';
+import { PagerDto } from '../interface/pager-dto';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 @Controller('flights')
 @ApiTags('Flight')

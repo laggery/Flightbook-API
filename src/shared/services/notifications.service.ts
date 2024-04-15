@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { initializeApp, cert } from "firebase-admin/app";
 import * as moment from 'moment';
 import { BatchResponse, getMessaging, MulticastMessage, SendResponse } from 'firebase-admin/messaging';
-import { UserService } from '../../user/user.service';
+import { UserRepository } from '../../user/user.repository';
 import { Student } from '../../training/student/student.entity';
 import { Appointment } from '../../training/appointment/appointment.entity';
 import { Subscription } from '../../training/subscription/subscription.entity';
@@ -15,8 +15,11 @@ export enum NotificationType {
 @Injectable()
 export class NotificationsService {
     constructor(
-        private userService: UserService
+        private userRepository: UserRepository
     ) {
+        if (!process.env.FIREBASE_CREDENTIAL_JSON) {
+            return;
+        }
         const firebaseCredentials = JSON.parse(process.env.FIREBASE_CREDENTIAL_JSON);
         initializeApp({
             credential: cert(firebaseCredentials)
@@ -68,7 +71,7 @@ export class NotificationsService {
             Logger.error("Firebase sendEachForMulticast error", e);
         }
 
-        this.userService.clearNotificationTokens(tokensToDelete);
+        this.userRepository.clearNotificationTokens(tokensToDelete);
     }
 
     async sendAppointmentSubscription(students: Student[], appointment: Appointment) {
@@ -116,7 +119,7 @@ export class NotificationsService {
             Logger.error("Firebase sendEachForMulticast error", e);
         }
 
-        this.userService.clearNotificationTokens(tokensToDelete);
+        this.userRepository.clearNotificationTokens(tokensToDelete);
     }
 
     async sendAppointmentStateChanged(appointment: Appointment) {
@@ -163,7 +166,7 @@ export class NotificationsService {
             Logger.error("Firebase sendEachForMulticast error", e);
         }
 
-        this.userService.clearNotificationTokens(tokensToDelete);
+        this.userRepository.clearNotificationTokens(tokensToDelete);
     }
 
 
@@ -215,6 +218,6 @@ export class NotificationsService {
             Logger.error("Firebase sendEachForMulticast error", e);
         }
 
-        this.userService.clearNotificationTokens(tokensToDelete);
+        this.userRepository.clearNotificationTokens(tokensToDelete);
     }
 }

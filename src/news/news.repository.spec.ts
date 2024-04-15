@@ -1,18 +1,39 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { NewsRepository } from './news.repository';
+import { TestBed } from '@automock/jest';
+import { TestUtil } from '../../test/test.util';
 
-describe('NewsService', () => {
-  let service: NewsRepository;
+describe('NewsRepository', () => {
+  let newsRepository: NewsRepository;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [NewsRepository],
-    }).compile();
+  beforeAll(async () => {
+    const { unit, unitRef } = TestBed.create(NewsRepository).compile();
 
-    service = module.get<NewsRepository>(NewsRepository);
+    newsRepository = unit;
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  it('Should get news', async () => {
+    // given - team name
+    const mockNews = TestUtil.createNews('de');
+
+    const findSpy = jest
+        .spyOn(newsRepository, 'find')
+        .mockResolvedValue([mockNews]);
+
+    // repository.find.mockResolvedValue([mockNews]);
+
+    //when
+    const newsList = await newsRepository.getNews('de');
+
+    //then
+    expect(newsList).toHaveLength(1);
+    expect(newsList[0]).toEqual(mockNews);
+    expect(findSpy).toHaveBeenCalledWith({
+      where: {
+          language: 'de'
+      },
+      order: {
+          date: 'DESC'
+      }
+  });
   });
 });

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
-import { PagerEntityDto } from 'src/interface/pager-entity-dto';
+import { PagerEntityDto } from '../../interface/pager-entity-dto';
 import { NoteRepository } from './note.repository';
 import { NoteDto } from './interface/note-dto';
 import { Student } from '../student/student.entity';

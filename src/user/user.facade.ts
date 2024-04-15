@@ -1,29 +1,29 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserService } from './user.service';
+import { UserRepository } from './user.repository';
 import { UserWriteDto } from './interface/user-write-dto';
 import { User } from './user.entity';
 import { UserAlreadyExistsException } from './exception/user-already-exists-exception';
 import { InvalidUserException } from './exception/invalid-user-exception';
 import { plainToClass } from 'class-transformer';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from '../auth/auth.service';
 import { UserReadDto } from './interface/user-read-dto';
 import { UserPasswordWriteDto } from './interface/user-password-write-dto';
 import { InvalidPasswordException } from './exception/invalid-password-exception';
 import { InvalidOldPasswordException } from './exception/invalid-oldpassword-exception';
 import { LoginType } from './login-type';
-import { PaymentFacade } from 'src/payment/payment-facade';
+import { PaymentFacade } from '../payment/payment-facade';
 
 @Injectable()
 export class UserFacade {
 
     constructor(
-        private userService: UserService,
+        private userRepository: UserRepository,
         private authService: AuthService,
         private paymentFacade: PaymentFacade
     ) {}
 
     async getCurrentUser(id: number): Promise<any> {
-        const user: User = await this.userService.getUserById(id);
+        const user: User = await this.userRepository.getUserById(id);
         return plainToClass(UserReadDto, user);
     }
 
@@ -32,7 +32,7 @@ export class UserFacade {
             throw new InvalidUserException();
         }
 
-        let user: User = await this.userService.getUserByEmail(userWriteDto.email);
+        let user: User = await this.userRepository.getUserByEmail(userWriteDto.email);
         if (user) {
             throw new UserAlreadyExistsException();
         }
@@ -41,7 +41,7 @@ export class UserFacade {
         user.password = await this.authService.hashPassword(user.password);
         user.loginType = LoginType.LOCAL;
 
-        const userResp: User = await this.userService.saveUser(user);
+        const userResp: User = await this.userRepository.saveUser(user);
         return plainToClass(UserReadDto, userResp);
     }
 
@@ -54,7 +54,7 @@ export class UserFacade {
         user.loginType = loginType;
         user.socialloginId = socialLoginId;
 
-        const userResp: User = await this.userService.saveUser(user);
+        const userResp: User = await this.userRepository.saveUser(user);
         return userResp;
     }
 
@@ -63,7 +63,7 @@ export class UserFacade {
             throw new InvalidUserException();
         }
 
-        const user: User = await this.userService.getUserById(id);
+        const user: User = await this.userRepository.getUserById(id);
         const oldEmail = user.email;
 
         if (user.loginType != LoginType.LOCAL) {
@@ -71,7 +71,7 @@ export class UserFacade {
         }
 
         if (user.email !== userWriteDto.email) {
-            const userExist: User = await this.userService.getUserByEmail(userWriteDto.email);
+            const userExist: User = await this.userRepository.getUserByEmail(userWriteDto.email);
 
             if (userExist) {
                 throw new UserAlreadyExistsException();
@@ -82,7 +82,7 @@ export class UserFacade {
         user.firstname = userWriteDto.firstname;
         user.lastname = userWriteDto.lastname;
 
-        const userResp: User = await this.userService.saveUser(user);
+        const userResp: User = await this.userRepository.saveUser(user);
 
         if (oldEmail !== userResp.email) {
             this.paymentFacade.updatePaymentUser(userResp, oldEmail);
@@ -95,7 +95,7 @@ export class UserFacade {
             throw new InvalidPasswordException();
         }
 
-        const user: User = await this.userService.getUserById(id);
+        const user: User = await this.userRepository.getUserById(id);
 
         const validatedUser = await this.authService.validateUser(user.email, userPasswordWriteDto.oldPassword);
         if (!validatedUser) {
@@ -104,34 +104,34 @@ export class UserFacade {
 
         user.password = await this.authService.hashPassword(userPasswordWriteDto.newPassword);
 
-        const userResp: User = await this.userService.saveUser(user);
+        const userResp: User = await this.userRepository.saveUser(user);
         return plainToClass(UserReadDto, userResp);
     }
 
     async updateNotificationToken(id: number, notificationToken: string): Promise<any> {
-        const user: User = await this.userService.getUserById(id);
+        const user: User = await this.userRepository.getUserById(id);
 
         if (!user) {
             throw new UnauthorizedException();
         }
 
         // Check if notification token already exists
-        const userToClean: User = await this.userService.getUserByNotificationToken(notificationToken);
+        const userToClean: User = await this.userRepository.getUserByNotificationToken(notificationToken);
         if (userToClean && userToClean.id != id) {
             userToClean.clearNotificationToken();
-            this.userService.saveUser(userToClean);
+            this.userRepository.saveUser(userToClean);
         }
 
         user.updateNotificationToken(notificationToken);
 
-        const userResp: User = await this.userService.saveUser(user);
+        const userResp: User = await this.userRepository.saveUser(user);
         return plainToClass(UserReadDto, userResp);
     }
 
     async disableUser(id: number): Promise<any> {
-        const user: User = await this.userService.getUserById(id);
+        const user: User = await this.userRepository.getUserById(id);
         user.enabled = false;
-        const userResp: User = await this.userService.saveUser(user);
+        const userResp: User = await this.userRepository.saveUser(user);
         return plainToClass(UserReadDto, userResp);
     }
 }

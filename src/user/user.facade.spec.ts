@@ -1,18 +1,25 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { UserFacade } from './user.facade';
+import { UserRepository } from './user.repository';
+import { AuthService } from '../auth/auth.service';
+import { PaymentFacade } from '../payment/payment-facade';
+import { TestBed } from '@automock/jest';
 
-describe('UserFacade', () => {
-  let provider: UserFacade;
+describe('User Facade', () => {
+  let facade: UserFacade,
+      userRepository: jest.Mocked<UserRepository>,
+      authService: jest.Mocked<AuthService>,
+      paymentFacade: jest.Mocked<PaymentFacade>;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [UserFacade],
-    }).compile();
+  beforeAll(async () => {
+    const { unit, unitRef } = TestBed.create(UserFacade).compile();
 
-    provider = module.get<UserFacade>(UserFacade);
+    facade = unit;
+    authService = unitRef.get(AuthService);
+    userRepository = unitRef.get(UserRepository);
+    paymentFacade = unitRef.get(PaymentFacade);
   });
 
   it('should be defined', () => {
-    expect(provider).toBeDefined();
+    expect(facade).toBeDefined();
   });
 });

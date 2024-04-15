@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { User } from '../../user/user.entity';
-import { UserService } from '../../user/user.service';
+import { UserRepository } from '../../user/user.repository';
 import { AltitudeFlight } from './altitude-flight.entity';
 import { ControlSheet } from './control-sheet.entity';
 import { ControlSheetRepository } from './control-sheet.repository';
@@ -15,7 +15,7 @@ export class ControlSheetFacade {
 
     constructor(
         private readonly controlSheetRepository: ControlSheetRepository,
-        private readonly userService: UserService
+        private readonly userRepository: UserRepository
     ) { }
 
     async studentCreateUpdateControlSheet(token: any, controlSheetDto: ControlSheetDto): Promise<ControlSheetDto> {
@@ -36,7 +36,7 @@ export class ControlSheetFacade {
 
     private async createUpdateControlSheet(token: any, controlSheet: ControlSheet, currentSheet: ControlSheet): Promise<ControlSheetDto> {
 
-        const user: User = await this.userService.getUserById(token.userId);
+        const user: User = await this.userRepository.getUserById(token.userId);
 
         if (!controlSheet.altitudeFlight) {
             controlSheet.altitudeFlight = new AltitudeFlight();

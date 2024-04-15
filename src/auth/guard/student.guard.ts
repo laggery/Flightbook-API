@@ -1,15 +1,15 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { Student } from 'src/training/student/student.entity';
-import { StudentRepository } from 'src/training/student/student.repository';
-import { TeamMember } from 'src/training/team-member/team-member.entity';
-import { TeamMemberService } from 'src/training/team-member/team-member.service';
+import { Student } from '../../training/student/student.entity';
+import { StudentRepository } from '../../training/student/student.repository';
+import { TeamMember } from '../../training/team-member/team-member.entity';
+import { TeamMemberRepository } from '../../training/team-member/team-member.repository';
 
 @Injectable()
 export class StudentGuard implements CanActivate {
 
   constructor(
-    private readonly teamMemberService: TeamMemberService,
+    private readonly teamMemberRepository: TeamMemberRepository,
     private readonly studentRepository: StudentRepository
   ) {}
 
@@ -22,7 +22,7 @@ export class StudentGuard implements CanActivate {
 
     const promiseList = [];
     return new Promise<boolean>((resolve, reject) => {
-      this.teamMemberService.getTeamMembersByUserId(request.user.userId).then((res: TeamMember[]) => {
+      this.teamMemberRepository.getTeamMembersByUserId(request.user.userId).then((res: TeamMember[]) => {
         res.forEach((teamMember: TeamMember) => {
           promiseList.push(this.studentRepository.getStudentsBySchoolId(teamMember.school.id));
         });

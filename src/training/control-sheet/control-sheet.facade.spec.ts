@@ -1,18 +1,22 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { ControlSheetFacade } from './control-sheet.facade';
+import { ControlSheetRepository } from './control-sheet.repository';
+import { UserRepository } from '../../user/user.repository';
+import { TestBed } from '@automock/jest';
 
 describe('ControlSheetFacade', () => {
-  let provider: ControlSheetFacade;
+  let facade: ControlSheetFacade,
+      controlSheetRepository: jest.Mocked<ControlSheetRepository>,
+      userRepository: jest.Mocked<UserRepository>;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [ControlSheetFacade],
-    }).compile();
+  beforeAll(async () => {
+    const { unit, unitRef } = TestBed.create(ControlSheetFacade).compile();
 
-    provider = module.get<ControlSheetFacade>(ControlSheetFacade);
+    facade = unit;
+    controlSheetRepository = unitRef.get(ControlSheetRepository);
+    userRepository = unitRef.get(UserRepository);
   });
 
   it('should be defined', () => {
-    expect(provider).toBeDefined();
+    expect(facade).toBeDefined();
   });
 });

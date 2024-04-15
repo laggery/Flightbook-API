@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Body, HttpCode, Put, Param, Delete, Query, UseGuards, Request } from '@nestjs/common';
 import { PlaceDto } from './interface/place-dto';
 import { PlaceFacade } from './place.facade';
-import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
-import { PagerDto } from 'src/interface/pager-dto';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { PagerDto } from '../interface/pager-dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { FeatureCollection } from 'geojson';
 

@@ -1,15 +1,14 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { NotificationsService } from './notifications.service';
+import { TestBed } from '@automock/jest';
 
 describe('NotificationsService', () => {
   let service: NotificationsService;
+  let json: jest.Mocked<JSON>;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [NotificationsService],
-    }).compile();
+  beforeAll(async () => {
+    const { unit, unitRef } = TestBed.create(NotificationsService).compile();
 
-    service = module.get<NotificationsService>(NotificationsService);
+    service = unit;
   });
 
   it('should be defined', () => {

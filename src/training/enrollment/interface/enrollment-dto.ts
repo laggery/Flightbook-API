@@ -1,6 +1,6 @@
 import { Exclude, Expose } from "class-transformer";
 import { IsEmail } from 'class-validator';
-import { SchoolDto } from "src/training/school/interface/school-dto";
+import { SchoolDto } from "../../../training/school/interface/school-dto";
 import { EnrollmentType } from "../enrollment-type";
 
 @Exclude()

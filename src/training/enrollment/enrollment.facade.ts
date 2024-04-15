@@ -2,16 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { plainToClass } from 'class-transformer';
 import { EmailService } from '../../email/email.service';
-import { SchoolService } from '../../training/school/school.service';
+import { SchoolRepository } from '../school/school.repository';
 import { Student } from '../../training/student/student.entity';
 import { StudentRepository } from '../../training/student/student.repository';
-import { UserService } from '../../user/user.service';
+import { UserRepository } from '../../user/user.repository';
 import { EnrollmentDto } from './interface/enrollment-dto';
 import { EnrollmentWriteDto } from './interface/enrollment-write-dto';
 import { Enrollment } from './enrollment.entity';
-import { EnrollmentService } from './enrollment.service';
+import { EnrollmentRepository } from './enrollment.repository';
 import { EnrollmentType } from './enrollment-type';
-import { TeamMemberService } from '../../training/team-member/team-member.service';
+import { TeamMemberRepository } from '../team-member/team-member.repository';
 import { TeamMember } from '../../training/team-member/team-member.entity';
 import { EnrollmentNotFoundException } from './exception/enrollment-not-found-exception';
 import { EnrollmentNotAllowedException } from './exception/enrollment-not-allowed-exception';
@@ -25,17 +25,17 @@ import { School } from '../school/school.entity';
 @Injectable()
 export class EnrollmentFacade {
     constructor(
-        private enrollmentService: EnrollmentService,
-        private userService: UserService,
+        private enrollmentRepository: EnrollmentRepository,
+        private userRepository: UserRepository,
         private studentRepository: StudentRepository,
-        private teamMemberService: TeamMemberService,
-        private schoolService: SchoolService,
+        private teamMemberRepository: TeamMemberRepository,
+        private schoolRepository: SchoolRepository,
         private emailService: EmailService,
         private controlSheetRepository: ControlSheetRepository
     ) { }
 
     async createStudentEnrollment(schoolId: number, enrollmentWriteDto: EnrollmentWriteDto, origin: string): Promise<EnrollmentDto> {
-        const user = await this.userService.getUserByEmail(enrollmentWriteDto.email);
+        const user = await this.userRepository.getUserByEmail(enrollmentWriteDto.email);
         if (user) {
             const students = await this.studentRepository.getStudentsBySchoolId(schoolId, false);
             const foundStudent = students.find((student: Student) => student.user.id === user.id);
@@ -44,7 +44,7 @@ export class EnrollmentFacade {
             }
         }
 
-        const enrollmentList = await this.enrollmentService.getStudentsEnrollmentByEmailAndSchoolId(enrollmentWriteDto.email, schoolId);
+        const enrollmentList = await this.enrollmentRepository.getStudentsEnrollmentByEmailAndSchoolId(enrollmentWriteDto.email, schoolId);
         for (const enrollment of enrollmentList){
             if (new Date() < new Date(enrollment.expireAt)) {
                 await this.emailService.sendStudentEnrollement(enrollment, origin);
@@ -55,12 +55,12 @@ export class EnrollmentFacade {
         let uuid;
         do {
             uuid = randomStringGenerator();
-        } while (await this.enrollmentService.getEnrollmentByToken(uuid));
+        } while (await this.enrollmentRepository.getEnrollmentByToken(uuid));
 
         const enrollment = new Enrollment();
         enrollment.type = EnrollmentType.STUDENT;
         enrollment.email = enrollmentWriteDto.email;
-        enrollment.school = await this.schoolService.getSchoolById(schoolId);
+        enrollment.school = await this.schoolRepository.getSchoolById(schoolId);
         enrollment.token = uuid;
 
         const expireAtDate = new Date();
@@ -68,7 +68,7 @@ export class EnrollmentFacade {
 
         enrollment.expireAt = expireAtDate;
 
-        const enrollmentResp = this.enrollmentService.saveEnrollment(enrollment);
+        const enrollmentResp = this.enrollmentRepository.save(enrollment);
 
         await this.emailService.sendStudentEnrollement(enrollment, origin);
 
@@ -76,16 +76,16 @@ export class EnrollmentFacade {
     }
 
     async createTeamMemberEnrollment(schoolId: number, enrollmentWriteDto: EnrollmentWriteDto, origin: string): Promise<EnrollmentDto> {
-        const user = await this.userService.getUserByEmail(enrollmentWriteDto.email);
+        const user = await this.userRepository.getUserByEmail(enrollmentWriteDto.email);
         if (user) {
-            const teamMembers = await this.teamMemberService.getTeamMembersBySchoolId(schoolId);
+            const teamMembers = await this.teamMemberRepository.getTeamMembersBySchoolId(schoolId);
             const foundStudent = teamMembers.find((teamMember: TeamMember) => teamMember.user.id === user.id);
             if (foundStudent) {
                 throw TeamMemberException.alreadyExistsException();
             }
         }
 
-        const enrollmentList = await this.enrollmentService.getTeamMemberEnrollmentByEmailAndSchoolId(enrollmentWriteDto.email, schoolId);
+        const enrollmentList = await this.enrollmentRepository.getTeamMemberEnrollmentByEmailAndSchoolId(enrollmentWriteDto.email, schoolId);
         for (const enrollment of enrollmentList){
             if (new Date() < new Date(enrollment.expireAt)) {
                 await this.emailService.sendTeamMemberEnrollement(enrollment, origin);
@@ -96,12 +96,12 @@ export class EnrollmentFacade {
         let uuid;
         do {
             uuid = randomStringGenerator();
-        } while (await this.enrollmentService.getEnrollmentByToken(uuid));
+        } while (await this.enrollmentRepository.getEnrollmentByToken(uuid));
 
         const enrollment = new Enrollment();
         enrollment.type = EnrollmentType.TEAM_MEMBER;
         enrollment.email = enrollmentWriteDto.email;
-        enrollment.school = await this.schoolService.getSchoolById(schoolId);
+        enrollment.school = await this.schoolRepository.getSchoolById(schoolId);
         enrollment.token = uuid;
 
         const expireAtDate = new Date();
@@ -109,7 +109,7 @@ export class EnrollmentFacade {
 
         enrollment.expireAt = expireAtDate;
 
-        const enrollmentResp = this.enrollmentService.saveEnrollment(enrollment);
+        const enrollmentResp = this.enrollmentRepository.save(enrollment);
 
         await this.emailService.sendTeamMemberEnrollement(enrollment, origin);
 
@@ -117,7 +117,7 @@ export class EnrollmentFacade {
     }
 
     async isFreeEnrollment(token: string): Promise<boolean> {
-        const enrollment = await this.enrollmentService.getEnrollmentByToken(token);
+        const enrollment = await this.enrollmentRepository.getEnrollmentByToken(token);
         if (!enrollment) {
             return false;
         }
@@ -125,7 +125,7 @@ export class EnrollmentFacade {
     }
     
     async getEnrollmentByToken(token: string): Promise<EnrollmentDto> {
-        const enrollment = await this.enrollmentService.getEnrollmentByToken(token);
+        const enrollment = await this.enrollmentRepository.getEnrollmentByToken(token);
         if (!enrollment) {
             return null;
         }
@@ -142,7 +142,7 @@ export class EnrollmentFacade {
                 return null;
             }
         } else {
-            const teamMembers = await this.teamMemberService.getTeamMembersBySchoolId(enrollment.school.id);
+            const teamMembers = await this.teamMemberRepository.getTeamMembersBySchoolId(enrollment.school.id);
             const foundTeamMember = teamMembers.find((teamMember: TeamMember) => teamMember.user.email === enrollment.email);
             if (foundTeamMember) {
                 return null;
@@ -151,7 +151,7 @@ export class EnrollmentFacade {
 
         const enrollmentDto = plainToClass(EnrollmentDto, enrollment);
 
-        const user = await this.userService.getUserByEmail(enrollment.email);
+        const user = await this.userRepository.getUserByEmail(enrollment.email);
         if (user) {
             enrollmentDto.isUser = true;
         } else {
@@ -162,13 +162,13 @@ export class EnrollmentFacade {
     }
 
     async acceptEnrollment(userToken: any, enrollmentToken: string): Promise<boolean> {
-        const enrollment = await this.enrollmentService.getEnrollmentByToken(enrollmentToken);
+        const enrollment = await this.enrollmentRepository.getEnrollmentByToken(enrollmentToken);
 
         if (!enrollment) {
             throw new EnrollmentNotFoundException();
         }
 
-        const user = await this.userService.getUserById(userToken.userId);
+        const user = await this.userRepository.getUserById(userToken.userId);
         if (user.email != enrollment.email.toLowerCase()){
             throw new EnrollmentNotAllowedException();
         }
@@ -192,7 +192,7 @@ export class EnrollmentFacade {
                 await this.addControlSheetToStudent(user, enrollment.school);
             }
         } else {
-            const teamMembers = await this.teamMemberService.getTeamMembersBySchoolId(enrollment.school.id);
+            const teamMembers = await this.teamMemberRepository.getTeamMembersBySchoolId(enrollment.school.id);
             const foundTeamMember = teamMembers.find((teamMember: TeamMember) => teamMember.user.email === enrollment.email);
             if (foundTeamMember) {
                 throw TeamMemberException.alreadyExistsException();
@@ -202,7 +202,7 @@ export class EnrollmentFacade {
             teamMember.admin = false;
             teamMember.school= enrollment.school;
             teamMember.user = user;
-            this.teamMemberService.saveTeamMember(teamMember);
+            this.teamMemberRepository.save(teamMember);
         }
 
         return true;

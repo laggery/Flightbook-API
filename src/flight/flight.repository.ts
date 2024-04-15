@@ -3,9 +3,9 @@ import { Flight } from './flight.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
-import { Glider } from 'src/glider/glider.entity';
-import { Place } from 'src/place/place.entity';
-import { PagerDto } from 'src/interface/pager-dto';
+import { Glider } from '../glider/glider.entity';
+import { Place } from '../place/place.entity';
+import { PagerDto } from '../interface/pager-dto';
 
 @Injectable()
 export class FlightRepository extends Repository<Flight> {

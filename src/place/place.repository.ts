@@ -2,7 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ILike } from 'typeorm';
 import { Place } from './place.entity';
-import { PagerDto } from 'src/interface/pager-dto';
+import { PagerDto } from '../interface/pager-dto';
 
 @Injectable()
 export class PlaceRepository extends Repository<Place> {

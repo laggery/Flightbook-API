@@ -4,7 +4,7 @@ import { StudentModule } from '../../training/student/student.module';
 import { UserModule } from '../../user/user.module';
 import { School } from './school.entity';
 import { SchoolFacade } from './school.facade';
-import { SchoolService } from './school.service';
+import { SchoolRepository } from './school.repository';
 
 @Module({
   imports: [
@@ -13,7 +13,7 @@ import { SchoolService } from './school.service';
     TypeOrmModule.forFeature([School])
   ],
   controllers: [],
-  providers: [SchoolFacade, SchoolService],
-  exports: [SchoolFacade, SchoolService]
+  providers: [SchoolFacade, SchoolRepository],
+  exports: [SchoolFacade, SchoolRepository]
 })
 export class SchoolModule {}

@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from '../user/user.service';
+import { UserRepository } from '../user/user.repository';
 import { User } from '../user/user.entity';
 import * as bcrypt from 'bcrypt';
 import { LoginType } from '../user/login-type';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UserService, private readonly jwtService: JwtService) { }
+  constructor(private readonly userRepository: UserRepository, private readonly jwtService: JwtService) { }
 
   async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.userService.getUserByEmail(email);
+    const user = await this.userRepository.getUserByEmail(email);
 
     if (user && user.loginType == LoginType.LOCAL && await bcrypt.compare(password, user.password) && user.enabled) {
       return user;
@@ -24,10 +24,10 @@ export class AuthService {
     let uuid;
     do {
       uuid = randomStringGenerator();
-    } while (await this.userService.getUserByToken(uuid));
+    } while (await this.userRepository.getUserByToken(uuid));
     user.token = uuid;
     user.lastLogin = new Date();
-    await this.userService.saveUser(user);
+    await this.userRepository.saveUser(user);
 
     return {
       // eslint-disable-next-line @typescript-eslint/camelcase

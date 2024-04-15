@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Note } from './note.entity';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { PagerEntityDto } from 'src/interface/pager-entity-dto';
+import { PagerEntityDto } from '../../interface/pager-entity-dto';
 
 @Injectable()
 export class NoteRepository extends Repository<Note> {

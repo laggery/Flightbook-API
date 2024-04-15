@@ -1,18 +1,31 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { NewsController } from './news.controller';
+import { NewsFacade } from './news.facade';
+import { TestBed } from '@automock/jest';
+import { TestUtil } from '../../test/test.util';
 
 describe('News Controller', () => {
   let controller: NewsController;
+  let newsFacade: jest.Mocked<NewsFacade>;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [NewsController],
-    }).compile();
+  beforeAll(async () => {
+    const { unit, unitRef } = TestBed.create(NewsController).compile();
 
-    controller = module.get<NewsController>(NewsController);
+    controller = unit;
+    newsFacade = unitRef.get(NewsFacade);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  it('Should get news', async () => {
+    // given - team name
+    const mockNews = TestUtil.createNews('de');
+
+    newsFacade.getNews.mockResolvedValue([mockNews]);
+
+    //when
+    const newsList = await controller.getNews('de');
+
+    //then
+    expect(newsFacade.getNews).toHaveBeenCalled();
+    expect(newsList).toHaveLength(1);
+    expect(newsList[0]).toEqual(mockNews);
   });
 });

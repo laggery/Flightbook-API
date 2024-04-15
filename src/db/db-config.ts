@@ -23,7 +23,7 @@ const dbConfigBase: any = {
     migrations: [__dirname + '/../db/migrations/*{.ts,.js}'],
     migrationsTableName: 'db_migrations',
     cli: {
-        migrationsDir: 'src/db/migrations'
+        migrationsDir: '../../db/migrations'
     },
     migrationsRun: true
 }

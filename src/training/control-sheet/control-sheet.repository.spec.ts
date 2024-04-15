@@ -1,18 +1,16 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { ControlSheetRepository } from './control-sheet.repository';
+import { TestBed } from '@automock/jest';
 
-describe('ControlSheetService', () => {
-  let service: ControlSheetRepository;
+describe('ControlSheet Repository', () => {
+  let controlSheetRepository: ControlSheetRepository;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [ControlSheetRepository],
-    }).compile();
+  beforeAll(async () => {
+    const { unit, unitRef } = TestBed.create(ControlSheetRepository).compile();
 
-    service = module.get<ControlSheetRepository>(ControlSheetRepository);
+    controlSheetRepository = unit;
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(controlSheetRepository).toBeDefined();
   });
 });

@@ -1,6 +1,6 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { MapConfigurationDto } from './interface/map-configuration-dto';
 
 @Controller('configuration')

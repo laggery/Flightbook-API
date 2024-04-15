@@ -10,7 +10,7 @@ export class NewsController {
 
     @Get(':language')
     @ApiParam({name: 'language', example: "fr", required: true, schema: { oneOf: [{type: 'string'}]}})
-    updatePlace(@Param('language') language) {
+    getNews(@Param('language') language) {
         return this.newsFacade.getNews(language);
     }
 }

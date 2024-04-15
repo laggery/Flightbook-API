@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { SchoolException } from '../school/exception/school.exception';
 import { School } from '../school/school.entity';
-import { SchoolService } from '../school/school.service';
+import { SchoolRepository } from '../school/school.repository';
 import { AppointmentType } from './appointment-type.entity';
 import { AppointmentTypeRepository } from './appointment-type.repository';
 import { AppointmentException } from './exception/appointment.exception';
 import { AppointmentTypeDto } from './interface/appointment-type-dto';
 import { User } from '../../user/user.entity';
-import { UserService } from '../../user/user.service';
+import { UserRepository } from '../../user/user.repository';
 import { UserException } from '../../user/exception/user.exception';
 import { AppointmentTypeMapper } from './appointment-type.mapper';
 
@@ -17,8 +17,8 @@ export class AppointmentTypeFacade {
 
     constructor(
         private appointmentTypeRepository: AppointmentTypeRepository,
-        private schoolService: SchoolService,
-        private userService: UserService
+        private schoolRepository: SchoolRepository,
+        private userRepository: UserRepository
     ) {}
 
     async getAppointmentTypesBySchoolId(schoolId: number, query: any): Promise<AppointmentTypeDto[]> {
@@ -33,7 +33,7 @@ export class AppointmentTypeFacade {
         await this.appointmentTypeValidityCheck(appointmentTypeDto, schoolId, type);
 
         if (instructor && instructor.email) {
-            const instructorEntity: User = await this.userService.getUserByEmail(instructor.email);
+            const instructorEntity: User = await this.userRepository.getUserByEmail(instructor.email);
 
             if (!instructorEntity) {
                 UserException.invalidEmailException("instructor");
@@ -63,7 +63,7 @@ export class AppointmentTypeFacade {
         type.time = time || null;
 
         if (instructor && instructor.email) {
-            const instructorEntity: User = await this.userService.getUserByEmail(instructor.email);
+            const instructorEntity: User = await this.userRepository.getUserByEmail(instructor.email);
 
             if (!instructorEntity) {
                 UserException.invalidEmailException("instructor");
@@ -85,7 +85,7 @@ export class AppointmentTypeFacade {
             throw AppointmentException.invalidAppointmentType();
         }
 
-        const schoolEntity: School = await this.schoolService.getSchoolById(schoolId);
+        const schoolEntity: School = await this.schoolRepository.getSchoolById(schoolId);
 
         if (!schoolEntity) {
             SchoolException.invalidIdException();

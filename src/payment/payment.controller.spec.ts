@@ -1,15 +1,16 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { PaymentController } from './payment.controller';
+import { PaymentFacade } from './payment-facade';
+import { TestBed } from '@automock/jest';
 
 describe('PaymentController', () => {
   let controller: PaymentController;
+  let facade: jest.Mocked<PaymentFacade>;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [PaymentController],
-    }).compile();
+  beforeAll(async () => {
+    const { unit, unitRef } = TestBed.create(PaymentController).compile();
 
-    controller = module.get<PaymentController>(PaymentController);
+    controller = unit;
+    facade = unitRef.get(PaymentFacade);
   });
 
   it('should be defined', () => {

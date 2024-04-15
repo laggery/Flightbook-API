@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Exclude, Expose } from "class-transformer";
-import { GliderDto } from "src/glider/interface/glider-dto";
-import { PlaceDto } from "src/place/interface/place-dto";
+import { GliderDto } from "../../glider/interface/glider-dto";
+import { PlaceDto } from "../../place/interface/place-dto";
 import { Igc } from "./igc";
 
 @Exclude()

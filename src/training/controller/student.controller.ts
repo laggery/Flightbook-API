@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
-import { SchoolDto } from 'src/training/school/interface/school-dto';
-import { StudentFacade } from 'src/training/student/student.facade';
+import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
+import { SchoolDto } from '../../training/school/interface/school-dto';
+import { StudentFacade } from '../../training/student/student.facade';
 import { AppointmentFacade } from '../appointment/appointment.facade';
 import { AppointmentDto } from '../appointment/interface/appointment-dto';
 import { ControlSheetFacade } from '../control-sheet/control-sheet.facade';

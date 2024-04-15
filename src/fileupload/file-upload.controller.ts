@@ -16,11 +16,11 @@ import { FileUploadService } from './file-upload.service';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { CopyFileDto } from './interface/copyFile-dto';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { ImportFacade } from 'src/import/import-facade';
-import { ImportResultDto } from 'src/import/interface/import-result-dto';
-import { ImportType } from 'src/import/import-type';
-import { ImportException } from 'src/import/exception/import.exception';
-import { EmailService } from 'src/email/email.service';
+import { ImportFacade } from '../import/import-facade';
+import { ImportResultDto } from '../import/interface/import-result-dto';
+import { ImportType } from '../import/import-type';
+import { ImportException } from '../import/exception/import.exception';
+import { EmailService } from '../email/email.service';
 
 @Controller('file')
 @ApiTags('File Upload')

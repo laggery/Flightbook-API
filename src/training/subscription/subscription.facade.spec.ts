@@ -1,18 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SubscriptionFacade } from './subscription.facade';
+import { TestBed } from '@automock/jest';
 
 describe('SubscriptionFacade', () => {
-  let provider: SubscriptionFacade;
+  let facade: SubscriptionFacade;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [SubscriptionFacade],
-    }).compile();
+  beforeAll(async () => {
+    const { unit, unitRef } = TestBed.create(SubscriptionFacade).compile();
 
-    provider = module.get<SubscriptionFacade>(SubscriptionFacade);
+    facade = unit;
   });
-
+  
   it('should be defined', () => {
-    expect(provider).toBeDefined();
+    expect(facade).toBeDefined();
   });
 });

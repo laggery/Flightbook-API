@@ -1,6 +1,6 @@
 import { Injectable, HttpException, UnauthorizedException } from '@nestjs/common';
 import { User } from '../user/user.entity';
-import { UserService } from '../user/user.service';
+import { UserRepository } from '../user/user.repository';
 import { AuthService } from './auth.service';
 import { EmailBodyDto } from '../email/email-body-dto';
 import { EmailService } from '../email/email.service';
@@ -12,7 +12,7 @@ import { UserAlreadyExistsException } from '../user/exception/user-already-exist
 @Injectable()
 export class AuthFacade {
     constructor(
-        private userService: UserService,
+        private userRepository: UserRepository,
         private userFacade: UserFacade,
         private authService: AuthService,
         private emailService: EmailService
@@ -23,7 +23,7 @@ export class AuthFacade {
     }
 
     async refresh(refreshToken: string) {
-        const user: User = await this.userService.getUserByToken(refreshToken);
+        const user: User = await this.userRepository.getUserByToken(refreshToken);
         if (user) {
             return this.authService.login(user);
         }
@@ -31,10 +31,10 @@ export class AuthFacade {
     }
 
     async logout(token: any) {
-        const user: User = await this.userService.getUserById(token.userId);
+        const user: User = await this.userRepository.getUserById(token.userId);
         user.clearToken();
         user.clearNotificationToken();
-        await this.userService.saveUser(user);
+        await this.userRepository.saveUser(user);
     }
 
     async resetPassword(email) {
@@ -42,7 +42,7 @@ export class AuthFacade {
             return;
         }
 
-        const user = await this.userService.getUserByEmail(email);
+        const user = await this.userRepository.getUserByEmail(email);
 
         if (!user || user?.loginType != LoginType.LOCAL || !user.enabled) {
             return;
@@ -51,7 +51,7 @@ export class AuthFacade {
         const newPassword = Math.random().toString(36).slice(-8);
         user.password = await this.authService.hashPassword(newPassword);
         user.passwordRequestedAt = new Date();
-        await this.userService.saveUser(user);
+        await this.userRepository.saveUser(user);
 
         const emailBody = new EmailBodyDto();
         emailBody.toAddress = email;
@@ -76,7 +76,7 @@ export class AuthFacade {
             })
             const payload = ticket.getPayload();
 
-            const user = await this.userService.getUserByEmail(payload.email);
+            const user = await this.userRepository.getUserByEmail(payload.email);
 
             if (user) {
                 if (LoginType.GOOGLE == user.loginType && user.socialloginId == payload.sub && user.enabled) {

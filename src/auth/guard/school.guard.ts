@@ -1,12 +1,12 @@
 import { CanActivate, ExecutionContext, Inject, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { TeamMember } from 'src/training/team-member/team-member.entity';
-import { TeamMemberService } from 'src/training/team-member/team-member.service';
+import { TeamMember } from '../../training/team-member/team-member.entity';
+import { TeamMemberRepository } from '../../training/team-member/team-member.repository';
 
 @Injectable()
 export class SchoolGuard implements CanActivate {
 
-  constructor(private readonly teamMemberService: TeamMemberService) {}
+  constructor(private readonly teamMemberRepository: TeamMemberRepository) {}
 
   canActivate(
     context: ExecutionContext,
@@ -15,7 +15,7 @@ export class SchoolGuard implements CanActivate {
     const params = request.params;
     const schoolId = params.id;
     return new Promise<boolean>((resolve, reject) => {
-      this.teamMemberService.getTeamMembersBySchoolId(schoolId).then((res: TeamMember[]) => {
+      this.teamMemberRepository.getTeamMembersBySchoolId(schoolId).then((res: TeamMember[]) => {
         res.find((teamMember: TeamMember) => {
           if (teamMember.user.id === request.user.userId) {
             return resolve(true)

@@ -1,10 +1,10 @@
 import { Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { News } from '../../../src/news/news.entity';
 import { NewsModule } from '../../../src/news/news.module';
 import { NewsRepository } from '../../../src/news/news.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dbTestConfig } from '../db-test-config';
+import { TestUtil } from '../../test.util';
 
 describe('NewsRepository', () => {
   let newsRepository: NewsRepository
@@ -14,8 +14,7 @@ describe('NewsRepository', () => {
       imports: [
         TypeOrmModule.forRoot(dbTestConfig),
         NewsModule
-
-      ],
+      ]
     })
       .compile();
     moduleRef.useLogger(new Logger());
@@ -29,11 +28,7 @@ describe('NewsRepository', () => {
 
   it('Should get news', async () => {
     // given - team name
-    const news = new News();
-    news.date = '01.01.2024';
-    news.title = 'title';
-    news.text = 'text';
-    news.language = 'de';
+    const news = TestUtil.createNews('de');
 
     await newsRepository.save(news);
 

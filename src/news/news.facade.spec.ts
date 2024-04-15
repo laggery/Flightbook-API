@@ -1,18 +1,31 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { TestBed } from '@automock/jest';
 import { NewsFacade } from './news.facade';
+import { NewsRepository } from './news.repository';
+import { TestUtil } from '../../test/test.util';
 
 describe('NewsFacade', () => {
-  let provider: NewsFacade;
+  let newsFacade: NewsFacade;
+  let newsRepository: jest.Mocked<NewsRepository>;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [NewsFacade],
-    }).compile();
+  beforeAll(async () => {
+    const { unit, unitRef } = TestBed.create(NewsFacade).compile();
 
-    provider = module.get<NewsFacade>(NewsFacade);
+    newsFacade = unit;
+    newsRepository = unitRef.get(NewsRepository);
   });
 
-  it('should be defined', () => {
-    expect(provider).toBeDefined();
+  it('Should get news', async () => {
+    // given - team name
+    const mockNews = TestUtil.createNews('de');
+
+    newsRepository.getNews.mockResolvedValue([mockNews]);
+
+    //when
+    const newsList = await newsFacade.getNews('de');
+
+    //then
+    expect(newsRepository.getNews).toHaveBeenCalled();
+    expect(newsList).toHaveLength(1);
+    expect(newsList[0]).toEqual(mockNews);
   });
 });

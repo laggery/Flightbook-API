@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PlaceRepository } from './place.repository';
-import { UserService } from '../user/user.service';
+import { UserRepository } from '../user/user.repository';
 import { PlaceDto } from './interface/place-dto';
 import { User } from '../user/user.entity';
 import { Place } from './place.entity';
 import { plainToClass } from 'class-transformer';
 import { PlaceAlreadyExistsException } from './exception/place-already-exists-exception';
-import { PagerDto } from 'src/interface/pager-dto';
+import { PagerDto } from '../interface/pager-dto';
 import { PlaceMapper } from './place.mapper';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
@@ -16,7 +16,7 @@ import { FeatureCollection } from 'geojson';
 export class PlaceFacade {
     constructor(
         private placeRepository: PlaceRepository,
-        private userService: UserService,
+        private userRepository: UserRepository,
         private readonly httpService: HttpService
     ) { }
 
@@ -35,7 +35,7 @@ export class PlaceFacade {
     }
 
     async createPlace(token: any, placeDto: PlaceDto): Promise<PlaceDto> {
-        const user: User = await this.userService.getUserById(token.userId);
+        const user: User = await this.userRepository.getUserById(token.userId);
         const place: Place = plainToClass(Place, placeDto);
         place.id = null;
         place.user = user;

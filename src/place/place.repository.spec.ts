@@ -1,18 +1,16 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { PlaceRepository } from './place.repository';
+import { TestBed } from '@automock/jest';
 
 describe('PlaceRepository', () => {
-  let service: PlaceRepository;
+  let placeRepository: PlaceRepository;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [PlaceRepository],
-    }).compile();
+  beforeAll(async () => {
+    const { unit, unitRef } = TestBed.create(PlaceRepository).compile();
 
-    service = module.get<PlaceRepository>(PlaceRepository);
+    placeRepository = unit;
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(placeRepository).toBeDefined();
   });
 });

@@ -1,18 +1,25 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { PlaceFacade } from './place.facade';
+import { UserRepository } from '../user/user.repository';
+import { HttpService } from '@nestjs/axios';
+import { PlaceRepository } from './place.repository';
+import { TestBed } from '@automock/jest';
 
-describe('PlaceFacade', () => {
-  let provider: PlaceFacade;
+describe('Place Facade', () => {
+  let facade: PlaceFacade,
+      userRepository: jest.Mocked<UserRepository>,
+      httpService: jest.Mocked<HttpService>,
+      placeRepository: jest.Mocked<PlaceRepository>;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [PlaceFacade],
-    }).compile();
+  beforeAll(async () => {
+    const { unit, unitRef } = TestBed.create(PlaceFacade).compile();
 
-    provider = module.get<PlaceFacade>(PlaceFacade);
+    facade = unit;
+    httpService = unitRef.get(HttpService);
+    userRepository = unitRef.get(UserRepository);
+    placeRepository = unitRef.get(PlaceRepository);
   });
 
   it('should be defined', () => {
-    expect(provider).toBeDefined();
+    expect(facade).toBeDefined();
   });
 });

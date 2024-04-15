@@ -1,18 +1,22 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { SchoolFacade } from './school.facade';
+import { UserRepository } from '../../user/user.repository';
+import { SchoolRepository } from './school.repository';
+import { TestBed } from '@automock/jest';
 
 describe('SchoolFacade', () => {
-  let provider: SchoolFacade;
+  let facade: SchoolFacade,
+      userRepository: jest.Mocked<UserRepository>,
+      schoolRepository: jest.Mocked<SchoolRepository>;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [SchoolFacade],
-    }).compile();
+  beforeAll(async () => {
+    const { unit, unitRef } = TestBed.create(SchoolFacade).compile();
 
-    provider = module.get<SchoolFacade>(SchoolFacade);
+    facade = unit;
+    userRepository = unitRef.get(UserRepository);
+    schoolRepository = unitRef.get(SchoolRepository);
   });
 
   it('should be defined', () => {
-    expect(provider).toBeDefined();
+    expect(facade).toBeDefined();
   });
 });

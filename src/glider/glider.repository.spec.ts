@@ -1,18 +1,16 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { GliderRepository } from './glider.repository';
+import { TestBed } from '@automock/jest';
 
-describe('GliderService', () => {
-  let service: GliderRepository;
+describe('Glider Repository', () => {
+  let gliderRepository: GliderRepository;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [GliderRepository],
-    }).compile();
+  beforeAll(async () => {
+    const { unit, unitRef } = TestBed.create(GliderRepository).compile();
 
-    service = module.get<GliderRepository>(GliderRepository);
+    gliderRepository = unit;
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(gliderRepository).toBeDefined();
   });
 });

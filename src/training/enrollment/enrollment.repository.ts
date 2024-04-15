@@ -5,15 +5,13 @@ import { EnrollmentType } from './enrollment-type';
 import { Enrollment } from './enrollment.entity';
 
 @Injectable()
-export class EnrollmentService {
+export class EnrollmentRepository extends Repository<Enrollment> {
 
     constructor(
         @InjectRepository(Enrollment)
-        private readonly enrollmentRepository: Repository<Enrollment>
-    ) { }
-
-    async saveEnrollment(studentEnrollment: Enrollment): Promise<Enrollment> {
-        return await this.enrollmentRepository.save(studentEnrollment);
+        private readonly repository: Repository<Enrollment>
+    ) {
+        super(repository.target, repository.manager, repository.queryRunner);
     }
 
     async getStudentsEnrollmentByEmailAndSchoolId(email: string, schoolId: number): Promise<Enrollment[]> {
@@ -29,7 +27,7 @@ export class EnrollmentService {
                 type: EnrollmentType.STUDENT
             }
         };
-        return this.enrollmentRepository.find(options);
+        return this.find(options);
     }
 
     async getTeamMemberEnrollmentByEmailAndSchoolId(email: string, schoolId: number): Promise<Enrollment[]> {
@@ -45,14 +43,14 @@ export class EnrollmentService {
                 type: EnrollmentType.TEAM_MEMBER
             }
         };
-        return this.enrollmentRepository.find(options);
+        return this.find(options);
     }
 
     async getEnrollmentByToken(token: string): Promise<Enrollment> {
         if (!token) {
             return undefined;
         }
-        return this.enrollmentRepository.findOne(
+        return this.findOne(
             {
                 relations: {
                     school: true

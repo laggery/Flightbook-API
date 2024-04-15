@@ -4,16 +4,16 @@ import { plainToInstance } from "class-transformer";
 import { Appointment } from "./appointment.entity";
 import { AppointmentRepository } from "./appointment.repository";
 import { School } from "../school/school.entity";
-import { SchoolService } from "../school/school.service";
+import { SchoolRepository } from "../school/school.repository";
 import { AppointmentException } from "./exception/appointment.exception";
 import { SchoolException } from "../school/exception/school.exception";
-import { UserService } from "../../user/user.service";
+import { UserRepository } from "../../user/user.repository";
 import { User } from "../../user/user.entity";
 import { UserException } from '../../user/exception/user.exception';
 import { AppointmentMapper } from './appointment.mapper';
 import { Subscription } from '../subscription/subscription.entity';
 import { SubscriptionException } from '../subscription/exception/subscription.exception';
-import { SubscriptionService } from '../subscription/subscription.service';
+import { SubscriptionRepository } from '../subscription/subscription.repository';
 import { PagerEntityDto } from '../../interface/pager-entity-dto';
 import { EmailService } from '../../email/email.service';
 import { SchoolDto } from '../school/interface/school-dto';
@@ -25,6 +25,7 @@ import { AppointmentType } from './appointment-type.entity';
 import { AppointmentTypeRepository } from './appointment-type.repository';
 import { GuestSubscription } from '../subscription/guest-subscription.entity';
 import { GuestSubscriptionDto } from '../subscription/interface/guest-subscription-dto';
+import { GuestSubscriptionRepository } from '../subscription/guest-subscription.repository';
 
 @Injectable()
 export class AppointmentFacade {
@@ -33,9 +34,10 @@ export class AppointmentFacade {
         private appointmentRepository: AppointmentRepository,
         private appointmentTypeRepository: AppointmentTypeRepository,
         private studentRepository: StudentRepository,
-        private subscriptionService: SubscriptionService,
-        private schoolService: SchoolService,
-        private userService: UserService,
+        private subscriptionRepository: SubscriptionRepository,
+        private guestSubscriptionRepository: GuestSubscriptionRepository,
+        private schoolRepository: SchoolRepository,
+        private userRepository: UserRepository,
         private emailService: EmailService,
         private notificationsService: NotificationsService
     ) { }
@@ -86,7 +88,7 @@ export class AppointmentFacade {
             const subscriptionDto = appointmentDto.subscriptions.find((subscriptionDto: SubscriptionDto) => subscriptionDto.user?.email === subscription.user.email);
             if (!subscriptionDto) {
                 appointment.removeUserSubscription(subscription.user.id);
-                this.subscriptionService.removeSubscription(subscription);
+                this.subscriptionRepository.remove(subscription);
             }
         });
 
@@ -106,7 +108,7 @@ export class AppointmentFacade {
                 guestSubscription.lastname = guestSubscriptionDto.lastname;
             } else {
                 appointment.removeGuestUserSubscription(guestSubscription.id);
-                this.subscriptionService.removeGuestSubscription(guestSubscription);
+                this.guestSubscriptionRepository.remove(guestSubscription);
             }
         });
 
@@ -128,7 +130,7 @@ export class AppointmentFacade {
 
     async addSubscriptionToAppointment(appointmentId: number, userId: number): Promise<AppointmentDto> {
         const appointment: Appointment = await this.appointmentRepository.getAppointmentById(appointmentId);
-        const user: User = await this.userService.getUserById(userId);
+        const user: User = await this.userRepository.getUserById(userId);
         const subscription = new Subscription();
         subscription.user = user
         if (!appointment.subscriptions) {
@@ -164,7 +166,7 @@ export class AppointmentFacade {
                 this.notificationsService.sendInformWaitingStudent(appointment, subscriptionToInform);
             }
 
-            this.subscriptionService.removeSubscription(subscriptionToDelete);
+            this.subscriptionRepository.remove(subscriptionToDelete);
             this.emailService.sendUnsubscribeEmail(school, appointment, subscriptionToDelete);
         }
         return AppointmentMapper.toAppointmentDto(appointment);
@@ -194,7 +196,7 @@ export class AppointmentFacade {
             throw AppointmentException.invalidAppointment();
         }
 
-        const schoolEntity: School = await this.schoolService.getSchoolById(schoolId);
+        const schoolEntity: School = await this.schoolRepository.getSchoolById(schoolId);
 
         if (!schoolEntity) {
             SchoolException.invalidIdException();
@@ -202,7 +204,7 @@ export class AppointmentFacade {
         appointment.school = schoolEntity;
 
         if (instructor && instructor.email) {
-            const instructorEntity: User = await this.userService.getUserByEmail(instructor.email);
+            const instructorEntity: User = await this.userRepository.getUserByEmail(instructor.email);
 
             if (!instructorEntity) {
                 UserException.invalidEmailException("instructor");
@@ -213,7 +215,7 @@ export class AppointmentFacade {
         }
 
         if (takeOffCoordinator) {
-            const takeOffCoordinatorEntity: User = await this.userService.getUserByEmail(takeOffCoordinator.email);
+            const takeOffCoordinatorEntity: User = await this.userRepository.getUserByEmail(takeOffCoordinator.email);
             if (!takeOffCoordinator) {
                 UserException.invalidEmailException("takeOffCoordinator");
             }

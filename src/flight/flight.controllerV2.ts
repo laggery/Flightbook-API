@@ -5,10 +5,10 @@ import {
     Request,
     Query
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { FlightDto } from './interface/flight-dto';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { PagerEntityDto } from 'src/interface/pager-entity-dto';
+import { PagerEntityDto } from '../interface/pager-entity-dto';
 import { FlightFacade } from './flight.facade';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { StatisticType } from './statistic-type';

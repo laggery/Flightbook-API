@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { PaymentStatusDto } from './interface/payment-status-dto';
 import Stripe from 'stripe';
-import { UserService } from '../user/user.service';
+import { UserRepository } from '../user/user.repository';
 import { env } from 'process';
 import { PaymentException } from './exception/payment.exception';
 import { EmailService } from '../email/email.service';
@@ -17,7 +17,7 @@ export class PaymentFacade {
 
     constructor(
         private readonly httpService: HttpService,
-        private readonly userService: UserService,
+        private readonly userRepository: UserRepository,
         private readonly emailService: EmailService
     ) {
         this.stripe = new Stripe(env.STRIPE_SECRET_KEY, {
@@ -27,7 +27,7 @@ export class PaymentFacade {
     }
 
     async getStripeSession(userId: number, callbackUrl: string, lang: string): Promise<any> {
-        const user = await this.userService.getUserById(userId);
+        const user = await this.userRepository.getUserById(userId);
 
         const session = await this.stripe.checkout.sessions.create({
             locale: lang as Stripe.Checkout.SessionCreateParams.Locale,
@@ -48,7 +48,7 @@ export class PaymentFacade {
     async cancelSubscription(id: number) {
         // TODO Check store (Stripe, IOs, Android) -> not yet necessary
         
-        const user = await this.userService.getUserById(id);
+        const user = await this.userRepository.getUserById(id);
         if (!user.email || user.email == null || user.email == undefined || user.email == '') {
             return;
         }
@@ -152,7 +152,7 @@ export class PaymentFacade {
             case 'checkout.session.completed':
                 const session = event.data.object;
                 try {
-                    const user = await this.userService.getUserById(session.client_reference_id);
+                    const user = await this.userRepository.getUserById(session.client_reference_id);
                     const revenuecatData = {
                         app_user_id: `${session.client_reference_id}`,
                         fetch_token: session.subscription,
@@ -186,7 +186,7 @@ export class PaymentFacade {
             case 'invoice.upcoming':
                 const invoiceUpcoming = event.data.object;
                 const email = invoiceUpcoming.customer_email;
-                const user = await this.userService.getUserByEmail(email);
+                const user = await this.userRepository.getUserByEmail(email);
                 if (user) {
                     this.emailService.sendInvoiceUpcoming(user);
                 }

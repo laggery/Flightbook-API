@@ -1,6 +1,6 @@
 import { Injectable, Req } from '@nestjs/common';
 import { FlightRepository } from './flight.repository';
-import { UserService } from '../user/user.service';
+import { UserRepository } from '../user/user.repository';
 import { FlightDto } from './interface/flight-dto';
 import { Flight } from './flight.entity';
 import { plainToClass, plainToInstance } from 'class-transformer';
@@ -24,7 +24,7 @@ export class FlightFacade {
         private flightService: FlightRepository,
         private placeFacade: PlaceFacade,
         private gliderFacade: GliderFacade,
-        private userService: UserService,
+        private userRepository: UserRepository,
         private fileUploadService: FileUploadService
     ) { }
 
@@ -76,7 +76,7 @@ export class FlightFacade {
     }
 
     async createFlight(token: any, flightDto: FlightDto): Promise<FlightDto> {
-        const user: User = await this.userService.getUserById(token.userId);
+        const user: User = await this.userRepository.getUserById(token.userId);
         let flight: Flight = plainToClass(Flight, flightDto);
 
         flight = await this.flightValidityCheck(flightDto, flight, token);

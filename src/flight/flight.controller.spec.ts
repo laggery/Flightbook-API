@@ -1,15 +1,16 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { FlightController } from './flight.controller';
+import { FlightFacade } from './flight.facade';
+import { TestBed } from '@automock/jest';
 
 describe('Flight Controller', () => {
   let controller: FlightController;
+  let facade: jest.Mocked<FlightFacade>;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [FlightController],
-    }).compile();
+  beforeAll(async () => {
+    const { unit, unitRef } = TestBed.create(FlightController).compile();
 
-    controller = module.get<FlightController>(FlightController);
+    controller = unit;
+    facade = unitRef.get(FlightFacade);
   });
 
   it('should be defined', () => {

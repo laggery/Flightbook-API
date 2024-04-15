@@ -7,7 +7,7 @@ import { Place } from '../place/place.entity';
 import { Readable } from 'stream';
 import { ImportResultDto, ResultDto } from './interface/import-result-dto';
 import { PlaceRepository } from '../place/place.repository';
-import { UserService } from '../user/user.service';
+import { UserRepository } from '../user/user.repository';
 import { User } from '../user/user.entity';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
@@ -21,7 +21,7 @@ export class ImportFacade {
     constructor(
         private gliderRepository: GliderRepository,
         private placeRepository: PlaceRepository,
-        private userRepository: UserService,
+        private userRepository: UserRepository,
         @InjectEntityManager()
         private entityManager: EntityManager,
     ) { }

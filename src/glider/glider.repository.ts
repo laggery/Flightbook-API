@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Glider } from './glider.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { PagerDto } from 'src/interface/pager-dto';
+import { PagerDto } from '../interface/pager-dto';
 
 @Injectable()
 export class GliderRepository extends Repository<Glider> {

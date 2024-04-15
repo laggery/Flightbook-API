@@ -1,5 +1,5 @@
 import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 import { SchoolDto } from './interface/school-dto';
 import { SchoolFacade } from './school.facade';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';

@@ -1,7 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Enrollment } from './enrollment.entity';
-import { EnrollmentService } from './enrollment.service';
+import { EnrollmentRepository } from './enrollment.repository';
 import { EnrollmentFacade } from './enrollment.facade';
 import { StudentModule } from '../../training/student/student.module';
 import { UserModule } from '../../user/user.module';
@@ -23,8 +23,8 @@ import { ControlSheet } from '../control-sheet/control-sheet.entity';
         forwardRef(() => SchoolModule),
         forwardRef(() => TeamMemberModule)
     ],
-    providers: [EnrollmentService, EnrollmentFacade, EmailService, NoteRepository, ControlSheetRepository],
-    exports: [EnrollmentService, EnrollmentFacade],
+    providers: [EnrollmentRepository, EnrollmentFacade, EmailService, NoteRepository, ControlSheetRepository],
+    exports: [EnrollmentRepository, EnrollmentFacade],
     controllers: []
 })
 export class EnrollmentModule { }

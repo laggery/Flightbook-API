@@ -4,12 +4,14 @@ import { Repository } from 'typeorm';
 import { TeamMember } from './team-member.entity';
 
 @Injectable()
-export class TeamMemberService {
+export class TeamMemberRepository extends Repository<TeamMember> {
 
     constructor(
         @InjectRepository(TeamMember)
-        private readonly teamMemberRepository: Repository<TeamMember>
-    ) { }
+        private readonly repository: Repository<TeamMember>
+    ) {
+        super(repository.target, repository.manager, repository.queryRunner);
+    }
 
     async getTeamMembersBySchoolId(schoolId: number): Promise<TeamMember[]> {
         let options: any = {
@@ -23,7 +25,7 @@ export class TeamMemberService {
                 }
             }
         };
-        return this.teamMemberRepository.find(options);
+        return this.find(options);
     }
 
     async getTeamMemberById(id: number): Promise<TeamMember>  {
@@ -39,7 +41,7 @@ export class TeamMemberService {
                 id: id
             }
         };
-        return this.teamMemberRepository.findOne(options);
+        return this.findOne(options);
     }
 
     async getTeamMembersByUserId(id: number): Promise<TeamMember[]>  {
@@ -54,15 +56,7 @@ export class TeamMemberService {
                 }
             }
         };
-        return this.teamMemberRepository.find(options);
-    }
-
-    async saveTeamMember(teamMember: TeamMember): Promise<TeamMember | undefined> {
-        return await this.teamMemberRepository.save(teamMember);
-    }
-
-    async removeTeamMember(teamMember: TeamMember): Promise<TeamMember | undefined> {
-        return await this.teamMemberRepository.remove(teamMember);
+        return this.find(options);
     }
 
     async getTeamMembersByUserIdAndSchoolId(schoolId: number, userId: number): Promise<TeamMember>  {
@@ -83,6 +77,6 @@ export class TeamMemberService {
                 }
             }
         };
-        return this.teamMemberRepository.findOne(options);
+        return this.findOne(options);
     }
 }

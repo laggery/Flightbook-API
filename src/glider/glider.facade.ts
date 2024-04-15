@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { GliderRepository } from './glider.repository';
-import { UserService } from '../user/user.service';
+import { UserRepository } from '../user/user.repository';
 import { GliderDto } from './interface/glider-dto';
 import { Glider } from './glider.entity';
 import { plainToClass } from 'class-transformer';
@@ -13,7 +13,7 @@ import { checkIfDateIsValid } from '../shared/util/date-utils';
 @Injectable()
 export class GliderFacade {
 
-    constructor(private gliderRepository: GliderRepository, private userService: UserService) { }
+    constructor(private gliderRepository: GliderRepository, private userRepository: UserRepository) { }
 
     async getGliders(token: any, query: any): Promise<GliderDto[]> {
         const list: Glider[] = await this.gliderRepository.getGliders(token, query);
@@ -36,7 +36,7 @@ export class GliderFacade {
             throw new InvalidDateException();
         }
 
-        const user: User = await this.userService.getUserById(token.userId);
+        const user: User = await this.userRepository.getUserById(token.userId);
         const glider: Glider = plainToClass(Glider, gliderDto);
 
         // format date
