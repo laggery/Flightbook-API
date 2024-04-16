@@ -1,3 +1,4 @@
 export enum ImportType {
-  FLUGBUCH = "flugbuch"
+  FLUGBUCH = "flugbuch",
+  CUSTOM = "custom"
 }

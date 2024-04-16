@@ -3,7 +3,7 @@ import { LocalAuthGuard } from './guard/local-auth.guard';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { AuthFacade } from './auth.facade';
 import { LoginDto } from './interface/login-dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -23,6 +23,7 @@ export class AuthController {
     }
 
     @Get('refresh/:token')
+    @ApiParam({name: 'token', required: true, schema: { oneOf: [{type: 'string'}]}})
     async refresh(@Param('token') token) {
         return this.authFacade.refresh(token);
     }

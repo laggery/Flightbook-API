@@ -176,6 +176,129 @@ export class ImportFacade {
         return importResultDto;
     }
 
+    async importCustom(file: Express.Multer.File, userId: number): Promise<ImportResultDto> {
+        const records = [];
+        // Pipe the stream into the csv parser
+        const parser = parse(file.buffer.toString(),{
+            delimiter: ',',
+            trim: true,
+            skipEmptyLines: true
+        });
+
+        // Parse the CSV file
+        for await (const record of parser) {
+            records.push(record);
+        }
+        
+        const gliders = [];
+        const places = [];
+        const flights = [];
+
+        const user = await this.userRepository.getUserById(userId);
+
+        records.forEach((record) => {
+            // Extract glider
+            let [brand, ...nameParts] = record[1].split(' ');
+            let name = nameParts.join(' ');
+
+            let glider = new Glider();
+            glider.brand = brand;
+            glider.name = name;
+            glider.user = user;
+
+            // Extract place
+            let startAltitude = record[4];
+            let startName = record[2];
+            let landingName = record[3];
+            let landingAltitude = record[5];
+
+            let start = new Place();
+            start.name = startName;
+            start.altitude = +startAltitude;
+            start.user = user;
+
+            let landing = new Place();
+            landing.name = landingName;
+            landing.altitude = +landingAltitude;
+            landing.user = user;
+
+            // Extract flight
+            let flight = new Flight();
+            flight.date = record[0];
+            if (record[6] != "") {
+                let time = record[6];
+                // console.log(time);
+                // var minutes = moment.duration(time).minutes();
+                // var hours = Math.trunc(moment.duration(time).asHours());
+                // console.log(minutes);
+                // console.log(hours);
+                flight.time = new Date(time * 60 * 1000).toISOString().substring(11, 19);
+                console.log(flight.time);
+            }
+            
+            if (record[7] != "") {
+                flight.km = record[7];
+            }  
+            
+            if (record[8] != "") {
+                flight.description = record[8];
+            }    
+            flight.user = user;
+
+            // Add gliders to set
+            let resGlider = gliders.find((glider: Glider) => glider.brand.toLowerCase() === brand.toLowerCase() && glider.name.toLowerCase() === name.toLowerCase());
+            if (resGlider) {
+                flight.glider = resGlider;
+            } else {
+                flight.glider = glider;
+                gliders.push(glider);
+            }
+
+            // Add places to set
+            if (start.name?.length > 0) {
+                let resStart = places.find((place: Place) => place.name.toLowerCase() === start.name.toLowerCase());
+                if (resStart) {
+                    flight.start = resStart;
+                } else {
+                    flight.start = start;
+                    places.push(start);
+                }
+            }
+
+            if (landing.name?.length > 0) {
+                let resLanding = places.find((place: Place) => place.name.toLowerCase() === landing.name.toLowerCase());
+                if (resLanding) {
+                    flight.landing = resLanding;
+                } else {
+                    flight.landing = landing;
+                    places.push(landing);
+                }
+            }
+
+            // Add flight to set
+            flights.push(flight);
+        });
+
+        const importResultDto = new ImportResultDto();
+        
+        // Save data in transaction
+        try {
+            await this.entityManager.transaction(async transactionalEntityManager => {
+                const gliderRepository = transactionalEntityManager.getRepository(Glider);
+                const placeRepository = transactionalEntityManager.getRepository(Place);
+                const flightRepository = transactionalEntityManager.getRepository(Flight);
+                importResultDto.glider = await this.saveGliders(gliders, user, gliderRepository);
+                importResultDto.place = await this.savePlaces(places, user, placeRepository);
+                importResultDto.flight = await this.saveFlights(flights, user, flightRepository);
+            })
+        } catch (error) {
+            console.log(error);
+            throw ImportException.importFailedException();
+        }
+
+        return importResultDto;
+    }
+
     private async saveGliders(gliders: Glider[], user: User, gliderRepository: Repository<Glider>): Promise<ResultDto> {
         const resultDto = new ResultDto();
 

@@ -109,6 +109,13 @@ export class FileUploadController {
           this.emailService.sendErrorMessageToAdmin(`${ImportType.FLUGBUCH} Import error`, content);
           throw e;
         }
+      case ImportType.CUSTOM:
+        try {
+          return await this.importFacade.importCustom(file, req.user.userId);
+        } catch (e) {
+          Logger.error('Import error', e.stack, 'importFacade.importCustom');
+          throw e;
+        } 
       default:
         ImportException.unsupportedImportTypeException();
     }
