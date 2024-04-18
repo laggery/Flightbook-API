@@ -115,7 +115,14 @@ export class FileUploadController {
         } catch (e) {
           Logger.error('Import error', e.stack, 'importFacade.importCustom');
           throw e;
-        } 
+        }
+        case ImportType.FB_PLACES:
+          try {
+            return await this.importFacade.importFbPlaces(file, req.user.userId);
+          } catch (e) {
+            Logger.error('Import error', e.stack, 'importFacade.importFbPlaces');
+            throw e;
+          }    
       default:
         ImportException.unsupportedImportTypeException();
     }

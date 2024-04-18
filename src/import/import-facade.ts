@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { parse } from 'csv-parse';
 import { Flight } from '../flight/flight.entity';
 import { Glider } from '../glider/glider.entity';
@@ -189,7 +189,7 @@ export class ImportFacade {
         for await (const record of parser) {
             records.push(record);
         }
-        
+
         const gliders = [];
         const places = [];
         const flights = [];
@@ -227,13 +227,7 @@ export class ImportFacade {
             flight.date = record[0];
             if (record[6] != "") {
                 let time = record[6];
-                // console.log(time);
-                // var minutes = moment.duration(time).minutes();
-                // var hours = Math.trunc(moment.duration(time).asHours());
-                // console.log(minutes);
-                // console.log(hours);
                 flight.time = new Date(time * 60 * 1000).toISOString().substring(11, 19);
-                console.log(flight.time);
             }
             
             if (record[7] != "") {
@@ -299,6 +293,66 @@ export class ImportFacade {
         return importResultDto;
     }
 
+    async importFbPlaces(file: Express.Multer.File, userId: number): Promise<ImportResultDto> {
+        const records = [];
+        let first = true;
+
+        // Pipe the stream into the csv parser
+        const parser = parse(file.buffer.toString(), {
+            delimiter: ',',
+            trim: true,
+            skipEmptyLines: true,
+        });
+
+        // Parse the CSV file
+        for await (const record of parser) {
+            if (first) {
+                first = false;
+                continue;
+            }
+            records.push(record);
+        }
+
+        const places = [];
+
+        const user = await this.userRepository.getUserById(userId);
+
+        records.forEach(async(record) => {
+
+            // Extract place
+            let place = new Place();
+            place.name = record[0];
+            place.altitude = +record[1];
+            place.country = record[2];
+            const coordinates = record[3].split(',');
+            let sqlResults = await this.placeRepository.convertEpsg4326toEpsg3857(coordinates);
+            place.point = {
+                type: "Point",
+                coordinates: JSON.parse(sqlResults[0].st_asgeojson).coordinates
+            }
+            place.user = user;
+
+            let resPlace = places.find((element: Place) => element.name.toLowerCase() === place.name.toLowerCase());
+                if (!resPlace) {
+                    places.push(place);
+                }
+        });
+
+        const importResultDto = new ImportResultDto();
+        
+        // Save data in transaction
+        try {
+            await this.entityManager.transaction(async transactionalEntityManager => {
+                const placeRepository = transactionalEntityManager.getRepository(Place);
+                importResultDto.place = await this.saveFbPlaces(places, user, placeRepository);
+            })
+        } catch (error) {
+            console.log(error);
+            throw ImportException.importFailedException();
+        }
+        return importResultDto
+    }
+
     private async saveGliders(gliders: Glider[], user: User, gliderRepository: Repository<Glider>): Promise<ResultDto> {
         const resultDto = new ResultDto();
 
@@ -314,7 +368,11 @@ export class ImportFacade {
         }
         return resultDto;
     }
-
+    
+    /**
+     * If some places already exists, savePlaces only set new altitude if not already exists
+     * Used to save flubuch places
+     */
     private async savePlaces(places: Place[], user: User, placeRepository: Repository<Place>): Promise<ResultDto> {
         const resultDto = new ResultDto();
 
@@ -334,6 +392,26 @@ export class ImportFacade {
                 place.id = (await placeRepository.save(place)).id;
                 resultDto.inserted++;
             }
+        }
+        return resultDto;
+    }
+
+    /**
+     * If some places already exists, saveFbPlaces override it.
+     * Used to save place import
+     */
+    private async saveFbPlaces(places: Place[], user: User, placeRepository: Repository<Place>): Promise<ResultDto> {
+        const resultDto = new ResultDto();
+
+        for(let place of places) {
+            let foundPlace = await this.placeRepository.getPlaceByNameCaseInsensitive({userId: user.id}, place.name);
+            if (foundPlace) {
+                place.id = foundPlace.id;
+                resultDto.updated++;
+            } else {
+                resultDto.inserted++;
+            }
+            place.id = (await placeRepository.save(place)).id;
         }
         return resultDto;
     }

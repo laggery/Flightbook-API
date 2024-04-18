@@ -115,4 +115,8 @@ export class PlaceRepository extends Repository<Place> {
         }
         return this.repository.find(options);
     }
+
+    async convertEpsg4326toEpsg3857(coordinates: any) {
+        return await this.manager.query(`select ST_AsGeoJSON(ST_Transform(ST_Point(${coordinates[1]},${coordinates[0]}, 4326),3857));`);
+    }
 }

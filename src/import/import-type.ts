@@ -1,4 +1,5 @@
 export enum ImportType {
   FLUGBUCH = "flugbuch",
-  CUSTOM = "custom"
+  CUSTOM = "custom",
+  FB_PLACES = 'fb_places'
 }
