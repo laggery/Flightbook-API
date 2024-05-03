@@ -341,12 +341,12 @@ export class ImportFacade {
             }
             // Extract place
             let place = new Place();
-            place.name = record[0];
-            place.altitude = record[1] === "" ? null : +record[1];
+            place.name = record[3];
+            place.altitude = record[0] === "" ? null : +record[0];
             place.country = record[2];
-            place.notes = record[3];
-            if (record[4]) {
-                let sqlResults = await this.placeRepository.convertEpsg4326toEpsg3857(JSON.parse(record[4]));
+            place.notes = record[4];
+            if (record[1]) {
+                let sqlResults = await this.placeRepository.convertEpsg4326toEpsg3857(JSON.parse(record[1]));
                 place.point = {
                     type: "Point",
                     coordinates: JSON.parse(sqlResults[0].st_asgeojson).coordinates
