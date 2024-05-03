@@ -1,0 +1,12 @@
+{
+    "import": {
+        "flugbuch": {
+            "name": "Flugbuch.ch",
+            "description": "Il s'agit de données provenant de l'application flugbuch.ch. (Pas un export de Flightbook)"
+        },
+        "fb_places": {
+            "name": "Déco / attero Flightbook",
+            "description":"Avec cette fonction, tu peux importer des décollages et atterrissages exportés de Flightbook."
+        }
+    }
+}

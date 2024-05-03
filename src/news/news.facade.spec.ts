@@ -15,15 +15,15 @@ describe('NewsFacade', () => {
   });
 
   it('Should get news', async () => {
-    // given - team name
+    // given
     const mockNews = TestUtil.createNews('de');
 
     newsRepository.getNews.mockResolvedValue([mockNews]);
 
-    //when
+    // when
     const newsList = await newsFacade.getNews('de');
 
-    //then
+    // then
     expect(newsRepository.getNews).toHaveBeenCalled();
     expect(newsList).toHaveLength(1);
     expect(newsList[0]).toEqual(mockNews);

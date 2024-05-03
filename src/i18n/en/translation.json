@@ -1,0 +1,12 @@
+{
+    "import": {
+        "flugbuch": {
+            "name": "Flugbuch.ch",
+            "description": "You can import data from the flugbuch.ch application. (Not for Flightbook exports)"
+        },
+        "fb_places": {
+            "name": "Flightbook places",
+            "description":"This allows you to import exported places from Flightbook."
+        }
+    }
+}

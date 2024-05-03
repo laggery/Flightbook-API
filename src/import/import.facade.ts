@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { parse } from 'csv-parse';
 import { Flight } from '../flight/flight.entity';
 import { Glider } from '../glider/glider.entity';
@@ -14,6 +14,8 @@ import { EntityManager, Repository } from 'typeorm';
 import moment = require('moment');
 import { ImportException } from './exception/import.exception';
 import { ImportType } from './import-type';
+import { I18nService } from 'nestjs-i18n';
+import { ImportTypeDto } from './interface/import-type-dto';
 
 @Injectable()
 export class ImportFacade {
@@ -24,7 +26,31 @@ export class ImportFacade {
         private userRepository: UserRepository,
         @InjectEntityManager()
         private entityManager: EntityManager,
+        @Inject(I18nService) 
+        private readonly i18n: I18nService
     ) { }
+
+    getImportTypes(lang: string): ImportTypeDto[] {
+
+        const types = [];
+        for (const value in ImportType) {
+            if (value === "CUSTOM") {
+                continue;
+            }
+
+            const importTypeDto = new ImportTypeDto();
+            importTypeDto.type = ImportType[value];
+            importTypeDto.name = this.i18n.t(`translation.import.${ImportType[value]}.name`, { lang });
+            const descriptionTranslationKey = `translation.import.${ImportType[value]}.description`
+            const description: string = this.i18n.t(descriptionTranslationKey, { lang });
+
+            if (description !== descriptionTranslationKey) {
+                importTypeDto.description = description;
+            }
+            types.push(importTypeDto);
+        }
+        return types;
+    }
 
     async importFlugbuch(file: Express.Multer.File, userId: number): Promise<ImportResultDto> {
         const records = [];
@@ -36,10 +62,10 @@ export class ImportFacade {
 
         lines = lines.map(line => {
             line = line.replace(/","/g, "','")
-            .slice(1)
-            .slice(0, -1)
-            .replace(/"/g, '""')
-            .replace(/','/g, '","');
+                .slice(1)
+                .slice(0, -1)
+                .replace(/"/g, '""')
+                .replace(/','/g, '","');
 
             return `"${line}"`;
         });
@@ -118,7 +144,7 @@ export class ImportFacade {
             flight.time = record[3];
             if (record[9] != "") {
                 flight.km = record[9];
-            }    
+            }
             flight.description = record[10];
             flight.user = user;
 
@@ -157,7 +183,7 @@ export class ImportFacade {
         });
 
         const importResultDto = new ImportResultDto();
-        
+
         // Save data in transaction
         try {
             await this.entityManager.transaction(async transactionalEntityManager => {
@@ -179,7 +205,7 @@ export class ImportFacade {
     async importCustom(file: Express.Multer.File, userId: number): Promise<ImportResultDto> {
         const records = [];
         // Pipe the stream into the csv parser
-        const parser = parse(file.buffer.toString(),{
+        const parser = parse(file.buffer.toString(), {
             delimiter: ',',
             trim: true,
             skipEmptyLines: true
@@ -229,14 +255,14 @@ export class ImportFacade {
                 let time = record[6];
                 flight.time = new Date(time * 60 * 1000).toISOString().substring(11, 19);
             }
-            
+
             if (record[7] != "") {
                 flight.km = record[7];
-            }  
-            
+            }
+
             if (record[8] != "") {
                 flight.description = record[8];
-            }    
+            }
             flight.user = user;
 
             // Add gliders to set
@@ -274,7 +300,7 @@ export class ImportFacade {
         });
 
         const importResultDto = new ImportResultDto();
-        
+
         // Save data in transaction
         try {
             await this.entityManager.transaction(async transactionalEntityManager => {
@@ -301,8 +327,11 @@ export class ImportFacade {
         const parser = parse(file.buffer.toString(), {
             delimiter: ',',
             trim: true,
-            skipEmptyLines: true,
+            skipEmptyLines: true
         });
+
+        const places = [];
+        const user = await this.userRepository.getUserById(userId);
 
         // Parse the CSV file
         for await (const record of parser) {
@@ -310,36 +339,29 @@ export class ImportFacade {
                 first = false;
                 continue;
             }
-            records.push(record);
-        }
-
-        const places = [];
-
-        const user = await this.userRepository.getUserById(userId);
-
-        records.forEach(async(record) => {
-
             // Extract place
             let place = new Place();
             place.name = record[0];
             place.altitude = +record[1];
-            place.country = record[2];
-            const coordinates = record[3].split(',');
-            let sqlResults = await this.placeRepository.convertEpsg4326toEpsg3857(coordinates);
-            place.point = {
-                type: "Point",
-                coordinates: JSON.parse(sqlResults[0].st_asgeojson).coordinates
+            place.country = record[3];
+            place.notes = record[4];
+            if (record[2]) {
+                let sqlResults = await this.placeRepository.convertEpsg4326toEpsg3857(JSON.parse(record[2]));
+                place.point = {
+                    type: "Point",
+                    coordinates: JSON.parse(sqlResults[0].st_asgeojson).coordinates
+                }
             }
             place.user = user;
 
             let resPlace = places.find((element: Place) => element.name.toLowerCase() === place.name.toLowerCase());
-                if (!resPlace) {
-                    places.push(place);
-                }
-        });
+            if (!resPlace) {
+                places.push(place);
+            }
+        }
 
         const importResultDto = new ImportResultDto();
-        
+
         // Save data in transaction
         try {
             await this.entityManager.transaction(async transactionalEntityManager => {
@@ -356,8 +378,8 @@ export class ImportFacade {
     private async saveGliders(gliders: Glider[], user: User, gliderRepository: Repository<Glider>): Promise<ResultDto> {
         const resultDto = new ResultDto();
 
-        for(let glider of gliders) {
-            let foundGlider = await this.gliderRepository.getGliderByName({userId: user.id}, glider.name);
+        for (let glider of gliders) {
+            let foundGlider = await this.gliderRepository.getGliderByName({ userId: user.id }, glider.name);
             if (foundGlider) {
                 glider.id = foundGlider.id;
                 resultDto.existed++;
@@ -368,7 +390,7 @@ export class ImportFacade {
         }
         return resultDto;
     }
-    
+
     /**
      * If some places already exists, savePlaces only set new altitude if not already exists
      * Used to save flubuch places
@@ -376,8 +398,8 @@ export class ImportFacade {
     private async savePlaces(places: Place[], user: User, placeRepository: Repository<Place>): Promise<ResultDto> {
         const resultDto = new ResultDto();
 
-        for(let place of places) {
-            let foundPlace = await this.placeRepository.getPlaceByNameCaseInsensitive({userId: user.id}, place.name);
+        for (let place of places) {
+            let foundPlace = await this.placeRepository.getPlaceByNameCaseInsensitive({ userId: user.id }, place.name);
             if (foundPlace) {
                 if (!foundPlace.altitude) {
                     // update altitude
@@ -387,7 +409,7 @@ export class ImportFacade {
                 } else {
                     place.id = foundPlace.id;
                     resultDto.existed++;
-                }    
+                }
             } else {
                 place.id = (await placeRepository.save(place)).id;
                 resultDto.inserted++;
@@ -403,8 +425,8 @@ export class ImportFacade {
     private async saveFbPlaces(places: Place[], user: User, placeRepository: Repository<Place>): Promise<ResultDto> {
         const resultDto = new ResultDto();
 
-        for(let place of places) {
-            let foundPlace = await this.placeRepository.getPlaceByNameCaseInsensitive({userId: user.id}, place.name);
+        for (let place of places) {
+            let foundPlace = await this.placeRepository.getPlaceByNameCaseInsensitive({ userId: user.id }, place.name);
             if (foundPlace) {
                 place.id = foundPlace.id;
                 resultDto.updated++;
@@ -419,7 +441,7 @@ export class ImportFacade {
     private async saveFlights(flights: Flight[], user: User, flightRepository: Repository<Flight>): Promise<ResultDto> {
         const resultDto = new ResultDto();
 
-        for(let flight of flights) {
+        for (let flight of flights) {
             await flightRepository.save(flight);
             resultDto.inserted++;
         }

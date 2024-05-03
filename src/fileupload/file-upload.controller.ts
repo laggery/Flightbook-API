@@ -15,8 +15,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { FileUploadService } from './file-upload.service';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { CopyFileDto } from './interface/copyFile-dto';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { ImportFacade } from '../import/import-facade';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ImportFacade } from '../import/import.facade';
 import { ImportResultDto } from '../import/interface/import-result-dto';
 import { ImportType } from '../import/import-type';
 import { ImportException } from '../import/exception/import.exception';
@@ -81,6 +81,7 @@ export class FileUploadController {
     return await this.fileUploadService.deleteFile(req.user.userId, filename);
   }
 
+  @ApiOperation({deprecated: true})
   @UseGuards(JwtAuthGuard)
   @Post('import')
   @ApiConsumes('multipart/form-data')
