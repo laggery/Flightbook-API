@@ -346,7 +346,6 @@ export class ImportFacade {
             place.country = record[2];
             place.notes = record[3];
             if (record[4]) {
-                console.log(record[4]);
                 let sqlResults = await this.placeRepository.convertEpsg4326toEpsg3857(JSON.parse(record[4]));
                 place.point = {
                     type: "Point",
