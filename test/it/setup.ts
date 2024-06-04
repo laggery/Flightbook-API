@@ -7,6 +7,9 @@ const init = async () => {
     await Promise.all([
         initPostgreSql()
     ]);
+    process.env.JWT_SECRET = 'test';
+    process.env.STRIPE_ENDPOINT_SECRET = 'test';
+    process.env.STRIPE_SECRET_KEY = 'test';
 };
 
 const initPostgreSql = async () => {
