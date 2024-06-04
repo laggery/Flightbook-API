@@ -17,6 +17,7 @@ import { Student } from "../../src/training/student/student.entity";
 import { TeamMember } from "../../src/training/team-member/team-member.entity";
 import { User } from "../../src/user/user.entity";
 import { Subscription } from "../../src/training/subscription/subscription.entity";
+import { Level } from "../../src/training/control-sheet/level.entity";
 
 const dbConfigBase: any = {
     type: 'postgres',
@@ -37,6 +38,7 @@ const dbConfigBase: any = {
         TrainingHill,
         AltitudeFlight,
         Theory,
+        Level,
         Enrollment,
         Note,
         School,

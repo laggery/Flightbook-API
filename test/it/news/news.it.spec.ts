@@ -27,7 +27,7 @@ describe('NewsRepository', () => {
 
 
   it('Should get news', async () => {
-    // given - team name
+    // given
     const news = TestUtil.createNews('de');
 
     await newsRepository.save(news);

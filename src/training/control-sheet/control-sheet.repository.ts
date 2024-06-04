@@ -21,7 +21,8 @@ export class ControlSheetRepository extends Repository<ControlSheet>{
             relations: {
                 theory: true,
                 altitudeFlight: true,
-                trainingHill: true
+                trainingHill: true,
+                level: true
             },
             where: {
                 user: {

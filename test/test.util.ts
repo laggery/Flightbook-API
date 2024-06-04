@@ -2,6 +2,7 @@ import { User } from "../src/user/user.entity";
 import { News } from "../src/news/news.entity";
 import { readFileSync } from "fs";
 import * as path from 'path';
+import { ControlSheet } from "../src/training/control-sheet/control-sheet.entity";
 
 export class TestUtil {
 
@@ -9,6 +10,10 @@ export class TestUtil {
         user: {
             userId: 1
         }
+    }
+
+    public static token = {
+        userId: 1
     }
     
     public static createNews(language: string): News {
@@ -20,12 +25,23 @@ export class TestUtil {
         return news;
     }
 
+    public static createControlSheet(userCanEdit: boolean): ControlSheet {
+        const controlSheet = new ControlSheet();
+        controlSheet.userCanEdit = userCanEdit;
+        controlSheet.altitudeFlight.id = 1;
+        controlSheet.trainingHill.id = 1;
+        controlSheet.theory.id = 1;
+        controlSheet.level.id = 1;
+        controlSheet.user = this.createUser();
+        return controlSheet;
+    }
+
     public static createUser(): User {
         const user = new User();
         user.id = 1;
-        user.firstname = "firstname";
-        user.firstname = "lastname";
-        user.email = "email";
+        user.firstname = "test";
+        user.lastname = "user";
+        user.email = "test@user.com";
         return user;
     }
 

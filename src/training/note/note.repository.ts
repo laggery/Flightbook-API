@@ -19,9 +19,15 @@ export class NoteRepository extends Repository<Note> {
     }
 
     async getNotesByStudentId(studentId: number): Promise<Note[]> {
-        return this.findBy({ student: {
-            id: studentId
-        }});
+        const options: any = {
+            where: {
+                student: {id: studentId}
+            },
+            order: {
+                date: 'DESC'
+            }
+        };
+        return this.find(options);
     }
 
     async getNotesPager(studentId: number, query: any): Promise<PagerEntityDto<Note[]>> {

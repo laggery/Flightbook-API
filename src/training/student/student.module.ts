@@ -14,13 +14,13 @@ import { NoteRepository } from '../note/note.repository';
 @Module({
     imports: [
       FlightModule, 
-      TypeOrmModule.forFeature([Student]), 
+      TypeOrmModule.forFeature([Student, Note]), 
       TeamMemberModule, 
       ControlSheetModule, 
       forwardRef(() => SchoolModule), 
       forwardRef(() => AppointmentModule)
     ],  
-    providers: [StudentRepository, StudentFacade],
+    providers: [StudentRepository, StudentFacade, NoteRepository],
     exports: [StudentRepository, StudentFacade],
     controllers: []
   })

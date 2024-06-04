@@ -3,6 +3,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn
 import { AltitudeFlight } from "./altitude-flight.entity";
 import { Theory } from "./theory.entity";
 import { TrainingHill } from "./training-hill.entity";
+import { Level } from "./level.entity";
 
 @Entity("control_sheet")
 export class ControlSheet {
@@ -11,6 +12,7 @@ constructor(){
   this.trainingHill = new TrainingHill();
   this.theory = new Theory();
   this.altitudeFlight = new AltitudeFlight();
+  this.level = new Level();
 }
 
   @PrimaryGeneratedColumn()
@@ -38,4 +40,8 @@ constructor(){
   @OneToOne(() => AltitudeFlight, { cascade: ['insert', 'update'] })
   @JoinColumn()
   altitudeFlight: AltitudeFlight;
+
+  @OneToOne(() => Level, { cascade: ['insert', 'update'] })
+  @JoinColumn()
+  level: Level;
 }

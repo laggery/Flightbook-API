@@ -4,6 +4,7 @@ import { User } from "../../../user/user.entity";
 import { AltitudeFlightDto } from "./altitude-flight-dto";
 import { TheoryDto } from "./theory-dto";
 import { TrainingHillDto } from "./training-hill-dto";
+import { LevelDto } from "./level-dto";
 
 export class ControlSheetDto {
   id: number;
@@ -22,4 +23,7 @@ export class ControlSheetDto {
   
   @ApiPropertyOptional()
   altitudeFlight: AltitudeFlightDto;
+
+  @ApiPropertyOptional()
+  level: LevelDto;
 }

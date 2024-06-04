@@ -57,6 +57,24 @@ export class StudentRepository extends Repository<Student> {
         return this.repository.find(options);
     }
 
+    async getStudentByUserIdAndSchoolId(userId: number, schoolId): Promise<Student> {
+        let options: any = {
+            relations: {
+                user: true,
+                school: true
+            },
+            where: {
+                user: {
+                    id: userId
+                },
+                school: {
+                    id: schoolId
+                }
+            }
+        };
+        return this.repository.findOneOrFail(options);
+    }
+
     async getStudentByEmail(email: string): Promise<Student[]> {
         let options: any = {
             relations: {

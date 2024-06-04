@@ -10,16 +10,18 @@ import { StudentDto } from './interface/student-dto';
 import { Student } from './student.entity';
 import { StudentRepository } from './student.repository';
 import { StudentException } from './exception/student.exception';
-import { UserReadIdDto } from '../../user/interface/user-read-id-dto';
 import { PagerEntityDto } from '../../interface/pager-entity-dto';
 import { StudentMapper } from './student.mapper';
+import { NoteRepository } from '../note/note.repository';
+import { NoteMapper } from '../note/note.mapper';
 
 @Injectable()
 export class StudentFacade {
 
     constructor(
         private studentRepository: StudentRepository,
-        private appointmentService: AppointmentRepository,
+        private appointmentRepository: AppointmentRepository,
+        private noteRepository: NoteRepository,
         private flightFacade: FlightFacade,
         private controlSheetFacade: ControlSheetFacade) { }
 
@@ -46,19 +48,24 @@ export class StudentFacade {
         return studentDtoList;
     }
 
-    // @TODO Improve -> search student entity by user id
     async getStudentsByAppointmentId(appointmentId: number): Promise<StudentDto[]> {
-        const appointment = await this.appointmentService.getAppointmentById(appointmentId);
+        const appointment = await this.appointmentRepository.getAppointmentById(appointmentId);
         const studentDtoList: StudentDto[] = [];
         for (const subscription of appointment.subscriptions) {
-            let studentDto = new StudentDto();
-            studentDto.user = plainToClass(UserReadIdDto, subscription.user);
-            studentDto.statistic = await this.flightFacade.getGlobalStatistic({ userId: subscription.user.id }, {});
+            const student = await this.studentRepository.getStudentByUserIdAndSchoolId(subscription.user.id, appointment.school.id);
+            const statistics = await this.flightFacade.getGlobalStatistic({ userId: subscription.user.id }, {});
+            let studentDto = StudentMapper.toStudentDto(student, statistics);
             const flightList = await this.flightFacade.getFlights({ userId: subscription.user.id }, { limit: 1 })
 
             if (flightList.length >= 1) {
                 studentDto.lastFlight = flightList[0];
             }
+
+            const notes = await this.noteRepository.getNotesByStudentId(student.id);
+            if (notes.length >= 0) {
+                studentDto.lastNote = NoteMapper.toNoteDto(notes[0]);
+            }
+            studentDto.controlSheet = await this.controlSheetFacade.getControlSheet({ userId: student.user.id });
 
             studentDtoList.push(studentDto);
         }

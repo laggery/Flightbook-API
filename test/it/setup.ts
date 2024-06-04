@@ -1,5 +1,7 @@
 import { PostgreSqlContainer } from "@testcontainers/postgresql";
 import { getDatasource } from "./util";
+import { DataSource } from "typeorm";
+import * as fs from "fs";
 
 const init = async () => {
     await Promise.all([
@@ -26,6 +28,14 @@ const initPostgreSql = async () => {
 
     const datasource = await getDatasource();
     await datasource.runMigrations();
+    await insertTestData(datasource);
+};
+
+const insertTestData = async (datasource: DataSource) => {
+    const importSql = fs.readFileSync("./test/it/data.sql").toString();
+    for (const sql of importSql.split(";").filter((s) => s.trim() !== "")) {
+        await datasource.query(sql);
+    }
 };
 
 export default init;

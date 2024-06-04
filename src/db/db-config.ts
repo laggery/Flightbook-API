@@ -3,6 +3,7 @@ import { AltitudeFlight } from "../training/control-sheet/altitude-flight.entity
 import { Theory } from "../training/control-sheet/theory.entity";
 import { TrainingHill } from "../training/control-sheet/training-hill.entity";
 import { GuestSubscription } from "../training/subscription/guest-subscription.entity";
+import { Level } from "../training/control-sheet/level.entity";
 
 const dbConfigBase: any = {
     type: 'postgres',
@@ -16,6 +17,7 @@ const dbConfigBase: any = {
         TrainingHill,
         AltitudeFlight,
         Theory,
+        Level,
         GuestSubscription
     ],
     autoLoadEntities: true,

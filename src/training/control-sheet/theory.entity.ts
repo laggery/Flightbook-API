@@ -3,6 +3,14 @@ import { Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 @Entity("theory")
 export class Theory {
 
+  constructor(){
+    this.fluglehre = 0;
+    this.wetterkunde = 0;
+    this.flugpraxis = 0;
+    this.gesetzgebung = 0;
+    this.materialkunde = 0;
+  }
+
   @PrimaryGeneratedColumn()
   id: number;
 

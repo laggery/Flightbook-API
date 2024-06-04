@@ -3,6 +3,27 @@ import { Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 @Entity("training_hill")
 export class TrainingHill {
 
+  constructor(){
+    this.auslegen = 0;
+    this.aufziehen = 0;
+    this.slalom = 0;
+    this.laufenAngebremst = 0;
+    this.vorbereitung = 0;
+    this.startphasen = 0;
+    this.richtungsaenderungen = 0;
+    this.startabbruch = 0;
+    this.seitenwindstart = 0;
+    this.schlechtAusgelegt = 0;
+    this.starts = 0;
+    this.landungen = 0;
+    this.notlandung = 0;
+    this.notschirm = 0;
+    this.kurven = 0;
+    this.entwirren = 0;
+    this.faltmethoden = 0;
+    this.theorietest = 0;
+  }
+
   @PrimaryGeneratedColumn()
   @Column("integer", { primary: true, name: "id" })
   id: number;

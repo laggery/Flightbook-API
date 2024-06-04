@@ -3,6 +3,39 @@ import { Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 @Entity("altitude_flight")
 export class AltitudeFlight {
 
+  constructor(){
+    this.tandem = 0;
+    this.notlandung = 0;
+    this.startplatzwahl = 0;
+    this.aufziehen = 0;
+    this.kreise = 0;
+    this.richtungswechsel = 0;
+    this.acht = 0;
+    this.engekreise = 0;
+    this.sackflug = 0;
+    this.geschwBereich = 0;
+    this.beschlunigung = 0;
+    this.negativsteuerung = 0;
+    this.gewichtsverlagerung = 0;
+    this.traggurten = 0;
+    this.pendeln = 0;
+    this.rollen = 0;
+    this.klappen = 0;
+    this.ohren = 0;
+    this.bStall = 0;
+    this.spirale = 0;
+    this.instrumente = 0;
+    this.soaring = 0;
+    this.thermik = 0;
+    this.landevolte = 0;
+    this.punktlandung = 0;
+    this.rueckenwindlandung = 0;
+    this.traggurtenLandung = 0;
+    this.hanglandung = 0;
+    this.touchAndGo = 0;
+    this.examProgramme = 0;
+  }
+
   @PrimaryGeneratedColumn()
   id: number;
 

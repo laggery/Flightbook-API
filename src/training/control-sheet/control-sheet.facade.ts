@@ -9,6 +9,7 @@ import { ControlSheetDto } from './interface/control-sheet-dto';
 import { Theory } from './theory.entity';
 import { TrainingHill } from './training-hill.entity';
 import { ControlSheetException } from './exception/control-sheet.exception';
+import { Level } from './level.entity';
 
 @Injectable()
 export class ControlSheetFacade {
@@ -25,16 +26,16 @@ export class ControlSheetFacade {
         }
         const controlSheet: ControlSheet = plainToInstance(ControlSheet, controlSheetDto);
         controlSheet.userCanEdit = undefined;
-        return this.createUpdateControlSheet(token, controlSheet, currentSheet);
+        controlSheet.level = currentSheet.level;
+        return this.createUpdateControlSheet(token, controlSheet);
     }
 
     async instructorCreateUpdateControlSheet(token: any, controlSheetDto: ControlSheetDto): Promise<ControlSheetDto> {
-        const currentSheet = await this.controlSheetRepository.getControlSheetByUserId(token.userId);
         const controlSheet: ControlSheet = plainToInstance(ControlSheet, controlSheetDto);
-        return this.createUpdateControlSheet(token, controlSheet, currentSheet);
+        return this.createUpdateControlSheet(token, controlSheet);
     }
 
-    private async createUpdateControlSheet(token: any, controlSheet: ControlSheet, currentSheet: ControlSheet): Promise<ControlSheetDto> {
+    private async createUpdateControlSheet(token: any, controlSheet: ControlSheet): Promise<ControlSheetDto> {
 
         const user: User = await this.userRepository.getUserById(token.userId);
 
@@ -50,6 +51,10 @@ export class ControlSheetFacade {
             controlSheet.theory = new Theory();
         }
 
+        if (!controlSheet.level) {
+            controlSheet.level = new Level();
+        }
+
         const current = await this.controlSheetRepository.getControlSheetByUserId(user.id);
 
         if (current) {
@@ -57,6 +62,7 @@ export class ControlSheetFacade {
             controlSheet.trainingHill.id = current.trainingHill.id;
             controlSheet.theory.id = current.theory.id;
             controlSheet.altitudeFlight.id = current.altitudeFlight.id;
+            controlSheet.level.id = current.level?.id
         }
         controlSheet.user = user;
 
@@ -66,6 +72,9 @@ export class ControlSheetFacade {
 
     async getControlSheet(token: any): Promise<ControlSheetDto> {
         const controlSheet = await this.controlSheetRepository.getControlSheetByUserId(token.userId);
+        if (controlSheet && !controlSheet.level) {
+            controlSheet.level = new Level();
+        }
         return plainToClass(ControlSheetDto, controlSheet);
     }
 }
