@@ -1,12 +1,9 @@
 name: feature branch pipeline
 
 on:
-  pull_request:
-    branches:
-      - 'master'
   push:
-    branches:
-      - '!master'
+    branches-ignore:
+      - master
 
 jobs:
   unit_test:
