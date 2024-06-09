@@ -66,4 +66,14 @@ describe('ControlSheetRepository', () => {
     //then
     expect(resp).toBeNull();
   });
+
+  it('Should return undefined control sheet', async () => {
+    // given
+
+    //when
+    const resp = await controlSheetRepository.getControlSheetByUserId(null);
+
+    //then
+    expect(resp).toBeUndefined();
+  });
 });
