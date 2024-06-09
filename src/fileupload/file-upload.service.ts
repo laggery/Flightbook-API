@@ -6,7 +6,9 @@ import {
   PutObjectCommand,
   CopyObjectCommand,
   GetObjectCommand,
-  DeleteObjectCommand
+  DeleteObjectCommand,
+  PutObjectCommandInput,
+  CopyObjectCommandInput
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import {v4 as uuidv4} from 'uuid';
@@ -37,11 +39,10 @@ export class FileUploadService {
   async fileUpload(file: Express.Multer.File, userId: number) {
 
     try {
-      const params = {
+      const params: PutObjectCommandInput = {
         Bucket: this.bucket,
         Key: `${this.env}/${userId}/${file.originalname}`,
         Body: file.buffer,
-        UploadId: userId.toString(),
         ACL: 'private'
       };
 
@@ -56,7 +57,7 @@ export class FileUploadService {
   async getSignedFileUploadUrl(filename: string, userId: number) {
 
     try {
-      const params = {
+      const params: PutObjectCommandInput = {
         Bucket: this.bucket,
         Key: `${this.env}/${userId}/${filename}`,
         ContentType: 'igc',
@@ -77,7 +78,7 @@ export class FileUploadService {
 
   async copyFile(userId: number, copyFile: CopyFileDto) {
     try {
-      const params = {
+      const params: CopyObjectCommandInput = {
         Bucket: this.bucket,
         CopySource: `${this.env}/${userId}/${copyFile.sourceFileName}`,
         Key: `${this.env}/${userId}/${copyFile.destinationFileName}`,
@@ -135,7 +136,7 @@ export class FileUploadService {
   async uploadErrorImportFile(userId: number, file: Express.Multer.File): Promise<String> {
     try {
       const key = `${this.env}/import/${userId}/${uuidv4()}-${file.originalname}`
-      const params = {
+      const params: PutObjectCommandInput = {
         Bucket: this.bucket,
         Key: key,
         ACL: 'private',
