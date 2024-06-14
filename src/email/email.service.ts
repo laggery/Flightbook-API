@@ -39,8 +39,10 @@ export class EmailService {
             const info = await transporter.sendMail({
                 from: process.env.EMAIL_FROM,
                 to: body.toAddress,
+                bcc: body.bccAddress,
                 subject: body.subject,
-                html: body.content
+                html: body.content,
+                replyTo: body.replyTo
             });
         } catch (err) {
             Logger.error("Error sending email", err);
@@ -104,9 +106,10 @@ export class EmailService {
         }
 
         const email = new EmailBodyDto();
-        email.toAddress = "";
+        email.replyTo = appointment.instructor? appointment.instructor.email : appointment.school.email;
+        email.bccAddress = "";
         students.forEach((student: Student) => {
-            email.toAddress += student.user.email + ";"
+            email.bccAddress += student.user.email + ";"
         });
 
         const i18n = I18nContext.current();
@@ -142,9 +145,10 @@ export class EmailService {
         }
 
         const email = new EmailBodyDto();
-        email.toAddress = "";
+        email.replyTo = appointment.instructor? appointment.instructor.email : appointment.school.email;
+        email.bccAddress = "";
         students.forEach((student: Student) => {
-            email.toAddress += student.user.email + ";"
+            email.bccAddress += student.user.email + ";"
         });
 
         const i18n = I18nContext.current();
