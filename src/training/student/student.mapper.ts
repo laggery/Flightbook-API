@@ -12,6 +12,7 @@ export class StudentMapper {
         studentDto.user = plainToClass(UserReadIdDto, student.user);
         studentDto.statistic = stat;
         studentDto.isArchived = student.isArchived;
+        studentDto.isTandem = student.isTandem;
         return studentDto
     }
 }

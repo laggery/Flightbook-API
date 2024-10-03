@@ -26,6 +26,7 @@ import { AppointmentTypeRepository } from './appointment-type.repository';
 import { GuestSubscription } from '../subscription/guest-subscription.entity';
 import { GuestSubscriptionDto } from '../subscription/interface/guest-subscription-dto';
 import { GuestSubscriptionRepository } from '../subscription/guest-subscription.repository';
+import { StudentMapper } from '../student/student.mapper';
 
 @Injectable()
 export class AppointmentFacade {
@@ -84,12 +85,13 @@ export class AppointmentFacade {
         appointment.timestamp = new Date();
 
         // Clear removed subscriptions
-        appointment.subscriptions.forEach((subscription: Subscription) => {
-            const subscriptionDto = appointmentDto.subscriptions.find((subscriptionDto: SubscriptionDto) => subscriptionDto.user?.email === subscription.user.email);
-            if (!subscriptionDto) {
-                appointment.removeUserSubscription(subscription.user.id);
-                this.subscriptionRepository.remove(subscription);
-            }
+        const subscriptionsToRemove = appointment.subscriptions.filter((subscription: Subscription) => {
+            return !appointmentDto.subscriptions.some((subscriptionDto: SubscriptionDto) => subscriptionDto.user?.email === subscription.user.email);
+        });
+
+        subscriptionsToRemove.forEach((subscription: Subscription) => {
+            appointment.removeUserSubscription(subscription.user.id);
+            this.subscriptionRepository.remove(subscription);
         });
 
         // add new subscriptions
@@ -155,16 +157,32 @@ export class AppointmentFacade {
     async deleteSubscriptionFromAppointment(appointmentId: number, userId: number, school: SchoolDto): Promise<AppointmentDto> {
         const appointment: Appointment = await this.appointmentRepository.getAppointmentById(appointmentId);
         if (appointment.subscriptions) {
-            const nbSubscription = appointment.subscriptions.length;
-            const isUserOnWaintingList = appointment.isUserOnWaintingList(userId);
-            const subscriptionToDelete = appointment.removeUserSubscription(userId);
 
             // Inform waiting student
-            if (appointment.maxPeople && subscriptionToDelete && !isUserOnWaintingList && nbSubscription > appointment.maxPeople ) {
-                const subscriptionToInform = appointment.subscriptions[appointment.maxPeople - 1];
-                this.emailService.sendInformWaitingStudent(school, appointment, subscriptionToInform);
-                this.notificationsService.sendInformWaitingStudent(appointment, subscriptionToInform);
-            }
+            // Only for EMC student subscription - After migrate Subscription user to student the student request can be removed
+            const students = await this.studentRepository.getStudentsBySchoolId(school.id);
+            
+            let countSubscription = 0;
+            const waitingList = [];
+            const studentToBeRemoved = students.find((student: Student) => student.user.id === userId);
+            let freePlaces = studentToBeRemoved.getUsedPlaces();
+
+            appointment.subscriptions.forEach((subscription: Subscription) => {
+                const foundStudent = students.find((student: Student) => student.user.email === subscription.user.email);
+
+                if (appointment.maxPeople && (countSubscription + foundStudent.getUsedPlaces()) > appointment.maxPeople) {
+                    waitingList.push(foundStudent);
+                    if (freePlaces > 0 && foundStudent.getUsedPlaces() <= freePlaces) {
+                        this.emailService.sendInformWaitingStudent(school, appointment, subscription);
+                        this.notificationsService.sendInformWaitingStudent(appointment, subscription);
+                        freePlaces -= foundStudent.getUsedPlaces();
+                    }
+                } else {
+                    countSubscription += foundStudent.getUsedPlaces();
+                }
+            });
+
+            const subscriptionToDelete = appointment.removeUserSubscription(userId);
 
             this.subscriptionRepository.remove(subscriptionToDelete);
             this.emailService.sendUnsubscribeEmail(school, appointment, subscriptionToDelete);
@@ -181,6 +199,32 @@ export class AppointmentFacade {
         entityPager.itemsPerPage = (query?.limit) ? Number(query.limit) : entityPager.itemCount;
         entityPager.totalPages = (query?.limit) ? Math.ceil(entityPager.totalItems / Number(query.limit)) : entityPager.totalItems;
         entityPager.currentPage = (query?.offset) ? (query.offset >= entityPager.totalItems ? null : Math.floor(parseInt(query.offset) / parseInt(query.limit)) + 1) : 1;
+        
+        // Only for EMC student subscription - After migrate Subscription user to student the student request can be removed
+        const students = await this.studentRepository.getStudentsBySchoolId(schoolId);
+
+        entityPager.entity.forEach((appointmentDto: AppointmentDto) => {
+            let countSubscription = 0;
+            let countWaitingList = 0;
+            appointmentDto.subscriptions.forEach((subscriptionDto: SubscriptionDto) => {
+                const foundStudent = students.find((student: Student) => student.user.email === subscriptionDto.user.email);
+                
+                subscriptionDto.waitingList = true;
+
+                if (appointmentDto.maxPeople && (countSubscription + foundStudent.getUsedPlaces()) > appointmentDto.maxPeople) {
+                    countWaitingList += foundStudent.getUsedPlaces();
+                } else {
+                    countSubscription += foundStudent.getUsedPlaces();
+                    subscriptionDto.waitingList = false;
+                }
+
+                subscriptionDto.student = StudentMapper.toStudentDto(foundStudent, null);
+            });
+            appointmentDto.countSubscription = countSubscription;
+            appointmentDto.countGuestSubscription = appointmentDto.guestSubscriptions.length;
+            appointmentDto.countWaitingList = countWaitingList;
+        });
+        
         return entityPager;
     }
 

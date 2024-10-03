@@ -10,6 +10,7 @@ export class StudentDto {
     public statistic: FlightStatisticDto;
     public lastFlight: FlightDto;
     public isArchived: boolean;
+    public isTandem: boolean;
     public controlSheet: ControlSheetDto;
     public lastNote: NoteDto;
 }

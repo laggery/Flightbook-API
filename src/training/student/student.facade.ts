@@ -35,6 +35,9 @@ export class StudentFacade {
             if (student.isArchived) {
                 query.timestamp = student.timestamp;
             }
+            if (student.isTandem) {
+                query["glider-type"] = 1;
+            }
 
             let studentDto = StudentMapper.toStudentDto(student, await this.flightFacade.getGlobalStatistic({ userId: student.user.id }, query));
             const flightList = await this.flightFacade.getFlights({ userId: student.user.id }, query)
@@ -85,6 +88,18 @@ export class StudentFacade {
         return StudentMapper.toStudentDto(studentResp, await this.flightFacade.getGlobalStatistic({ userId: studentResp.user.id }, {timestamp: studentResp.timestamp}));
     }
 
+    async updateTandemStudent(studentId: number): Promise<StudentDto> {
+        const student = await this.studentRepository.getStudentById(studentId);
+        if (!student) {
+            throw StudentException.notFoundException();
+        }
+
+        student.isTandem = !student.isTandem;
+
+        const studentResp = await this.studentRepository.save(student);
+        return StudentMapper.toStudentDto(studentResp, await this.flightFacade.getGlobalStatistic({ userId: studentResp.user.id }, {timestamp: studentResp.timestamp}));
+    }
+
     async getActiveSchoolsByUserId(id: number): Promise<SchoolDto[]> {
         const students = await this.studentRepository.getStudentByUserId(id);
         const schoolsDto: SchoolDto[] = [];
@@ -106,6 +121,11 @@ export class StudentFacade {
         if (student.isArchived) {
             query.timestamp = student.timestamp;
         }
+
+        if (student.isTandem) {
+            query["glider-type"] = 1;
+        }
+
         return await this.flightFacade.getFlightsPager({ userId: student.user.id }, query);
     }
 

@@ -32,6 +32,13 @@ export class Student {
   @Column("boolean", { name: "isArchived", default: () => "false" })
   isArchived: boolean;
 
+  @Column("boolean", { name: "isTandem", default: () => "false" })
+  isTandem: boolean;
+
   @OneToMany(() => Note, (note) => note.student)
   notes: Note[];
+
+  getUsedPlaces(): number {
+    return this.isTandem ? 2 : 1;
+  }
 }

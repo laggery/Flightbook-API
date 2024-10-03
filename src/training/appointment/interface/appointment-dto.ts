@@ -61,4 +61,13 @@ export class AppointmentDto {
     @Expose()
     @ApiProperty()
     type: AppointmentTypeDto;
+
+    @Expose()
+    countSubscription: number;
+
+    @Expose()
+    countGuestSubscription: number;
+
+    @Expose()
+    countWaitingList: number;
 }

@@ -152,6 +152,12 @@ export class InstructorController {
     }
 
     @UseGuards(JwtAuthGuard, StudentGuard)
+    @Put('/students/:id/tandem')
+    updateStudentType(@Request() req, @Param('id') id: number): Promise<StudentDto> {
+        return this.studentFacade.updateTandemStudent(id);
+    }
+
+    @UseGuards(JwtAuthGuard, StudentGuard)
     @Get('/students/:id/control-sheet')
     getControlSheet(@Request() req, @Param('id') id: number): Promise<ControlSheetDto> {
         return this.studentFacade.getStudentControlSheetByStudentId(id);

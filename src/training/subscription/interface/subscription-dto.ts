@@ -1,7 +1,8 @@
-import {Exclude, Expose} from "class-transformer";
-import {ApiProperty, ApiPropertyOptional} from "@nestjs/swagger";
-import {UserReadDto} from "../../../user/interface/user-read-dto";
-import {AppointmentDto} from "../../appointment/interface/appointment-dto";
+import { Exclude, Expose } from "class-transformer";
+import { ApiProperty } from "@nestjs/swagger";
+import { UserReadDto } from "../../../user/interface/user-read-dto";
+import { AppointmentDto } from "../../appointment/interface/appointment-dto";
+import { StudentDto } from "src/training/student/interface/student-dto";
 
 @Exclude()
 export class SubscriptionDto {
@@ -14,7 +15,15 @@ export class SubscriptionDto {
     user: UserReadDto;
 
     @Expose()
+    @ApiProperty()
+    student: StudentDto;
+
+    @Expose()
     appointment: AppointmentDto;
+
+    @Expose()
+    waitingList: boolean;
+
 
     timestamp: Date;
 }
