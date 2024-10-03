@@ -2,7 +2,7 @@ import { Exclude, Expose } from "class-transformer";
 import { ApiProperty } from "@nestjs/swagger";
 import { UserReadDto } from "../../../user/interface/user-read-dto";
 import { AppointmentDto } from "../../appointment/interface/appointment-dto";
-import { StudentDto } from "src/training/student/interface/student-dto";
+import { StudentDto } from "../../student/interface/student-dto";
 
 @Exclude()
 export class SubscriptionDto {
