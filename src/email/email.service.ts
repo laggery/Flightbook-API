@@ -179,6 +179,9 @@ export class EmailService {
     }
 
     sendUnsubscribeEmail(school: SchoolDto, appointment: Appointment, subscription: Subscription) {
+        if (!appointment.instructor) {
+            return;
+        }
         const i18n = I18nContext.current();
         const email = new EmailBodyDto();
 
