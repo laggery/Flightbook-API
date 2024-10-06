@@ -67,7 +67,7 @@ export class AppointmentFacade {
         this.emailService.sendNewAppointment(students, appointment);
         this.notificationsService.sendNewAppointment(students, appointment);
 
-        return AppointmentMapper.toAppointmentDto(appointmentResp);
+        return await this.generateWaitingList(AppointmentMapper.toAppointmentDto(appointmentResp), schoolId);
     }
 
     async updateAppointment(id: number, schoolId: number, appointmentDto: AppointmentDto): Promise<AppointmentDto> {
@@ -127,7 +127,7 @@ export class AppointmentFacade {
         }
 
         const appointmentResp: Appointment = await this.appointmentRepository.saveAppointment(appointment);
-        return AppointmentMapper.toAppointmentDto(appointmentResp);
+        return await this.generateWaitingList(AppointmentMapper.toAppointmentDto(appointmentResp), schoolId);
     }
 
     async addSubscriptionToAppointment(appointmentId: number, userId: number): Promise<AppointmentDto> {
@@ -151,7 +151,7 @@ export class AppointmentFacade {
         appointment.subscriptions.push(subscription);
 
         const appointmentResp: Appointment = await this.appointmentRepository.saveAppointment(appointment);
-        return AppointmentMapper.toAppointmentDto(appointmentResp);
+        return await this.generateWaitingList(AppointmentMapper.toAppointmentDto(appointmentResp), appointment.school.id);
     }
 
     async deleteSubscriptionFromAppointment(appointmentId: number, userId: number, school: SchoolDto): Promise<AppointmentDto> {
@@ -193,44 +193,18 @@ export class AppointmentFacade {
     async getAppointmentsBySchoolId(schoolId: number, query: any): Promise<PagerEntityDto<AppointmentDto[]>> {
         const appointmentsPager = await this.appointmentRepository.getAppointmentsBySchoolId(schoolId, query);
         const entityPager = new PagerEntityDto<AppointmentDto[]>();
-        entityPager.entity = AppointmentMapper.toAppointmentDtoList(appointmentsPager[0]);
+        entityPager.entity = await this.generateWaitingList(AppointmentMapper.toAppointmentDtoList(appointmentsPager[0]), schoolId);
         entityPager.itemCount = appointmentsPager[0].length;
         entityPager.totalItems = appointmentsPager[1];
         entityPager.itemsPerPage = (query?.limit) ? Number(query.limit) : entityPager.itemCount;
         entityPager.totalPages = (query?.limit) ? Math.ceil(entityPager.totalItems / Number(query.limit)) : entityPager.totalItems;
         entityPager.currentPage = (query?.offset) ? (query.offset >= entityPager.totalItems ? null : Math.floor(parseInt(query.offset) / parseInt(query.limit)) + 1) : 1;
-        
-        // Only for EMC student subscription - After migrate Subscription user to student the student request can be removed
-        const students = await this.studentRepository.getStudentsBySchoolId(schoolId);
-
-        entityPager.entity.forEach((appointmentDto: AppointmentDto) => {
-            let countSubscription = 0;
-            let countWaitingList = 0;
-            appointmentDto.subscriptions.forEach((subscriptionDto: SubscriptionDto) => {
-                const foundStudent = students.find((student: Student) => student.user.email === subscriptionDto.user.email);
-                
-                subscriptionDto.waitingList = true;
-
-                if (appointmentDto.maxPeople && (countSubscription + foundStudent.getUsedPlaces()) > appointmentDto.maxPeople) {
-                    countWaitingList += foundStudent.getUsedPlaces();
-                } else {
-                    countSubscription += foundStudent.getUsedPlaces();
-                    subscriptionDto.waitingList = false;
-                }
-
-                subscriptionDto.student = StudentMapper.toStudentDto(foundStudent, null);
-            });
-            appointmentDto.countSubscription = countSubscription;
-            appointmentDto.countGuestSubscription = appointmentDto.guestSubscriptions.length;
-            appointmentDto.countWaitingList = countWaitingList;
-        });
-        
         return entityPager;
     }
 
     async getAppointmentById(id: number): Promise<AppointmentDto> {
         const appointment = await this.appointmentRepository.getAppointmentById(id);
-        return AppointmentMapper.toAppointmentDto(appointment);
+        return await this.generateWaitingList(AppointmentMapper.toAppointmentDto(appointment), appointment.school.id);
     }
 
     private async appointmentValidityCheck(appointmentDto: AppointmentDto, schoolId: number, appointment: Appointment) {
@@ -277,5 +251,40 @@ export class AppointmentFacade {
         } else {
             appointment.type = null;
         }
+    }
+
+    // Overload signatures
+    private async generateWaitingList(appointmentDto: AppointmentDto, schoolId: number): Promise<AppointmentDto>;
+    private async generateWaitingList(appointmentDtoList: AppointmentDto[], schoolId: number): Promise<AppointmentDto[]>;
+
+    private async generateWaitingList(appointmentDtoOrList: AppointmentDto | AppointmentDto[], schoolId: number): Promise<AppointmentDto | AppointmentDto[]> {
+        const appointmentDtoList = Array.isArray(appointmentDtoOrList) ? appointmentDtoOrList : [appointmentDtoOrList];
+        // Only for EMC student subscription - After migrate Subscription user to student the student request can be removed
+        const students = await this.studentRepository.getStudentsBySchoolId(schoolId);
+        appointmentDtoList.forEach((appointmentDto: AppointmentDto) => {
+            let countSubscription = 0;
+            let countWaitingList = 0;
+            appointmentDto.subscriptions.forEach((subscriptionDto: SubscriptionDto) => {
+                const foundStudent = students.find((student: Student) => student.user.email === subscriptionDto.user.email);
+                if (!foundStudent)  {
+                   console.log(subscriptionDto);
+                   console.log(students);
+                }
+                subscriptionDto.waitingList = true;
+
+                if (appointmentDto.maxPeople && (countSubscription + foundStudent.getUsedPlaces()) > appointmentDto.maxPeople) {
+                    countWaitingList += foundStudent.getUsedPlaces();
+                } else {
+                    countSubscription += foundStudent.getUsedPlaces();
+                    subscriptionDto.waitingList = false;
+                }
+
+                subscriptionDto.student = StudentMapper.toStudentDto(foundStudent, null);
+            });
+            appointmentDto.countSubscription = countSubscription;
+            appointmentDto.countGuestSubscription = appointmentDto.guestSubscriptions.length;
+            appointmentDto.countWaitingList = countWaitingList;
+        });
+        return appointmentDtoOrList;
     }
 }
