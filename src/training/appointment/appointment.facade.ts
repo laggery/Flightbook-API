@@ -114,7 +114,7 @@ export class AppointmentFacade {
             }
         });
 
-        // add new subscriptions
+        // add new guest subscriptions
         appointmentDto.guestSubscriptions.forEach((guestSubscriptionDto: GuestSubscriptionDto) => {
             if (!appointment.findGuestSubscription(guestSubscriptionDto.id)) {
                 const guestSubscription: GuestSubscription = plainToInstance(GuestSubscription, guestSubscriptionDto);

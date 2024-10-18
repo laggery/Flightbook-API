@@ -29,7 +29,7 @@ export class EmailService {
             port: Number(process.env.EMAIL_PORT),
             secure: true,
             auth: {
-                user: process.env.EMAIL_FROM,
+                user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASSWORD,
             },
             logger: false,
