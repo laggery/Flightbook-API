@@ -136,7 +136,7 @@ export class EmailService {
             }
         });
 
-        // this.sendEmail(email);
+        this.sendEmail(email);
     }
 
     sendAppointmentSubscription(students: Student[], appointment: Appointment) {
@@ -175,7 +175,7 @@ export class EmailService {
             }
         });
 
-        // this.sendEmail(email);
+        this.sendEmail(email);
     }
 
     sendUnsubscribeEmail(school: SchoolDto, appointment: Appointment, subscription: Subscription) {
@@ -201,7 +201,7 @@ export class EmailService {
             }
         });
 
-        // this.sendEmail(email);
+        this.sendEmail(email);
     }
 
     sendInformWaitingStudent(school: SchoolDto, appointment: Appointment, subscription: Subscription) {
@@ -231,7 +231,7 @@ export class EmailService {
             }
         });
 
-        // this.sendEmail(email);
+        this.sendEmail(email);
     }
 
     sendInvoiceUpcoming(user: User) {
