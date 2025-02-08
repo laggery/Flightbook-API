@@ -16,9 +16,11 @@ import { ImportException } from './exception/import.exception';
 import { ImportType } from './import-type';
 import { I18nService } from 'nestjs-i18n';
 import { ImportTypeDto } from './interface/import-type-dto';
+import { read, utils }from 'xlsx';
 
 @Injectable()
 export class ImportFacade {
+    private UNKNOWN = "Unknown";
 
     constructor(
         private gliderRepository: GliderRepository,
@@ -41,6 +43,7 @@ export class ImportFacade {
             const importTypeDto = new ImportTypeDto();
             importTypeDto.type = ImportType[value];
             importTypeDto.name = this.i18n.t(`translation.import.${ImportType[value]}.name`, { lang });
+            importTypeDto.fileType = this.i18n.t(`translation.import.${ImportType[value]}.fileType`, { lang });
             const descriptionTranslationKey = `translation.import.${ImportType[value]}.description`
             const description: string = this.i18n.t(descriptionTranslationKey, { lang });
 
@@ -267,6 +270,113 @@ export class ImportFacade {
 
             // Add gliders to set
             let resGlider = gliders.find((glider: Glider) => glider.brand.toLowerCase() === brand.toLowerCase() && glider.name.toLowerCase() === name.toLowerCase());
+            if (resGlider) {
+                flight.glider = resGlider;
+            } else {
+                flight.glider = glider;
+                gliders.push(glider);
+            }
+
+            // Add places to set
+            if (start.name?.length > 0) {
+                let resStart = places.find((place: Place) => place.name.toLowerCase() === start.name.toLowerCase());
+                if (resStart) {
+                    flight.start = resStart;
+                } else {
+                    flight.start = start;
+                    places.push(start);
+                }
+            }
+
+            if (landing.name?.length > 0) {
+                let resLanding = places.find((place: Place) => place.name.toLowerCase() === landing.name.toLowerCase());
+                if (resLanding) {
+                    flight.landing = resLanding;
+                } else {
+                    flight.landing = landing;
+                    places.push(landing);
+                }
+            }
+
+            // Add flight to set
+            flights.push(flight);
+        });
+
+        const importResultDto = new ImportResultDto();
+
+        // Save data in transaction
+        try {
+            await this.entityManager.transaction(async transactionalEntityManager => {
+                const gliderRepository = transactionalEntityManager.getRepository(Glider);
+                const placeRepository = transactionalEntityManager.getRepository(Place);
+                const flightRepository = transactionalEntityManager.getRepository(Flight);
+                importResultDto.glider = await this.saveGliders(gliders, user, gliderRepository);
+                importResultDto.place = await this.savePlaces(places, user, placeRepository);
+                importResultDto.flight = await this.saveFlights(flights, user, flightRepository);
+            })
+        } catch (error) {
+            console.log(error);
+            throw ImportException.importFailedException();
+        }
+
+        return importResultDto;
+    }
+
+    async importVfr(file: Express.Multer.File, userId: number): Promise<ImportResultDto> {
+        const workbook = read(file.buffer, {type: 'buffer'});
+        var worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        const raw_data = utils.sheet_to_json(worksheet, {header: 1});
+
+        // remove header
+        if (raw_data.length > 0) {
+            raw_data.shift();
+        }
+
+        const gliders = [];
+        const places = [];
+        const flights = [];
+
+        const user = await this.userRepository.getUserById(userId);
+
+        raw_data.forEach((record: any[]) => {
+            if (record.length < 1) {
+                return
+            }
+            // Extract glider
+            let glider = new Glider();
+            glider.brand = "Unknown";
+            glider.name = record[1].trim();
+            glider.user = user;
+
+            // Extract place
+            let start = new Place();
+            if (record[3]) {
+                start.name = record[3].trim();
+                start.user = user;
+            }
+
+            let landing = new Place();
+            if (record[4]) {
+                landing.name = record[4].trim();
+                landing.user = user;
+            }
+
+            // Extract flight
+            let flight = new Flight();
+            flight.date = record[0];
+
+            if (record[10]) {
+                flight.time = record[10];
+            }
+
+            if (record[10]) {
+                flight.description = record[12];
+            }
+
+            flight.user = user;
+
+            // Add gliders to set
+            let resGlider = gliders.find((glider: Glider) => glider.brand.toLowerCase() === this.UNKNOWN.toLowerCase() && glider.name.toLowerCase() === record[1].toLowerCase());
             if (resGlider) {
                 flight.glider = resGlider;
             } else {

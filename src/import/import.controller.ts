@@ -65,6 +65,13 @@ export class ImportController {
                     await this.logError(ImportType.FB_PLACES, req.user.userId, file, e);
                     throw e;
                 }
+            case ImportType.VFR:
+                try {
+                    return await this.importFacade.importVfr(file, req.user.userId);
+                } catch (e) {
+                    await this.logError(ImportType.VFR, req.user.userId, file, e);
+                    throw e;
+                }
             default:
                 ImportException.unsupportedImportTypeException();
         }

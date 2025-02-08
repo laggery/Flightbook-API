@@ -81,7 +81,7 @@ export class FileUploadController {
     return await this.fileUploadService.deleteFile(req.user.userId, filename);
   }
 
-  @ApiOperation({deprecated: true})
+  @ApiOperation({ deprecated: true })
   @UseGuards(JwtAuthGuard)
   @Post('import')
   @ApiConsumes('multipart/form-data')
@@ -117,13 +117,20 @@ export class FileUploadController {
           Logger.error('Import error', e.stack, 'importFacade.importCustom');
           throw e;
         }
-        case ImportType.FB_PLACES:
-          try {
-            return await this.importFacade.importFbPlaces(file, req.user.userId);
-          } catch (e) {
-            Logger.error('Import error', e.stack, 'importFacade.importFbPlaces');
-            throw e;
-          }    
+      case ImportType.FB_PLACES:
+        try {
+          return await this.importFacade.importFbPlaces(file, req.user.userId);
+        } catch (e) {
+          Logger.error('Import error', e.stack, 'importFacade.importFbPlaces');
+          throw e;
+        }
+      case ImportType.VFR:
+        try {
+          return await this.importFacade.importVfr(file, req.user.userId);
+        } catch (e) {
+          Logger.error('Import error', e.stack, 'importFacade.importVfr');
+          throw e;
+        }
       default:
         ImportException.unsupportedImportTypeException();
     }

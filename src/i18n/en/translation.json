@@ -2,11 +2,18 @@
     "import": {
         "flugbuch": {
             "name": "Flugbuch.ch",
-            "description": "You can import data from the flugbuch.ch application. (Not for Flightbook exports)"
+            "description": "You can import data from the flugbuch.ch application. (Not for Flightbook exports)",
+            "fileType": "csv"
         },
         "fb_places": {
             "name": "Flightbook places",
-            "description":"This allows you to import exported places from Flightbook."
+            "description":"This allows you to import exported places from Flightbook.",
+            "fileType": "csv"
+        },
+        "vfr": {
+            "name": "VFRnav",
+            "description":"You can import data from the VFRnav application. (Not for Flightbook exports)",
+            "fileType": "xlsx"
         }
     }
 }

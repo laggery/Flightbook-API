@@ -7,6 +7,8 @@ export class ImportTypeDto {
     type: string;
     @Expose()
     name: string;
+    @Expose()
+    fileType: string;
     @ApiPropertyOptional()
     @Expose()
     description: string;

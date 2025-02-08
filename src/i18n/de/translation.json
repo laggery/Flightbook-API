@@ -2,11 +2,18 @@
     "import": {
         "flugbuch": {
             "name": "Flugbuch.ch",
-            "description": "Es handelt sich um Daten aus der flugbuch.ch-Applikation. (Nicht um Flightbook-Exporte)"
+            "description": "Es handelt sich um Daten aus der flugbuch.ch-Applikation. (Nicht um Flightbook-Exporte)",
+            "fileType": "csv"
         },
         "fb_places": {
             "name": "Start-Landeplätze von Flightbook",
-            "description":"Hiermit kannst du exportierte Start- und Landeplätze von Flightbook importieren."
+            "description":"Hiermit kannst du exportierte Start- und Landeplätze von Flightbook importieren.",
+            "fileType": "csv"
+        },
+        "vfr": {
+            "name": "VFRnav",
+            "description":"Es handelt sich um Daten aus der VFRnav Applikation. (Nicht um Flightbook-Exporte)",
+            "fileType": "xlsx"
         }
     }
 }
