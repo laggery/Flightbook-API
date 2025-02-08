@@ -34,7 +34,7 @@ describe('ImportFacade', () => {
     const importTypeDtoList = await facade.getImportTypes('de');
 
     // then
-    expect(importTypeDtoList).toHaveLength(2);
+    expect(importTypeDtoList).toHaveLength(3);
   });
 
   it('Import places', async () => {
@@ -62,6 +62,20 @@ describe('ImportFacade', () => {
 
     // when
     const importResultDto = await facade.importFlugbuch(csv, mockUser.id);
+
+    // then
+    expect(entityManager.transaction).toBeCalledTimes(1);
+  });
+
+  it('Import VFRnav', async () => {
+    // given
+    const mockUser = TestUtil.createUser();
+    userRepository.getUserById.mockReturnValue(Promise.resolve(mockUser));
+
+    const csv = TestUtil.readFile("VFRnav.xlsx");
+
+    // when
+    const importResultDto = await facade.importVfr(csv, mockUser.id);
 
     // then
     expect(entityManager.transaction).toBeCalledTimes(1);
