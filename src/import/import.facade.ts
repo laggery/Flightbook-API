@@ -16,7 +16,7 @@ import { ImportException } from './exception/import.exception';
 import { ImportType } from './import-type';
 import { I18nService } from 'nestjs-i18n';
 import { ImportTypeDto } from './interface/import-type-dto';
-import { read, utils }from 'xlsx';
+import { read, utils } from 'xlsx';
 
 @Injectable()
 export class ImportFacade {
@@ -28,7 +28,7 @@ export class ImportFacade {
         private userRepository: UserRepository,
         @InjectEntityManager()
         private entityManager: EntityManager,
-        @Inject(I18nService) 
+        @Inject(I18nService)
         private readonly i18n: I18nService
     ) { }
 
@@ -365,11 +365,17 @@ export class ImportFacade {
             let flight = new Flight();
             flight.date = record[0];
 
-            if (record[10]) {
-                flight.time = record[10];
+
+            // Calculate time
+            if (record[6] && record[7]) {
+                const startTime = moment.duration(record[6]).asMilliseconds();
+                const endTime = moment.duration(record[7]).asMilliseconds();
+                const diff = endTime - startTime;
+                const formattedTime = moment.utc(diff).format('HH:mm');
+                flight.time = formattedTime;
             }
 
-            if (record[10]) {
+            if (record[12]) {
                 flight.description = record[12];
             }
 
