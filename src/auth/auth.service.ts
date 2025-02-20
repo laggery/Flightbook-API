@@ -10,7 +10,7 @@ import { LoginType } from '../user/login-type';
 export class AuthService {
   constructor(private readonly userRepository: UserRepository, private readonly jwtService: JwtService) { }
 
-  async validateUser(email: string, password: string): Promise<any> {
+  async validateUser(email: string, password: string): Promise<User | null> {
     const user = await this.userRepository.getUserByEmail(email);
 
     if (user && user.loginType == LoginType.LOCAL && await bcrypt.compare(password, user.password) && user.enabled) {

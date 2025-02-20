@@ -33,5 +33,11 @@
             "subject": "Prochaine facture",
             "content": "<p>Bonjour</p><p>Votre abonnement sera automatiquement renouvelé dans 30 jours. Vous serez débité d'un montant de 12.- CHF.</p><p>Vous pouvez résilier votre abonnement à tout moment dans l'application sous \"Paramètres\".</p><p> Nous serions heureux de continuer à pouvoir vous compter parmi nos clients à l'avenir.</p><p>Salutations</br>Equipe Flightbook</p>"
         }
+    },
+    "verification": {
+        "subject": "Vérifiez votre compte Flightbook",
+        "welcome": "Bienvenue sur Flightbook !",
+        "verify_prompt": "Veuillez vérifier votre adresse e-mail en cliquant sur le lien ci-dessous :",
+        "link_expiry": "Ce lien expirera dans 24 heures."
     }
 }

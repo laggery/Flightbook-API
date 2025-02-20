@@ -33,5 +33,11 @@
             "subject": "Upcoming invoice",
             "content": "<p>Hello</p><p>Your subscription will be automatically renewed in 30 days. You will be charged an amount of CHF 12.- </p><p>The subscription can be cancelled at any time in the application under \"Settings\".</p><p>We would be delighted to be able to count you among our customers in the future.</p><p>Kind regards</br>Flightbook Team</p>"
         }
+    },
+    "verification": {
+        "subject": "Verify your Flightbook account",
+        "welcome": "Welcome to Flightbook!",
+        "verify_prompt": "Please verify your email address by clicking the link below:",
+        "link_expiry": "This link will expire in 24 hours."
     }
 }

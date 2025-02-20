@@ -31,6 +31,12 @@ export class User {
   @Column("timestamp with time zone", { name: "last_login", nullable: true })
   lastLogin: Date | null;
 
+  @Column("timestamp with time zone", { name: "created_at", nullable: true })
+  createdAt: Date | null;
+
+  @Column("timestamp with time zone", { name: "validated_at", nullable: true })
+  validatedAt: Date | null;
+
   @Column("character varying", {
     name: "confirmation_token",
     nullable: true,

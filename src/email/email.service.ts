@@ -234,6 +234,22 @@ export class EmailService {
         this.sendEmail(email);
     }
 
+    async sendEmailVerification(email: string, token: string, language: string): Promise<void> {
+        const i18n = I18nContext.current();
+        const verificationLink = `${process.env.MOBILE_APP_URL}/login?token=${token}`;
+        const emailBody = new EmailBodyDto();
+        emailBody.toAddress = email;
+        emailBody.subject = i18n.t('email.verification.subject', { lang: language });
+        emailBody.content = `
+            <h1>${i18n.t('email.verification.welcome', { lang: language })}</h1>
+            <p>${i18n.t('email.verification.verify_prompt', { lang: language })}</p>
+            <p><a href="${verificationLink}">${verificationLink}</a></p>
+            <p>${i18n.t('email.verification.link_expiry', { lang: language })}</p>
+        `;
+        
+        await this.sendEmail(emailBody);
+    }
+
     sendInvoiceUpcoming(user: User) {
         const i18n = I18nContext.current();
         const email = new EmailBodyDto();

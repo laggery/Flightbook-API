@@ -12,6 +12,9 @@ import { InvalidPasswordException } from './exception/invalid-password-exception
 import { InvalidOldPasswordException } from './exception/invalid-oldpassword-exception';
 import { LoginType } from './login-type';
 import { PaymentFacade } from '../payment/payment-facade';
+import { EmailService } from '../email/email.service';
+import * as crypto from 'crypto';
+import { UserException } from './exception/user.exception';
 
 @Injectable()
 export class UserFacade {
@@ -19,7 +22,8 @@ export class UserFacade {
     constructor(
         private userRepository: UserRepository,
         private authService: AuthService,
-        private paymentFacade: PaymentFacade
+        private paymentFacade: PaymentFacade,
+        private emailService: EmailService
     ) {}
 
     async getCurrentUser(id: number): Promise<any> {
@@ -27,7 +31,7 @@ export class UserFacade {
         return plainToClass(UserReadDto, user);
     }
 
-    async createUser(userWriteDto: UserWriteDto): Promise<any> {
+    async createUser(userWriteDto: UserWriteDto, isInstructorApp: boolean, language: string): Promise<any> {
         if (!userWriteDto.email || !userWriteDto.firstname || !userWriteDto.lastname || !userWriteDto.password) {
             throw new InvalidUserException();
         }
@@ -38,11 +42,32 @@ export class UserFacade {
         }
 
         user = plainToClass(User, userWriteDto);
+        user.email = user.email.toLowerCase();
         user.password = await this.authService.hashPassword(user.password);
         user.loginType = LoginType.LOCAL;
+        user.createdAt = new Date();
+        
+        if (isInstructorApp) {
+            user.validatedAt = new Date();
+        } else {
+            user.confirmationToken = crypto.randomBytes(32).toString('hex');
+            await this.emailService.sendEmailVerification(user.email, user.confirmationToken, language);
+        }
 
         const userResp: User = await this.userRepository.saveUser(user);
         return plainToClass(UserReadDto, userResp);
+    }
+
+    async verifyEmail(token: string): Promise<void> {
+        const user = await this.userRepository.getUserByConfirmationToken(token);
+        
+        if (!user) {
+            UserException.invalidEmailTokenVerificationException();
+        }
+
+        user.confirmationToken = null;
+        user.validatedAt = new Date();
+        await this.userRepository.saveUser(user);
     }
 
     async createSocialLoginUser(userWriteDto: UserWriteDto, loginType: LoginType, socialLoginId: string): Promise<any> {

@@ -1,0 +1,33 @@
+{
+    "appointment": {
+        "type": "Tipo",
+        "new": {
+            "subject": "{school}: Nuovo appuntamento il: {date}",
+            "content": "<p>Informazioni sull'appuntamento</p><ul><li>Data: {date}</li>{type}<li>Punto d'incontro: {meetingPoint}</li><li>Descrizione: {description}</li><li>Partecipanti massimi: {maxPeople}</li></ul>"
+        },
+        "subscription": {
+            "subject": "{school}: Iscrizione: {date}",
+            "content": "<p>{school} ti ha registrato per la data del {date}</p><p>Informazioni sull'appuntamento</p><ul><li>Data: {date}</li>{type}<li>Punto d'incontro: {meetingPoint}</li><li>Descrizione: {description}</li><li>Partecipanti massimi: {maxPeople}</li></ul>"
+        },
+        "unsubscribe": {
+            "subject": "{name}: Disiscrizione dal {date}",
+            "content": "<p>{name} ha cancellato la partecipazione dal {date}</p>"
+        },
+        "informWaitingStudent": {
+            "subject": "{school}: Registrazione per: {date}",
+            "content": "<p>Qualcuno ha cancellato la sua partecipazione per {date}. Ora puoi registrarti per questa data.</p>"
+        }
+    },
+    "invoice": {
+        "upcoming": {
+            "subject": "Fattura imminente",
+            "content": "<p>Salve</p><p>Il tuo abbonamento sarà rinnovato automaticamente tra 30 giorni. Ti verrà addebitato un importo di 12.- CHF.</p><p>L'abbonamento può essere disdetto in qualsiasi momento nell'applicazione sotto \"Impostazioni\".</p><p>Saremmo lieti di poterti annoverare tra i nostri clienti anche in futuro.</p><p>Cordiali saluti</br>Team Flightbook</p>"
+        }
+    },
+    "verification": {
+        "subject": "Verifica il tuo account Flightbook",
+        "welcome": "Benvenuto su Flightbook!",
+        "verify_prompt": "Per favore verifica il tuo indirizzo email cliccando sul link qui sotto:",
+        "link_expiry": "Questo link scadrà tra 24 ore."
+    }
+}

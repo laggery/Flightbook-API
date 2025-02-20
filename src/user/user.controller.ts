@@ -1,4 +1,4 @@
-import { Controller, Post, Request, Body, Put, UseGuards, Get, Delete, HttpCode } from '@nestjs/common';
+import { Controller, Post, Request, Body, Put, UseGuards, Get, Delete, HttpCode, Headers, Query } from '@nestjs/common';
 import { UserFacade } from './user.facade';
 import { UserWriteDto } from './interface/user-write-dto';
 import { UserReadDto } from './interface/user-read-dto';
@@ -21,8 +21,12 @@ export class UserController {
     }
 
     @Post()
-    createUser(@Body() userWriteDto: UserWriteDto): Promise<UserReadDto> {
-        return this.userFacade.createUser(userWriteDto);
+    createUser(@Body() userWriteDto: UserWriteDto, @Headers('accept-language') language: string, @Headers('origin') origin: string): Promise<UserReadDto> {
+        let isInstructorApp = false;
+        if (origin.includes(process.env.ORIGIN_INSTRUCTOR)) {
+            isInstructorApp = true;
+        }
+        return this.userFacade.createUser(userWriteDto, isInstructorApp, language);
     }
 
     @UseGuards(JwtAuthGuard)
@@ -49,5 +53,11 @@ export class UserController {
     @HttpCode(204)
     updateUserNotificationToken(@Request() req, @Body() notificationToken: any): Promise<UserReadDto> {
         return this.userFacade.updateNotificationToken(req.user.userId, notificationToken.token);
+    }
+
+    @Get('verify-email')
+    @HttpCode(204)
+    async verifyEmail(@Query('token') token: string): Promise<void> {
+        await this.userFacade.verifyEmail(token);
     }
 }

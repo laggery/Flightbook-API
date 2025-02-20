@@ -1,4 +1,4 @@
-import {ConflictException, UnprocessableEntityException} from "@nestjs/common";
+import {BadRequestException, ConflictException, UnprocessableEntityException} from "@nestjs/common";
 
 export class UserException {
 
@@ -7,5 +7,9 @@ export class UserException {
             type = "user";
         }
         throw new UnprocessableEntityException(`A ${type} email must be provided and be valid`)
+    }
+
+    public static invalidEmailTokenVerificationException() {
+        throw new BadRequestException('Invalid verification token')
     }
 }

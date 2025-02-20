@@ -33,5 +33,11 @@
             "subject": "Bevorstehende Rechnung",
             "content": "<p>Guten Tag</p><p>Ihr Abonnement wird in 30 Tagen automatisch verlängert. Sie werden mit einem Betrag von CHF 12.- belastet.</p><p>Das Abonnement kann jederzeit in der Applikation unter \"Einstellungen\" gekündet werden.</p><p>Wir würden uns freuen, Sie auch in Zukunft zu unseren Kunden zählen zu können.</p><p>Freundliche Grüsse</br>Flightbook Team</p>"
         }
+    },
+    "verification": {
+        "subject": "Bestätige dein Flightbook-Konto",
+        "welcome": "Willkommen bei Flightbook!",
+        "verify_prompt": "Bitte bestätige deine E-Mail-Adresse durch Klicken auf den untenstehenden Link:",
+        "link_expiry": "Dieser Link läuft in 24 Stunden ab."
     }
 }

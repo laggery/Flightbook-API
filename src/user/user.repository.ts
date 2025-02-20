@@ -40,6 +40,15 @@ export class UserRepository extends Repository<User> {
         return this.findOneBy({ notificationToken: notificationToken });
     }
 
+    async getUserByConfirmationToken(token: string): Promise<User | undefined> {
+        if (!token) {
+            return undefined;
+        }
+        return this.findOne({ 
+            where: { confirmationToken: token }
+        });
+    }
+
     async clearNotificationTokens(tokens: string[]) {
         tokens.forEach(async (token: string) => {
             const user = await this.getUserByNotificationToken(token);
