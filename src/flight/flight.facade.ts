@@ -102,6 +102,7 @@ export class FlightFacade {
         flight.description = flightDto.description;
         flight.price = flightDto.price;
         flight.igc = flightDto.igc;
+        flight.shvAlone = flightDto.shvAlone;
 
         const flightResp: Flight = await this.flightService.save(flight);
         return plainToClass(FlightDto, flightResp);
