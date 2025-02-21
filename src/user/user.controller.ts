@@ -21,12 +21,8 @@ export class UserController {
     }
 
     @Post()
-    createUser(@Body() userWriteDto: UserWriteDto, @Headers('accept-language') language: string, @Headers('origin') origin: string): Promise<UserReadDto> {
-        let isInstructorApp = false;
-        if (origin.includes(process.env.ORIGIN_INSTRUCTOR)) {
-            isInstructorApp = true;
-        }
-        return this.userFacade.createUser(userWriteDto, isInstructorApp, language);
+    createUser(@Body() userWriteDto: UserWriteDto): Promise<UserReadDto> {
+        return this.userFacade.createUser(userWriteDto, true, null);
     }
 
     @UseGuards(JwtAuthGuard)
