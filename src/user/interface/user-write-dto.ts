@@ -17,4 +17,7 @@ export class UserWriteDto {
     @ApiProperty()
     @Expose()
     readonly lastname: string;
+    @ApiProperty()
+    @Expose()
+    readonly phone: string;
 }

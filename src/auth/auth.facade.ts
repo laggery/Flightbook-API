@@ -89,6 +89,7 @@ export class AuthFacade {
                     firstname: payload.given_name,
                     lastname: payload.family_name,
                     email: payload.email,
+                    phone: null,
                     password: null
                 }, LoginType.GOOGLE, payload.sub);
 

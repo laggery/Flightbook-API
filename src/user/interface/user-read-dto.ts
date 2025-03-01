@@ -4,10 +4,11 @@ import { LoginType } from "../login-type";
 @Exclude()
 export class UserReadDto {
 
-    constructor(email: string, firstname: string, lastname: string, loginType?: LoginType) {
+    constructor(email: string, firstname: string, lastname: string, phone: string, loginType?: LoginType) {
         this.email = email;
         this.firstname = firstname;
         this.lastname = lastname;
+        this.phone = phone;
         this.loginType = loginType;
     }
 
@@ -17,6 +18,8 @@ export class UserReadDto {
     readonly firstname: string;
     @Expose()
     readonly lastname: string;
+    @Expose()
+    readonly phone: string;
     @Expose()
     readonly loginType: LoginType;
 }

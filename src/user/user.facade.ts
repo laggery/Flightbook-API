@@ -106,6 +106,7 @@ export class UserFacade {
         user.email = userWriteDto.email;
         user.firstname = userWriteDto.firstname;
         user.lastname = userWriteDto.lastname;
+        user.phone = userWriteDto.phone;
 
         const userResp: User = await this.userRepository.saveUser(user);
 

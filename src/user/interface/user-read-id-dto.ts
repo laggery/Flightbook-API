@@ -12,5 +12,7 @@ export class UserReadIdDto {
     @Expose()
     readonly lastname: string;
     @Expose()
+    readonly phone: string;
+    @Expose()
     readonly loginType: LoginType;
 }

@@ -23,11 +23,11 @@ export class AppointmentMapper {
         const appointmentDto: AppointmentDto = plainToInstance(AppointmentDto, appointment);
 
         if(instructor) {
-            appointmentDto.instructor = new UserReadDto(instructor.email, instructor.firstname, instructor.lastname);
+            appointmentDto.instructor = new UserReadDto(instructor.email, instructor.firstname, instructor.lastname, instructor.phone);
         }
         
         if (takeOffCoordinator) {
-            appointmentDto.takeOffCoordinator = new UserReadDto(takeOffCoordinator.email, takeOffCoordinator.firstname, takeOffCoordinator.lastname);
+            appointmentDto.takeOffCoordinator = new UserReadDto(takeOffCoordinator.email, takeOffCoordinator.firstname, takeOffCoordinator.lastname, takeOffCoordinator.phone);
         } else {
             delete appointmentDto.takeOffCoordinator;
         }
@@ -42,7 +42,7 @@ export class AppointmentMapper {
             const subscriptionDtoList: SubscriptionDto[] = [];
             subscriptions.forEach((subscription: Subscription) => {
                 const subscriptionDto = plainToInstance(SubscriptionDto, subscription);
-                subscriptionDto.user =  new UserReadDto(subscription.user.email, subscription.user.firstname, subscription.user.lastname);
+                subscriptionDto.user =  new UserReadDto(subscription.user.email, subscription.user.firstname, subscription.user.lastname, subscription.user.phone);
 
                 subscriptionDtoList.push(subscriptionDto);
             })

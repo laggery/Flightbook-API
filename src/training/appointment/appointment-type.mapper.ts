@@ -18,7 +18,7 @@ export class AppointmentTypeMapper {
         const typeDto= plainToInstance(AppointmentTypeDto, type)
 
         if(instructor) {
-            typeDto.instructor = new UserReadDto(instructor.email, instructor.firstname, instructor.lastname);
+            typeDto.instructor = new UserReadDto(instructor.email, instructor.firstname, instructor.lastname, instructor.phone);
         }
 
         return typeDto

@@ -56,6 +56,9 @@ export class User {
   @Column("character varying", { name: "lastname", length: 30 })
   lastname: string;
 
+  @Column("text", { name: "phone", nullable: true })
+  phone: string;
+
   @Column("character varying", { name: "token", nullable: true, length: 60 })
   token: string | null;
 
