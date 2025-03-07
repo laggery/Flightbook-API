@@ -255,7 +255,12 @@ export class EmailService {
         const emailBody = new EmailBodyDto();
         emailBody.toAddress = user.email;
         emailBody.subject = i18n.t('email.welcome.subject', { lang: language });
-        emailBody.content = i18n.t('email.welcome.content', { lang: language });
+        emailBody.content = i18n.t('email.welcome.content', {
+             lang: language,
+             args: { 
+                name: user.firstname
+            }
+        });
         
         await this.sendEmail(emailBody);
     }
