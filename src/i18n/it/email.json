@@ -29,5 +29,9 @@
         "welcome": "Benvenuto su Flightbook!",
         "verify_prompt": "Per favore verifica il tuo indirizzo email cliccando sul link qui sotto:",
         "link_expiry": "Questo link scadrà tra 24 ore."
-    }
+    },
+    "welcome": {
+    "subject": "Benvenuto su Flightbook",
+    "content": "<table cellpadding=0 cellspacing=0 style=\"margin:0 auto;width:100%;background-color:#fff\"><tr><td><div style=\"background-color:#fff;border:1px solid #eee;box-sizing:border-box;font-family:Lato,Helvetica,'Helvetica Neue',Arial,sans-serif;margin:auto;max-width:600px;overflow:hidden;width:600px\"><div style=background-color:#1b3e71;display:flex;align-items:center;padding:20px><h4 style=color:#fff;font-weight:400;font-size:16px;margin:0;flex:1>Benvenuto su Flightbook!<br></h4><img height=80px src=https://raw.githubusercontent.com/laggery/Flightbook-MobileApp/7d738a8497449768f4a38d647cfdf7da138f77b6/src/assets/icons/icon-128x128.png style=border-radius:10px;margin-left:auto width=80px></div><div style=\"padding:25px 40px 50px\"><p>Ciao {name},<br><p>Siamo felici di darti il benvenuto su Flightbook!<br><p>Attualmente stai utilizzando <b>Flightbook Free</b>, che ti dà accesso a tutte le funzionalità. Tuttavia, in questa versione puoi aggiungere fino a <b>25 voli</b>.<br><p>Vuoi di più? Passa a <b>Flightbook Premium</b> per soli <b>12 CHF all'anno</b> (appena <b>1 CHF al mese</b>)!<br><p style=\"text-align:center;margin:20px 0\"><a href=https://m.flightbook.ch/settings style=\"border:none;border-radius:4px;color:#fff;cursor:pointer;display:inline-block;font-size:14px;font-weight:700;text-decoration:none;padding:12px 24px;background-color:#1b3e71\">Passa a Flightbook Premium</a><br><p>Con l'upgrade a Premium, sostieni il progetto e contribuisci ai costi dei server. Grazie di cuore per il tuo supporto!<br><p>Divertiti con Flightbook e, se hai domande, non esitare a contattarmi.<br><p>Un caro saluto,<br><p>Yannick<br></div></div></table>"
+}
 }

@@ -250,6 +250,16 @@ export class EmailService {
         await this.sendEmail(emailBody);
     }
 
+    async sendWelcomeEmail(user: User, language: string): Promise<void> {
+        const i18n = I18nContext.current();
+        const emailBody = new EmailBodyDto();
+        emailBody.toAddress = user.email;
+        emailBody.subject = i18n.t('email.welcome.subject', { lang: language });
+        emailBody.content = i18n.t('email.welcome.content', { lang: language });
+        
+        await this.sendEmail(emailBody);
+    }
+
     sendInvoiceUpcoming(user: User) {
         const i18n = I18nContext.current();
         const email = new EmailBodyDto();

@@ -77,6 +77,14 @@ export class PaymentFacade {
 
     async hasUserPayed(id: number): Promise<PaymentStatusDto> {
         let paymentStatusDto = new PaymentStatusDto();
+        paymentStatusDto.active = false;
+        paymentStatusDto.state = PaymentState.NONE;
+
+        const user = await this.userRepository.getUserById(id);
+        if (user.paymentExempted) {
+            paymentStatusDto.active = true;
+            paymentStatusDto.state = PaymentState.EXEMPTED;
+        }
 
         try {
             const response = await firstValueFrom(this.httpService.get(
@@ -91,10 +99,7 @@ export class PaymentFacade {
     
             const productSubscription = response.data.subscriber.entitlements[env.REVENUECAT_ENTITLEMENT];
     
-            paymentStatusDto = new PaymentStatusDto();
             paymentStatusDto.store = response.data.subscriber.subscriptions[productSubscription?.product_identifier]?.store;
-            paymentStatusDto.active = false;
-            paymentStatusDto.state = PaymentState.NONE;
     
             if (productSubscription && new Date <= new Date(productSubscription.expires_date)) {
                 paymentStatusDto.expires_date = productSubscription.expires_date;
@@ -105,6 +110,11 @@ export class PaymentFacade {
                 if (productSubscription.unsubscribe_detected_at != undefined) {
                     paymentStatusDto.state = PaymentState.CANCELED;
                 }
+            } else if(!user.paymentExempted && productSubscription && new Date > new Date(productSubscription.expires_date)) {
+                paymentStatusDto.expires_date = productSubscription.expires_date;
+                paymentStatusDto.purchase_date = productSubscription.purchase_date;
+                paymentStatusDto.active = false;
+                paymentStatusDto.state = PaymentState.EXPIRED;
             }
         } catch (e: any) {
             paymentStatusDto.active = true;

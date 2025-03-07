@@ -18,14 +18,14 @@ export class AuthFacade {
         private emailService: EmailService
     ) { }
 
-    async login(user: User) {
-        return this.authService.login(user);
+    async login(user: User, language: string) {
+        return this.authService.login(user, language);
     }
 
-    async refresh(refreshToken: string) {
+    async refresh(refreshToken: string, language: string) {
         const user: User = await this.userRepository.getUserByToken(refreshToken);
         if (user) {
-            return this.authService.login(user);
+            return this.authService.login(user, language);
         }
         return null;
     }
@@ -67,7 +67,7 @@ export class AuthFacade {
         }
     }
 
-    async googleLogin(token: string) {
+    async googleLogin(token: string, language: string) {
         const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
         try {
             const ticket = await client.verifyIdToken({
@@ -80,7 +80,7 @@ export class AuthFacade {
 
             if (user) {
                 if (LoginType.GOOGLE == user.loginType && user.socialloginId == payload.sub && user.enabled) {
-                    return this.authService.login(user)
+                    return this.authService.login(user, language);
                 } else {
                     throw new UserAlreadyExistsException();
                 }
@@ -93,7 +93,7 @@ export class AuthFacade {
                     password: null
                 }, LoginType.GOOGLE, payload.sub);
 
-                return this.authService.login(createdUser)
+                return this.authService.login(createdUser, language);
             }
         } catch (exception) {
             throw new UnauthorizedException();

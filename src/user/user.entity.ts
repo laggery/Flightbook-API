@@ -71,6 +71,9 @@ export class User {
   @Column("boolean", { name: "enabled", default: true })
   enabled: boolean;
 
+  @Column("boolean", { name: "payment_exempted", default: true })
+  paymentExempted: boolean;
+
   @Column("character varying", { name: "notification_token", nullable: true, length: 1000 })
   notificationToken: string | null;
 
