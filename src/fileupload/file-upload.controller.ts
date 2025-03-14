@@ -131,6 +131,13 @@ export class FileUploadController {
           Logger.error('Import error', e.stack, 'importFacade.importVfr');
           throw e;
         }
+        case ImportType.LOGFLY:
+          try {
+            return await this.importFacade.importLogfly(file, req.user.userId);
+          } catch (e) {
+            Logger.error('Import error', e.stack, 'importFacade.importLogfly');
+            throw e;
+          }
       default:
         ImportException.unsupportedImportTypeException();
     }

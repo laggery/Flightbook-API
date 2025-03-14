@@ -72,6 +72,13 @@ export class ImportController {
                     await this.logError(ImportType.VFR, req.user.userId, file, e);
                     throw e;
                 }
+            case ImportType.LOGFLY:
+                try {
+                    return await this.importFacade.importLogfly(file, req.user.userId);
+                } catch (e) {
+                    await this.logError(ImportType.LOGFLY, req.user.userId, file, e);
+                    throw e;
+                }    
             default:
                 ImportException.unsupportedImportTypeException();
         }

@@ -14,6 +14,11 @@
             "name": "VFRnav",
             "description":"You can import data from the VFRnav application. (Not for Flightbook exports)",
             "fileType": "xlsx"
+        },
+        "logfly": {
+            "name": "Logfly",
+            "description":"You can import data from the Logfly application. (Not for Flightbook exports)",
+            "fileType": "csv"
         }
     }
 }

@@ -14,6 +14,11 @@
             "name": "VFRnav",
             "description":"Es handelt sich um Daten aus der VFRnav Applikation. (Nicht um Flightbook-Exporte)",
             "fileType": "xlsx"
+        },
+        "logfly": {
+            "name": "Logfly",
+            "description":"Es handelt sich um Daten aus der Logfly Applikation. (Nicht um Flightbook-Exporte)",
+            "fileType": "csv"
         }
     }
 }

@@ -435,6 +435,148 @@ export class ImportFacade {
         return importResultDto;
     }
 
+    async importLogfly(file: Express.Multer.File, userId: number): Promise<ImportResultDto> {
+        const importResultDto = new ImportResultDto();
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+        const places: Place[] = [];
+        const gliders: Glider[] = [];
+        const flights: Flight[] = [];
+
+        const csvContent = file.buffer.toString();
+        const rows = csvContent.split('\n').map(row => row.trim()).filter(row => row);
+        const headers = rows[0].split(';');
+
+        const parseValue = (value: string) => {
+            const cleaned = value.trim();
+            return cleaned === 'null' || cleaned === '...' ? null : cleaned;
+        };
+
+        for (let i = 1; i < rows.length; i++) {
+            const row = rows[i];
+            if (!row) continue;
+
+            // Parse the row considering potential unescaped semicolons
+            const parts = [];
+            let currentPart = '';
+            let insideQuotes = false;
+            let previousChar = '';
+
+            for (let j = 0; j < row.length; j++) {
+                const char = row[j];
+
+                if (char === '"' && previousChar !== '\\') {
+                    insideQuotes = !insideQuotes;
+                } else if (char === ';' && !insideQuotes) {
+                    parts.push(parseValue(currentPart));
+                    currentPart = '';
+                } else {
+                    currentPart += char;
+                }
+
+                previousChar = char;
+            }
+            // Push the last part
+            if (currentPart) {
+                parts.push(parseValue(currentPart));
+            }
+
+            // Validate we have the correct number of columns
+            if (parts.length < 11) {
+                console.warn(`Skipping row ${i + 1}: insufficient columns`);
+                continue;
+            }
+
+            if (!parts[1] || !parts[10]) continue;  // Date and Voile are required
+
+            // Process glider info - split by first space
+            const [brand, ...nameParts] = parts[10].split(' ');
+            const name = nameParts.join(' ');
+
+            // Find or create glider and add it to flight
+            const flight = new Flight();
+            flight.user = user;
+
+            let newGlider = gliders.find(g => g.brand.toLowerCase() === brand.toLowerCase() && g.name.toLowerCase() === name.toLowerCase());
+            if (newGlider) {
+                flight.glider = newGlider;
+            } else {
+                newGlider = new Glider();
+                newGlider.brand = brand;
+                newGlider.name = name;
+                newGlider.user = user;
+                flight.glider = newGlider;
+                gliders.push(newGlider);
+            }
+
+            // Process place
+            const site = parts[5];
+            let place = places.find(p => p.name === site);
+            if (place) {
+                flight.start = place;
+            } else if (site) {
+                let newPlace = new Place();
+                newPlace.user = user;
+                newPlace.name = site;
+                newPlace.altitude = parts[7] ? parseInt(parts[7]) : null;
+                
+                // Handle coordinates - clean up any quotes
+                const lat = parts[8]?.replace(/['"]/g, '');
+                const lon = parts[9]?.replace(/['"]/g, '');
+                if (lat && lon) {
+                    // newPlace.point = {
+                    //     type: 'Point',
+                    //     coordinates: [parseFloat(lon), parseFloat(lat)]
+                    // };
+
+                    let sqlResults = await this.placeRepository.convertEpsg4326toEpsg3857([lon, lat]);
+                    // let sqlResults = await this.placeRepository.convertEpsg4326toEpsg3857(["7.48", "46.334"]);
+                    newPlace.point = {
+                        type: "Point",
+                        coordinates: JSON.parse(sqlResults[0].st_asgeojson).coordinates
+                    }
+                }
+                flight.start = newPlace;
+                places.push(newPlace);
+            }
+
+            // Process duration
+            if (parts[4]) {
+                const durationMatch = parts[4].match(/(\d+)h(\d+)mn/);
+                if (durationMatch) {
+                    const hours = parseInt(durationMatch[1]);
+                    const minutes = parseInt(durationMatch[2]);
+                    flight.time = moment().hours(hours).minutes(minutes).format('HH:mm');
+                }
+            }
+
+            // Set flight date and description
+            flight.date = moment(parts[1].trim(), 'YYYY-MM-DD').format('YYYY-MM-DD');
+            if (parts[11]) {
+                flight.description = parts[11];  
+            }
+            
+            flights.push(flight);
+        }
+
+        // Save data in transaction
+        try {
+            await this.entityManager.transaction(async transactionalEntityManager => {
+                const gliderRepository = transactionalEntityManager.getRepository(Glider);
+                const placeRepository = transactionalEntityManager.getRepository(Place);
+                const flightRepository = transactionalEntityManager.getRepository(Flight);
+                
+                importResultDto.glider = await this.saveGliders(gliders, user, gliderRepository);
+                importResultDto.place = await this.savePlaces(places, user, placeRepository);
+                importResultDto.flight = await this.saveFlights(flights, user, flightRepository);
+            });
+        } catch (error) {
+            console.log(error);
+            throw ImportException.importFailedException();
+        }
+
+        return importResultDto;
+    }
+
     async importFbPlaces(file: Express.Multer.File, userId: number): Promise<ImportResultDto> {
         const records = [];
         let first = true;
