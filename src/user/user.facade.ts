@@ -46,7 +46,7 @@ export class UserFacade {
         user.password = await this.authService.hashPassword(user.password);
         user.loginType = LoginType.LOCAL;
         user.createdAt = new Date();
-        user.paymentExempted = true; // @TODO: Change to false when payment is implemented in Frontend app
+        user.paymentExempted = false;
         
         if (isInstructorApp) {
             user.validatedAt = new Date();
