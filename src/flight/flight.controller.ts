@@ -11,7 +11,7 @@ import {
     Delete,
     HttpCode
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { KeycloakAuthGuard } from '../auth/guard/keycloak-auth.guard';
 import { FlightDto } from './interface/flight-dto';
 import { FlightFacade } from './flight.facade';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
@@ -25,50 +25,50 @@ export class FlightController {
     constructor(private flightFacade: FlightFacade) { }
 
     @ApiOperation({deprecated: true})
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(KeycloakAuthGuard)
     @Get()
     getFlights(@Request() req, @Query() query): Promise<FlightDto[]> {
         return this.flightFacade.getFlights(req.user, query);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(KeycloakAuthGuard)
     @Get('pager')
     getFlightsPager(@Request() req, @Query() query): Promise<PagerDto> {
         return this.flightFacade.getFlightsPager(req.user, query);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(KeycloakAuthGuard)
     @ApiQuery({ name: 'years', required: false })
     @Get('statistic')
     getStatistic(@Request() req, @Query() query): Promise<FlightStatisticDto | FlightStatisticDto[]> {
         return this.flightFacade.getStatisticV1(req.user, query);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(KeycloakAuthGuard)
     @Get('/places/:id/count')
     nbFlightsByPlaceId(@Request() req, @Param('id') id: number) {
         return this.flightFacade.nbFlightsByPlaceId(req.user, id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(KeycloakAuthGuard)
     @Get('/gliders/:id/count')
     nbFlightsByGliderId(@Request() req, @Param('id') id: number) {
         return this.flightFacade.nbFlightsByGliderId(req.user, id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(KeycloakAuthGuard)
     @Post()
     createFlight(@Request() req, @Body() flightDto: FlightDto): Promise<FlightDto> {
         return this.flightFacade.createFlight(req.user, flightDto);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(KeycloakAuthGuard)
     @Put(':id')
     updateFlight(@Request() req, @Param('id') id: number, @Body() flightDto: FlightDto) {
         return this.flightFacade.updateFlight(req.user, id, flightDto);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(KeycloakAuthGuard)
     @Delete(':id')
     @HttpCode(204)
     async remove(@Request() req, @Param('id') id: number) {

@@ -161,4 +161,11 @@ export class UserFacade {
         const userResp: User = await this.userRepository.saveUser(user);
         return plainToClass(UserReadDto, userResp);
     }
+
+    /**
+     * Maps a User entity to a UserReadDto
+     */
+    mapUserToReadDto(user: User): UserReadDto {
+        return plainToClass(UserReadDto, user);
+    }
 }

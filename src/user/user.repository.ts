@@ -40,6 +40,13 @@ export class UserRepository extends Repository<User> {
         return this.findOneBy({ notificationToken: notificationToken });
     }
 
+    async getUserByKeycloakId(keycloakId: string): Promise<User | undefined> {
+        if (!keycloakId) {
+            return undefined;
+        }
+        return this.findOneBy({ keycloakId: keycloakId });
+    }
+
     async getUserByConfirmationToken(token: string): Promise<User | undefined> {
         if (!token) {
             return undefined;

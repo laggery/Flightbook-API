@@ -46,6 +46,7 @@
     "firebase-admin": "^12.1.1",
     "google-auth-library": "^8.0.2",
     "helmet": "^6.0.1",
+    "jwks-rsa": "^3.2.0",
     "moment": "^2.29.4",
     "multer-s3": "^2.10.0",
     "nestjs-i18n": "^10.0.0",

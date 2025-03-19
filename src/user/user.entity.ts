@@ -77,6 +77,9 @@ export class User {
   @Column("character varying", { name: "notification_token", nullable: true, length: 1000 })
   notificationToken: string | null;
 
+  @Column("text", { name: "keycloak_id", nullable: true })
+  keycloakId: string | null;
+
   @OneToMany(() => Flight, (flight) => flight.user)
   flights: Flight[];
 
