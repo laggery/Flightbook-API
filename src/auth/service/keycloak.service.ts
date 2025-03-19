@@ -86,6 +86,7 @@ export class KeycloakService {
         grant_type: 'password',
         client_id: this.keycloakConfig.getClientId(),
         client_secret: this.keycloakConfig.getClientSecret(),
+        scope: 'openid profile email'
       });
 
       this.logger.log(`Attempting login for user: ${username}`);
@@ -191,6 +192,7 @@ export class KeycloakService {
     try {
       this.logger.log('Fetching user info from Keycloak');
       
+      console.log(accessToken);
       const response = await firstValueFrom(
         this.httpService.get(this.getUserInfoUrl(), {
           headers: {
