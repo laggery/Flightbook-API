@@ -1,6 +1,6 @@
 import { Controller, Post, UseGuards, Request, Param, Get, HttpCode, Body, Headers } from '@nestjs/common';
 import { LocalAuthGuard } from './guard/local-auth.guard';
-import { JwtAuthGuard } from './guard/jwt-auth.guard';
+import { CompositeAuthGuard } from './guard/composite-auth.guard';
 import { AuthFacade } from './auth.facade';
 import { LoginDto } from './interface/login-dto';
 import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
@@ -28,7 +28,7 @@ export class AuthController {
         return this.authFacade.refresh(token, language);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Get('logout')
     @HttpCode(204)
     @ApiBearerAuth('jwt')

@@ -5,13 +5,14 @@ import {
     Request,
     Query
 } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { FlightDto } from './interface/flight-dto';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { PagerEntityDto } from '../interface/pager-entity-dto';
 import { FlightFacade } from './flight.facade';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { StatisticType } from './statistic-type';
+import { CompositeAuthGuard } from '../auth/guard/composite-auth.guard';
+
 @Controller({
     path: 'flights',
     version: '2'
@@ -22,13 +23,13 @@ export class FlightControllerV2 {
 
     constructor(private flightFacade: FlightFacade) { }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Get()
     getFlights(@Request() req, @Query() query): Promise<PagerEntityDto<FlightDto[]>> {
         return this.flightFacade.getFlightsPager(req.user, query);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @ApiQuery({ name: 'type', required: true, enum: StatisticType })
     @Get('statistic')
     getStatistic(@Request() req, @Query() query): Promise<FlightStatisticDto[]> {

@@ -5,6 +5,7 @@ import { UserReadDto } from './interface/user-read-dto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { UserPasswordWriteDto } from './interface/user-password-write-dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { CompositeAuthGuard } from '../auth/guard/composite-auth.guard';
 
 @Controller('users')
 @ApiTags('User')
@@ -14,7 +15,7 @@ export class UserController {
     constructor(
         private userFacade: UserFacade) { }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Get()
     getCurrentUser(@Request() req): Promise<UserReadDto> {
         return this.userFacade.getCurrentUser(req.user.userId);
@@ -25,26 +26,26 @@ export class UserController {
         return this.userFacade.createUser(userWriteDto, true, null);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Put()
     updateUser(@Request() req, @Body() userWriteDto: UserWriteDto): Promise<UserReadDto> {
         return this.userFacade.updateUser(req.user.userId, userWriteDto);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Delete()
     @HttpCode(204)
     disableUser(@Request() req): Promise<UserReadDto> {
         return this.userFacade.disableUser(req.user.userId);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Put('password/change')
     updateUserPassword(@Request() req, @Body() userPasswordWriteDto: UserPasswordWriteDto): Promise<UserReadDto> {
         return this.userFacade.updatePassword(req.user.userId, userPasswordWriteDto);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Put('notification/token')
     @HttpCode(204)
     updateUserNotificationToken(@Request() req, @Body() notificationToken: any): Promise<UserReadDto> {

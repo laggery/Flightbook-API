@@ -5,6 +5,7 @@ import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { PagerDto } from '../interface/pager-dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { FeatureCollection } from 'geojson';
+import { CompositeAuthGuard } from '../auth/guard/composite-auth.guard';
 
 @Controller('places')
 @ApiTags('Place')
@@ -15,49 +16,49 @@ export class PlaceController {
         private placeFacade: PlaceFacade
     ) {}
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Get("metadata")
     getElevationByCoordinates(@Request() req, @Query() query): Promise<PlaceDto> {
         return this.placeFacade.getPlaceMetadata(query);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Get("openstreetmap/:name")
     searchOpenstreetmapPlace(@Query() query, @Param('name') name: string): Promise<FeatureCollection> {
         return this.placeFacade.searchOpenstreetmapPlace(name);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Get()
     getPlaces(@Request() req, @Query() query): Promise<PlaceDto[]> {
         return this.placeFacade.getPlaces(req.user, query);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Get('pager')
     getPlacesPager(@Request() req, @Query() query): Promise<PagerDto> {
         return this.placeFacade.getPlacesPager(req.user, query);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Get(':name')
     getPlacesByName(@Request() req, @Query() query, @Param('name') name: string): Promise<PlaceDto[]> {
         return this.placeFacade.getPlacesByName(req.user, query, name);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Post()
     createPlace(@Request() req, @Body() placeDto: PlaceDto): Promise<PlaceDto> {
         return this.placeFacade.createPlace(req.user, placeDto);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Put(':id')
     updatePlace(@Request() req, @Param('id') id: number, @Body() placeDto: PlaceDto) {
         return this.placeFacade.updatePlace(req.user, id, placeDto);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Delete(':id')
     @HttpCode(204)
     async remove(@Request() req, @Param('id') id: number) {

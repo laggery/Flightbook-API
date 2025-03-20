@@ -1,5 +1,4 @@
 import { Controller, Get, Headers, Logger, Post, Query, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { ImportType } from './import-type';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ImportFacade } from './import.facade';
@@ -8,6 +7,7 @@ import { ImportResultDto } from './interface/import-result-dto';
 import { EmailService } from '../email/email.service';
 import { FileUploadService } from '../fileupload/file-upload.service';
 import { ImportException } from './exception/import.exception';
+import { CompositeAuthGuard } from '../auth/guard/composite-auth.guard';
 
 @Controller('import')
 @ApiTags('Import')
@@ -20,13 +20,13 @@ export class ImportController {
         private fileUploadService: FileUploadService,
     ) { }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Get('types')
     getImportTypes(@Headers('accept-language') acceptLanguage: string): any[] {
         return this.importFacade.getImportTypes(acceptLanguage);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Post()
     @ApiConsumes('multipart/form-data')
     @ApiQuery({ name: 'type', required: true, enum: ImportType })

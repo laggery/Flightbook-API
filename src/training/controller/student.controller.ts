@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 import { SchoolDto } from '../../training/school/interface/school-dto';
 import { StudentFacade } from '../../training/student/student.facade';
 import { AppointmentFacade } from '../appointment/appointment.facade';
@@ -9,6 +8,7 @@ import { ControlSheetFacade } from '../control-sheet/control-sheet.facade';
 import { ControlSheetDto } from '../control-sheet/interface/control-sheet-dto';
 import { TeamMemberFacade } from '../team-member/team-member.facade';
 import { EnrollmentFacade } from '../enrollment/enrollment.facade';
+import { CompositeAuthGuard } from '../../auth/guard/composite-auth.guard';
 
 @Controller('student')
 @ApiTags('Student')
@@ -23,13 +23,13 @@ export class StudentController {
         private enrollmentFacade: EnrollmentFacade
     ){}
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Get('schools')
     getSchoolsByUserId(@Request() req): Promise<SchoolDto[]> {
         return this.studentFacade.getActiveSchoolsByUserId(req.user.userId);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Get('schools/:schoolId/appointments')
     async getAppointments(@Param('schoolId') schoolId: number, @Query() query, @Request() req): Promise<AppointmentDto[]> {
         const schools = await this.studentFacade.getActiveSchoolsByUserId(req.user.userId)
@@ -46,7 +46,7 @@ export class StudentController {
         return await (await this.appointmentFacade.getAppointmentsBySchoolId(schoolId, query)).entity;
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Get('schools/:schoolId/appointments/:appointmentId')
     async getAppointment(@Param('schoolId') schoolId: number, @Param('appointmentId') appointmentId: number, @Query() query, @Request() req): Promise<AppointmentDto> {
         const schools = await this.studentFacade.getActiveSchoolsByUserId(req.user.userId)
@@ -63,7 +63,7 @@ export class StudentController {
         return this.appointmentFacade.getAppointmentById(appointmentId);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Post('schools/:schoolId/appointments/:appointmentId/subscriptions')
     async addSubscriptions(@Param('schoolId') schoolId: number, @Param('appointmentId') appointmentId: number, @Request() req): Promise<AppointmentDto> {
         const schools = await this.studentFacade.getActiveSchoolsByUserId(req.user.userId)
@@ -80,7 +80,7 @@ export class StudentController {
         return this.appointmentFacade.addSubscriptionToAppointment(appointmentId, req.user.userId);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Delete('schools/:schoolId/appointments/:appointmentId/subscriptions')
     @HttpCode(204)
     async deleteAppointmentSubscription(@Param('schoolId') schoolId: number, @Param('appointmentId') appointmentId: number, @Request() req): Promise<AppointmentDto> {
@@ -98,19 +98,19 @@ export class StudentController {
         return this.appointmentFacade.deleteSubscriptionFromAppointment(appointmentId, req.user.userId, studentInSchool);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Get('schools/:schoolId/enrollment/:token/free')
     async hasFreeEnrollment(@Param('schoolId') schoolId: number, @Param('token') token: string, @Request() req): Promise<any> {
         return await this.enrollmentFacade.isFreeEnrollment(token) || await this.teamMemberFacade.isUserTeamMemberFromSchool(schoolId, req.user.userId);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Get('/control-sheet')
     getControlSheet(@Request() req): Promise<ControlSheetDto> {
         return this.controlSheetFacade.getControlSheet(req.user);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Post('/control-sheet')
     createUpdateControlSheet(@Request() req, @Body() controlSheetDto: ControlSheetDto): Promise<ControlSheetDto> {
         return this.controlSheetFacade.studentCreateUpdateControlSheet(req.user, controlSheetDto);

@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { MapConfigurationDto } from './interface/map-configuration-dto';
+import { CompositeAuthGuard } from '../auth/guard/composite-auth.guard';
 
 @Controller('configuration')
 @ApiTags('Configuration')
@@ -9,7 +9,7 @@ import { MapConfigurationDto } from './interface/map-configuration-dto';
 export class ConfigurationController {
     constructor() {}
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Get('map')
     getMapConfiguration(): MapConfigurationDto {
         const mapConfigurationDto = {

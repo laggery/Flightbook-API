@@ -21,6 +21,7 @@ import { AppointmentTypeFacade } from '../appointment/appointment-type.facade';
 import { AppointmentTypeDto } from '../appointment/interface/appointment-type-dto';
 import { NoteDto } from '../note/interface/note-dto';
 import { NoteFacade } from '../note/note.facade';
+import { CompositeAuthGuard } from 'src/auth/guard/composite-auth.guard';
 
 @Controller('instructor')
 @ApiTags('Instructor')
@@ -37,7 +38,7 @@ export class InstructorController {
         private noteFacade: NoteFacade
     ){}
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Post()
     createSchool(@Request() req, @Body() schoolDto: SchoolDto): Promise<SchoolDto> {
         return this.schoolFacade.createSchool(req.user, schoolDto);
@@ -45,149 +46,149 @@ export class InstructorController {
 
     // TODO: Need permissions for update school.
 
-    // @UseGuards(JwtAuthGuard)
+    // @UseGuards(CompositeAuthGuard)
     // @Put(':id')
     // updateSchool(@Request() req, @Param('id') id: number, @Body() schoolDto: SchoolDto): Promise<SchoolDto> {
     //     return this.schoolFacade.updateSchool(req.user, id, schoolDto);
     // }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Get('/schools')
     getSchoolsByUserIdAsInstructor(@Request() req): Promise<SchoolDto[]> {
         return this.teamMembersFacade.getSchoolsByUserId(req.user.userId);
     }
 
-    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @UseGuards(CompositeAuthGuard, SchoolGuard)
     @Get('/schools/:id/students')
     getStudents(@Query('archived') archived: boolean, @Param('id') id: number): Promise<StudentDto[]> {
         return this.studentFacade.getStudentsBySchoolId(id, archived);
     }
 
-    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @UseGuards(CompositeAuthGuard, SchoolGuard)
     @Get('/schools/:id/team-members')
     getTeamMembers(@Request() req, @Param('id') id: number): Promise<TeamMemberDto[]> {
         return this.teamMembersFacade.getTeamMembersBySchoolId(id);
     }
 
-    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @UseGuards(CompositeAuthGuard, SchoolGuard)
     @Post('/schools/:id/students/enrollment')
     @HttpCode(204)
     postStudentsEnrollment(@Headers('origin') origin: string, @Param('id') id: number, @Body() enrollmentWriteDto: EnrollmentWriteDto): Promise<EnrollmentDto> {
         return this.enrollmentFacade.createStudentEnrollment(id, enrollmentWriteDto, origin);
     }
 
-    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @UseGuards(CompositeAuthGuard, SchoolGuard)
     @Post('/schools/:id/team-members/enrollment')
     @HttpCode(204)
     postTeamMemberEnrollment(@Headers('origin') origin: string, @Param('id') id: number, @Body() enrollmentWriteDto: EnrollmentWriteDto): Promise<EnrollmentDto> {
         return this.enrollmentFacade.createTeamMemberEnrollment(id, enrollmentWriteDto, origin);
     }
 
-    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @UseGuards(CompositeAuthGuard, SchoolGuard)
     @Delete('/schools/:id/team-members/:teamMemberId')
     @HttpCode(204)
     deleteTeamMember(@Param('id') id: number, @Param('teamMemberId') teamMemberId: number): Promise<TeamMemberDto>{
         return this.teamMembersFacade.deleteTeamMember(teamMemberId);
     }
 
-    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @UseGuards(CompositeAuthGuard, SchoolGuard)
     @Post('/schools/:id/appointments')
     async postAppointment(@Param('id') id: number, @Body() appointmentDto: AppointmentDto): Promise<AppointmentDto> {
         return this.appointmentFacade.createAppointment(id, appointmentDto);
     }
 
-    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @UseGuards(CompositeAuthGuard, SchoolGuard)
     @Put('/schools/:id/appointments/:appointment_id')
     putAppointment(@Param('id') id: number, @Param('appointment_id') appointmentId: number, @Body() appointmentDto: AppointmentDto): Promise<AppointmentDto> {
         return this.appointmentFacade.updateAppointment(appointmentId, id, appointmentDto);
     }
 
-    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @UseGuards(CompositeAuthGuard, SchoolGuard)
     @Get('/schools/:id/appointments')
     getAppointments(@Param('id') id: number, @Query() query): Promise<PagerEntityDto<AppointmentDto[]>> {
         return this.appointmentFacade.getAppointmentsBySchoolId(id, query);
     }
 
-    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @UseGuards(CompositeAuthGuard, SchoolGuard)
     @Get('/schools/:id/appointments/:appointment_id/students')
     getAppointmentSubscriptions(@Param('id') id: number, @Param('appointment_id') appointmentId: number): Promise<StudentDto[]> {
         return this.studentFacade.getStudentsByAppointmentId(appointmentId);
     }
 
-    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @UseGuards(CompositeAuthGuard, SchoolGuard)
     @Get('/schools/:id/appointment-types')
     getAppointmentType(@Param('id') id: number, @Query() query): Promise<AppointmentTypeDto[]> {
         return this.appointmentTypeFacade.getAppointmentTypesBySchoolId(id, query);
     }
 
-    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @UseGuards(CompositeAuthGuard, SchoolGuard)
     @Post('/schools/:id/appointment-types')
     postAppointmentType(@Param('id') id: number, @Body() appointmentTypeDto: AppointmentTypeDto): Promise<AppointmentTypeDto> {
         return this.appointmentTypeFacade.createAppointmentType(id, appointmentTypeDto);
     }
 
-    @UseGuards(JwtAuthGuard, SchoolGuard)
+    @UseGuards(CompositeAuthGuard, SchoolGuard)
     @Put('/schools/:id/appointment-types/:appointmentTypes_id')
     putAppointmentType(@Param('id') id: number, @Param('appointmentTypes_id') appointmentTypeId: number, @Body() appointmentTypeDto: AppointmentTypeDto): Promise<AppointmentTypeDto> {
         return this.appointmentTypeFacade.updateAppointmentType(appointmentTypeId, id, appointmentTypeDto);
     }
 
-    @UseGuards(JwtAuthGuard, StudentGuard)
+    @UseGuards(CompositeAuthGuard, StudentGuard)
     @Delete('/students/:id')
     @HttpCode(204)
     removeStudent(@Request() req, @Param('id') studendId: number): Promise<StudentDto> {
         return this.studentFacade.archiveStudent(studendId);
     }
 
-    @UseGuards(JwtAuthGuard, StudentGuard)
+    @UseGuards(CompositeAuthGuard, StudentGuard)
     @Get('/students/:id/flights')
     getStudentFlights(@Request() req, @Query() query, @Param('id') id: number): Promise<PagerEntityDto<FlightDto[]>> {
         return this.studentFacade.getStudentFlightsByStudentId(id, query);
     }
 
-    @UseGuards(JwtAuthGuard, StudentGuard)
+    @UseGuards(CompositeAuthGuard, StudentGuard)
     @Put('/students/:id/flights/:flightId')
     updateStudentFlight(@Request() req, @Param('id') id: number, @Param('flightId') flightId: number, @Body() flightDto: FlightDto): Promise<FlightDto> {
         return this.studentFacade.updateStudentFlight(id, flightId, flightDto);
     }
 
-    @UseGuards(JwtAuthGuard, StudentGuard)
+    @UseGuards(CompositeAuthGuard, StudentGuard)
     @Put('/students/:id/tandem')
     updateStudentType(@Request() req, @Param('id') id: number): Promise<StudentDto> {
         return this.studentFacade.updateTandemStudent(id);
     }
 
-    @UseGuards(JwtAuthGuard, StudentGuard)
+    @UseGuards(CompositeAuthGuard, StudentGuard)
     @Get('/students/:id/control-sheet')
     getControlSheet(@Request() req, @Param('id') id: number): Promise<ControlSheetDto> {
         return this.studentFacade.getStudentControlSheetByStudentId(id);
     }
 
-    @UseGuards(JwtAuthGuard, StudentGuard)
+    @UseGuards(CompositeAuthGuard, StudentGuard)
     @Post('/students/:id/control-sheet')
     postControlSheet(@Request() req, @Param('id') id: number, @Body() controlSheetDto: ControlSheetDto): Promise<ControlSheetDto> {
         return this.studentFacade.postStudentControlSheetByStudentId(id, controlSheetDto);
     }
 
-    @UseGuards(JwtAuthGuard, StudentGuard)
+    @UseGuards(CompositeAuthGuard, StudentGuard)
     @Post('/students/:id/notes')
     postNotes(@Request() req, @Param('id') id: number, @Body() noteDto: NoteDto): Promise<NoteDto> {
         return this.noteFacade.createNote(id, noteDto);
     }
 
-    @UseGuards(JwtAuthGuard, StudentGuard)
+    @UseGuards(CompositeAuthGuard, StudentGuard)
     @Post('/students/:id/notes/:noteId')
     putNotes(@Request() req, @Param('id') id: number, @Param('noteId') noteId: number, @Body() noteDto: NoteDto): Promise<NoteDto> {
         return this.noteFacade.updateNote(noteId, id, noteDto);
     }
 
-    @UseGuards(JwtAuthGuard, StudentGuard)
+    @UseGuards(CompositeAuthGuard, StudentGuard)
     @Get('/students/:id/notes')
     getNotes(@Request() req, @Query() query, @Param('id') id: number): Promise<PagerEntityDto<NoteDto[]>> {
         return this.noteFacade.getNotesByStudentId(id, query);
     }
 
-    @UseGuards(JwtAuthGuard, StudentGuard)
+    @UseGuards(CompositeAuthGuard, StudentGuard)
     @Delete('/students/:id/notes/:noteId')
     @HttpCode(204)
     removeNote(@Request() req, id: number, @Param('noteId') noteId: number, @Param('studendId') studendId: number) {

@@ -192,7 +192,6 @@ export class KeycloakService {
     try {
       this.logger.log('Fetching user info from Keycloak');
       
-      console.log(accessToken);
       const response = await firstValueFrom(
         this.httpService.get(this.getUserInfoUrl(), {
           headers: {
