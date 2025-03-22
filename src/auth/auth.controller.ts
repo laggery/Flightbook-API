@@ -11,10 +11,9 @@ export class AuthController {
 
     constructor(private authFacade: AuthFacade) { }
 
-    @UseGuards(LocalAuthGuard)
     @Post('login')
-    async login(@Request() req, @Body() loginDto: LoginDto, @Headers('accept-language') language: string) {
-        return this.authFacade.login(req.user, language);
+    async login(@Body() loginDto: LoginDto, @Headers('accept-language') language: string) {
+        return this.authFacade.login(loginDto, language);
     }
 
     @Post('google/login/:token')

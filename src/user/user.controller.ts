@@ -2,7 +2,6 @@ import { Controller, Post, Request, Body, Put, UseGuards, Get, Delete, HttpCode,
 import { UserFacade } from './user.facade';
 import { UserWriteDto } from './interface/user-write-dto';
 import { UserReadDto } from './interface/user-read-dto';
-import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { UserPasswordWriteDto } from './interface/user-password-write-dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CompositeAuthGuard } from '../auth/guard/composite-auth.guard';

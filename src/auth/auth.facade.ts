@@ -8,6 +8,9 @@ import { OAuth2Client } from 'google-auth-library';
 import { UserFacade } from '../user/user.facade';
 import { LoginType } from '../user/login-type';
 import { UserAlreadyExistsException } from '../user/exception/user-already-exists-exception';
+import { LoginDto } from './interface/login-dto';
+import { KeycloakService } from './service/keycloak.service';
+import { isUUID } from 'class-validator';
 
 @Injectable()
 export class AuthFacade {
@@ -15,19 +18,44 @@ export class AuthFacade {
         private userRepository: UserRepository,
         private userFacade: UserFacade,
         private authService: AuthService,
-        private emailService: EmailService
+        private emailService: EmailService,
+        private keycloakService: KeycloakService
     ) { }
 
-    async login(user: User, language: string) {
-        return this.authService.login(user, language);
+    async login(loginDto: LoginDto, language: string) {
+        const user = await this.userRepository.getUserByEmail(loginDto.email);
+        if (!user || !user.keycloakId) {
+            // Login with legacy and create keycloak user
+            const user = await this.authService.validateUser(loginDto.email, loginDto.password);
+            if (!user) {
+                throw new UnauthorizedException();
+            } else if (user.confirmationToken) {
+                throw new UnauthorizedException('account not validated');
+            }
+
+            // Migrate user to keycloak
+            const existingUser = await this.keycloakService.getUserByEmail(user.email);
+            if (existingUser) {
+                user.keycloakId = existingUser.keycloakId;
+            } else {
+                const keycloakUserId = await this.keycloakService.createUser(user, loginDto.password);
+                user.keycloakId = keycloakUserId;
+            }
+            await this.userRepository.saveUser(user);
+        }
+        return this.keycloakService.login(loginDto.email, loginDto.password);
     }
 
     async refresh(refreshToken: string, language: string) {
-        const user: User = await this.userRepository.getUserByToken(refreshToken);
-        if (user) {
-            return this.authService.login(user, language);
+        // Check if refresh token is UUID
+        if (!isUUID(refreshToken)) {
+            const user: User = await this.userRepository.getUserByToken(refreshToken);
+            if (user) {
+                return this.authService.login(user, language);
+            }
         }
-        return null;
+
+        return await this.keycloakService.refreshToken(refreshToken);
     }
 
     async logout(token: any) {

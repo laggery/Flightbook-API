@@ -6,6 +6,7 @@ import { KeycloakConfig } from '../config/keycloak.config';
 import { HttpService } from '@nestjs/axios';
 import { Logger, UnauthorizedException } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
+import { User } from '../../user/user.entity';
 
 @Injectable()
 export class KeycloakService {
@@ -47,10 +48,14 @@ export class KeycloakService {
     return `${this.keycloakConfig.getBaseUrl()}/realms/${this.keycloakConfig.getRealm()}/protocol/openid-connect/userinfo`;
   }
 
+  private getUserByEmailUrl(email: string): string {
+    return `${this.keycloakConfig.getBaseUrl()}/admin/realms/${this.keycloakConfig.getRealm()}/users?email=${encodeURIComponent(email)}`;
+  }
+
   /**
    * Get Keycloak admin token
    */
-  async getAdminToken(): Promise<string> {
+  private async getAdminToken(): Promise<string> {
     const data = querystring.stringify({
       grant_type: 'password',
       client_id: 'admin-cli',
@@ -73,6 +78,13 @@ export class KeycloakService {
       this.logger.error('Failed to get admin token:', error);
       throw new Error('Failed to get admin token');
     }
+  }
+
+  /**
+   * Get Keycloak users URL
+   */
+  private getUsersUrl(): string {
+    return `${this.keycloakConfig.getBaseUrl()}/admin/realms/${this.keycloakConfig.getRealm()}/users`;
   }
 
   /**
@@ -107,29 +119,79 @@ export class KeycloakService {
     }
   }
 
-  /**
-   * Exchange Google token for Keycloak token
-   */
-  async exchangeGoogleToken(googleToken: string): Promise<any> {
-    const data = querystring.stringify({
-      grant_type: 'urn:ietf:params:oauth:grant-type:token-exchange',
-      client_id: this.keycloakConfig.getClientId(),
-      client_secret: this.keycloakConfig.getClientSecret(),
-      subject_token: googleToken,
-      subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
-      subject_issuer: 'google',
-    });
-
+  async getUserByEmail(email: string): Promise<any> {
     try {
-      const response = await axios.post(this.getTokenUrl(), data, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      });
-      return response.data;
+      const adminToken = await this.getAdminToken();
+      
+      const usersUrl = this.getUserByEmailUrl(email);
+      this.logger.log(`Getting user from Keycloak: ${usersUrl}`);
+      
+      const response = await firstValueFrom(
+        this.httpService.get(this.getUserByEmailUrl(email), {
+          headers: {
+            'Authorization': `Bearer ${adminToken}`,
+            'Content-Type': 'application/json'
+          }
+        })
+      );
+      
+      const users = response.data;
+      return users.length > 0 ? users[0] : null;
     } catch (error) {
-      this.logger.error('Google token exchange failed:', error.response?.data || error.message);
-      throw new Error('Google authentication failed');
+      this.logger.error(`Failed to get user from Keycloak: ${error.message}`);
+      return null;
+    }
+  }
+
+  /**
+   * Create a new user in Keycloak
+   * @param user The user to create in Keycloak
+   * @param password The initial password for the user
+   * @returns The Keycloak user ID
+   */
+  async createUser(user: User, password: string): Promise<string> {
+    try {
+      const adminToken = await this.getAdminToken();
+      
+      const userData = {
+        username: user.email,
+        email: user.email,
+        firstName: user.firstname,
+        lastName: user.lastname,
+        enabled: true,
+        emailVerified: true,
+        credentials: [
+          {
+            type: 'password',
+            value: password,
+            temporary: false
+          }
+        ],
+        attributes: {
+          flightbookUserId: [user.id.toString()]
+        }
+      };
+
+      this.logger.log(`Creating Keycloak user for: ${user.email}`);
+      
+      const response = await firstValueFrom(
+        this.httpService.post(this.getUsersUrl(), userData, {
+          headers: {
+            'Authorization': `Bearer ${adminToken}`,
+            'Content-Type': 'application/json'
+          }
+        })
+      );
+      
+      // Get the user ID from the Location header
+      const locationHeader = response.headers.location;
+      const userId = locationHeader.substring(locationHeader.lastIndexOf('/') + 1);
+      
+      this.logger.log(`Successfully created Keycloak user with ID: ${userId}`);
+      return userId;
+    } catch (error) {
+      this.logger.error('Error creating Keycloak user:', error.response?.data || error.message);
+      throw new Error('Failed to create user in Keycloak');
     }
   }
 
@@ -145,15 +207,14 @@ export class KeycloakService {
     });
 
     try {
-      const response = await axios.post(this.getTokenUrl(), data, {
+      const response = await firstValueFrom(this.httpService.post(this.getTokenUrl(), data, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-      });
+      }));
       return response.data;
     } catch (error) {
-      this.logger.error('Token refresh failed:', error.response?.data || error.message);
-      throw new Error('Token refresh failed');
+      return null;
     }
   }
 

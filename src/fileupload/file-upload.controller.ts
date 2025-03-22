@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileUploadService } from './file-upload.service';
-import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { CopyFileDto } from './interface/copyFile-dto';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ImportFacade } from '../import/import.facade';
@@ -21,6 +20,7 @@ import { ImportResultDto } from '../import/interface/import-result-dto';
 import { ImportType } from '../import/import-type';
 import { ImportException } from '../import/exception/import.exception';
 import { EmailService } from '../email/email.service';
+import { CompositeAuthGuard } from 'src/auth/guard/composite-auth.guard';
 
 @Controller('file')
 @ApiTags('File Upload')
@@ -34,7 +34,7 @@ export class FileUploadController {
   ) {
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CompositeAuthGuard)
   @Post('upload')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -53,27 +53,27 @@ export class FileUploadController {
     return this.fileUploadService.fileUpload(file, req.user.userId);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CompositeAuthGuard)
   @ApiParam({ name: 'filename', required: true, schema: { oneOf: [{ type: 'string' }] } })
   @Get('upload/url/:filename')
   async getSignedFileUploadUrl(@Request() req, @Param('filename') filename) {
     return this.fileUploadService.getSignedFileUploadUrl(filename, req.user.userId);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CompositeAuthGuard)
   @Post('copy')
   async copyFile(@Request() req, @Body() copyFile: CopyFileDto) {
     return this.fileUploadService.copyFile(req.user.userId, copyFile);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CompositeAuthGuard)
   @ApiParam({ name: 'filename', required: true, schema: { oneOf: [{ type: 'string' }] } })
   @Get(':filename')
   async getFile(@Request() req, @Param('filename') filename) {
     return await this.fileUploadService.getFile(req.user.userId, filename);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CompositeAuthGuard)
   @ApiParam({ name: 'filename', required: true, schema: { oneOf: [{ type: 'string' }] } })
   @Delete(':filename')
   @HttpCode(204)
@@ -82,7 +82,7 @@ export class FileUploadController {
   }
 
   @ApiOperation({ deprecated: true })
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(CompositeAuthGuard)
   @Post('import')
   @ApiConsumes('multipart/form-data')
   @ApiQuery({ name: 'type', required: true, enum: ImportType })
