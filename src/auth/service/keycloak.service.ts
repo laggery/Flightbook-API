@@ -149,7 +149,7 @@ export class KeycloakService {
    * @param password The initial password for the user
    * @returns The Keycloak user ID
    */
-  async createUser(user: User, password: string): Promise<string> {
+  async createUser(user: User, password: string, emailVerified: boolean): Promise<string> {
     try {
       const adminToken = await this.getAdminToken();
       
@@ -159,7 +159,7 @@ export class KeycloakService {
         firstName: user.firstname,
         lastName: user.lastname,
         enabled: true,
-        emailVerified: true,
+        emailVerified: emailVerified,
         credentials: [
           {
             type: 'password',
@@ -168,7 +168,7 @@ export class KeycloakService {
           }
         ],
         attributes: {
-          flightbookUserId: [user.id.toString()]
+          flightbookUserId: user.id ? [user.id.toString()] : []
         }
       };
 
@@ -330,6 +330,50 @@ export class KeycloakService {
     } catch (error) {
       this.logger.error('Password reset failed:', error.response?.data || error.message);
       throw new Error('Password reset failed');
+    }
+  }
+
+  /**
+   * Update an existing user in Keycloak
+   * @param userId The Keycloak user ID
+   * @param userData The user data to update
+   * @returns Promise<void>
+   */
+  async updateUser(keycloakId: string, user: User): Promise<void> {
+    try {
+      const adminToken = await this.getAdminToken();
+
+      const userData = {
+        username: user.email,
+        email: user.email,
+        firstName: user.firstname,
+        lastName: user.lastname,
+        enabled: true,
+        emailVerified: true,
+        attributes: {
+          flightbookUserId: [user.id.toString()]
+        }
+      };
+      
+      this.logger.log(`Updating Keycloak user with ID: ${keycloakId}`);
+      
+      await firstValueFrom(
+        this.httpService.put(
+          `${this.keycloakConfig.getBaseUrl()}/admin/realms/${this.keycloakConfig.getRealm()}/users/${keycloakId}`,
+          userData,
+          {
+            headers: {
+              'Authorization': `Bearer ${adminToken}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+      );
+      
+      this.logger.log(`Successfully updated Keycloak user with ID: ${keycloakId}`);
+    } catch (error) {
+      this.logger.error('Error updating Keycloak user:', error.response?.data || error.message);
+      throw new Error('Failed to update user in Keycloak');
     }
   }
 }

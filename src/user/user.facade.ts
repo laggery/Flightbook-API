@@ -15,6 +15,7 @@ import { PaymentFacade } from '../payment/payment-facade';
 import { EmailService } from '../email/email.service';
 import * as crypto from 'crypto';
 import { UserException } from './exception/user.exception';
+import { KeycloakService } from 'src/auth/service/keycloak.service';
 
 @Injectable()
 export class UserFacade {
@@ -23,7 +24,8 @@ export class UserFacade {
         private userRepository: UserRepository,
         private authService: AuthService,
         private paymentFacade: PaymentFacade,
-        private emailService: EmailService
+        private emailService: EmailService,
+        private keycloakService: KeycloakService
     ) {}
 
     async getCurrentUser(id: number): Promise<any> {
@@ -48,6 +50,9 @@ export class UserFacade {
         user.createdAt = new Date();
         user.paymentExempted = false;
         
+        const keycloakUserId = await this.keycloakService.createUser(user, userWriteDto.password, isInstructorApp);
+        user.keycloakId = keycloakUserId;
+
         if (isInstructorApp) {
             user.validatedAt = new Date();
         } else {
@@ -68,6 +73,9 @@ export class UserFacade {
 
         user.confirmationToken = null;
         user.validatedAt = new Date();
+        if (user.keycloakId) {
+            this.keycloakService.updateUser(user.keycloakId, user);
+        }
         await this.userRepository.saveUser(user);
     }
 

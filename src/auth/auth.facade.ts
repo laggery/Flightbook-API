@@ -40,7 +40,7 @@ export class AuthFacade {
             if (existingUser) {
                 validatedUser.keycloakId = existingUser.id;
             } else {
-                const keycloakUserId = await this.keycloakService.createUser(validatedUser, loginDto.password);
+                const keycloakUserId = await this.keycloakService.createUser(validatedUser, loginDto.password, true);
                 validatedUser.keycloakId = keycloakUserId;
             }
             await this.userRepository.saveUser(validatedUser);
