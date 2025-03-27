@@ -15,7 +15,6 @@ import { PaymentFacade } from '../payment/payment-facade';
 import { KeycloakService } from './service/keycloak.service';
 import { KeycloakStrategy } from './strategy/keycloak.strategy';
 import { KeycloakConfig } from './config/keycloak.config';
-import { AuthControllerV2 } from './auth.controllerV2';
 
 @Module({
   imports: [
@@ -49,7 +48,7 @@ import { AuthControllerV2 } from './auth.controllerV2';
     KeycloakService,
     KeycloakConfig
   ],
-  controllers: [AuthController, AuthControllerV2],
+  controllers: [AuthController],
   exports: [AuthService, KeycloakService, KeycloakConfig],
 })
 export class AuthModule { }

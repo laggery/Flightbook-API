@@ -24,24 +24,26 @@ export class AuthFacade {
 
     async login(loginDto: LoginDto, language: string) {
         const user = await this.userRepository.getUserByEmail(loginDto.email);
+        if (user?.confirmationToken) {
+            throw new UnauthorizedException('account not validated');
+        }
+
         if (!user || !user.keycloakId) {
             // Login with legacy and create keycloak user
-            const user = await this.authService.validateUser(loginDto.email, loginDto.password);
-            if (!user) {
+            const validatedUser = await this.authService.validateUser(loginDto.email, loginDto.password);
+            if (!validatedUser) {
                 throw new UnauthorizedException();
-            } else if (user.confirmationToken) {
-                throw new UnauthorizedException('account not validated');
             }
 
             // Migrate user to keycloak
             const existingUser = await this.keycloakService.getUserByEmail(user.email);
             if (existingUser) {
-                user.keycloakId = existingUser.keycloakId;
+                validatedUser.keycloakId = existingUser.id;
             } else {
-                const keycloakUserId = await this.keycloakService.createUser(user, loginDto.password);
-                user.keycloakId = keycloakUserId;
+                const keycloakUserId = await this.keycloakService.createUser(validatedUser, loginDto.password);
+                validatedUser.keycloakId = keycloakUserId;
             }
-            await this.userRepository.saveUser(user);
+            await this.userRepository.saveUser(validatedUser);
         }
         return this.keycloakService.login(loginDto.email, loginDto.password);
     }
@@ -58,7 +60,11 @@ export class AuthFacade {
         return await this.keycloakService.refreshToken(refreshToken);
     }
 
-    async logout(token: any) {
+    async logout(token: any, refreshToken: string) {
+        if (refreshToken && !isUUID(refreshToken)) {
+            await this.keycloakService.logout(refreshToken);
+        }
+        
         const user: User = await this.userRepository.getUserById(token.userId);
         user.clearToken();
         user.clearNotificationToken();
