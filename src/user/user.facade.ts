@@ -117,6 +117,10 @@ export class UserFacade {
         user.lastname = userWriteDto.lastname;
         user.phone = userWriteDto.phone;
 
+        if (user.keycloakId) {
+            await this.keycloakService.updateUser(user.keycloakId, user);
+        }
+
         const userResp: User = await this.userRepository.saveUser(user);
 
         if (oldEmail !== userResp.email) {

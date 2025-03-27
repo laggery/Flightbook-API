@@ -342,21 +342,33 @@ export class KeycloakService {
   async updateUser(keycloakId: string, user: User): Promise<void> {
     try {
       const adminToken = await this.getAdminToken();
+      
+      // First get the current user data
+      const response = await firstValueFrom(
+        this.httpService.get(
+          `${this.keycloakConfig.getBaseUrl()}/admin/realms/${this.keycloakConfig.getRealm()}/users/${keycloakId}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${adminToken}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+      );
+      
+      const userData = response.data;
 
-      const userData = {
-        username: user.email,
-        email: user.email,
-        firstName: user.firstname,
-        lastName: user.lastname,
-        enabled: true,
-        emailVerified: true,
-        attributes: {
-          flightbookUserId: [user.id.toString()]
-        }
-      };
+      userData.username = user.email;
+      userData.email = user.email;
+      userData.firstName = user.firstname;
+      userData.lastName = user.lastname;
+      userData.enabled = true;
+      userData.emailVerified = true;
+      userData.attributes = {
+        flightbookUserId: [user.id.toString()]
+      }
       
-      this.logger.log(`Updating Keycloak user with ID: ${keycloakId}`);
-      
+      // Send the update request with complete user data
       await firstValueFrom(
         this.httpService.put(
           `${this.keycloakConfig.getBaseUrl()}/admin/realms/${this.keycloakConfig.getRealm()}/users/${keycloakId}`,
