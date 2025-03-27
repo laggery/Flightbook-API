@@ -2,7 +2,7 @@ import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { SchoolDto } from './interface/school-dto';
 import { SchoolFacade } from './school.facade';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { CompositeAuthGuard } from 'src/auth/guard/composite-auth.guard';
+import { CompositeAuthGuard } from '../../auth/guard/composite-auth.guard';
 
 @Controller('schools')
 @ApiTags('School')

@@ -15,7 +15,7 @@ import { PaymentFacade } from '../payment/payment-facade';
 import { EmailService } from '../email/email.service';
 import * as crypto from 'crypto';
 import { UserException } from './exception/user.exception';
-import { KeycloakService } from 'src/auth/service/keycloak.service';
+import { KeycloakService } from '../auth/service/keycloak.service';
 
 @Injectable()
 export class UserFacade {

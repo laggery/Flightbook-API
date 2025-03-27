@@ -2,7 +2,7 @@ import { Controller, Get, Headers, HttpCode, Param, Post, Request, UseGuards } f
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { PaymentStatusDto } from './interface/payment-status-dto';
 import { PaymentFacade } from './payment-facade';
-import { CompositeAuthGuard } from 'src/auth/guard/composite-auth.guard';
+import { CompositeAuthGuard } from '../auth/guard/composite-auth.guard';
 
 @Controller('payments')
 @ApiTags('Payments')

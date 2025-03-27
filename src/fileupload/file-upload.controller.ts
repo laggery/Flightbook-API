@@ -20,7 +20,7 @@ import { ImportResultDto } from '../import/interface/import-result-dto';
 import { ImportType } from '../import/import-type';
 import { ImportException } from '../import/exception/import.exception';
 import { EmailService } from '../email/email.service';
-import { CompositeAuthGuard } from 'src/auth/guard/composite-auth.guard';
+import { CompositeAuthGuard } from '../auth/guard/composite-auth.guard';
 
 @Controller('file')
 @ApiTags('File Upload')

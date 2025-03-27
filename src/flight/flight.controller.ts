@@ -16,7 +16,7 @@ import { FlightFacade } from './flight.facade';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { PagerDto } from '../interface/pager-dto';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { CompositeAuthGuard } from 'src/auth/guard/composite-auth.guard';
+import { CompositeAuthGuard } from '../auth/guard/composite-auth.guard';
 @Controller('flights')
 @ApiTags('Flight')
 @ApiBearerAuth('jwt')

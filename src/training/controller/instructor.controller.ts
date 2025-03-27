@@ -1,5 +1,4 @@
 import { Body, Controller, Delete, Get, Headers, HttpCode, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 import { StudentGuard } from '../../auth/guard/student.guard';
 import { ControlSheetDto } from '../../training/control-sheet/interface/control-sheet-dto';
 import { FlightDto } from '../../flight/interface/flight-dto';
@@ -21,7 +20,7 @@ import { AppointmentTypeFacade } from '../appointment/appointment-type.facade';
 import { AppointmentTypeDto } from '../appointment/interface/appointment-type-dto';
 import { NoteDto } from '../note/interface/note-dto';
 import { NoteFacade } from '../note/note.facade';
-import { CompositeAuthGuard } from 'src/auth/guard/composite-auth.guard';
+import { CompositeAuthGuard } from '../../auth/guard/composite-auth.guard';
 
 @Controller('instructor')
 @ApiTags('Instructor')
