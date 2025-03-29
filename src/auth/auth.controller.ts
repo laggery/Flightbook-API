@@ -1,5 +1,4 @@
 import { Controller, Post, UseGuards, Request, Param, Get, HttpCode, Body, Headers } from '@nestjs/common';
-import { LocalAuthGuard } from './guard/local-auth.guard';
 import { CompositeAuthGuard } from './guard/composite-auth.guard';
 import { AuthFacade } from './auth.facade';
 import { LoginDto } from './interface/login-dto';
@@ -24,7 +23,7 @@ export class AuthController {
     @ApiOperation({ deprecated: true })
     @Get('refresh/:token')
     @ApiParam({name: 'token', required: true, schema: { oneOf: [{type: 'string'}]}})
-    async refresh(@Param('token') token, @Headers('accept-language') language: string) {
+    async refresh(@Param('token') token: string, @Headers('accept-language') language: string) {
         return this.authFacade.refresh(token, language);
     }
 
