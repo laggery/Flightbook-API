@@ -10,7 +10,6 @@ import { LoginType } from '../user/login-type';
 import { UserAlreadyExistsException } from '../user/exception/user-already-exists-exception';
 import { LoginDto } from './interface/login-dto';
 import { KeycloakService } from './service/keycloak.service';
-import { isUUID } from 'class-validator';
 
 @Injectable()
 export class AuthFacade {
@@ -45,12 +44,23 @@ export class AuthFacade {
             }
             await this.userRepository.saveUser(validatedUser);
         }
-        return this.keycloakService.login(loginDto.email, loginDto.password);
+        let keycloakLoginData = await this.keycloakService.login(loginDto.email, loginDto.password);
+        const previousLogin = user.lastLogin;
+        user.lastLogin = new Date();
+        await this.userRepository.saveUser(user);
+
+        if (!previousLogin && !user.paymentExempted && user.validatedAt != user.createdAt) {
+            this.emailService.sendWelcomeEmail(user, language);
+        }
+
+        keycloakLoginData.lastLogin = previousLogin;
+
+        return keycloakLoginData;
     }
 
     async refresh(refreshToken: string, language: string) {
         // Check if refresh token is UUID
-        if (!isUUID(refreshToken)) {
+        if (refreshToken?.length <= 36) {
             const user: User = await this.userRepository.getUserByToken(refreshToken);
             if (user) {
                 return this.authService.login(user, language);
@@ -61,7 +71,7 @@ export class AuthFacade {
     }
 
     async logout(token: any, refreshToken: string) {
-        if (refreshToken && !isUUID(refreshToken)) {
+        if (refreshToken && refreshToken.length > 36) {
             await this.keycloakService.logout(refreshToken);
         }
         
