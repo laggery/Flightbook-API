@@ -240,6 +240,7 @@ export class ImportFacade {
                                 type: "Point",
                                 coordinates: JSON.parse(sqlResults[0].st_asgeojson).coordinates
                             }
+                            takeoff.country = item.takeoff.countryIso.toLowerCase();
                         }
                         takeoff.user = user;
                     }
