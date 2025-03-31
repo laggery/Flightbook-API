@@ -1,0 +1,386 @@
+{
+    "list": {
+        "startItemIndex": 0,
+        "numberItemsRequested": 1000,
+        "numberItemsReturned": 2,
+        "numberItems": 2
+    },
+    "items": [
+        {
+            "id": 4866437,
+            "isSingle": true,
+            "timeClaim": "2024-07-25T14:33:15Z",
+            "timeLastChange": "2024-07-25T19:16:22Z",
+            "utcOffsetStart": 7200,
+            "numReplies": 0,
+            "numPhotos": 0,
+            "numFans": 0,
+            "comment": "",
+            "websiteUrl": "",
+            "replies": null,
+            "photos": null,
+            "countries": [
+                "CH"
+            ],
+            "league": {
+                "ident": "world2024",
+                "flight": {
+                    "isActive": true,
+                    "isPublic": true,
+                    "isValid": null,
+                    "link": "https:\/\/www.xcontest.org\/2024\/world\/en\/flights\/detail:laggery\/25.07.2024\/09:42"
+                },
+                "route": {
+                    "type": "FREE_TRIANGLE",
+                    "distance": 62.228,
+                    "duration": "PT03H15M19S",
+                    "avgSpeed": 19.116,
+                    "points": 87.12,
+                    "factor": 1.4,
+                    "turnpoints": [
+                        {
+                            "time": "2024-07-25T09:42:37Z",
+                            "altitude": 1944,
+                            "latitude": 46.37652,
+                            "longitude": 8.0309
+                        },
+                        {
+                            "time": "2024-07-25T11:14:08Z",
+                            "altitude": 3000,
+                            "latitude": 46.52743,
+                            "longitude": 8.2488
+                        },
+                        {
+                            "time": "2024-07-25T11:30:50Z",
+                            "altitude": 2935,
+                            "latitude": 46.55213,
+                            "longitude": 8.31338
+                        },
+                        {
+                            "time": "2024-07-25T12:57:18Z",
+                            "altitude": 1999,
+                            "latitude": 46.35182,
+                            "longitude": 8.00355
+                        },
+                        {
+                            "time": "2024-07-25T12:57:56Z",
+                            "altitude": 1983,
+                            "latitude": 46.35373,
+                            "longitude": 8.00817
+                        }
+                    ],
+                    "legs": [
+                        {
+                            "distance": 23.67,
+                            "duration": "PT01H31M31S",
+                            "avgSpeed": 15.518,
+                            "fraction": 0.38
+                        },
+                        {
+                            "distance": 5.652,
+                            "duration": "PT00H16M42S",
+                            "avgSpeed": 20.307,
+                            "fraction": 0.091
+                        },
+                        {
+                            "distance": 32.551,
+                            "duration": "PT01H26M28S",
+                            "avgSpeed": 22.587,
+                            "fraction": 0.523
+                        },
+                        {
+                            "distance": 27.102,
+                            "duration": "PT00H00M38S",
+                            "avgSpeed": 0,
+                            "fraction": 0.436
+                        }
+                    ]
+                }
+            },
+            "takeoff": {
+                "id": 10,
+                "name": "Riederalp",
+                "countryIso": "CH",
+                "countryName": "Switzerland"
+            },
+            "glider": {
+                "nameCompact": "OZONE Delta 2",
+                "classFAI": 3,
+                "subclass": "C"
+            },
+            "pointStart": {
+                "time": "2024-07-25T09:42:34Z",
+                "altitude": 1942,
+                "longitude": 8.03062,
+                "latitude": 46.37667
+            },
+            "pointEnd": {
+                "time": "2024-07-25T13:15:34Z",
+                "altitude": 797,
+                "longitude": 7.95435,
+                "latitude": 46.30768
+            },
+            "routeFreeDistance": {
+                "type": "FREE_DISTANCE",
+                "distance": 38.683,
+                "duration": "PT01H44M12S",
+                "avgSpeed": 22.274,
+                "turnpoints": [
+                    {
+                        "time": "2024-07-25T11:30:50Z",
+                        "altitude": 2935,
+                        "latitude": 46.55213,
+                        "longitude": 8.31338
+                    },
+                    {
+                        "time": "2024-07-25T13:15:02Z",
+                        "altitude": 798,
+                        "latitude": 46.30768,
+                        "longitude": 7.95425
+                    }
+                ]
+            },
+            "routeFreeFlight": {
+                "type": "FREE_FLIGHT",
+                "distance": 69.746,
+                "duration": "PT03H32M28S",
+                "avgSpeed": 19.696,
+                "turnpoints": [
+                    {
+                        "time": "2024-07-25T09:42:34Z",
+                        "altitude": 1942,
+                        "latitude": 46.37667,
+                        "longitude": 8.03062
+                    },
+                    {
+                        "time": "2024-07-25T10:37:39Z",
+                        "altitude": 2459,
+                        "latitude": 46.4464,
+                        "longitude": 8.16977
+                    },
+                    {
+                        "time": "2024-07-25T10:46:35Z",
+                        "altitude": 2933,
+                        "latitude": 46.46278,
+                        "longitude": 8.15443
+                    },
+                    {
+                        "time": "2024-07-25T11:30:50Z",
+                        "altitude": 2935,
+                        "latitude": 46.55213,
+                        "longitude": 8.31338
+                    },
+                    {
+                        "time": "2024-07-25T13:15:02Z",
+                        "altitude": 798,
+                        "latitude": 46.30768,
+                        "longitude": 7.95425
+                    }
+                ]
+            },
+            "stats": {
+                "duration": "PT03H33M00S",
+                "altitudeMax": 3323,
+                "altitudeGain": 1381,
+                "climbMax": 2.7,
+                "sinkMax": 2.63333333333,
+                "distanceStartEnd": 9650,
+                "distanceTracklog": 115639
+            },
+            "igc": {
+                "name": "47PLaYa1.igc",
+                "isValid": true,
+                "nameArchive": "laggery.2024-07-25.09-42-34.IGC"
+            },
+            "vars": []
+        },
+        {
+            "id": 4579422,
+            "isSingle": true,
+            "timeClaim": "2024-04-12T19:53:35Z",
+            "timeLastChange": "2024-04-12T19:54:52Z",
+            "utcOffsetStart": 7200,
+            "numReplies": 0,
+            "numPhotos": 0,
+            "numFans": 0,
+            "comment": "",
+            "websiteUrl": "",
+            "replies": null,
+            "photos": null,
+            "countries": [
+                "CH"
+            ],
+            "league": {
+                "ident": "world2024",
+                "flight": {
+                    "isActive": true,
+                    "isPublic": true,
+                    "isValid": null,
+                    "link": "https:\/\/www.xcontest.org\/2024\/world\/en\/flights\/detail:laggery\/12.04.2024\/10:42"
+                },
+                "route": {
+                    "type": "FREE_TRIANGLE",
+                    "distance": 61.284,
+                    "duration": "PT02H52M42S",
+                    "avgSpeed": 21.2915,
+                    "points": 85.8,
+                    "factor": 1.4,
+                    "turnpoints": [
+                        {
+                            "time": "2024-04-12T10:47:48Z",
+                            "altitude": 1901,
+                            "latitude": 46.37563,
+                            "longitude": 8.03142
+                        },
+                        {
+                            "time": "2024-04-12T10:51:16Z",
+                            "altitude": 1965,
+                            "latitude": 46.37658,
+                            "longitude": 8.03137
+                        },
+                        {
+                            "time": "2024-04-12T12:27:28Z",
+                            "altitude": 2304,
+                            "latitude": 46.53983,
+                            "longitude": 8.33315
+                        },
+                        {
+                            "time": "2024-04-12T13:40:30Z",
+                            "altitude": 1722,
+                            "latitude": 46.34683,
+                            "longitude": 8.02712
+                        },
+                        {
+                            "time": "2024-04-12T13:40:30Z",
+                            "altitude": 1722,
+                            "latitude": 46.34683,
+                            "longitude": 8.02712
+                        }
+                    ],
+                    "legs": [
+                        {
+                            "distance": 0.106,
+                            "duration": "PT00H03M28S",
+                            "avgSpeed": 1.835,
+                            "fraction": 0.002
+                        },
+                        {
+                            "distance": 29.392,
+                            "duration": "PT01H36M12S",
+                            "avgSpeed": 18.332,
+                            "fraction": 0.48
+                        },
+                        {
+                            "distance": 31.787,
+                            "duration": "PT01H13M02S",
+                            "avgSpeed": 26.114,
+                            "fraction": 0.519
+                        },
+                        {
+                            "distance": 3.324,
+                            "duration": "PT00H00M00S",
+                            "avgSpeed": 0,
+                            "fraction": 0.054
+                        }
+                    ]
+                }
+            },
+            "takeoff": {
+                "id": 10,
+                "name": "Riederalp",
+                "countryIso": "CH",
+                "countryName": "Switzerland"
+            },
+            "glider": {
+                "nameCompact": "OZONE Delta 2",
+                "classFAI": 3,
+                "subclass": "C"
+            },
+            "pointStart": {
+                "time": "2024-04-12T10:42:21Z",
+                "altitude": 1860,
+                "longitude": 8.03085,
+                "latitude": 46.37647
+            },
+            "pointEnd": {
+                "time": "2024-04-12T13:51:32Z",
+                "altitude": 730,
+                "longitude": 8.0146,
+                "latitude": 46.33512
+            },
+            "routeFreeDistance": {
+                "type": "FREE_DISTANCE",
+                "distance": 34.528,
+                "duration": "PT01H17M11S",
+                "avgSpeed": 26.841,
+                "turnpoints": [
+                    {
+                        "time": "2024-04-12T12:27:27Z",
+                        "altitude": 2307,
+                        "latitude": 46.53988,
+                        "longitude": 8.33308
+                    },
+                    {
+                        "time": "2024-04-12T13:44:38Z",
+                        "altitude": 1266,
+                        "latitude": 46.32405,
+                        "longitude": 8.00917
+                    }
+                ]
+            },
+            "routeFreeFlight": {
+                "type": "FREE_FLIGHT",
+                "distance": 65.843,
+                "duration": "PT03H02M17S",
+                "avgSpeed": 21.673,
+                "turnpoints": [
+                    {
+                        "time": "2024-04-12T10:47:40Z",
+                        "altitude": 1900,
+                        "latitude": 46.37587,
+                        "longitude": 8.0307
+                    },
+                    {
+                        "time": "2024-04-12T12:27:28Z",
+                        "altitude": 2304,
+                        "latitude": 46.53983,
+                        "longitude": 8.33315
+                    },
+                    {
+                        "time": "2024-04-12T13:44:41Z",
+                        "altitude": 1262,
+                        "latitude": 46.32385,
+                        "longitude": 8.0095
+                    },
+                    {
+                        "time": "2024-04-12T13:47:18Z",
+                        "altitude": 991,
+                        "latitude": 46.33488,
+                        "longitude": 8.01805
+                    },
+                    {
+                        "time": "2024-04-12T13:49:57Z",
+                        "altitude": 799,
+                        "latitude": 46.33448,
+                        "longitude": 8.01228
+                    }
+                ]
+            },
+            "stats": {
+                "duration": "PT03H09M11S",
+                "altitudeMax": 2753,
+                "altitudeGain": 893,
+                "climbMax": 3.43333333333,
+                "sinkMax": 3.56666666667,
+                "distanceStartEnd": 4764,
+                "distanceTracklog": 105397
+            },
+            "igc": {
+                "name": "44CLaYa1.igc",
+                "isValid": true,
+                "nameArchive": "laggery.2024-04-12.10-42-21.IGC"
+            },
+            "vars": []
+        }
+    ]
+}

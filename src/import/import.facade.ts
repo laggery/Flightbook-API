@@ -205,6 +205,136 @@ export class ImportFacade {
         return importResultDto;
     }
 
+    async importXContest(file: Express.Multer.File, userId: number): Promise<ImportResultDto> {
+        const user = await this.userRepository.getUserById(userId);
+
+        const gliders = [];
+        const places = [];
+        const flights = [];
+
+        // Parse XContest JSON data
+        try {
+            const jsonData = JSON.parse(file.buffer.toString());
+            
+            if (jsonData.items && Array.isArray(jsonData.items)) {
+                for (const item of jsonData.items) {
+                    // Extract glider
+                    let gliderInfo = item.glider ? item.glider.nameCompact || this.UNKNOWN : this.UNKNOWN;
+                    let [brand, ...nameParts] = gliderInfo.split(' ');
+                    let name = nameParts.join(' ');
+                    
+                    let glider = new Glider();
+                    glider.brand = brand || this.UNKNOWN;
+                    glider.name = name || this.UNKNOWN;
+                    glider.user = user;
+                    
+                    // Extract takeoff place
+                    let takeoff = new Place();
+                    if (item.takeoff && item.takeoff.name) {
+                        takeoff.name = item.takeoff.name;
+                        // Try to extract altitude from pointStart if available
+                        if (item.pointStart && item.pointStart.altitude) {
+                            takeoff.altitude = item.pointStart.altitude;
+                            let sqlResults = await this.placeRepository.convertEpsg4326toEpsg3857([item.pointStart.longitude, item.pointStart.latitude]);
+                            takeoff.point = {
+                                type: "Point",
+                                coordinates: JSON.parse(sqlResults[0].st_asgeojson).coordinates
+                            }
+                        }
+                        takeoff.user = user;
+                    }
+                    
+                    // Extract flight
+                    let flight = new Flight();
+                    
+                    // Parse date from pointStart time
+                    if (item.pointStart && item.pointStart.time) {
+                        flight.date = new Date(item.pointStart.time).toISOString().split('T')[0];
+                    }
+                    
+                    // Calculate flight time
+                    if (item.stats && item.stats.duration) {
+                        // Convert ISO8601 duration format (PT03H33M00S) to time string (03:33:00)
+                        const durationString = item.stats.duration;
+                        const durationRegex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
+                        const matches = durationString.match(durationRegex);
+                        
+                        if (matches) {
+                            const hours = matches[1] ? matches[1].padStart(2, '0') : '00';
+                            const minutes = matches[2] ? matches[2].padStart(2, '0') : '00';
+                            const seconds = matches[3] ? matches[3].padStart(2, '0') : '00';
+                            flight.time = `${hours}:${minutes}:${seconds}`;
+                        }
+                    }
+                    
+                    // Add distance information
+                    if (item.routeFreeFlight && item.routeFreeFlight.distance) {
+                        flight.km = item.routeFreeFlight.distance;
+                    }
+                    
+                    // Add any comment as description
+                    if (item.comment) {
+                        flight.description = item.comment;
+                    }
+                    
+                    flight.user = user;
+                    
+                    // Add glider to set if not already present
+                    let resGlider = gliders.find(
+                        (g: Glider) => g.brand.toLowerCase() === glider.brand.toLowerCase() && 
+                                       g.name.toLowerCase() === glider.name.toLowerCase()
+                    );
+                    
+                    if (resGlider) {
+                        flight.glider = resGlider;
+                    } else {
+                        flight.glider = glider;
+                        gliders.push(glider);
+                    }
+                    
+                    // Add takeoff place to set if not already present and if it has a name
+                    if (takeoff.name?.length > 0) {
+                        let resTakeoff = places.find(
+                            (p: Place) => p.name.toLowerCase() === takeoff.name.toLowerCase()
+                        );
+                        
+                        if (resTakeoff) {
+                            flight.start = resTakeoff;
+                        } else {
+                            flight.start = takeoff;
+                            places.push(takeoff);
+                        }
+                    }
+                    
+                    // Add flight to set
+                    flights.push(flight);
+                }
+            }
+        } catch (error) {
+            console.log('Error parsing XContest data:', error);
+            throw ImportException.importFailedException();
+        }
+
+        const importResultDto = new ImportResultDto();
+
+        // Save data in transaction
+        try {
+            await this.entityManager.transaction(async transactionalEntityManager => {
+                const gliderRepository = transactionalEntityManager.getRepository(Glider);
+                const placeRepository = transactionalEntityManager.getRepository(Place);
+                const flightRepository = transactionalEntityManager.getRepository(Flight);
+                importResultDto.glider = await this.saveGliders(gliders, user, gliderRepository);
+                importResultDto.place = await this.savePlaces(places, user, placeRepository);
+                importResultDto.flight = await this.saveFlights(flights, user, flightRepository);
+            })
+        } catch (error) {
+            console.log(error);
+            throw ImportException.importFailedException();
+        }
+
+        return importResultDto;
+    }
+
     async importCustom(file: Express.Multer.File, userId: number): Promise<ImportResultDto> {
         const records = [];
         // Pipe the stream into the csv parser
