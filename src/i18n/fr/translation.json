@@ -19,6 +19,11 @@
             "name": "Logfly",
             "description":"Il s'agit de données provenant de l'application Logfly. (Pas un export de Flightbook)",
             "fileType": "csv"
+        },
+        "xcontest": {
+            "name": "XContest.org",
+            "description":"Il s'agit de données provenant de l'application XContest.org.",
+            "fileType": "json"
         }
     }
 }

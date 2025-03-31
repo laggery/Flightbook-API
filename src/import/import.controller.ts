@@ -51,6 +51,13 @@ export class ImportController {
                     await this.logError(ImportType.FLUGBUCH, req.user.userId, file, e);
                     throw e;
                 }
+            case ImportType.XCONTEST:
+                try {
+                    return await this.importFacade.importXContest(file, req.user.userId);
+                } catch (e) {
+                    await this.logError(ImportType.XCONTEST, req.user.userId, file, e);
+                    throw e;
+                }
             case ImportType.CUSTOM:
                 try {
                     return await this.importFacade.importCustom(file, req.user.userId);

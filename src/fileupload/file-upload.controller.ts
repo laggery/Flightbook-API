@@ -110,6 +110,16 @@ export class FileUploadController {
           this.emailService.sendErrorMessageToAdmin(`${ImportType.FLUGBUCH} Import error`, content);
           throw e;
         }
+      case ImportType.XCONTEST:
+        try {
+          return await this.importFacade.importXContest(file, req.user.userId);
+        } catch (e) {
+          Logger.error('Import error', e.stack, 'importFacade.importXContest');
+          const key = await this.fileUploadService.uploadErrorImportFile(req.user.userId, file);
+          const content = `<p>Import has failed for user id: ${req.user.userId} with object key: ${key}<p>`;
+          this.emailService.sendErrorMessageToAdmin(`${ImportType.FLUGBUCH} Import error`, content);
+          throw e;
+        }  
       case ImportType.CUSTOM:
         try {
           return await this.importFacade.importCustom(file, req.user.userId);

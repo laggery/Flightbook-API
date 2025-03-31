@@ -19,6 +19,11 @@
             "name": "Logfly",
             "description":"You can import data from the Logfly application. (Not for Flightbook exports)",
             "fileType": "csv"
+        },
+        "xcontest": {
+            "name": "XContest.org",
+            "description":"You can import data from the XContest.org application.",
+            "fileType": "json"
         }
     }
 }
