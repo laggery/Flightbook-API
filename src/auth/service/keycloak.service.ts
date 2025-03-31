@@ -64,14 +64,16 @@ export class KeycloakService {
     });
 
     try {
-      const response = await axios.post(
-        `${this.keycloakConfig.getBaseUrl()}/realms/master/protocol/openid-connect/token`,
-        data,
-        {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
+      const response = await firstValueFrom(
+        this.httpService.post(
+          `${this.keycloakConfig.getBaseUrl()}/realms/master/protocol/openid-connect/token`,
+          data,
+          {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
           },
-        },
+        ),
       );
       return response.data.access_token;
     } catch (error) {
@@ -297,13 +299,15 @@ export class KeycloakService {
       const adminToken = await this.getAdminToken();
       
       // Get user ID by email
-      const userResponse = await axios.get(
-        `${this.keycloakConfig.getBaseUrl()}/admin/realms/${this.keycloakConfig.getRealm()}/users?email=${encodeURIComponent(email)}`,
-        {
-          headers: {
-            Authorization: `Bearer ${adminToken}`,
+      const userResponse = await firstValueFrom(
+        this.httpService.get(
+          `${this.keycloakConfig.getBaseUrl()}/admin/realms/${this.keycloakConfig.getRealm()}/users?email=${encodeURIComponent(email)}`,
+          {
+            headers: {
+              Authorization: `Bearer ${adminToken}`,
+            },
           },
-        },
+        ),
       );
       
       if (!userResponse.data || userResponse.data.length === 0) {
@@ -313,19 +317,21 @@ export class KeycloakService {
       const userId = userResponse.data[0].id;
       
       // Execute reset password action
-      await axios.put(
-        `${this.keycloakConfig.getBaseUrl()}/admin/realms/${this.keycloakConfig.getRealm()}/users/${userId}/execute-actions-email`,
-        ['UPDATE_PASSWORD'],
-        {
-          headers: {
-            Authorization: `Bearer ${adminToken}`,
-            'Content-Type': 'application/json',
+      await firstValueFrom(
+        this.httpService.put(
+          `${this.keycloakConfig.getBaseUrl()}/admin/realms/${this.keycloakConfig.getRealm()}/users/${userId}/execute-actions-email`,
+          ['UPDATE_PASSWORD'],
+          {
+            headers: {
+              Authorization: `Bearer ${adminToken}`,
+              'Content-Type': 'application/json',
+            },
+            params: {
+              client_id: this.keycloakConfig.getClientId(),
+              redirect_uri: this.configService.get<string>('APP_URL'),
+            },
           },
-          params: {
-            client_id: this.keycloakConfig.getClientId(),
-            redirect_uri: this.configService.get<string>('APP_URL'),
-          },
-        },
+        ),
       );
     } catch (error) {
       this.logger.error('Password reset failed:', error.response?.data || error.message);
@@ -386,6 +392,79 @@ export class KeycloakService {
     } catch (error) {
       this.logger.error('Error updating Keycloak user:', error.response?.data || error.message);
       throw new Error('Failed to update user in Keycloak');
+    }
+  }
+
+  async changePassword(user: User, currentPassword: string, newPassword: string): Promise<void> {
+    try {
+      // Check if user exists
+      const adminToken = await this.getAdminToken();
+      const userResponse = await firstValueFrom(
+        this.httpService.get(
+          `${this.keycloakConfig.getBaseUrl()}/admin/realms/${this.keycloakConfig.getRealm()}/users/${user.keycloakId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${adminToken}`,
+            },
+          },
+        ),
+      );
+      if (!userResponse.data) {
+        throw new Error('User not found in Keycloak');
+      }
+
+      // Validate current password
+      const isValidPassword = await this.validateUserPassword(user, currentPassword);
+      if (!isValidPassword) {
+        throw new Error('Current password is invalid');
+      }
+
+      // Set new password
+      await firstValueFrom(
+        this.httpService.put(
+          `${this.keycloakConfig.getBaseUrl()}/admin/realms/${this.keycloakConfig.getRealm()}/users/${user.keycloakId}/reset-password`,
+          {
+            type: 'password',
+            value: newPassword,
+            temporary: false,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${adminToken}`,
+              'Content-Type': 'application/json',
+            },
+          },
+        ),
+      );
+    } catch (error) {
+      this.logger.error('Error changing password:', error.response?.data || error.message);
+      throw new Error('Failed to change password');
+    }
+  }
+
+  // Helper function to validate user password
+  private async validateUserPassword(user: User, password: string): Promise<boolean> {
+    try {
+      const payload = new URLSearchParams({
+        username: user.email,
+        password,
+        grant_type: 'password',
+        client_id: this.keycloakConfig.getClientId(),
+        client_secret: this.keycloakConfig.getClientSecret(),
+        scope: 'openid profile email'
+      });
+
+      await firstValueFrom(
+        this.httpService.post(this.getTokenUrl(), payload.toString(), {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        })
+      );
+
+      return true;
+    } catch (error) {
+      return false;
     }
   }
 }
