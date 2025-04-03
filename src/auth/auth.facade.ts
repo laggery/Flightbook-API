@@ -1,7 +1,7 @@
 import { Injectable, HttpException, UnauthorizedException } from '@nestjs/common';
 import { User } from '../user/user.entity';
 import { UserRepository } from '../user/user.repository';
-import { AuthService } from './auth.service';
+import { AuthService } from './service/auth.service';
 import { EmailBodyDto } from '../email/email-body-dto';
 import { EmailService } from '../email/email.service';
 import { OAuth2Client } from 'google-auth-library';
@@ -22,7 +22,7 @@ export class AuthFacade {
     ) { }
 
     async login(loginDto: LoginDto, language: string) {
-        const user = await this.userRepository.getUserByEmail(loginDto.email);
+        let user = await this.userRepository.getUserByEmail(loginDto.email);
         if (user?.confirmationToken) {
             throw new UnauthorizedException('account not validated');
         }
@@ -46,7 +46,7 @@ export class AuthFacade {
                 const keycloakUserId = await this.keycloakService.createUser(validatedUser, loginDto.password, true);
                 validatedUser.keycloakId = keycloakUserId;
             }
-            await this.userRepository.saveUser(validatedUser);
+            user = await this.userRepository.saveUser(validatedUser);
         }
         let keycloakLoginData = await this.keycloakService.login(loginDto.email, loginDto.password);
         const previousLogin = user.lastLogin;

@@ -5,7 +5,7 @@ import { User } from './user.entity';
 import { UserAlreadyExistsException } from './exception/user-already-exists-exception';
 import { InvalidUserException } from './exception/invalid-user-exception';
 import { plainToClass } from 'class-transformer';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../auth/service/auth.service';
 import { UserReadDto } from './interface/user-read-dto';
 import { UserPasswordWriteDto } from './interface/user-password-write-dto';
 import { InvalidPasswordException } from './exception/invalid-password-exception';

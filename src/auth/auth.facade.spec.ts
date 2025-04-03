@@ -2,7 +2,7 @@ import { AuthFacade } from './auth.facade';
 import { TestBed } from '@automock/jest';
 import { UserRepository } from '../user/user.repository';
 import { UserFacade } from '../user/user.facade';
-import { AuthService } from './auth.service';
+import { AuthService } from './service/auth.service';
 import { EmailService } from '../email/email.service';
 
 describe('AuthFacade', () => {
