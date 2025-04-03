@@ -21,6 +21,9 @@ docker-compose -f docker/docker-compose.yml up -d
 
 Create a .env file
 ```
+ENV=local
+LOG_LEVELS=log,error,warn,debug,verbose
+
 DATABASE_HOST=localhost
 DATABASE_PORT=5432
 DATABASE_USER=flightbook_dev

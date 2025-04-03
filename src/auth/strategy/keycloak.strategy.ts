@@ -24,19 +24,17 @@ export class KeycloakStrategy extends PassportStrategy(Strategy, 'keycloak') {
       }),
       algorithms: ['RS256'], // Keycloak's default algorithm
     });
-    
-    this.logger.log(`Keycloak strategy initialized with client ID: ${keycloakConfig.getClientId()}`);
   }
 
   async validate(payload: any) {
     try {
       if (!payload) {
-        this.logger.error('No payload in token');
+        this.logger.debug('No payload in token');
         throw new UnauthorizedException('Invalid token - no payload');
       }
       
       if (!payload.sub) {
-        this.logger.error('No sub claim in token payload');
+        this.logger.debug('No sub claim in token payload');
         throw new UnauthorizedException('Invalid token - missing subject');
       }
       
@@ -44,7 +42,7 @@ export class KeycloakStrategy extends PassportStrategy(Strategy, 'keycloak') {
       const user = await this.userRepository.getUserByKeycloakId(payload.sub);
       
       if (!user) {
-        this.logger.error(`User with Keycloak ID ${payload.sub} not found`);
+        this.logger.debug(`User with Keycloak ID ${payload.sub} not found`);
         throw new UnauthorizedException('User not found');
       }
       
@@ -54,7 +52,7 @@ export class KeycloakStrategy extends PassportStrategy(Strategy, 'keycloak') {
         keycloakId: user.keycloakId
       };
     } catch (error) {
-      this.logger.error(`Token validation error: ${error.message}`);
+      this.logger.debug(`Token validation error: ${error.message}`);
       throw new UnauthorizedException('Invalid token');
     }
   }

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import axios from 'axios';
 import * as querystring from 'querystring';
 import { KeycloakConfig } from '../config/keycloak.config';
 import { HttpService } from '@nestjs/axios';
@@ -16,16 +15,7 @@ export class KeycloakService {
     private configService: ConfigService,
     private readonly httpService: HttpService,
     private keycloakConfig: KeycloakConfig
-  ) {
-    // Log all configuration values to help debug
-    this.logger.log(`Keycloak Configuration:`);
-    this.logger.log(`Base URL: ${this.keycloakConfig.getBaseUrl()}`);
-    this.logger.log(`Realm: ${this.keycloakConfig.getRealm()}`);
-    this.logger.log(`Client ID: ${this.keycloakConfig.getClientId()}`);
-    this.logger.log(`Client Secret: ${this.keycloakConfig.getClientSecret() ? 'Set' : 'Not Set'}`);
-    this.logger.log(`Token URL: ${this.keycloakConfig.getTokenUrl()}`);
-    this.logger.log(`Certs URL: ${this.keycloakConfig.getCertsUrl()}`);
-  }
+  ) {}
 
   /**
    * Get Keycloak token URL
@@ -77,7 +67,7 @@ export class KeycloakService {
       );
       return response.data.access_token;
     } catch (error) {
-      this.logger.error('Failed to get admin token:', error);
+      this.logger.debug('Failed to get admin token:', error);
       throw new Error('Failed to get admin token');
     }
   }
@@ -103,8 +93,6 @@ export class KeycloakService {
         scope: 'openid profile email'
       });
 
-      this.logger.log(`Attempting login for user: ${username}`);
-      
       const response = await firstValueFrom(
         this.httpService.post(this.getTokenUrl(), payload.toString(), {
           headers: {
@@ -113,10 +101,9 @@ export class KeycloakService {
         })
       );
 
-      this.logger.log(`Successful login for user: ${username}`);
       return response.data;
     } catch (error) {
-      this.logger.error('Login error:', error.response?.data || error.message);
+      this.logger.debug('Login error:', error.response?.data || error.message);
       throw new UnauthorizedException('Invalid credentials');
     }
   }
@@ -124,9 +111,6 @@ export class KeycloakService {
   async getUserByEmail(email: string): Promise<any> {
     try {
       const adminToken = await this.getAdminToken();
-      
-      const usersUrl = this.getUserByEmailUrl(email);
-      this.logger.log(`Getting user from Keycloak: ${usersUrl}`);
       
       const response = await firstValueFrom(
         this.httpService.get(this.getUserByEmailUrl(email), {
@@ -140,7 +124,7 @@ export class KeycloakService {
       const users = response.data;
       return users.length > 0 ? users[0] : null;
     } catch (error) {
-      this.logger.error(`Failed to get user from Keycloak: ${error.message}`);
+      this.logger.debug(`Failed to get user from Keycloak: ${error.message}`);
       return null;
     }
   }
@@ -173,8 +157,6 @@ export class KeycloakService {
           flightbookUserId: user.id ? [user.id.toString()] : []
         }
       };
-
-      this.logger.log(`Creating Keycloak user for: ${user.email}`);
       
       const response = await firstValueFrom(
         this.httpService.post(this.getUsersUrl(), userData, {
@@ -189,10 +171,9 @@ export class KeycloakService {
       const locationHeader = response.headers.location;
       const userId = locationHeader.substring(locationHeader.lastIndexOf('/') + 1);
       
-      this.logger.log(`Successfully created Keycloak user with ID: ${userId}`);
       return userId;
     } catch (error) {
-      this.logger.error('Error creating Keycloak user:', error.response?.data || error.message);
+      this.logger.debug('Error creating Keycloak user:', error.response?.data || error.message);
       throw new Error('Failed to create user in Keycloak');
     }
   }
@@ -230,8 +211,6 @@ export class KeycloakService {
         client_secret: this.keycloakConfig.getClientSecret(),
         refresh_token: refreshToken,
       });
-
-      this.logger.log('Logging out user');
       
       await firstValueFrom(
         this.httpService.post(this.getLogoutUrl(), payload.toString(), {
@@ -240,10 +219,8 @@ export class KeycloakService {
           },
         })
       );
-      
-      this.logger.log('User logged out successfully');
     } catch (error) {
-      this.logger.error('Logout error:', error.response?.data || error.message);
+      this.logger.debug('Logout error:', error.response?.data || error.message);
       // We don't throw here as logout should succeed even if Keycloak fails
     }
   }
@@ -253,8 +230,6 @@ export class KeycloakService {
    */
   async getUserInfo(accessToken: string): Promise<any> {
     try {
-      this.logger.log('Fetching user info from Keycloak');
-      
       const response = await firstValueFrom(
         this.httpService.get(this.getUserInfoUrl(), {
           headers: {
@@ -263,10 +238,9 @@ export class KeycloakService {
         })
       );
 
-      this.logger.log(`User info fetched successfully`);
       return response.data;
     } catch (error) {
-      this.logger.error('Error fetching user info:', error.response?.data || error.message);
+      this.logger.debug('Error fetching user info:', error.response?.data || error.message);
       throw new UnauthorizedException('Invalid token');
     }
   }
@@ -276,16 +250,13 @@ export class KeycloakService {
    */
   async getJwks(): Promise<any> {
     try {
-      this.logger.log(`Fetching JWKS from: ${this.keycloakConfig.getCertsUrl()}`);
-      
       const response = await firstValueFrom(
         this.httpService.get(this.keycloakConfig.getCertsUrl())
       );
 
-      this.logger.log('JWKS fetched successfully');
       return response.data;
     } catch (error) {
-      this.logger.error('Error fetching JWKS:', error.response?.data || error.message);
+      this.logger.debug('Error fetching JWKS:', error.response?.data || error.message);
       throw new Error('Failed to fetch JWT signing keys');
     }
   }
@@ -334,7 +305,7 @@ export class KeycloakService {
         ),
       );
     } catch (error) {
-      this.logger.error('Password reset failed:', error.response?.data || error.message);
+      this.logger.debug('Password reset failed:', error.response?.data || error.message);
       throw new Error('Password reset failed');
     }
   }
@@ -386,11 +357,9 @@ export class KeycloakService {
             }
           }
         )
-      );
-      
-      this.logger.log(`Successfully updated Keycloak user with ID: ${keycloakId}`);
+      );  
     } catch (error) {
-      this.logger.error('Error updating Keycloak user:', error.response?.data || error.message);
+      this.logger.debug('Error updating Keycloak user:', error.response?.data || error.message);
       throw new Error('Failed to update user in Keycloak');
     }
   }
@@ -431,7 +400,7 @@ export class KeycloakService {
         ),
       );
     } catch (error) {
-      this.logger.error('Error changing password:', error.response?.data || error.message);
+      this.logger.debug('Error changing password:', error.response?.data || error.message);
       throw new Error('Failed to change password');
     }
   }

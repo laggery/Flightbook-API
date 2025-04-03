@@ -10,7 +10,7 @@ export class CompositeAuthGuard {
 
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     return this.tryKeycloak(context).catch(err => {
-      this.logger.log('Keycloak authentication failed, trying JWT...');
+      this.logger.debug('Keycloak authentication failed, trying JWT...');
       return this.tryJwt(context);
     });
   }
@@ -21,25 +21,25 @@ export class CompositeAuthGuard {
       // Handle different return types
       if (typeof result === 'boolean') {
         if (result) {
-          this.logger.log('JWT authentication successful');
+          this.logger.debug('JWT authentication successful');
         }
         return result;
       } else if (isObservable(result)) {
         const value = await firstValueFrom(result);
         if (value) {
-          this.logger.log('JWT authentication successful');
+          this.logger.debug('JWT authentication successful');
         }
         return value;
       } else {
         // It's a Promise
         const value = await result;
         if (value) {
-          this.logger.log('JWT authentication successful');
+          this.logger.debug('JWT authentication successful');
         }
         return value;
       }
     } catch (error) {
-      this.logger.error(`JWT auth failed: ${error.message}`);
+      this.logger.debug(`JWT auth failed: ${error.message}`);
       throw error;
     }
   }
@@ -50,20 +50,20 @@ export class CompositeAuthGuard {
       // Handle different return types
       if (typeof result === 'boolean') {
         if (result) {
-          this.logger.log('Keycloak authentication successful');
+          this.logger.debug('Keycloak authentication successful');
         }
         return result;
       } else if (isObservable(result)) {
         const value = await firstValueFrom(result);
         if (value) {
-          this.logger.log('Keycloak authentication successful');
+          this.logger.debug('Keycloak authentication successful');
         }
         return value;
       } else {
         // It's a Promise
         const value = await result;
         if (value) {
-          this.logger.log('Keycloak authentication successful');
+          this.logger.debug('Keycloak authentication successful');
         }
         return value;
       }
