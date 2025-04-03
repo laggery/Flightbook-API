@@ -395,7 +395,7 @@ export class KeycloakService {
     }
   }
 
-  async changePassword(user: User, currentPassword: string, newPassword: string): Promise<void> {
+  public async changePassword(user: User, newPassword: string): Promise<void> {
     try {
       // Check if user exists
       const adminToken = await this.getAdminToken();
@@ -411,12 +411,6 @@ export class KeycloakService {
       );
       if (!userResponse.data) {
         throw new Error('User not found in Keycloak');
-      }
-
-      // Validate current password
-      const isValidPassword = await this.validateUserPassword(user, currentPassword);
-      if (!isValidPassword) {
-        throw new Error('Current password is invalid');
       }
 
       // Set new password
@@ -442,8 +436,7 @@ export class KeycloakService {
     }
   }
 
-  // Helper function to validate user password
-  private async validateUserPassword(user: User, password: string): Promise<boolean> {
+  public async validateUserPassword(user: User, password: string): Promise<boolean> {
     try {
       const payload = new URLSearchParams({
         username: user.email,

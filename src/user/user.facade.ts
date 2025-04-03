@@ -137,7 +137,12 @@ export class UserFacade {
         const user: User = await this.userRepository.getUserById(id);
 
         if (user.keycloakId) {
-            await this.keycloakService.changePassword(user, userPasswordWriteDto.oldPassword, userPasswordWriteDto.newPassword);
+            // Validate current password
+            const isValidPassword = await this.keycloakService.validateUserPassword(user, userPasswordWriteDto.oldPassword);
+            if (!isValidPassword) {
+                throw new InvalidOldPasswordException();
+            }
+            await this.keycloakService.changePassword(user, userPasswordWriteDto.newPassword);
         } else {
             const validatedUser = await this.authService.validateUser(user.email, userPasswordWriteDto.oldPassword);
             if (!validatedUser) {
@@ -148,6 +153,7 @@ export class UserFacade {
             const keycloakUser = await this.keycloakService.getUserByEmail(user.email);
             if (keycloakUser) {
                 user.keycloakId = keycloakUser.id;
+                await this.keycloakService.changePassword(user, userPasswordWriteDto.newPassword);
             } else {
                 const keycloakUserId = await this.keycloakService.createUser(user, userPasswordWriteDto.newPassword, true);
                 user.keycloakId = keycloakUserId;

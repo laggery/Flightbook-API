@@ -27,6 +27,10 @@ export class AuthFacade {
             throw new UnauthorizedException('account not validated');
         }
 
+        if (!user?.enabled) {
+            throw new UnauthorizedException('account disabled');
+        }
+
         if (!user || !user.keycloakId) {
             // Login with legacy and create keycloak user
             const validatedUser = await this.authService.validateUser(loginDto.email, loginDto.password);
@@ -81,18 +85,33 @@ export class AuthFacade {
         await this.userRepository.saveUser(user);
     }
 
-    async resetPassword(email) {
+    async resetPassword(email: string): Promise<void> {
         if (!new RegExp('^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$').test(email)) {
             return;
         }
 
         const user = await this.userRepository.getUserByEmail(email);
 
-        if (!user || user?.loginType != LoginType.LOCAL || !user.enabled) {
+        if (!user || !user.enabled) {
             return;
         }
 
         const newPassword = Math.random().toString(36).slice(-8);
+
+        if (user.keycloakId) {
+            await this.keycloakService.changePassword(user, newPassword);
+        } else {
+            // Check if user exists in keycloak and create if not
+            const keycloakUser = await this.keycloakService.getUserByEmail(user.email);
+            if (keycloakUser) {
+                user.keycloakId = keycloakUser.id;
+                await this.keycloakService.changePassword(user, newPassword);
+            } else {
+                const keycloakUserId = await this.keycloakService.createUser(user, newPassword, true);
+                user.keycloakId = keycloakUserId;
+            }
+        }
+
         user.password = await this.authService.hashPassword(newPassword);
         user.passwordRequestedAt = new Date();
         await this.userRepository.saveUser(user);
