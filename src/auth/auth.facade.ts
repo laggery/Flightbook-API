@@ -63,7 +63,7 @@ export class AuthFacade {
     }
 
     async refresh(refreshToken: string, language: string) {
-        // Check if refresh token is UUID
+        // Check if refresh token is legacy token
         if (refreshToken?.length <= 36) {
             const user: User = await this.userRepository.getUserByToken(refreshToken);
             if (user) {
