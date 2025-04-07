@@ -54,7 +54,7 @@ export class UserFacade {
         user.keycloakId = keycloakUserId;
 
         if (isInstructorApp) {
-            user.validatedAt = new Date();
+            user.validatedAt = user.createdAt;
         } else {
             user.confirmationToken = crypto.randomBytes(32).toString('hex');
             await this.emailService.sendEmailVerification(user.email, user.confirmationToken, language);

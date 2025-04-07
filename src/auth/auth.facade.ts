@@ -53,7 +53,7 @@ export class AuthFacade {
         user.lastLogin = new Date();
         await this.userRepository.saveUser(user);
 
-        if (!previousLogin && !user.paymentExempted && user.validatedAt != user.createdAt) {
+        if (!previousLogin && !user.paymentExempted && user.validatedAt.toISOString() !== user.createdAt.toISOString()) {
             this.emailService.sendWelcomeEmail(user, language);
         }
 
