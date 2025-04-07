@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import * as querystring from 'querystring';
 import { KeycloakConfig } from '../config/keycloak.config';
 import { HttpService } from '@nestjs/axios';
@@ -12,35 +11,9 @@ export class KeycloakService {
   private readonly logger = new Logger(KeycloakService.name);
 
   constructor(
-    private configService: ConfigService,
     private readonly httpService: HttpService,
-    private keycloakConfig: KeycloakConfig
+    private readonly keycloakConfig: KeycloakConfig
   ) {}
-
-  /**
-   * Get Keycloak token URL
-   */
-  private getTokenUrl(): string {
-    return `${this.keycloakConfig.getBaseUrl()}/realms/${this.keycloakConfig.getRealm()}/protocol/openid-connect/token`;
-  }
-
-  /**
-   * Get Keycloak logout URL
-   */
-  private getLogoutUrl(): string {
-    return `${this.keycloakConfig.getBaseUrl()}/realms/${this.keycloakConfig.getRealm()}/protocol/openid-connect/logout`;
-  }
-
-  /**
-   * Get Keycloak user info URL
-   */
-  private getUserInfoUrl(): string {
-    return `${this.keycloakConfig.getBaseUrl()}/realms/${this.keycloakConfig.getRealm()}/protocol/openid-connect/userinfo`;
-  }
-
-  private getUserByEmailUrl(email: string): string {
-    return `${this.keycloakConfig.getBaseUrl()}/admin/realms/${this.keycloakConfig.getRealm()}/users?email=${encodeURIComponent(email)}`;
-  }
 
   /**
    * Get Keycloak admin token
@@ -56,7 +29,7 @@ export class KeycloakService {
     try {
       const response = await firstValueFrom(
         this.httpService.post(
-          `${this.keycloakConfig.getBaseUrl()}/realms/master/protocol/openid-connect/token`,
+          this.keycloakConfig.getAdminTokenUrl(),
           data,
           {
             headers: {
@@ -70,13 +43,6 @@ export class KeycloakService {
       this.logger.debug('Failed to get admin token:', error);
       throw new Error('Failed to get admin token');
     }
-  }
-
-  /**
-   * Get Keycloak users URL
-   */
-  private getUsersUrl(): string {
-    return `${this.keycloakConfig.getBaseUrl()}/admin/realms/${this.keycloakConfig.getRealm()}/users`;
   }
 
   /**
@@ -94,7 +60,7 @@ export class KeycloakService {
       });
 
       const response = await firstValueFrom(
-        this.httpService.post(this.getTokenUrl(), payload.toString(), {
+        this.httpService.post(this.keycloakConfig.getTokenUrl(), payload.toString(), {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
@@ -113,7 +79,7 @@ export class KeycloakService {
       const adminToken = await this.getAdminToken();
       
       const response = await firstValueFrom(
-        this.httpService.get(this.getUserByEmailUrl(email), {
+        this.httpService.get(this.keycloakConfig.getUserByEmailUrl(email), {
           headers: {
             'Authorization': `Bearer ${adminToken}`,
             'Content-Type': 'application/json'
@@ -159,7 +125,7 @@ export class KeycloakService {
       };
       
       const response = await firstValueFrom(
-        this.httpService.post(this.getUsersUrl(), userData, {
+        this.httpService.post(this.keycloakConfig.getUsersUrl(), userData, {
           headers: {
             'Authorization': `Bearer ${adminToken}`,
             'Content-Type': 'application/json'
@@ -190,7 +156,7 @@ export class KeycloakService {
     });
 
     try {
-      const response = await firstValueFrom(this.httpService.post(this.getTokenUrl(), data, {
+      const response = await firstValueFrom(this.httpService.post(this.keycloakConfig.getTokenUrl(), data, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
@@ -213,7 +179,7 @@ export class KeycloakService {
       });
       
       await firstValueFrom(
-        this.httpService.post(this.getLogoutUrl(), payload.toString(), {
+        this.httpService.post(this.keycloakConfig.getLogoutUrl(), payload.toString(), {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
@@ -231,7 +197,7 @@ export class KeycloakService {
   async getUserInfo(accessToken: string): Promise<any> {
     try {
       const response = await firstValueFrom(
-        this.httpService.get(this.getUserInfoUrl(), {
+        this.httpService.get(this.keycloakConfig.getUserInfoUrl(), {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -262,55 +228,6 @@ export class KeycloakService {
   }
 
   /**
-   * Reset password
-   */
-  async resetPassword(email: string): Promise<void> {
-    try {
-      // Get admin token
-      const adminToken = await this.getAdminToken();
-      
-      // Get user ID by email
-      const userResponse = await firstValueFrom(
-        this.httpService.get(
-          `${this.keycloakConfig.getBaseUrl()}/admin/realms/${this.keycloakConfig.getRealm()}/users?email=${encodeURIComponent(email)}`,
-          {
-            headers: {
-              Authorization: `Bearer ${adminToken}`,
-            },
-          },
-        ),
-      );
-      
-      if (!userResponse.data || userResponse.data.length === 0) {
-        throw new Error('User not found');
-      }
-      
-      const userId = userResponse.data[0].id;
-      
-      // Execute reset password action
-      await firstValueFrom(
-        this.httpService.put(
-          `${this.keycloakConfig.getBaseUrl()}/admin/realms/${this.keycloakConfig.getRealm()}/users/${userId}/execute-actions-email`,
-          ['UPDATE_PASSWORD'],
-          {
-            headers: {
-              Authorization: `Bearer ${adminToken}`,
-              'Content-Type': 'application/json',
-            },
-            params: {
-              client_id: this.keycloakConfig.getClientId(),
-              redirect_uri: this.configService.get<string>('APP_URL'),
-            },
-          },
-        ),
-      );
-    } catch (error) {
-      this.logger.debug('Password reset failed:', error.response?.data || error.message);
-      throw new Error('Password reset failed');
-    }
-  }
-
-  /**
    * Update an existing user in Keycloak
    * @param userId The Keycloak user ID
    * @param userData The user data to update
@@ -323,7 +240,7 @@ export class KeycloakService {
       // First get the current user data
       const response = await firstValueFrom(
         this.httpService.get(
-          `${this.keycloakConfig.getBaseUrl()}/admin/realms/${this.keycloakConfig.getRealm()}/users/${keycloakId}`,
+          `${this.keycloakConfig.getUsersUrl()}/${keycloakId}`,
           {
             headers: {
               'Authorization': `Bearer ${adminToken}`,
@@ -348,7 +265,7 @@ export class KeycloakService {
       // Send the update request with complete user data
       await firstValueFrom(
         this.httpService.put(
-          `${this.keycloakConfig.getBaseUrl()}/admin/realms/${this.keycloakConfig.getRealm()}/users/${keycloakId}`,
+          `${this.keycloakConfig.getUsersUrl()}/${keycloakId}`,
           userData,
           {
             headers: {
@@ -357,7 +274,7 @@ export class KeycloakService {
             }
           }
         )
-      );  
+      );
     } catch (error) {
       this.logger.debug('Error updating Keycloak user:', error.response?.data || error.message);
       throw new Error('Failed to update user in Keycloak');
@@ -370,7 +287,7 @@ export class KeycloakService {
       const adminToken = await this.getAdminToken();
       const userResponse = await firstValueFrom(
         this.httpService.get(
-          `${this.keycloakConfig.getBaseUrl()}/admin/realms/${this.keycloakConfig.getRealm()}/users/${user.keycloakId}`,
+          `${this.keycloakConfig.getUsersUrl()}/${user.keycloakId}`,
           {
             headers: {
               Authorization: `Bearer ${adminToken}`,
@@ -385,7 +302,7 @@ export class KeycloakService {
       // Set new password
       await firstValueFrom(
         this.httpService.put(
-          `${this.keycloakConfig.getBaseUrl()}/admin/realms/${this.keycloakConfig.getRealm()}/users/${user.keycloakId}/reset-password`,
+          `${this.keycloakConfig.getUsersUrl()}/${user.keycloakId}/reset-password`,
           {
             type: 'password',
             value: newPassword,
@@ -417,7 +334,7 @@ export class KeycloakService {
       });
 
       await firstValueFrom(
-        this.httpService.post(this.getTokenUrl(), payload.toString(), {
+        this.httpService.post(this.keycloakConfig.getTokenUrl(), payload.toString(), {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           },

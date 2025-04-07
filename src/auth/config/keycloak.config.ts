@@ -11,11 +11,12 @@ export class KeycloakConfig {
   private readonly adminPassword: string;
 
   constructor(private configService: ConfigService) {
-    // Fix for the URL format in case there's a typo in the environment variable
+    // Fix for the URL format in case there's no protocol specified
     const rawBaseUrl = this.configService.get<string>('KEYCLOAK_BASE_URL') || '';
-    this.baseUrl = rawBaseUrl.startsWith('http') 
+    // Check if URL already has a protocol (http:// or https://)
+    this.baseUrl = rawBaseUrl.match(/^https?:\/\//) 
       ? rawBaseUrl 
-      : `http://${rawBaseUrl}`;
+      : `https://${rawBaseUrl}`; // Default to HTTPS for security
       
     this.realm = this.configService.get<string>('KEYCLOAK_REALM') || 'flightbook';
     this.clientId = this.configService.get<string>('KEYCLOAK_CLIENT_ID') || 'flightbook-api';
@@ -62,5 +63,17 @@ export class KeycloakConfig {
 
   getCertsUrl(): string {
     return `${this.baseUrl}/realms/${this.realm}/protocol/openid-connect/certs`;
+  }
+
+  getUserByEmailUrl(email: string): string {
+    return `${this.baseUrl}/admin/realms/${this.realm}/users?email=${encodeURIComponent(email)}`;
+  }
+  
+  getAdminTokenUrl(): string {
+    return `${this.baseUrl}/realms/master/protocol/openid-connect/token`;
+  }
+  
+  getUsersUrl(): string {
+    return `${this.baseUrl}/admin/realms/${this.realm}/users`;
   }
 }
