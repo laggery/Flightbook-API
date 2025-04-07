@@ -1,8 +1,8 @@
 import { Controller, Get, Headers, HttpCode, Param, Post, Request, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { PaymentStatusDto } from './interface/payment-status-dto';
 import { PaymentFacade } from './payment-facade';
+import { CompositeAuthGuard } from '../auth/guard/composite-auth.guard';
 
 @Controller('payments')
 @ApiTags('Payments')
@@ -13,14 +13,14 @@ export class PaymentController {
         private paymentFacade: PaymentFacade
     ) {}
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Get('stripe/session/:enrollmentToken')
     stripePaymentInstructor(@Headers('accept-language') acceptLanguage: string, @Headers('origin') origin: string, @Request() req, @Param('enrollmentToken') enrollmentToken: string): Promise<any> {
         const callbackUrl = `${origin}/enrollments/${enrollmentToken}`;
         return this.paymentFacade.getStripeSession(req.user.userId, callbackUrl, acceptLanguage);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Get('stripe/session')
     stripePaymentWebApp(@Headers('accept-language') acceptLanguage: string, @Headers('origin') origin: string, @Request() req): Promise<any> {
         const callbackUrl = `${origin}/settings`;
@@ -33,13 +33,13 @@ export class PaymentController {
         await this.paymentFacade.stripeWebhook(req);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Get('status')
     async paymentStatus(@Request() req): Promise<PaymentStatusDto> {
         return await this.paymentFacade.hasUserPayed(req.user.userId);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Post('cancel')
     @HttpCode(204)
     async cancelSubscription(@Request() req) {

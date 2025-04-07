@@ -21,6 +21,9 @@ docker-compose -f docker/docker-compose.yml up -d
 
 Create a .env file
 ```
+ENV=local
+LOG_LEVELS=log,error,warn,debug,verbose
+
 DATABASE_HOST=localhost
 DATABASE_PORT=5432
 DATABASE_USER=flightbook_dev
@@ -29,6 +32,13 @@ DATABASE_NAME=flightbook_dev
 DATABASE_SYNCHRONIZE=false
 DATABASE_SCHEMA=public
 DATABASE_SSL=false
+
+KEYCLOAK_BASE_URL=http://localhost:8080
+KEYCLOAK_REALM=flightbook
+KEYCLOAK_CLIENT_ID=flightbook-api
+KEYCLOAK_CLIENT_SECRET=SEE_KEYCLOAK_CLIENT_SECRET
+KEYCLOAK_ADMIN_USERNAME=admin
+KEYCLOAK_ADMIN_PASSWORD=admin
 
 AWS_S3_ENDPOINT=http://localhost
 AWS_BUCKET=flightbook-bucket

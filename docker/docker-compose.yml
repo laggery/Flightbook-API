@@ -36,6 +36,16 @@ services:
       - 9001:9001
     command: server /data --console-address ":9001"
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.6
+    command: start-dev --import-realm
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    volumes:
+      - ./realms:/opt/keycloak/data/import
+    ports:
+      - "8080:8080"
   pgadmin:
     image: dpage/pgadmin4:7
     environment:

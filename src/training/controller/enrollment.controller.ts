@@ -1,8 +1,8 @@
 import { Controller, Get, HttpCode, Param, Post, Request, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { EnrollmentFacade } from '../../training/enrollment/enrollment.facade';
 import { EnrollmentDto } from '../../training/enrollment/interface/enrollment-dto';
+import { CompositeAuthGuard } from '../../auth/guard/composite-auth.guard';
 
 @Controller('enrollments')
 @ApiTags('Enrollment')
@@ -17,7 +17,7 @@ export class EnrollmentController {
         return this.enrollmentFacade.getEnrollmentByToken(token);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Post('/:token')
     @HttpCode(204)
     @ApiBearerAuth('jwt')

@@ -1,8 +1,8 @@
 import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 import { SchoolDto } from './interface/school-dto';
 import { SchoolFacade } from './school.facade';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { CompositeAuthGuard } from '../../auth/guard/composite-auth.guard';
 
 @Controller('schools')
 @ApiTags('School')
@@ -13,7 +13,7 @@ export class SchoolController {
         private schoolFacade: SchoolFacade
     ) { }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(CompositeAuthGuard)
     @Post()
     createSchool(@Request() req, @Body() schoolDto: SchoolDto): Promise<SchoolDto> {
         return this.schoolFacade.createSchool(req.user, schoolDto);
@@ -21,7 +21,7 @@ export class SchoolController {
 
     // TODO: Need permissions for update school.
 
-    // @UseGuards(JwtAuthGuard)
+    // @UseGuards(CompositeAuthGuard)
     // @Put(':id')
     // updateSchool(@Request() req, @Param('id') id: number, @Body() schoolDto: SchoolDto): Promise<SchoolDto> {
     //     return this.schoolFacade.updateSchool(req.user, id, schoolDto);

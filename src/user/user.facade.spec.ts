@@ -1,6 +1,6 @@
 import { UserFacade } from './user.facade';
 import { UserRepository } from './user.repository';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../auth/service/auth.service';
 import { PaymentFacade } from '../payment/payment-facade';
 import { TestBed } from '@automock/jest';
 

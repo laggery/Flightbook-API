@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { JwtService } from '@nestjs/jwt';
-import { UserRepository } from '../user/user.repository';
-import { User } from '../user/user.entity';
+import { UserRepository } from '../../user/user.repository';
+import { User } from '../../user/user.entity';
 import * as bcrypt from 'bcrypt';
-import { LoginType } from '../user/login-type';
-import { EmailService } from '../email/email.service';
+import { LoginType } from '../../user/login-type';
+import { EmailService } from '../../email/email.service';
 
 @Injectable()
 export class AuthService {

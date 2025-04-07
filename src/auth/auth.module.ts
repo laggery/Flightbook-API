@@ -1,7 +1,7 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthService } from './auth.service';
+import { AuthService } from './service/auth.service';
 import { UserModule } from '../user/user.module';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategy/local.strategy';
@@ -12,20 +12,43 @@ import { EmailService } from '../email/email.service';
 import { HttpModule } from '@nestjs/axios';
 import { UserFacade } from '../user/user.facade';
 import { PaymentFacade } from '../payment/payment-facade';
+import { KeycloakService } from './service/keycloak.service';
+import { KeycloakStrategy } from './strategy/keycloak.strategy';
+import { KeycloakConfig } from './config/keycloak.config';
 
 @Module({
   imports: [
-    HttpModule,
+    HttpModule.register({
+      timeout: 5000,
+      maxRedirects: 5,
+    }),
     ConfigModule.forRoot(),
     forwardRef(() => UserModule),
     PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.TOKEN_EXPIRATION },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get('JWT_SECRET'),
+        signOptions: {
+          expiresIn: configService.get('TOKEN_EXPIRATION'),
+        },
+      }),
+      inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy, AuthFacade, EmailService, UserFacade, PaymentFacade],
+  providers: [
+    AuthService, 
+    LocalStrategy, 
+    JwtStrategy, 
+    KeycloakStrategy,
+    AuthFacade, 
+    EmailService, 
+    UserFacade, 
+    PaymentFacade,
+    KeycloakService,
+    KeycloakConfig
+  ],
   controllers: [AuthController],
-  exports: [AuthService],
+  exports: [AuthService, KeycloakService, KeycloakConfig],
 })
 export class AuthModule { }

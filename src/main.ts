@@ -1,12 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { VERSION_NEUTRAL, ValidationPipe, VersioningType } from '@nestjs/common';
+import { VERSION_NEUTRAL, ValidationPipe, VersioningType, LogLevel } from '@nestjs/common';
 import helmet from 'helmet'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
+  // Map the log levels from environment variables to LogLevel enum values
+  const logLevels = process.env.LOG_LEVELS?.split(',').filter(level => 
+    ['log', 'error', 'warn', 'debug', 'verbose'].includes(level)
+  ) as LogLevel[] || ['error', 'warn', 'log'] as LogLevel[];
+  
   const app = await NestFactory.create(AppModule,{
-    logger: process.env.ENV == "prod" ? ['log', 'error', 'warn'] : ['error', 'warn', 'log', 'debug', 'verbose'],
+    logger: logLevels,
     rawBody: true
   });
   app.enableCors();

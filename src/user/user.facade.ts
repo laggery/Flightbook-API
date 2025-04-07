@@ -5,7 +5,7 @@ import { User } from './user.entity';
 import { UserAlreadyExistsException } from './exception/user-already-exists-exception';
 import { InvalidUserException } from './exception/invalid-user-exception';
 import { plainToClass } from 'class-transformer';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../auth/service/auth.service';
 import { UserReadDto } from './interface/user-read-dto';
 import { UserPasswordWriteDto } from './interface/user-password-write-dto';
 import { InvalidPasswordException } from './exception/invalid-password-exception';
@@ -15,6 +15,7 @@ import { PaymentFacade } from '../payment/payment-facade';
 import { EmailService } from '../email/email.service';
 import * as crypto from 'crypto';
 import { UserException } from './exception/user.exception';
+import { KeycloakService } from '../auth/service/keycloak.service';
 
 @Injectable()
 export class UserFacade {
@@ -23,7 +24,8 @@ export class UserFacade {
         private userRepository: UserRepository,
         private authService: AuthService,
         private paymentFacade: PaymentFacade,
-        private emailService: EmailService
+        private emailService: EmailService,
+        private keycloakService: KeycloakService
     ) {}
 
     async getCurrentUser(id: number): Promise<any> {
@@ -48,6 +50,9 @@ export class UserFacade {
         user.createdAt = new Date();
         user.paymentExempted = false;
         
+        const keycloakUserId = await this.keycloakService.createUser(user, userWriteDto.password, isInstructorApp);
+        user.keycloakId = keycloakUserId;
+
         if (isInstructorApp) {
             user.validatedAt = new Date();
         } else {
@@ -68,6 +73,9 @@ export class UserFacade {
 
         user.confirmationToken = null;
         user.validatedAt = new Date();
+        if (user.keycloakId) {
+            this.keycloakService.updateUser(user.keycloakId, user);
+        }
         await this.userRepository.saveUser(user);
     }
 
@@ -109,6 +117,10 @@ export class UserFacade {
         user.lastname = userWriteDto.lastname;
         user.phone = userWriteDto.phone;
 
+        if (user.keycloakId) {
+            await this.keycloakService.updateUser(user.keycloakId, user);
+        }
+
         const userResp: User = await this.userRepository.saveUser(user);
 
         if (oldEmail !== userResp.email) {
@@ -124,9 +136,28 @@ export class UserFacade {
 
         const user: User = await this.userRepository.getUserById(id);
 
-        const validatedUser = await this.authService.validateUser(user.email, userPasswordWriteDto.oldPassword);
-        if (!validatedUser) {
-            throw new InvalidOldPasswordException();
+        if (user.keycloakId) {
+            // Validate current password
+            const isValidPassword = await this.keycloakService.validateUserPassword(user, userPasswordWriteDto.oldPassword);
+            if (!isValidPassword) {
+                throw new InvalidOldPasswordException();
+            }
+            await this.keycloakService.changePassword(user, userPasswordWriteDto.newPassword);
+        } else {
+            const validatedUser = await this.authService.validateUser(user.email, userPasswordWriteDto.oldPassword);
+            if (!validatedUser) {
+                throw new InvalidOldPasswordException();
+            }
+
+            // Check if user exists in keycloak and create if not
+            const keycloakUser = await this.keycloakService.getUserByEmail(user.email);
+            if (keycloakUser) {
+                user.keycloakId = keycloakUser.id;
+                await this.keycloakService.changePassword(user, userPasswordWriteDto.newPassword);
+            } else {
+                const keycloakUserId = await this.keycloakService.createUser(user, userPasswordWriteDto.newPassword, true);
+                user.keycloakId = keycloakUserId;
+            }
         }
 
         user.password = await this.authService.hashPassword(userPasswordWriteDto.newPassword);
@@ -160,5 +191,12 @@ export class UserFacade {
         user.enabled = false;
         const userResp: User = await this.userRepository.saveUser(user);
         return plainToClass(UserReadDto, userResp);
+    }
+
+    /**
+     * Maps a User entity to a UserReadDto
+     */
+    mapUserToReadDto(user: User): UserReadDto {
+        return plainToClass(UserReadDto, user);
     }
 }
