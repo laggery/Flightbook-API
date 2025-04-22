@@ -4,5 +4,6 @@ export enum ImportType {
   FB_PLACES = 'fb_places',
   VFR = 'vfr',
   LOGFLY = 'logfly',
-  XCONTEST = "xcontest"
+  XCONTEST = "xcontest",
+  FLIGHTBOOK = "flightbook"
 }

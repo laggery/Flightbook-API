@@ -104,53 +104,61 @@ export class FileUploadController {
         try {
           return await this.importFacade.importFlugbuch(file, req.user.userId);
         } catch (e) {
-          Logger.error('Import error', e.stack, 'importFacade.importFlugbuch');
-          const key = await this.fileUploadService.uploadErrorImportFile(req.user.userId, file);
-          const content = `<p>Import has failed for user id: ${req.user.userId} with object key: ${key}<p>`;
-          this.emailService.sendErrorMessageToAdmin(`${ImportType.FLUGBUCH} Import error`, content);
+          await this.logError(ImportType.FLUGBUCH, req.user.userId, file, e);
           throw e;
         }
       case ImportType.XCONTEST:
         try {
           return await this.importFacade.importXContest(file, req.user.userId);
         } catch (e) {
-          Logger.error('Import error', e.stack, 'importFacade.importXContest');
-          const key = await this.fileUploadService.uploadErrorImportFile(req.user.userId, file);
-          const content = `<p>Import has failed for user id: ${req.user.userId} with object key: ${key}<p>`;
-          this.emailService.sendErrorMessageToAdmin(`${ImportType.FLUGBUCH} Import error`, content);
+          await this.logError(ImportType.XCONTEST, req.user.userId, file, e);
           throw e;
         }  
       case ImportType.CUSTOM:
         try {
           return await this.importFacade.importCustom(file, req.user.userId);
         } catch (e) {
-          Logger.error('Import error', e.stack, 'importFacade.importCustom');
+          await this.logError(ImportType.CUSTOM, req.user.userId, file, e);
           throw e;
         }
       case ImportType.FB_PLACES:
         try {
           return await this.importFacade.importFbPlaces(file, req.user.userId);
         } catch (e) {
-          Logger.error('Import error', e.stack, 'importFacade.importFbPlaces');
+          await this.logError(ImportType.FB_PLACES, req.user.userId, file, e);
           throw e;
         }
       case ImportType.VFR:
         try {
           return await this.importFacade.importVfr(file, req.user.userId);
         } catch (e) {
-          Logger.error('Import error', e.stack, 'importFacade.importVfr');
+          await this.logError(ImportType.VFR, req.user.userId, file, e);
           throw e;
         }
-        case ImportType.LOGFLY:
-          try {
-            return await this.importFacade.importLogfly(file, req.user.userId);
-          } catch (e) {
-            Logger.error('Import error', e.stack, 'importFacade.importLogfly');
-            throw e;
-          }
+      case ImportType.LOGFLY:
+        try {
+          return await this.importFacade.importLogfly(file, req.user.userId);
+        } catch (e) {
+          await this.logError(ImportType.LOGFLY, req.user.userId, file, e);
+          throw e;
+        }
+      case ImportType.FLIGHTBOOK:
+        try {
+          return await this.importFacade.importFlightbook(file, req.user.userId);
+        } catch (e) {
+          await this.logError(ImportType.FLIGHTBOOK, req.user.userId, file, e);
+          throw e;
+        }
       default:
         ImportException.unsupportedImportTypeException();
     }
   }
+
+  private async logError(importType: ImportType, userId: number, file: Express.Multer.File, error: any) {
+    Logger.error('Import error', error.stack, `importFacade for ${importType}`);
+    const key = await this.fileUploadService.uploadErrorImportFile(userId, file);
+    const content = `<p>${importType} import has failed for user id: ${userId} with object key: ${key}<p>`;
+    this.emailService.sendErrorMessageToAdmin(`${importType} import error`, content);
+}
 
 }

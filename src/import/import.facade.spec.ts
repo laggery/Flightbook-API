@@ -34,7 +34,7 @@ describe('ImportFacade', () => {
     const importTypeDtoList = await facade.getImportTypes('de');
 
     // then
-    expect(importTypeDtoList).toHaveLength(5);
+    expect(importTypeDtoList).toHaveLength(6);
   });
 
   it('Import places', async () => {

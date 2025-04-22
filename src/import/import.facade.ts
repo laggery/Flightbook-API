@@ -708,6 +708,135 @@ export class ImportFacade {
         return importResultDto;
     }
 
+    async importFlightbook(file: Express.Multer.File, userId: number): Promise<ImportResultDto> {
+        const importResultDto = new ImportResultDto();
+        const gliders = [];
+        const places = [];
+        const flights = [];
+
+        try {
+            // Get user
+            const user = await this.userRepository.getUserById(userId);
+
+            // // Read Excel file
+            // const xlsx = require('xlsx');
+            // const workbook = xlsx.read(file.buffer, { type: 'buffer' });
+
+            
+            
+            // // Assuming the first sheet contains flight data
+            // const firstSheetName = workbook.SheetNames[0];
+            // const worksheet = workbook.Sheets[firstSheetName];
+
+            const workbook = read(file.buffer, {type: 'buffer'});
+            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+            const raw_data = utils.sheet_to_json(worksheet, {header: 1});
+
+            // remove header
+            if (raw_data.length > 0) {
+                raw_data.shift();
+            }
+            
+            // Process each record
+            raw_data.forEach((record) => {
+                if (!record[2] || record[2] === '') {
+                    return;
+                }
+                // Extract glider
+                let [brand, ...nameParts] = record[10].split(' ');
+                let name = nameParts.join(' ');
+    
+                let glider = new Glider();
+                glider.brand = brand;
+                glider.name = name;
+                if (record[11] ) {
+                    glider.tandem = true;
+                }
+                glider.user = user;
+    
+                // Extract place
+                let startName = record[2];
+                let landingName = record[4];
+    
+                let start = new Place();
+                start.name = startName;
+                if (record[3]) {
+                    start.country = record[3];
+                }
+                start.user = user;
+    
+                let landing = new Place();
+                landing.name = landingName;
+                if (record[5]){
+                    landing.country = record[5];
+                }
+                landing.user = user;
+    
+                // Extract flight
+                let flight = new Flight();
+                flight.date = moment(record[1], 'D.M.YYYY').format('MM-DD-YYYY');
+                flight.time = record[6];
+                if (record[7] && record[7] != "") {
+                    flight.km = record[7];
+                }
+                if (record[8] && record[8] != "") {
+                    flight.price = record[8];
+                }
+                flight.description = record[9];
+                flight.user = user;
+    
+                // Add gliders to set
+                let resGlider = gliders.find((glider: Glider) => glider.brand.toLowerCase() === brand.toLowerCase() && glider.name.toLowerCase() === name.toLowerCase());
+                if (resGlider) {
+                    flight.glider = resGlider;
+                } else {
+                    flight.glider = glider;
+                    gliders.push(glider);
+                }
+    
+                // Add places to set
+                if (start.name?.length > 0) {
+                    let resStart = places.find((place: Place) => place.name.toLowerCase() === start.name.toLowerCase());
+                    if (resStart) {
+                        flight.start = resStart;
+                    } else {
+                        flight.start = start;
+                        places.push(start);
+                    }
+                }
+    
+                if (landing.name?.length > 0) {
+                    let resLanding = places.find((place: Place) => place.name.toLowerCase() === landing.name.toLowerCase());
+                    if (resLanding) {
+                        flight.landing = resLanding;
+                    } else {
+                        flight.landing = landing;
+                        places.push(landing);
+                    }
+                }
+    
+                // Add flight to set
+                flights.push(flight);
+            });
+            
+            // Save data in transaction
+            await this.entityManager.transaction(async transactionalEntityManager => {
+                const gliderRepository = transactionalEntityManager.getRepository(Glider);
+                const placeRepository = transactionalEntityManager.getRepository(Place);
+                const flightRepository = transactionalEntityManager.getRepository(Flight);
+                
+                importResultDto.glider = await this.saveGliders(gliders, user, gliderRepository);
+                importResultDto.place = await this.savePlaces(places, user, placeRepository);
+                importResultDto.flight = await this.saveFlights(flights, user, flightRepository);
+            });
+        } catch (error) {
+            console.log(error);
+            throw ImportException.importFailedException();
+        }
+        
+        return importResultDto;
+    }
+
     async importFbPlaces(file: Express.Multer.File, userId: number): Promise<ImportResultDto> {
         const records = [];
         let first = true;

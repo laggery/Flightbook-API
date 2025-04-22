@@ -24,6 +24,11 @@
             "name": "XContest.org",
             "description":"Il s'agit de données provenant de l'application XContest.org.",
             "fileType": "json"
+        },
+        "flightbook": {
+            "name": "Flightbook",
+            "description":"Il s'agit d'un template qui te permet d'importer des données dans Flightbook.",
+            "fileType": "xlsx"
         }
     }
 }

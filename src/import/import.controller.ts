@@ -85,7 +85,14 @@ export class ImportController {
                 } catch (e) {
                     await this.logError(ImportType.LOGFLY, req.user.userId, file, e);
                     throw e;
-                }    
+                }
+            case ImportType.FLIGHTBOOK:
+                try {
+                    return await this.importFacade.importFlightbook(file, req.user.userId);
+                } catch (e) {
+                    await this.logError(ImportType.FLIGHTBOOK, req.user.userId, file, e);
+                    throw e;
+                }      
             default:
                 ImportException.unsupportedImportTypeException();
         }
