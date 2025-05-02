@@ -12,6 +12,7 @@ import { StudentModule } from './student/student.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { TeamMemberModule } from './team-member/team-member.module';
 import { NoteModule } from './note/note.module';
+import { EmergencyContactModule } from './emergency-contact/emergency-contact.module';
 
 @Module({
     imports: [
@@ -23,7 +24,8 @@ import { NoteModule } from './note/note.module';
       TeamMemberModule,
       SchoolModule,
       EnrollmentModule,
-      NoteModule
+      NoteModule,
+      EmergencyContactModule
     ],
     controllers: [
         InstructorController,

@@ -9,6 +9,8 @@ import { ControlSheetDto } from '../control-sheet/interface/control-sheet-dto';
 import { TeamMemberFacade } from '../team-member/team-member.facade';
 import { EnrollmentFacade } from '../enrollment/enrollment.facade';
 import { CompositeAuthGuard } from '../../auth/guard/composite-auth.guard';
+import { EmergencyContactFacade } from '../emergency-contact/emergency-contact.facade';
+import { EmergencyContactDto } from '../emergency-contact/interface/emergency-contact-dto';
 
 @Controller('student')
 @ApiTags('Student')
@@ -20,7 +22,8 @@ export class StudentController {
         private appointmentFacade: AppointmentFacade,
         private controlSheetFacade: ControlSheetFacade,
         private teamMemberFacade: TeamMemberFacade,
-        private enrollmentFacade: EnrollmentFacade
+        private enrollmentFacade: EnrollmentFacade,
+        private emergencyContactFacade: EmergencyContactFacade
     ){}
 
     @UseGuards(CompositeAuthGuard)
@@ -114,5 +117,17 @@ export class StudentController {
     @Post('/control-sheet')
     createUpdateControlSheet(@Request() req, @Body() controlSheetDto: ControlSheetDto): Promise<ControlSheetDto> {
         return this.controlSheetFacade.studentCreateUpdateControlSheet(req.user, controlSheetDto);
+    }
+
+    @UseGuards(CompositeAuthGuard)
+    @Get('/emergency-contacts')
+    getEmergencyContacts(@Request() req): Promise<EmergencyContactDto[]> {
+        return this.emergencyContactFacade.getEmergencyContacts(req.user, {});
+    }
+
+    @UseGuards(CompositeAuthGuard)
+    @Post('/emergency-contacts')
+    createUpdateEmergencyContact(@Request() req, @Body() emergencyContactDto: EmergencyContactDto): Promise<EmergencyContactDto> {
+        return this.emergencyContactFacade.createUpdateEmergencyContact(req.user, emergencyContactDto);
     }
 }

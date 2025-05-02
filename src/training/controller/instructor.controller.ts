@@ -21,6 +21,7 @@ import { AppointmentTypeDto } from '../appointment/interface/appointment-type-dt
 import { NoteDto } from '../note/interface/note-dto';
 import { NoteFacade } from '../note/note.facade';
 import { CompositeAuthGuard } from '../../auth/guard/composite-auth.guard';
+import { EmergencyContactDto } from '../emergency-contact/interface/emergency-contact-dto';
 
 @Controller('instructor')
 @ApiTags('Instructor')
@@ -167,6 +168,12 @@ export class InstructorController {
     @Post('/students/:id/control-sheet')
     postControlSheet(@Request() req, @Param('id') id: number, @Body() controlSheetDto: ControlSheetDto): Promise<ControlSheetDto> {
         return this.studentFacade.postStudentControlSheetByStudentId(id, controlSheetDto);
+    }
+
+    @UseGuards(CompositeAuthGuard, StudentGuard)
+    @Get('/students/:id/emergency-contacts')
+    getEmergencyContacts(@Request() req, @Param('id') id: number): Promise<EmergencyContactDto[]> {
+        return this.studentFacade.getStudentEmergencyContactsByStudentId(id);
     }
 
     @UseGuards(CompositeAuthGuard, StudentGuard)

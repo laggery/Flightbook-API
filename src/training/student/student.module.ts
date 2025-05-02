@@ -10,13 +10,15 @@ import { ControlSheetModule } from '../../training/control-sheet/control-sheet.m
 import { AppointmentModule } from '../../training/appointment/appointment.module';
 import { Note } from '../note/note.entity';
 import { NoteRepository } from '../note/note.repository';
+import { EmergencyContactModule } from '../emergency-contact/emergency-contact.module';
 
 @Module({
     imports: [
       FlightModule, 
       TypeOrmModule.forFeature([Student, Note]), 
       TeamMemberModule, 
-      ControlSheetModule, 
+      ControlSheetModule,
+      EmergencyContactModule, 
       forwardRef(() => SchoolModule), 
       forwardRef(() => AppointmentModule)
     ],  

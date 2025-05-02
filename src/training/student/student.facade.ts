@@ -14,6 +14,8 @@ import { PagerEntityDto } from '../../interface/pager-entity-dto';
 import { StudentMapper } from './student.mapper';
 import { NoteRepository } from '../note/note.repository';
 import { NoteMapper } from '../note/note.mapper';
+import { EmergencyContactFacade } from '../emergency-contact/emergency-contact.facade';
+import { EmergencyContactDto } from '../emergency-contact/interface/emergency-contact-dto';
 
 @Injectable()
 export class StudentFacade {
@@ -23,7 +25,8 @@ export class StudentFacade {
         private appointmentRepository: AppointmentRepository,
         private noteRepository: NoteRepository,
         private flightFacade: FlightFacade,
-        private controlSheetFacade: ControlSheetFacade) { }
+        private controlSheetFacade: ControlSheetFacade,
+        private emergencyContactFacade: EmergencyContactFacade) { }
 
     async getStudentsBySchoolId(id: number, archived: boolean): Promise<StudentDto[]> {
         const students = await this.studentRepository.getStudentsBySchoolId(id, archived);
@@ -69,6 +72,7 @@ export class StudentFacade {
                 studentDto.lastNote = NoteMapper.toNoteDto(notes[0]);
             }
             studentDto.controlSheet = await this.controlSheetFacade.getControlSheet({ userId: student.user.id });
+            studentDto.emergencyContacts = await this.emergencyContactFacade.getEmergencyContacts({ userId: student.user.id }, {});
 
             studentDtoList.push(studentDto);
         }
@@ -159,5 +163,14 @@ export class StudentFacade {
             throw StudentException.notFoundException();
         }
         return await this.controlSheetFacade.instructorCreateUpdateControlSheet({ userId: student.user.id }, controlSheetDto);
+    }
+
+    async getStudentEmergencyContactsByStudentId(studentId: number): Promise<EmergencyContactDto[]> {
+        const student = await this.studentRepository.getStudentById(studentId);
+
+        if (!student) {
+            throw StudentException.notFoundException();
+        }
+        return await this.emergencyContactFacade.getEmergencyContacts({ userId: student.user.id }, {});
     }
 }
