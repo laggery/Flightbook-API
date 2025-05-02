@@ -18,6 +18,7 @@ import { TeamMember } from "../../src/training/team-member/team-member.entity";
 import { User } from "../../src/user/user.entity";
 import { Subscription } from "../../src/training/subscription/subscription.entity";
 import { Level } from "../../src/training/control-sheet/level.entity";
+import { EmergencyContact } from "../../src/training/emergency-contact/emergency-contact.entity";
 
 const dbConfigBase: any = {
     type: 'postgres',
@@ -35,6 +36,7 @@ const dbConfigBase: any = {
         AppointmentType,
         Appointment,
         ControlSheet,
+        EmergencyContact,
         TrainingHill,
         AltitudeFlight,
         Theory,
