@@ -40,7 +40,8 @@ export class PaymentFacade {
             success_url: `${callbackUrl}/success`,
             cancel_url: `${callbackUrl}/cancel`,
             client_reference_id: userId.toString(),
-            customer_email: user.email
+            customer_email: user.email,
+            allow_promotion_codes: true
         });
         return { id: session.id, url: session.url };
     }
