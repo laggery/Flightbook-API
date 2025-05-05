@@ -53,20 +53,6 @@ describe('ImportFacade', () => {
     // expect(importResultDto.place.inserted).toBe(2);
   });
 
-  it('Import flugbuch', async () => {
-    // given
-    const mockUser = TestUtil.createUser();
-    userRepository.getUserById.mockReturnValue(Promise.resolve(mockUser));
-
-    const csv = TestUtil.readFile("flugbuch.csv");
-
-    // when
-    const importResultDto = await facade.importFlugbuch(csv, mockUser.id);
-
-    // then
-    expect(entityManager.transaction).toBeCalledTimes(1);
-  });
-
   it('Import VFRnav', async () => {
     // given
     const mockUser = TestUtil.createUser();

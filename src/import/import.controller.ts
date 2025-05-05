@@ -8,6 +8,7 @@ import { EmailService } from '../email/email.service';
 import { FileUploadService } from '../fileupload/file-upload.service';
 import { ImportException } from './exception/import.exception';
 import { CompositeAuthGuard } from '../auth/guard/composite-auth.guard';
+import { FlugbuchFacade } from './flugbuch.facade';
 
 @Controller('import')
 @ApiTags('Import')
@@ -16,6 +17,7 @@ export class ImportController {
 
     constructor(
         private importFacade: ImportFacade,
+        private flugbuchFacade: FlugbuchFacade,
         private emailService: EmailService,
         private fileUploadService: FileUploadService,
     ) { }
@@ -46,7 +48,7 @@ export class ImportController {
         switch (query.type) {
             case ImportType.FLUGBUCH:
                 try {
-                    return await this.importFacade.importFlugbuch(file, req.user.userId);
+                    return await this.flugbuchFacade.importFlugbuch(file, req.user.userId);
                 } catch (e) {
                     await this.logError(ImportType.FLUGBUCH, req.user.userId, file, e);
                     throw e;
