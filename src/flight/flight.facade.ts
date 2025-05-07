@@ -1,4 +1,4 @@
-import { Injectable, Req } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { FlightRepository } from './flight.repository';
 import { UserRepository } from '../user/user.repository';
 import { FlightDto } from './interface/flight-dto';
@@ -16,9 +16,9 @@ import { FileUploadService } from '../fileupload/file-upload.service';
 import { PagerEntityDto } from '../interface/pager-entity-dto';
 import { StatisticType } from './statistic-type';
 import { FlightException } from './exception/flight.exception';
-import { School } from 'src/training/school/school.entity';
+import { School } from '../training/school/school.entity';
 import { FlightValidation } from './flight-validation.entity';
-import { SchoolException } from 'src/training/school/exception/school.exception';
+import { SchoolException } from '../training/school/exception/school.exception';
 
 @Injectable()
 export class FlightFacade {
