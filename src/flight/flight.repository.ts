@@ -6,6 +6,7 @@ import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { Glider } from '../glider/glider.entity';
 import { Place } from '../place/place.entity';
 import { PagerDto } from '../interface/pager-dto';
+import { FlightValidation } from './flight-validation.entity';
 
 @Injectable()
 export class FlightRepository extends Repository<Flight> {
@@ -46,6 +47,13 @@ export class FlightRepository extends Repository<Flight> {
                     if (key.startsWith('flight_shv_alone')) {
                         const name = key.substring(7, key.length);
                         data.shvAlone = Boolean(raw[key]);
+                    } else if (key.startsWith('flight_validation')) {
+                        // @Hack -> Shoud be refactored
+                        if (!data.validation) data.validation = new FlightValidation();
+                        const name = key.substring(18, key.length);
+                        if (name !== 'user_id' && name !== 'school_id') {
+                            data["validation"][name] = raw[key];
+                        }
                     } else {
                         const name = key.substring(7, key.length);
                         data[name] = raw[key];
@@ -282,5 +290,14 @@ export class FlightRepository extends Repository<Flight> {
             .andWhere(`flight.glider_id = ${gliderId}`)
 
         return builder.getRawOne();
+    }
+
+    async countNotValidatedFlights(token: any, isTandem: boolean): Promise<number> {
+        return this.createQueryBuilder('flight')
+        .leftJoin('flight.glider', 'glider')
+            .where('flight.validation_timestamp IS NULL')
+            .andWhere(`flight.user_id = ${token.userId}`)
+            .andWhere(`glider.tandem = ${isTandem}`)
+            .getCount();
     }
 }

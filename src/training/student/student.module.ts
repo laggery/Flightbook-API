@@ -11,18 +11,20 @@ import { AppointmentModule } from '../../training/appointment/appointment.module
 import { Note } from '../note/note.entity';
 import { NoteRepository } from '../note/note.repository';
 import { EmergencyContactModule } from '../emergency-contact/emergency-contact.module';
+import { SchoolRepository } from '../school/school.repository';
+import { School } from '../school/school.entity';
 
 @Module({
     imports: [
       FlightModule, 
-      TypeOrmModule.forFeature([Student, Note]), 
+      TypeOrmModule.forFeature([Student, Note, School]), 
       TeamMemberModule, 
       ControlSheetModule,
       EmergencyContactModule, 
       forwardRef(() => SchoolModule), 
       forwardRef(() => AppointmentModule)
     ],  
-    providers: [StudentRepository, StudentFacade, NoteRepository],
+    providers: [StudentRepository, SchoolRepository, StudentFacade, NoteRepository],
     exports: [StudentRepository, StudentFacade],
     controllers: []
   })

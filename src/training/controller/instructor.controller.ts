@@ -134,6 +134,12 @@ export class InstructorController {
     }
 
     @UseGuards(CompositeAuthGuard, StudentGuard)
+    @Put('/schools/:school_id/students/:id/flights/:flightId')
+    validateStudentFlight(@Request() req, @Param('school_id') schoolId: number, @Param('id') id: number, @Param('flightId') flightId: number, @Body() flightDto: FlightDto): Promise<FlightDto> {
+        return this.studentFacade.validateStudentFlight(id, flightId, schoolId, req.user.userId);
+    }
+
+    @UseGuards(CompositeAuthGuard, StudentGuard)
     @Delete('/students/:id')
     @HttpCode(204)
     removeStudent(@Request() req, @Param('id') studendId: number): Promise<StudentDto> {

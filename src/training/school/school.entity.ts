@@ -4,6 +4,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { TeamMember } from "../team-member/team-member.entity";
 import {Appointment} from "../appointment/appointment.entity";
 import { AppointmentType } from "../appointment/appointment-type.entity";
+import { SchoolConfiguration } from "./school-configuration.entity";
 
 @Entity("school")
 export class School {
@@ -35,8 +36,8 @@ export class School {
   @Column("character varying", { name: "language", length: 2 })
   language: string;
 
-  @Column("boolean", { name: "user_can_edit_controlsheet", default: true })
-  userCanEditControlSheet: boolean; 
+  @Column(() => SchoolConfiguration, { prefix: false })
+  configuration: SchoolConfiguration;
 
   @OneToMany(() => TeamMember, (teamMember) => teamMember.school, { cascade: ['insert', 'update'] })
   teamMembers: TeamMember[];

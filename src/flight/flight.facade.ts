@@ -16,6 +16,9 @@ import { FileUploadService } from '../fileupload/file-upload.service';
 import { PagerEntityDto } from '../interface/pager-entity-dto';
 import { StatisticType } from './statistic-type';
 import { FlightException } from './exception/flight.exception';
+import { School } from 'src/training/school/school.entity';
+import { FlightValidation } from './flight-validation.entity';
+import { SchoolException } from 'src/training/school/exception/school.exception';
 
 @Injectable()
 export class FlightFacade {
@@ -31,6 +34,10 @@ export class FlightFacade {
     async getFlights(token: any, query: any): Promise<FlightDto[]> {
         const list: Flight[] = await this.flightService.getFlights(token, query);
         return plainToInstance(FlightDto, list);
+    }
+
+    async countNotValidatedFlights(token: any, isTandem: boolean): Promise<number> {
+        return this.flightService.countNotValidatedFlights(token, isTandem);
     }
 
     async getFlightsPager(token: any, query: any): Promise<PagerEntityDto<FlightDto[]>> {
@@ -83,6 +90,7 @@ export class FlightFacade {
 
         flight.id = null;
         flight.user = user;
+        flight.validation = null;
 
         const flightResp: Flight = await this.flightService.save(flight);
         return plainToClass(FlightDto, flightResp);
@@ -117,6 +125,34 @@ export class FlightFacade {
 
         flight.shvAlone = flightDto.shvAlone === undefined ? false : flightDto.shvAlone;
 
+        const flightResp: Flight = await this.flightService.save(flight);
+        return plainToClass(FlightDto, flightResp);
+    }
+
+    async validateFlight(token: any, id: number, school: School, instructorId: number): Promise<FlightDto> {
+        let flight: Flight = await this.flightService.getFlightById(token, id);
+
+        if (!flight) {
+            FlightException.notFoundException();
+        }
+
+        const instructor: User = await this.userRepository.getUserById(instructorId);
+        if (!instructor) {
+            SchoolException.instructorNotFoundException();
+        }
+
+        if (!flight.validation || flight.validation.timestamp == null) {
+            const flightValidation: FlightValidation = new FlightValidation();
+            flightValidation.instructor = instructor;
+            flightValidation.school = school;
+            flightValidation.timestamp = new Date();
+
+            flight.validation = flightValidation;
+        } else {
+            flight.validation.instructor = null;
+            flight.validation.school = null;
+            flight.validation.timestamp = null;
+        }
         const flightResp: Flight = await this.flightService.save(flight);
         return plainToClass(FlightDto, flightResp);
     }

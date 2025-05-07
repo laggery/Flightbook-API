@@ -1,8 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { Exclude, Expose } from "class-transformer";
+import { Exclude, Expose, Type } from "class-transformer";
 import { GliderDto } from "../../glider/interface/glider-dto";
 import { PlaceDto } from "../../place/interface/place-dto";
 import { Igc } from "./igc";
+import { FlightValidationDto } from "./flight-validation-dto";
 
 @Exclude()
 export class FlightDto {
@@ -38,4 +39,9 @@ export class FlightDto {
     readonly igc?: Igc;
     @Expose()
     readonly shvAlone: boolean;
+    
+    @ApiPropertyOptional()
+    @Expose()
+    @Type(() => FlightValidationDto)
+    readonly validation: FlightValidationDto;
 }

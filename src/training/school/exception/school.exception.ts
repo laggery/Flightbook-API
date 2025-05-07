@@ -1,4 +1,4 @@
-import {ConflictException, UnprocessableEntityException} from "@nestjs/common";
+import {ConflictException, NotFoundException, UnprocessableEntityException} from "@nestjs/common";
 
 export class SchoolException {
 
@@ -12,5 +12,13 @@ export class SchoolException {
 
     public static alreadyExistsException() {
         throw new ConflictException("The school already exists.")
+    }
+
+    public static notFoundException() {
+        throw new NotFoundException("The school was not found.")
+    }
+
+    public static instructorNotFoundException() {
+        throw new NotFoundException("The instructor was not found.")
     }
 }

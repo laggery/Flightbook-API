@@ -7,6 +7,7 @@ import { SchoolDto } from './interface/school-dto';
 import { School } from './school.entity';
 import { SchoolRepository } from './school.repository';
 import {SchoolException} from "./exception/school.exception";
+import { SchoolConfiguration } from './school-configuration.entity';
 
 @Injectable()
 export class SchoolFacade {
@@ -25,6 +26,9 @@ export class SchoolFacade {
         const school: School = plainToInstance(School, schoolDto);
         school.id = null;
         school.address2 = schoolDto.address2 === '' ? null : schoolDto.address2;
+        school.configuration = new SchoolConfiguration();
+        school.configuration.validateFlights = true;
+        school.configuration.userCanEditControlSheet = true;
 
         // Check if name already existe for this user
         if (await this.schoolRepository.getSchoolByName(school.name)) {
