@@ -8,6 +8,8 @@ import { Place } from '../place/place.entity';
 import { PagerDto } from '../interface/pager-dto';
 import { FlightValidation } from './flight-validation.entity';
 import { FlightValidationState } from './flight-validation-state';
+import { User } from '../user/user.entity';
+import { School } from '../training/school/school.entity';
 
 @Injectable()
 export class FlightRepository extends Repository<Flight> {
@@ -26,6 +28,8 @@ export class FlightRepository extends Repository<Flight> {
             .leftJoinAndSelect('flight.glider', 'glider', 'glider.id = flight.glider_id')
             .leftJoinAndSelect('flight.start', 'start', 'start.id = flight.start_id')
             .leftJoinAndSelect('flight.landing', 'landing', 'landing.id = flight.landing_id')
+            .leftJoinAndSelect('flight.validation.instructor', 'instructor', 'instructor.id = flight.validation_user_id')
+            .leftJoinAndSelect('flight.validation.school', 'school', 'school.id = flight.validation_school_id')
             .where(`flight.user_id = ${token.userId}`);
 
         builder = FlightRepository.addQueryParams(builder, query);
@@ -74,6 +78,18 @@ export class FlightRepository extends Repository<Flight> {
                     if (!data.landing) data.landing = new Place();
                     const name = key.substring(8, key.length);
                     data["landing"][name] = raw[key];
+                }
+                if (key.startsWith('instructor')) {
+                    if (!data.validation) data.validation = new FlightValidation();
+                    if (!data.validation.instructor) data.validation.instructor = new User();
+                    const name = key.substring(11, key.length);
+                    data["validation"]["instructor"][name] = raw[key];
+                }
+                if (key.startsWith('school')) {
+                    if (!data.validation) data.validation = new FlightValidation();
+                    if (!data.validation.school) data.validation.school = new School();
+                    const name = key.substring(7, key.length);
+                    data["validation"]["school"][name] = raw[key];
                 }
             })
             list.push(data)
