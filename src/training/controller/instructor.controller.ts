@@ -22,6 +22,7 @@ import { NoteDto } from '../note/interface/note-dto';
 import { NoteFacade } from '../note/note.facade';
 import { CompositeAuthGuard } from '../../auth/guard/composite-auth.guard';
 import { EmergencyContactDto } from '../emergency-contact/interface/emergency-contact-dto';
+import { FlightValidationDto } from '../../flight/interface/flight-validation-dto';
 
 @Controller('instructor')
 @ApiTags('Instructor')
@@ -134,9 +135,16 @@ export class InstructorController {
     }
 
     @UseGuards(CompositeAuthGuard, StudentGuard)
+    @Put('/schools/:school_id/students/:id/flights/validate-all')
+    @HttpCode(204)
+    validateAllStudentFlight(@Request() req, @Param('school_id') schoolId: number, @Param('id') id: number, @Body() flightValidationDto: FlightValidationDto) {
+        return this.studentFacade.validateAllStudentFlight(id, schoolId, req.user.userId, flightValidationDto);
+    }
+
+    @UseGuards(CompositeAuthGuard, StudentGuard)
     @Put('/schools/:school_id/students/:id/flights/:flightId')
-    validateStudentFlight(@Request() req, @Param('school_id') schoolId: number, @Param('id') id: number, @Param('flightId') flightId: number, @Body() flightDto: FlightDto): Promise<FlightDto> {
-        return this.studentFacade.validateStudentFlight(id, flightId, schoolId, req.user.userId);
+    validateStudentFlight(@Request() req, @Param('school_id') schoolId: number, @Param('id') id: number, @Param('flightId') flightId: number, @Body() flightValidationDto: FlightValidationDto): Promise<FlightDto> {
+        return this.studentFacade.validateStudentFlight(id, flightId, schoolId, req.user.userId, flightValidationDto);
     }
 
     @UseGuards(CompositeAuthGuard, StudentGuard)

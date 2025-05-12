@@ -19,6 +19,7 @@ import { FlightException } from './exception/flight.exception';
 import { School } from '../training/school/school.entity';
 import { FlightValidation } from './flight-validation.entity';
 import { SchoolException } from '../training/school/exception/school.exception';
+import { FlightValidationDto } from './interface/flight-validation-dto';
 
 @Injectable()
 export class FlightFacade {
@@ -129,7 +130,7 @@ export class FlightFacade {
         return plainToClass(FlightDto, flightResp);
     }
 
-    async validateFlight(token: any, id: number, school: School, instructorId: number): Promise<FlightDto> {
+    async validateFlight(token: any, id: number, school: School, instructorId: number, flightValidationDto: FlightValidationDto): Promise<FlightDto> {
         let flight: Flight = await this.flightService.getFlightById(token, id);
 
         if (!flight) {
@@ -141,20 +142,25 @@ export class FlightFacade {
             SchoolException.instructorNotFoundException();
         }
 
-        if (!flight.validation || flight.validation.timestamp == null) {
-            const flightValidation: FlightValidation = new FlightValidation();
-            flightValidation.instructor = instructor;
-            flightValidation.school = school;
-            flightValidation.timestamp = new Date();
+        const flightValidation: FlightValidation = new FlightValidation();
+        flightValidation.instructor = instructor;
+        flightValidation.school = school;
+        flightValidation.timestamp = new Date();
+        flightValidation.state = flightValidationDto.state;
+        flightValidation.comment = flightValidationDto.comment;
+        flight.validation = flightValidation;
 
-            flight.validation = flightValidation;
-        } else {
-            flight.validation.instructor = null;
-            flight.validation.school = null;
-            flight.validation.timestamp = null;
-        }
         const flightResp: Flight = await this.flightService.save(flight);
         return plainToClass(FlightDto, flightResp);
+    }
+
+    async validateAllFlight(token: any, school: School, instructorId: number, flightValidationDto: FlightValidationDto) {
+        const instructor: User = await this.userRepository.getUserById(instructorId);
+        if (!instructor) {
+            SchoolException.instructorNotFoundException();
+        }
+
+        await this.flightService.validateAllFlight(token, school.id, instructorId, flightValidationDto.state);
     }
 
     async removeFlight(token: any, id: number): Promise<FlightDto> {

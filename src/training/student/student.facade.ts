@@ -18,6 +18,7 @@ import { EmergencyContactFacade } from '../emergency-contact/emergency-contact.f
 import { EmergencyContactDto } from '../emergency-contact/interface/emergency-contact-dto';
 import { SchoolException } from '../school/exception/school.exception';
 import { SchoolRepository } from '../school/school.repository';
+import { FlightValidationDto } from '../../flight/interface/flight-validation-dto';
 
 @Injectable()
 export class StudentFacade {
@@ -147,7 +148,7 @@ export class StudentFacade {
         return await this.flightFacade.updateFlightAlone({ userId: student.user.id }, flightId, flightDto);
     }
 
-    async validateStudentFlight(studentId: number, flightId: number, schoolId: number, instructorId: number): Promise<FlightDto> {
+    async validateStudentFlight(studentId: number, flightId: number, schoolId: number, instructorId: number, flightValidationDto: FlightValidationDto): Promise<FlightDto> {
         const student = await this.studentRepository.getStudentById(studentId);
         if (!student) {
             throw StudentException.notFoundException();
@@ -158,7 +159,21 @@ export class StudentFacade {
             throw SchoolException.notFoundException();
         }
 
-        return await this.flightFacade.validateFlight({ userId: student.user.id }, flightId, school, instructorId);
+        return await this.flightFacade.validateFlight({ userId: student.user.id }, flightId, school, instructorId, flightValidationDto);
+    }
+
+    async validateAllStudentFlight(studentId: number, schoolId: number, instructorId: number, flightValidationDto: FlightValidationDto) {
+        const student = await this.studentRepository.getStudentById(studentId);
+        if (!student) {
+            throw StudentException.notFoundException();
+        }
+
+        const school = await this.schoolRepository.getSchoolById(schoolId);
+        if (!school) {
+            throw SchoolException.notFoundException();
+        }
+
+        await this.flightFacade.validateAllFlight({ userId: student.user.id }, school, instructorId, flightValidationDto);
     }
 
     async getStudentControlSheetByStudentId(studentId: number): Promise<ControlSheetDto> {

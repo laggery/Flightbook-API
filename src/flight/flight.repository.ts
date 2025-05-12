@@ -7,6 +7,7 @@ import { Glider } from '../glider/glider.entity';
 import { Place } from '../place/place.entity';
 import { PagerDto } from '../interface/pager-dto';
 import { FlightValidation } from './flight-validation.entity';
+import { FlightValidationState } from './flight-validation-state';
 
 @Injectable()
 export class FlightRepository extends Repository<Flight> {
@@ -34,8 +35,8 @@ export class FlightRepository extends Repository<Flight> {
 
         let sqlRequest = builder.getSql();
         sqlRequest = sqlRequest.replace('FROM "data"."flight" "flight"', ` FROM (Select ROW_NUMBER() OVER (ORDER BY flight.date ASC, flight.timestamp ASC) flight_number, flight.* from data.flight where user_id = ${token.userId}) as flight`)
-        if (query && query.limit) { sqlRequest = sqlRequest + ` LIMIT ${query.limit}`}
-        if (query && query.offset) { sqlRequest = sqlRequest + ` OFFSET ${query.offset}`}
+        if (query && query.limit) { sqlRequest = sqlRequest + ` LIMIT ${query.limit}` }
+        if (query && query.offset) { sqlRequest = sqlRequest + ` OFFSET ${query.offset}` }
 
         const res: [] = await this.repository.query(sqlRequest);
 
@@ -101,15 +102,15 @@ export class FlightRepository extends Repository<Flight> {
 
     async getStatisticYears(token: any, query: any): Promise<FlightStatisticDto[]> {
         let maxdate = this.repository.createQueryBuilder("flight")
-        .select("max(date) + interval '1 year'")
-        .where(`flight.user_id = ${token.userId}`)
-        .leftJoin('flight.glider', 'glider');
+            .select("max(date) + interval '1 year'")
+            .where(`flight.user_id = ${token.userId}`)
+            .leftJoin('flight.glider', 'glider');
         maxdate = FlightRepository.addQueryParams(maxdate, query);
 
         let mindate = this.repository.createQueryBuilder("flight")
-        .select("min(date)")
-        .where(`flight.user_id = ${token.userId}`)
-        .leftJoin('flight.glider', 'glider');
+            .select("min(date)")
+            .where(`flight.user_id = ${token.userId}`)
+            .leftJoin('flight.glider', 'glider');
         mindate = FlightRepository.addQueryParams(mindate, query);
 
         let builder = this.repository.manager.createQueryBuilder()
@@ -123,25 +124,25 @@ export class FlightRepository extends Repository<Flight> {
             .addSelect("coalesce(best_distance, 0)", "bestDistance")
             .addFrom((qb) => {
                 return qb.select(`date_trunc('year',generate_series((${mindate.getSql()})::DATE, (${maxdate.getSql()})::DATE, '1 year'))`, "year")
-                .fromDummy();
+                    .fromDummy();
             }, "m")
             .leftJoin((qb) => {
                 let builder = qb.select("date_trunc('year',date)", "sub_year")
-                        .addSelect("COUNT(*)::int", "nb_flight")
-                        .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
-                        .addSelect("Sum(price)", "income")
-                        .addSelect('EXTRACT(epoch FROM Avg(flight.time))', "average")
-                        .addSelect('Sum(flight.km)', "total_distance")
-                        .addSelect('Max(flight.km)', "best_distance")
-                        .addFrom(Flight, "flight")
-                        .where(`flight.user_id = ${token.userId}`)
-                        .leftJoin('flight.glider', 'glider')
-                        .groupBy('sub_year');
+                    .addSelect("COUNT(*)::int", "nb_flight")
+                    .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
+                    .addSelect("Sum(price)", "income")
+                    .addSelect('EXTRACT(epoch FROM Avg(flight.time))', "average")
+                    .addSelect('Sum(flight.km)', "total_distance")
+                    .addSelect('Max(flight.km)', "best_distance")
+                    .addFrom(Flight, "flight")
+                    .where(`flight.user_id = ${token.userId}`)
+                    .leftJoin('flight.glider', 'glider')
+                    .groupBy('sub_year');
 
                 builder = FlightRepository.addQueryParams(builder, query);
 
                 return builder;
-                
+
             }, "counts", "m.year = counts.sub_year")
             .orderBy("year")
             .take(900);
@@ -152,15 +153,15 @@ export class FlightRepository extends Repository<Flight> {
     async getStatisticMonth(token: any, query: any): Promise<FlightStatisticDto[]> {
 
         let maxdate = this.repository.createQueryBuilder("flight")
-        .select("max(date) + interval '1 month'")
-        .where(`flight.user_id = ${token.userId}`)
-        .leftJoin('flight.glider', 'glider');;
+            .select("max(date) + interval '1 month'")
+            .where(`flight.user_id = ${token.userId}`)
+            .leftJoin('flight.glider', 'glider');;
         maxdate = FlightRepository.addQueryParams(maxdate, query);
 
         let mindate = this.repository.createQueryBuilder("flight")
-        .select("min(date)")
-        .where(`flight.user_id = ${token.userId}`)
-        .leftJoin('flight.glider', 'glider');;
+            .select("min(date)")
+            .where(`flight.user_id = ${token.userId}`)
+            .leftJoin('flight.glider', 'glider');;
         mindate = FlightRepository.addQueryParams(mindate, query);
 
         let builder = this.repository.manager.createQueryBuilder()
@@ -175,25 +176,25 @@ export class FlightRepository extends Repository<Flight> {
             .addSelect("coalesce(best_distance, 0)", "bestDistance")
             .addFrom((qb) => {
                 return qb.select(`date_trunc('month',generate_series((${mindate.getSql()})::DATE, (${maxdate.getSql()})::DATE, '1 month'))`, "year_month")
-                .fromDummy();
+                    .fromDummy();
             }, "m")
             .leftJoin((qb) => {
                 let builder = qb.select("date_trunc('month',date)", "sub_year_month")
-                        .addSelect("COUNT(*)::int", "nb_flight")
-                        .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
-                        .addSelect("Sum(price)", "income")
-                        .addSelect('EXTRACT(epoch FROM Avg(flight.time))', "average")
-                        .addSelect('Sum(flight.km)', "total_distance")
-                        .addSelect('Max(flight.km)', "best_distance")
-                        .addFrom(Flight, "flight")
-                        .where(`flight.user_id = ${token.userId}`)
-                        .leftJoin('flight.glider', 'glider')
-                        .groupBy('sub_year_month');
+                    .addSelect("COUNT(*)::int", "nb_flight")
+                    .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
+                    .addSelect("Sum(price)", "income")
+                    .addSelect('EXTRACT(epoch FROM Avg(flight.time))', "average")
+                    .addSelect('Sum(flight.km)', "total_distance")
+                    .addSelect('Max(flight.km)', "best_distance")
+                    .addFrom(Flight, "flight")
+                    .where(`flight.user_id = ${token.userId}`)
+                    .leftJoin('flight.glider', 'glider')
+                    .groupBy('sub_year_month');
 
                 builder = FlightRepository.addQueryParams(builder, query);
 
                 return builder;
-                
+
             }, "counts", "m.year_month = counts.sub_year_month")
             .orderBy("year_month")
             .take(900);
@@ -220,7 +221,7 @@ export class FlightRepository extends Repository<Flight> {
         pagerDto.itemCount = entityNumber[0].length;
         pagerDto.totalItems = entityNumber[1];
         pagerDto.itemsPerPage = (query?.limit) ? Number(query.limit) : pagerDto.itemCount;
-        pagerDto.totalPages =  (query?.limit) ?  Math.ceil(pagerDto.totalItems / Number(query.limit)) : pagerDto.totalItems;
+        pagerDto.totalPages = (query?.limit) ? Math.ceil(pagerDto.totalItems / Number(query.limit)) : pagerDto.totalItems;
         pagerDto.currentPage = (query?.offset) ? (query.offset >= pagerDto.totalItems ? null : Math.floor(parseInt(query.offset) / parseInt(query.limit)) + 1) : 1;
         return pagerDto;
     }
@@ -294,10 +295,30 @@ export class FlightRepository extends Repository<Flight> {
 
     async countNotValidatedFlights(token: any, isTandem: boolean): Promise<number> {
         return this.createQueryBuilder('flight')
-        .leftJoin('flight.glider', 'glider')
+            .leftJoin('flight.glider', 'glider')
             .where('flight.validation_timestamp IS NULL')
             .andWhere(`flight.user_id = ${token.userId}`)
             .andWhere(`glider.tandem = ${isTandem}`)
             .getCount();
+    }
+
+    async validateAllFlight(token: any, schoolId: number, instructorId: number, state: FlightValidationState) {
+        await this.createQueryBuilder()
+            .update(Flight)
+            .set({
+                validation: {
+                    state: state,
+                    school: {
+                        id: schoolId
+                    },
+                    instructor: {
+                        id: instructorId
+                    },
+                    timestamp: new Date()
+                }
+            })
+            .where("user_id = :userId", { userId: token.userId })
+            .andWhere("validation_state IS NULL")
+            .execute();
     }
 }
