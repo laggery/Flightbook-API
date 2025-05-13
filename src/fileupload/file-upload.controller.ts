@@ -21,7 +21,6 @@ import { ImportType } from '../import/import-type';
 import { ImportException } from '../import/exception/import.exception';
 import { EmailService } from '../email/email.service';
 import { CompositeAuthGuard } from '../auth/guard/composite-auth.guard';
-import { FlugbuchFacade } from '../import/flugbuch.facade';
 
 @Controller('file')
 @ApiTags('File Upload')
@@ -31,7 +30,6 @@ export class FileUploadController {
   constructor(
     private fileUploadService: FileUploadService,
     private importFacade: ImportFacade,
-    private flugbuchFacade: FlugbuchFacade,
     private emailService: EmailService
   ) {
   }
@@ -104,9 +102,9 @@ export class FileUploadController {
     switch (query.type) {
       case ImportType.FLUGBUCH:
         try {
-          return await this.flugbuchFacade.importFlugbuch(file, req.user.userId);
+          return await this.importFacade.importFlugbuch(file, req.user.userId);
         } catch (e) {
-          Logger.error('Import error', e.stack, 'flugbuchFacade.importFlugbuch');
+          Logger.error('Import error', e.stack, 'importFacade.importFlugbuch');
           const key = await this.fileUploadService.uploadErrorImportFile(req.user.userId, file);
           const content = `<p>Import has failed for user id: ${req.user.userId} with object key: ${key}<p>`;
           this.emailService.sendErrorMessageToAdmin(`${ImportType.FLUGBUCH} Import error`, content);
