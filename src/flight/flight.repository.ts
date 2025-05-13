@@ -53,10 +53,9 @@ export class FlightRepository extends Repository<Flight> {
                         const name = key.substring(7, key.length);
                         data.shvAlone = Boolean(raw[key]);
                     } else if (key.startsWith('flight_validation')) {
-                        // @Hack -> Shoud be refactored
-                        if (!data.validation) data.validation = new FlightValidation();
                         const name = key.substring(18, key.length);
-                        if (name !== 'user_id' && name !== 'school_id') {
+                        if (name !== 'user_id' && name !== 'school_id' && raw[key] !== null) {
+                            if (!data.validation) data.validation = new FlightValidation();
                             data["validation"][name] = raw[key];
                         }
                     } else {
@@ -80,16 +79,20 @@ export class FlightRepository extends Repository<Flight> {
                     data["landing"][name] = raw[key];
                 }
                 if (key.startsWith('instructor')) {
-                    if (!data.validation) data.validation = new FlightValidation();
-                    if (!data.validation.instructor) data.validation.instructor = new User();
-                    const name = key.substring(11, key.length);
-                    data["validation"]["instructor"][name] = raw[key];
+                    if (raw[key] !== null) {
+                        if (!data.validation) data.validation = new FlightValidation();
+                        if (!data.validation.instructor) data.validation.instructor = new User();
+                        const name = key.substring(11, key.length);
+                        data["validation"]["instructor"][name] = raw[key];
+                    }
                 }
                 if (key.startsWith('school')) {
-                    if (!data.validation) data.validation = new FlightValidation();
-                    if (!data.validation.school) data.validation.school = new School();
-                    const name = key.substring(7, key.length);
-                    data["validation"]["school"][name] = raw[key];
+                    if (raw[key] !== null) {
+                        if (!data.validation) data.validation = new FlightValidation();
+                        if (!data.validation.school) data.validation.school = new School();
+                        const name = key.substring(7, key.length);
+                        data["validation"]["school"][name] = raw[key];
+                    }
                 }
             })
             list.push(data)
@@ -220,6 +223,20 @@ export class FlightRepository extends Repository<Flight> {
 
     async getFlightById(token: any, id: number): Promise<Flight> {
         return this.repository.findOneByOrFail({ id: id, user: { id: token.userId } });
+    }
+
+    async getFlightByIdWithRelations(token: any, id: number): Promise<Flight> {
+        return this.repository.findOneOrFail({
+            relations: {
+                start: true,
+                landing: true,
+                glider: true,
+            },
+            where: {
+                id: id,
+                user: { id: token.userId }
+            }
+        });
     }
 
     async getFlightsPager(token: any, query: any): Promise<PagerDto> {

@@ -37,6 +37,11 @@ export class FlightFacade {
         return plainToInstance(FlightDto, list);
     }
 
+    async getFlightById(token: any, id: number): Promise<FlightDto> {
+        const flight: Flight = await this.flightService.getFlightByIdWithRelations(token, id);
+        return plainToInstance(FlightDto, flight);
+    }
+
     async countNotValidatedFlights(token: any, isTandem: boolean): Promise<number> {
         return this.flightService.countNotValidatedFlights(token, isTandem);
     }
