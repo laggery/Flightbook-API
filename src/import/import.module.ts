@@ -7,12 +7,11 @@ import { UserModule } from '../user/user.module';
 import { ImportController } from './import.controller';
 import { FileUploadService } from '../fileupload/file-upload.service';
 import { EmailService } from '../email/email.service';
-import { FlugbuchFacade } from './flugbuch.facade';
 
 @Module({
   imports: [FlightModule, GliderModule, FlightModule, PlaceModule, UserModule],
-  providers: [ImportFacade, FlugbuchFacade, FileUploadService, EmailService],
-  exports: [ImportFacade, FlugbuchFacade],
+  providers: [ImportFacade, FileUploadService, EmailService],
+  exports: [ImportFacade],
   controllers: [ImportController]
 })
 export class ImportModule {}
