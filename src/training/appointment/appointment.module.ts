@@ -1,7 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmailService } from '../../email/email.service';
-import { NotificationsService } from '../../shared/services/notifications.service';
+import { SharedModule } from '../../shared/shared.module';
 import { SchoolModule } from '../../training/school/school.module';
 import { UserModule } from '../../user/user.module';
 import { StudentModule } from '../student/student.module';
@@ -19,7 +19,8 @@ import { AppointmentRepository } from './appointment.repository';
     TypeOrmModule.forFeature([Appointment, AppointmentType]),
     forwardRef(() => SchoolModule),
     SubscriptionModule,
-    StudentModule
+    StudentModule,
+    SharedModule
   ],
   controllers: [],
   providers: [
@@ -27,8 +28,7 @@ import { AppointmentRepository } from './appointment.repository';
     AppointmentRepository,
     AppointmentTypeRepository,
     AppointmentTypeFacade,
-    EmailService,
-    NotificationsService
+    EmailService
   ],
   exports: [
     AppointmentFacade,

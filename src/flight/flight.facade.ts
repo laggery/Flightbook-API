@@ -20,6 +20,8 @@ import { School } from '../training/school/school.entity';
 import { FlightValidation } from './flight-validation.entity';
 import { SchoolException } from '../training/school/exception/school.exception';
 import { FlightValidationDto } from './interface/flight-validation-dto';
+import { FlightValidationState } from './flight-validation-state';
+import { NotificationsService } from '../shared/services/notifications.service';
 
 @Injectable()
 export class FlightFacade {
@@ -29,7 +31,8 @@ export class FlightFacade {
         private placeFacade: PlaceFacade,
         private gliderFacade: GliderFacade,
         private userRepository: UserRepository,
-        private fileUploadService: FileUploadService
+        private fileUploadService: FileUploadService,
+        private notificationsService: NotificationsService
     ) { }
 
     async getFlights(token: any, query: any): Promise<FlightDto[]> {
@@ -138,7 +141,7 @@ export class FlightFacade {
     }
 
     async validateFlight(token: any, id: number, school: School, instructorId: number, flightValidationDto: FlightValidationDto): Promise<FlightDto> {
-        let flight: Flight = await this.flightService.getFlightById(token, id);
+        let flight: Flight = await this.flightService.getFlightByIdWithRelations(token, id);
 
         if (!flight) {
             FlightException.notFoundException();
@@ -158,6 +161,9 @@ export class FlightFacade {
         flight.validation = flightValidation;
 
         const flightResp: Flight = await this.flightService.save(flight);
+        if (flightResp.validation.state === FlightValidationState.REJECTED) {
+            this.notificationsService.sendFlightValidationRejected(flightResp);
+        }
         return plainToClass(FlightDto, flightResp);
     }
 

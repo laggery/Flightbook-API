@@ -16,5 +16,11 @@
             "title": "{school}: Registration for: {date}",
             "body": "Someone has unsubscribed for the appointment from {date}. You can now participate."
         }
+    },
+    "flightValidation": {
+        "rejected": {
+            "title": "Flight rejected",
+            "body": "The flight from {date} was rejected."
+        }
     }
 }

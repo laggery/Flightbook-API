@@ -16,5 +16,11 @@
             "title": "{school}: Inscription",
             "body": "Quelqu'un s'est désinscrit pour le rendez-vous du {date}. Vous pouvez maintenant participer."
         }
+    },
+    "flightValidation": {
+        "rejected": {
+            "title": "Vol refusé",
+            "body": "Le vol du {date} a été refusé."
+        }
     }
 }
