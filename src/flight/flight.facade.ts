@@ -121,7 +121,9 @@ export class FlightFacade {
         flight.igc = flightDto.igc;
         flight.shvAlone = flightDto.shvAlone;
 
-        flight.validation.state = null;
+        if (flight.validation) {
+            flight.validation.state = null;
+        }
 
         const flightResp: Flight = await this.flightService.save(flight);
         return plainToClass(FlightDto, flightResp);
