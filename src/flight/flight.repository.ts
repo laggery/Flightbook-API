@@ -232,6 +232,10 @@ export class FlightRepository extends Repository<Flight> {
                 landing: true,
                 glider: true,
                 user: true,
+                validation: {
+                    instructor: true,
+                    school: true
+                }
             },
             where: {
                 id: id,
