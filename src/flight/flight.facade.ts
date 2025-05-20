@@ -1,4 +1,4 @@
-import { Injectable, Req } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { FlightRepository } from './flight.repository';
 import { UserRepository } from '../user/user.repository';
 import { FlightDto } from './interface/flight-dto';
@@ -16,6 +16,12 @@ import { FileUploadService } from '../fileupload/file-upload.service';
 import { PagerEntityDto } from '../interface/pager-entity-dto';
 import { StatisticType } from './statistic-type';
 import { FlightException } from './exception/flight.exception';
+import { School } from '../training/school/school.entity';
+import { FlightValidation } from './flight-validation.entity';
+import { SchoolException } from '../training/school/exception/school.exception';
+import { FlightValidationDto } from './interface/flight-validation-dto';
+import { FlightValidationState } from './flight-validation-state';
+import { NotificationsService } from '../shared/services/notifications.service';
 
 @Injectable()
 export class FlightFacade {
@@ -25,12 +31,22 @@ export class FlightFacade {
         private placeFacade: PlaceFacade,
         private gliderFacade: GliderFacade,
         private userRepository: UserRepository,
-        private fileUploadService: FileUploadService
+        private fileUploadService: FileUploadService,
+        private notificationsService: NotificationsService
     ) { }
 
     async getFlights(token: any, query: any): Promise<FlightDto[]> {
         const list: Flight[] = await this.flightService.getFlights(token, query);
         return plainToInstance(FlightDto, list);
+    }
+
+    async getFlightById(token: any, id: number): Promise<FlightDto> {
+        const flight: Flight = await this.flightService.getFlightByIdWithRelations(token, id);
+        return plainToInstance(FlightDto, flight);
+    }
+
+    async countNotValidatedFlights(token: any, isTandem: boolean): Promise<number> {
+        return this.flightService.countNotValidatedFlights(token, isTandem);
     }
 
     async getFlightsPager(token: any, query: any): Promise<PagerEntityDto<FlightDto[]>> {
@@ -83,6 +99,7 @@ export class FlightFacade {
 
         flight.id = null;
         flight.user = user;
+        flight.validation = null;
 
         const flightResp: Flight = await this.flightService.save(flight);
         return plainToClass(FlightDto, flightResp);
@@ -104,6 +121,10 @@ export class FlightFacade {
         flight.igc = flightDto.igc;
         flight.shvAlone = flightDto.shvAlone;
 
+        if (flight.validation) {
+            flight.validation.state = null;
+        }
+
         const flightResp: Flight = await this.flightService.save(flight);
         return plainToClass(FlightDto, flightResp);
     }
@@ -119,6 +140,42 @@ export class FlightFacade {
 
         const flightResp: Flight = await this.flightService.save(flight);
         return plainToClass(FlightDto, flightResp);
+    }
+
+    async validateFlight(token: any, id: number, school: School, instructorId: number, flightValidationDto: FlightValidationDto): Promise<FlightDto> {
+        let flight: Flight = await this.flightService.getFlightByIdWithRelations(token, id);
+
+        if (!flight) {
+            FlightException.notFoundException();
+        }
+
+        const instructor: User = await this.userRepository.getUserById(instructorId);
+        if (!instructor) {
+            SchoolException.instructorNotFoundException();
+        }
+
+        const flightValidation: FlightValidation = new FlightValidation();
+        flightValidation.instructor = instructor;
+        flightValidation.school = school;
+        flightValidation.timestamp = new Date();
+        flightValidation.state = flightValidationDto.state;
+        flightValidation.comment = flightValidationDto.comment;
+        flight.validation = flightValidation;
+
+        const flightResp: Flight = await this.flightService.save(flight);
+        if (flightResp.validation.state === FlightValidationState.REJECTED) {
+            this.notificationsService.sendFlightValidationRejected(flightResp);
+        }
+        return plainToClass(FlightDto, flightResp);
+    }
+
+    async validateAllFlight(token: any, school: School, instructorId: number, flightValidationDto: FlightValidationDto) {
+        const instructor: User = await this.userRepository.getUserById(instructorId);
+        if (!instructor) {
+            SchoolException.instructorNotFoundException();
+        }
+
+        await this.flightService.validateAllFlight(token, school.id, instructorId, flightValidationDto.state);
     }
 
     async removeFlight(token: any, id: number): Promise<FlightDto> {

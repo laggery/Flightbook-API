@@ -10,8 +10,10 @@ import { GliderModule } from '../glider/glider.module';
 import { FileUploadService } from '../fileupload/file-upload.service';
 import { FlightControllerV2 } from './flight.controllerV2';
 
+import { SharedModule } from '../shared/shared.module';
+
 @Module({
-  imports: [UserModule, TypeOrmModule.forFeature([Flight]), PlaceModule, GliderModule],
+  imports: [UserModule, TypeOrmModule.forFeature([Flight]), PlaceModule, GliderModule, SharedModule],
   controllers: [FlightController, FlightControllerV2],
   providers: [FlightRepository, FlightFacade, FileUploadService],
   exports: [FlightFacade, FlightRepository]

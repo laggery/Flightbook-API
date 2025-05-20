@@ -213,7 +213,7 @@ export class EnrollmentFacade {
         if (!sheet) {
             const controlSheet = new ControlSheet();
             controlSheet.user = user;
-            controlSheet.userCanEdit = school.userCanEditControlSheet;
+            controlSheet.userCanEdit = school.configuration.userCanEditControlSheet;
             await this.controlSheetRepository.save(controlSheet);
         }
     }

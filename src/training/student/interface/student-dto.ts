@@ -15,4 +15,5 @@ export class StudentDto {
     public controlSheet: ControlSheetDto;
     public emergencyContacts: EmergencyContactDto[];
     public lastNote: NoteDto;
+    public countNotValidatedFlights: number;
 }

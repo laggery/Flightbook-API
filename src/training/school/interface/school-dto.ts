@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { Exclude, Expose } from "class-transformer";
+import { Exclude, Expose, Type } from "class-transformer";
 import { IsEmail } from 'class-validator';
+import { SchoolConfigurationDto } from './school-configuration-dto';
 
 @Exclude()
 export class SchoolDto {
@@ -34,5 +35,6 @@ export class SchoolDto {
     readonly language: string;
     @ApiPropertyOptional()
     @Expose()
-    readonly userCanEditControlSheet: boolean
+    @Type(() => SchoolConfigurationDto)
+    readonly configuration: SchoolConfigurationDto;
 }

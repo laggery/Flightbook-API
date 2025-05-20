@@ -45,6 +45,12 @@ export class FlightController {
     }
 
     @UseGuards(CompositeAuthGuard)
+    @Get('/:id')
+    getFlightById(@Request() req, @Param('id') id: number): Promise<FlightDto> {
+        return this.flightFacade.getFlightById(req.user, id);
+    }
+
+    @UseGuards(CompositeAuthGuard)
     @Get('/places/:id/count')
     nbFlightsByPlaceId(@Request() req, @Param('id') id: number) {
         return this.flightFacade.nbFlightsByPlaceId(req.user, id);

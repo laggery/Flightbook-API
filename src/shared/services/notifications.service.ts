@@ -7,9 +7,11 @@ import { Student } from '../../training/student/student.entity';
 import { Appointment } from '../../training/appointment/appointment.entity';
 import { Subscription } from '../../training/subscription/subscription.entity';
 import { I18nContext } from 'nestjs-i18n';
+import { Flight } from '../../flight/flight.entity';
 
 export enum NotificationType {
-    APPOINTMENT = "APPOINTMENT"
+    APPOINTMENT = "APPOINTMENT",
+    FLIGHT_VALIDATION_REJECTED = "FLIGHT_VALIDATION_REJECTED"
   }
 
 @Injectable()
@@ -212,6 +214,51 @@ export class NotificationsService {
             batchResponse.responses.forEach((response: SendResponse, index: number) => {
                 if (!response.success) {
                     tokensToDelete.push(subscription.user.notificationToken);
+                }
+            });
+        } catch (e: any) {
+            Logger.error("Firebase sendEachForMulticast error", e);
+        }
+
+        this.userRepository.clearNotificationTokens(tokensToDelete);
+    }
+
+    async sendFlightValidationRejected(flight: Flight) {
+        if (!flight.user.notificationToken) {
+            Logger.debug("no notification to send for inform waiting student");
+            return
+        }
+
+        const i18n = I18nContext.current();
+
+        const body = i18n.t('notification.flightValidation.rejected.body', {
+            lang: flight.validation.school.language,
+            args: {
+                date: moment(flight.date).format('DD.MM.YYYY')
+            }
+        });
+
+        const title = i18n.t('notification.flightValidation.rejected.title', {
+            lang: flight.validation.school.language
+        });
+        const multicastMessage: MulticastMessage = {
+            notification: {
+                title: title,
+                body: body
+            },
+            data: {
+                type: NotificationType.FLIGHT_VALIDATION_REJECTED,
+                flightId: `${flight.id}`
+            },
+            tokens: [flight.user.notificationToken]
+        }
+        const tokensToDelete: string[] = [];
+        try {
+            const batchResponse: BatchResponse = await getMessaging().sendEachForMulticast(multicastMessage, process.env.ENV != "prod");
+            Logger.debug(batchResponse);
+            batchResponse.responses.forEach((response: SendResponse) => {
+                if (!response.success) {
+                    tokensToDelete.push(flight.user.notificationToken);
                 }
             });
         } catch (e: any) {

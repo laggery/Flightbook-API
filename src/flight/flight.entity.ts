@@ -3,6 +3,7 @@ import { Glider } from '../glider/glider.entity';
 import { Place } from "../place/place.entity";
 import { User } from "../user/user.entity";
 import { Igc } from "./interface/igc";
+import { FlightValidation } from "./flight-validation.entity";
 
 @Index("idx_16389_glider_id", ["gliderId"], {})
 @Index("idx_16586_glider_id", ["gliderId"], {})
@@ -89,4 +90,7 @@ export class Flight {
 
   @Column("boolean", { name: "shv_alone", default: () => "false" })
   shvAlone: boolean;
+
+  @Column(() => FlightValidation, { prefix: false })
+  validation: FlightValidation;
 }

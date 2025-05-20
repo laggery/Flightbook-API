@@ -269,6 +269,7 @@ export class AppointmentFacade {
                 if (!foundStudent)  {
                    console.log(subscriptionDto);
                    console.log(students);
+                   return;
                 }
                 subscriptionDto.waitingList = true;
 
