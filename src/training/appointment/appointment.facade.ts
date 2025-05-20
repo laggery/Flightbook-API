@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { AppointmentDto } from "./interface/appointment-dto";
 import { plainToInstance } from "class-transformer";
 import { Appointment } from "./appointment.entity";
@@ -267,9 +267,9 @@ export class AppointmentFacade {
             appointmentDto.subscriptions.forEach((subscriptionDto: SubscriptionDto) => {
                 const foundStudent = students.find((student: Student) => student.user.email === subscriptionDto.user.email);
                 if (!foundStudent)  {
-                   console.log(subscriptionDto);
-                   console.log(students);
-                   return;
+                    Logger.debug("Student not found - subscriptionDto", subscriptionDto);
+                    Logger.debug("Student not found - student list", students);
+                    return;
                 }
                 subscriptionDto.waitingList = true;
 
