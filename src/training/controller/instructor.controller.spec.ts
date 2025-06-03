@@ -11,7 +11,6 @@ import { NoteFacade } from '../note/note.facade';
 describe('Instructor Controller', () => {
   let controller: InstructorController,
       studentFacade: jest.Mocked<StudentFacade>,
-      schoolFacade: jest.Mocked<SchoolFacade>,
       teamMembersFacade: jest.Mocked<TeamMemberFacade>,
       enrollmentFacade: jest.Mocked<EnrollmentFacade>,
       appointmentFacade: jest.Mocked<AppointmentFacade>,
@@ -23,7 +22,6 @@ describe('Instructor Controller', () => {
 
     controller = unit;
     studentFacade = unitRef.get(StudentFacade);
-    schoolFacade = unitRef.get(SchoolFacade);
     teamMembersFacade = unitRef.get(TeamMemberFacade);
     enrollmentFacade = unitRef.get(EnrollmentFacade);
     appointmentFacade = unitRef.get(AppointmentFacade);

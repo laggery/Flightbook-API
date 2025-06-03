@@ -4,7 +4,7 @@ import { SchoolFacade } from './school.facade';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CompositeAuthGuard } from '../../auth/guard/composite-auth.guard';
 import { SchoolConfigurationDto } from './interface/school-configuration-dto';
-import { SchoolGuard } from 'src/auth/guard/school.guard';
+import { SchoolGuard } from '../../auth/guard/school.guard';
 
 @Controller('schools')
 @ApiTags('School')
