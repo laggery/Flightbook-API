@@ -5,7 +5,6 @@ import { FlightDto } from '../../flight/interface/flight-dto';
 import { StudentFacade } from '../../training/student/student.facade';
 import { SchoolGuard } from '../../auth/guard/school.guard';
 import { AppointmentDto } from '../appointment/interface/appointment-dto';
-import { SchoolFacade } from '../../training/school/school.facade';
 import { TeamMemberFacade } from '../team-member/team-member.facade';
 import { EnrollmentFacade } from '../../training/enrollment/enrollment.facade';
 import { AppointmentFacade } from '../appointment/appointment.facade';
@@ -31,27 +30,12 @@ export class InstructorController {
 
     constructor(
         private studentFacade: StudentFacade,
-        private schoolFacade: SchoolFacade,
         private teamMembersFacade: TeamMemberFacade,
         private enrollmentFacade: EnrollmentFacade,
         private appointmentFacade: AppointmentFacade,
         private appointmentTypeFacade: AppointmentTypeFacade,
         private noteFacade: NoteFacade
     ){}
-
-    @UseGuards(CompositeAuthGuard)
-    @Post()
-    createSchool(@Request() req, @Body() schoolDto: SchoolDto): Promise<SchoolDto> {
-        return this.schoolFacade.createSchool(req.user, schoolDto);
-    }
-
-    // TODO: Need permissions for update school.
-
-    // @UseGuards(CompositeAuthGuard)
-    // @Put(':id')
-    // updateSchool(@Request() req, @Param('id') id: number, @Body() schoolDto: SchoolDto): Promise<SchoolDto> {
-    //     return this.schoolFacade.updateSchool(req.user, id, schoolDto);
-    // }
 
     @UseGuards(CompositeAuthGuard)
     @Get('/schools')

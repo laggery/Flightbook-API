@@ -8,6 +8,7 @@ import { School } from './school.entity';
 import { SchoolRepository } from './school.repository';
 import {SchoolException} from "./exception/school.exception";
 import { SchoolConfiguration } from './school-configuration.entity';
+import { SchoolConfigurationDto } from './interface/school-configuration-dto';
 
 @Injectable()
 export class SchoolFacade {
@@ -68,6 +69,21 @@ export class SchoolFacade {
         school.city = schoolDto.city;
         school.phone = schoolDto.phone;
         school.email = schoolDto.email;
+
+        const schoolResp: School = await this.schoolRepository.save(school);
+        return plainToClass(SchoolDto, schoolResp);
+    }
+
+    async updateSchoolConfiguration(id: number, schoolConfigurationDto: SchoolConfigurationDto) {
+        const school: School = await this.schoolRepository.getSchoolById(id);
+
+        // Check if school exists
+        if (!school) {
+            throw SchoolException.notFoundException();
+        }
+
+        school.configuration.validateFlights = schoolConfigurationDto.validateFlights;
+        school.configuration.userCanEditControlSheet = schoolConfigurationDto.userCanEditControlSheet;
 
         const schoolResp: School = await this.schoolRepository.save(school);
         return plainToClass(SchoolDto, schoolResp);
