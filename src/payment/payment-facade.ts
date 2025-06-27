@@ -29,8 +29,21 @@ export class PaymentFacade {
     async getStripeSession(userId: number, callbackUrl: string, lang: string): Promise<any> {
         const user = await this.userRepository.getUserById(userId);
 
+        // Map your application's language code to a valid Stripe locale
+        const validLocales = [
+            'de', 'en', 'fr', 'it'
+        ];
+        
+        // Default to 'en' if the provided language isn't supported by Stripe
+        let stripeLocale = 'en';
+        
+        // If the provided lang is valid for Stripe, use it
+        if (validLocales.includes(lang)) {
+            stripeLocale = lang;
+        }
+
         const session = await this.stripe.checkout.sessions.create({
-            locale: lang as Stripe.Checkout.SessionCreateParams.Locale,
+            locale: stripeLocale as Stripe.Checkout.SessionCreateParams.Locale,
             payment_method_types: ['card'],
             line_items: [{
                 price: env.STRIPE_PRICE,
