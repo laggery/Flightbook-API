@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
-import { AppointmentRepository } from '../../training/appointment/appointment.repository';
+import { AppointmentRepository } from '../appointment/appointment.repository';
 import { ControlSheetFacade } from '../../training/control-sheet/control-sheet.facade';
 import { ControlSheetDto } from '../../training/control-sheet/interface/control-sheet-dto';
 import { FlightFacade } from '../../flight/flight.facade';

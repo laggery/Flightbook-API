@@ -20,6 +20,7 @@ import { TrainingModule } from './training/training.module';
 import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import { PaymentModule } from './payment/payment.module';
 import { ConfigurationModule } from './configuration/configuration.module';
+import { TandemModule } from './tandem/tandem.module';
 import * as path from 'path';
 
 @Module({
@@ -47,7 +48,8 @@ import * as path from 'path';
     HttpModule,
     TrainingModule,
     PaymentModule,
-    ConfigurationModule
+    ConfigurationModule,
+    TandemModule
   ],
   controllers: [AppController],
   providers: [
