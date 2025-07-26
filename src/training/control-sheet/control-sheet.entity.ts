@@ -20,7 +20,13 @@ constructor(){
   id: number;
 
   @Column("boolean", { name: "user_can_edit", default: true })
-  userCanEdit: boolean; 
+  userCanEdit: boolean;
+
+  @Column("date", { name: "pass_theory_exam", nullable: true })
+  passTheoryExam: Date;
+
+  @Column("date", { name: "pass_practice_exam", nullable: true })
+  passPracticeExam: Date;
 
   @ManyToOne(() => User, (user) => user.students, {
     onDelete: "RESTRICT",

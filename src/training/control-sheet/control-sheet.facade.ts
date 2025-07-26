@@ -55,6 +55,13 @@ export class ControlSheetFacade {
             controlSheet.level = new Level();
         }
 
+        if (controlSheet.passTheoryExam === undefined) {
+            controlSheet.passTheoryExam = null;
+        }
+        if (controlSheet.passPracticeExam === undefined) {
+            controlSheet.passPracticeExam = null;
+        }
+
         const current = await this.controlSheetRepository.getControlSheetByUserId(user.id);
 
         if (current) {

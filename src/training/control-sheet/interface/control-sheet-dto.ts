@@ -1,5 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { Exclude } from "class-transformer";
+import { ApiPropertyOptional } from "@nestjs/swagger";
+import { Exclude, Transform } from "class-transformer";
 import { User } from "../../../user/user.entity";
 import { AltitudeFlightDto } from "./altitude-flight-dto";
 import { TheoryDto } from "./theory-dto";
@@ -14,6 +14,14 @@ export class ControlSheetDto {
 
   @ApiPropertyOptional()
   readonly userCanEdit: boolean;
+
+  @ApiPropertyOptional()
+  @Transform(({ value }) => value === null ? undefined : value)
+  passTheoryExam: Date;
+
+  @ApiPropertyOptional()
+  @Transform(({ value }) => value === null ? undefined : value)
+  passPracticeExam: Date;
 
   @ApiPropertyOptional()
   trainingHill: TrainingHillDto;
