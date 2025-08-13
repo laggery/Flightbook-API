@@ -1,5 +1,20 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { Exclude, Expose } from "class-transformer";
+import { Exclude, Expose, Type } from "class-transformer";
+import { IsDate, IsNotEmpty, ValidateNested } from "class-validator";
+
+@Exclude()
+export class GliderCheckDto {
+    @Expose()
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsDate()
+    @Type(() => Date)
+    readonly date: Date;
+    @Expose()
+    @ApiProperty()
+    @IsNotEmpty()
+    readonly result: string;
+}
 
 @Exclude()
 export class GliderDto {
@@ -28,4 +43,9 @@ export class GliderDto {
     readonly nbFlights: number;
     @Expose()
     readonly time: number;
+    @ApiPropertyOptional({ type: [GliderCheckDto] })
+    @Expose()
+    @ValidateNested()
+    @Type(() => GliderCheckDto)
+    readonly checks?: GliderCheckDto[];
 }

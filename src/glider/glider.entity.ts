@@ -50,6 +50,12 @@ export class Glider {
   })
   note: string | null;
 
+  @Column("jsonb", { nullable: true })
+  checks: {
+    date: Date;
+    result: string;
+  }[] | null;
+
   @OneToMany(() => Flight, (flight) => flight.glider)
   flights: Flight[];
 

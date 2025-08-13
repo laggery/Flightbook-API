@@ -43,6 +43,11 @@ export class GliderFacade {
         if (buyDate) {
             glider.buyDate = moment(buyDate).format('YYYY-MM-DD');
         }
+
+        if (glider.checks?.length == 0) {
+            glider.checks = null;
+        }
+
         glider.id = null;
         glider.user = user;
 
@@ -68,6 +73,13 @@ export class GliderFacade {
         glider.tandem = gliderDto.tandem;
         glider.archived = gliderDto.archived;
         glider.note = gliderDto.note ? gliderDto.note : null;
+
+        if (gliderDto.checks?.length == 0) {
+            glider.checks = null;
+        } else {
+            glider.checks = gliderDto.checks;
+        }
+        
         const gliderResp: Glider = await this.gliderRepository.save(glider);
         return plainToClass(GliderDto, gliderResp);
     }
