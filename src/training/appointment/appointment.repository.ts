@@ -85,6 +85,12 @@ export class AppointmentRepository {
             options.where.state = state;
         }
 
+        if (query && query.instructorId) {
+            options.where.instructor = {
+                id: query.instructorId
+            };
+        }
+
         let entityNumber: [Appointment[], number] = await this.appointmentRepository.findAndCount(options);
         entityNumber[0].forEach((appointment: Appointment) => {
             appointment.subscriptions = this.orderSubscriptionByTimestampAsc(appointment.subscriptions);
