@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Exclude, Expose, Type } from "class-transformer";
-import { IsDate, IsNotEmpty, ValidateNested } from "class-validator";
+import { IsDate, IsNotEmpty, IsOptional, ValidateNested } from "class-validator";
 
 @Exclude()
 export class GliderCheckDto {
@@ -46,6 +46,7 @@ export class GliderDto {
     @ApiPropertyOptional({ type: [GliderCheckDto] })
     @Expose()
     @ValidateNested()
+    @IsOptional()
     @Type(() => GliderCheckDto)
     readonly checks?: GliderCheckDto[];
 }
