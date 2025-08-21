@@ -1,13 +1,14 @@
-import { Student } from "../training/student/student.entity";
-import { TeamMember } from "../training/team-member/team-member.entity";
+import { Student } from "../../training/student/student.entity";
+import { TeamMember } from "../../training/team-member/team-member.entity";
 import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Flight } from "../flight/flight.entity";
-import { Glider } from "../glider/glider.entity";
-import { Place } from "../place/place.entity";
-import { LoginType } from "./login-type";
-import {Appointment} from "../training/appointment/appointment.entity";
-import { Subscription } from "..//training/subscription/subscription.entity";
-import { EmergencyContact } from "../training/emergency-contact/emergency-contact.entity";
+import { Flight } from "../../flight/flight.entity";
+import { Glider } from "../../glider/glider.entity";
+import { Place } from "../../place/place.entity";
+import { LoginType } from "../login-type";
+import {Appointment} from "../../training/appointment/appointment.entity";
+import { Subscription } from "../../training/subscription/subscription.entity";
+import { EmergencyContact } from "../../training/emergency-contact/emergency-contact.entity";
+import { UserConfig } from "./user-config";
 
 @Index("idx_16606_idx_e12875dfb3b1d92d7d7c5377e2", ["email"], { unique: true })
 @Index("idx_16409_idx_e12875dfb3b1d92d7d7c5377e2", ["email"], { unique: true })
@@ -80,6 +81,9 @@ export class User {
 
   @Column("text", { name: "keycloak_id", nullable: true })
   keycloakId: string | null;
+
+  @Column("jsonb", { nullable: true })
+  config: UserConfig | null;
 
   @OneToMany(() => Flight, (flight) => flight.user)
   flights: Flight[];

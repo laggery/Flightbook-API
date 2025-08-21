@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Exclude, Transform } from "class-transformer";
-import { User } from "../../../user/user.entity";
+import { User } from "../../../user/domain/user.entity";
 import { AltitudeFlightDto } from "./altitude-flight-dto";
 import { TheoryDto } from "./theory-dto";
 import { TrainingHillDto } from "./training-hill-dto";

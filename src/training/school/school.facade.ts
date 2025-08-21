@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { plainToClass, plainToInstance } from 'class-transformer';
-import { User } from '../../user/user.entity';
+import { User } from '../../user/domain/user.entity';
 import { UserRepository } from '../../user/user.repository';
 import { TeamMember } from '../team-member/team-member.entity';
 import { SchoolDto } from './interface/school-dto';

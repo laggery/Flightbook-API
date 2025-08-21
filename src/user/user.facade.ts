@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import { UserWriteDto } from './interface/user-write-dto';
-import { User } from './user.entity';
+import { User } from './domain/user.entity';
 import { UserAlreadyExistsException } from './exception/user-already-exists-exception';
 import { InvalidUserException } from './exception/invalid-user-exception';
 import { plainToClass } from 'class-transformer';
@@ -16,6 +16,7 @@ import { EmailService } from '../email/email.service';
 import * as crypto from 'crypto';
 import { UserException } from './exception/user.exception';
 import { KeycloakService } from '../auth/service/keycloak.service';
+import { UserConfig } from './domain/user-config';
 
 @Injectable()
 export class UserFacade {
@@ -49,6 +50,10 @@ export class UserFacade {
         user.loginType = LoginType.LOCAL;
         user.createdAt = new Date();
         user.paymentExempted = false;
+        
+        if (user.config && Object.keys(user.config).length === 0) {
+            user.config = null;
+        }
         
         const keycloakUserId = await this.keycloakService.createUser(user, userWriteDto.password, isInstructorApp);
         user.keycloakId = keycloakUserId;
@@ -116,6 +121,11 @@ export class UserFacade {
         user.firstname = userWriteDto.firstname;
         user.lastname = userWriteDto.lastname;
         user.phone = userWriteDto.phone;
+
+        user.config = plainToClass(UserConfig, userWriteDto.config);
+        if (user.config && Object.keys(user.config).length === 0) {
+            user.config = null;
+        }
 
         if (user.keycloakId) {
             await this.keycloakService.updateUser(user.keycloakId, user);

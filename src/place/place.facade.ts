@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PlaceRepository } from './place.repository';
 import { UserRepository } from '../user/user.repository';
 import { PlaceDto } from './interface/place-dto';
-import { User } from '../user/user.entity';
+import { User } from '../user/domain/user.entity';
 import { Place } from './place.entity';
 import { plainToClass } from 'class-transformer';
 import { PlaceAlreadyExistsException } from './exception/place-already-exists-exception';

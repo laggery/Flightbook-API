@@ -1,7 +1,7 @@
 import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import { Appointment } from "./appointment.entity";
 import { School } from "../school/school.entity";
-import { User } from "../../user/user.entity";
+import { User } from "../../user/domain/user.entity";
 
 @Entity("appointment_type")
 export class AppointmentType {

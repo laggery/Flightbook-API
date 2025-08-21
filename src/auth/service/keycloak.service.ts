@@ -4,7 +4,7 @@ import { KeycloakConfig } from '../config/keycloak.config';
 import { HttpService } from '@nestjs/axios';
 import { Logger, UnauthorizedException } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
-import { User } from '../../user/user.entity';
+import { User } from '../../user/domain/user.entity';
 
 @Injectable()
 export class KeycloakService {

@@ -4,7 +4,7 @@ import { UserRepository } from '../user/user.repository';
 import { FlightDto } from './interface/flight-dto';
 import { Flight } from './flight.entity';
 import { plainToClass, plainToInstance } from 'class-transformer';
-import { User } from '../user/user.entity';
+import { User } from '../user/domain/user.entity';
 import { PlaceFacade } from '../place/place.facade';
 import { Place } from '../place/place.entity';
 import { GliderFacade } from '../glider/glider.facade';

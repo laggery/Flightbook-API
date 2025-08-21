@@ -8,7 +8,7 @@ import { env } from 'process';
 import { PaymentException } from './exception/payment.exception';
 import { EmailService } from '../email/email.service';
 import { PaymentState } from './paymentState';
-import { User } from '../user/user.entity';
+import { User } from '../user/domain/user.entity';
 
 @Injectable()
 export class PaymentFacade {

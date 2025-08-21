@@ -1,6 +1,7 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { Exclude, Expose } from "class-transformer";
-import { IsEmail } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { Exclude, Expose, Type } from "class-transformer";
+import { IsEmail, IsOptional, ValidateNested } from 'class-validator';
+import { UserConfigDto } from "./user-config-dto";
 
 @Exclude()
 export class UserWriteDto {
@@ -20,4 +21,10 @@ export class UserWriteDto {
     @ApiProperty()
     @Expose()
     readonly phone: string;
+    @ApiPropertyOptional({ type: UserConfigDto })
+    @Expose()
+    @ValidateNested()
+    @IsOptional()
+    @Type(() => UserConfigDto)
+    readonly config?: UserConfigDto
 }

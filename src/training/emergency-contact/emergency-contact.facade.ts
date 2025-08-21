@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EmergencyContactRepository } from './emergency-contact.repository';
 import { UserRepository } from '../../user/user.repository';
 import { EmergencyContactDto } from './interface/emergency-contact-dto';
-import { User } from '../../user/user.entity';
+import { User } from '../../user/domain/user.entity';
 import { EmergencyContact } from './emergency-contact.entity';
 import { plainToClass } from 'class-transformer';
 import { EmergencyContactMapper } from './emergency-contact.mapper';

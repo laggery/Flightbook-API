@@ -8,7 +8,7 @@ import { SchoolRepository } from "../school/school.repository";
 import { AppointmentException } from "./exception/appointment.exception";
 import { SchoolException } from "../school/exception/school.exception";
 import { UserRepository } from "../../user/user.repository";
-import { User } from "../../user/user.entity";
+import { User } from "../../user/domain/user.entity";
 import { UserException } from '../../user/exception/user.exception';
 import { AppointmentMapper } from './appointment.mapper';
 import { Subscription } from '../subscription/subscription.entity';

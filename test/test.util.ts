@@ -1,4 +1,4 @@
-import { User } from "../src/user/user.entity";
+import { User } from "../src/user/domain/user.entity";
 import { News } from "../src/news/news.entity";
 import { readFileSync } from "fs";
 import * as path from 'path';

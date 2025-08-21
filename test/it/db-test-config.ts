@@ -15,7 +15,7 @@ import { Note } from "../../src/training/note/note.entity";
 import { School } from "../../src/training/school/school.entity";
 import { Student } from "../../src/training/student/student.entity";
 import { TeamMember } from "../../src/training/team-member/team-member.entity";
-import { User } from "../../src/user/user.entity";
+import { User } from "../../src/user/domain/user.entity";
 import { Subscription } from "../../src/training/subscription/subscription.entity";
 import { Level } from "../../src/training/control-sheet/level.entity";
 import { EmergencyContact } from "../../src/training/emergency-contact/emergency-contact.entity";

@@ -7,6 +7,7 @@ import { SubscriptionDto } from "../subscription/interface/subscription-dto";
 import { AppointmentType } from "./appointment-type.entity";
 import { GuestSubscriptionDto } from "../subscription/interface/guest-subscription-dto";
 import { GuestSubscription } from "../subscription/guest-subscription.entity";
+import { AppointmentTypeDto } from "./interface/appointment-type-dto";
 
 export class AppointmentMapper {
 
@@ -33,7 +34,7 @@ export class AppointmentMapper {
         }
 
         if (type) {
-            appointmentDto.type = plainToInstance(AppointmentType, type);
+            appointmentDto.type = plainToInstance(AppointmentTypeDto, type);
         } else {
             delete appointmentDto.type;
         }

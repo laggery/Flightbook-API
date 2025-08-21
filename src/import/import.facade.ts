@@ -8,7 +8,7 @@ import { Readable } from 'stream';
 import { ImportResultDto, ResultDto } from './interface/import-result-dto';
 import { PlaceRepository } from '../place/place.repository';
 import { UserRepository } from '../user/user.repository';
-import { User } from '../user/user.entity';
+import { User } from '../user/domain/user.entity';
 import { InjectEntityManager } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import moment = require('moment');

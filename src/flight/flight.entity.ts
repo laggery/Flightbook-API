@@ -1,7 +1,7 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Glider } from '../glider/glider.entity';
 import { Place } from "../place/place.entity";
-import { User } from "../user/user.entity";
+import { User } from "../user/domain/user.entity";
 import { Igc } from "./interface/igc";
 import { FlightValidation } from "./flight-validation.entity";
 

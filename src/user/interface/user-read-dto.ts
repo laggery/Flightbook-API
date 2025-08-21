@@ -1,5 +1,8 @@
-import { Exclude, Expose } from "class-transformer";
+import { Exclude, Expose, Type } from "class-transformer";
 import { LoginType } from "../login-type";
+import { ApiPropertyOptional } from "@nestjs/swagger";
+import { IsOptional, ValidateNested } from "class-validator";
+import { UserConfigDto } from "./user-config-dto";
 
 @Exclude()
 export class UserReadDto {
@@ -22,4 +25,10 @@ export class UserReadDto {
     readonly phone: string;
     @Expose()
     readonly loginType: LoginType;
+    @ApiPropertyOptional({ type: UserConfigDto })
+    @Expose()
+    @ValidateNested()
+    @IsOptional()
+    @Type(() => UserConfigDto)
+    readonly config?: UserConfigDto
 }

@@ -1,5 +1,5 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "../../user/user.entity";
+import { User } from "../../user/domain/user.entity";
 
 @Entity("emergency_contact")
 export class EmergencyContact {

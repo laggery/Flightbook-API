@@ -1,5 +1,5 @@
 import { Injectable, HttpException, UnauthorizedException } from '@nestjs/common';
-import { User } from '../user/user.entity';
+import { User } from '../user/domain/user.entity';
 import { UserRepository } from '../user/user.repository';
 import { AuthService } from './service/auth.service';
 import { EmailBodyDto } from '../email/email-body-dto';

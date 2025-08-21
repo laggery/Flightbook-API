@@ -2,7 +2,7 @@ import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn
 import {State} from "./state";
 import {Subscription} from "../subscription/subscription.entity";
 import {School} from "../school/school.entity";
-import {User} from "../../user/user.entity";
+import {User} from "../../user/domain/user.entity";
 import { AppointmentType } from "./appointment-type.entity";
 import { GuestSubscription } from "../subscription/guest-subscription.entity";
 

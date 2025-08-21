@@ -18,7 +18,7 @@ import { EnrollmentNotAllowedException } from './exception/enrollment-not-allowe
 import { StudentException } from '../student/exception/student.exception';
 import { TeamMemberException } from '../team-member/exception/team-member.exception';
 import { ControlSheetRepository } from '../control-sheet/control-sheet.repository';
-import { User } from '../../user/user.entity';
+import { User } from '../../user/domain/user.entity';
 import { ControlSheet } from '../control-sheet/control-sheet.entity';
 import { School } from '../school/school.entity';
 

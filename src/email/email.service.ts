@@ -10,7 +10,7 @@ import { I18nContext } from 'nestjs-i18n';
 import { Student } from '../training/student/student.entity';
 import { Enrollment } from '../training/enrollment/enrollment.entity';
 import { env } from 'process';
-import { User } from '../user/user.entity';
+import { User } from '../user/domain/user.entity';
 
 @Injectable()
 export class EmailService {

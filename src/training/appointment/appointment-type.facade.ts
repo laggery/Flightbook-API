@@ -7,7 +7,7 @@ import { AppointmentType } from './appointment-type.entity';
 import { AppointmentTypeRepository } from './appointment-type.repository';
 import { AppointmentException } from './exception/appointment.exception';
 import { AppointmentTypeDto } from './interface/appointment-type-dto';
-import { User } from '../../user/user.entity';
+import { User } from '../../user/domain/user.entity';
 import { UserRepository } from '../../user/user.repository';
 import { UserException } from '../../user/exception/user.exception';
 import { AppointmentTypeMapper } from './appointment-type.mapper';

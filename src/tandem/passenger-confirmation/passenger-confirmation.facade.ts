@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PassengerConfirmationDto } from './interface/passenger-confirmation-dto';
-import { User } from '../../user/user.entity';
+import { User } from '../../user/domain/user.entity';
 import { UserRepository } from '../../user/user.repository';
 import { PassengerConfirmationRepository } from './passenger-confirmation.repository';
 import { PassengerConfirmation } from './passenger-confirmation.entity';

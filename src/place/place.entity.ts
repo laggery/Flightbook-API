@@ -9,7 +9,7 @@ import {
   Point,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { User } from "../user/user.entity";
+import { User } from "../user/domain/user.entity";
 import { Flight } from "../flight/flight.entity";
 
 @Exclude()

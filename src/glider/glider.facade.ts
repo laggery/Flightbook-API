@@ -4,7 +4,7 @@ import { UserRepository } from '../user/user.repository';
 import { GliderDto } from './interface/glider-dto';
 import { Glider } from './glider.entity';
 import { plainToClass } from 'class-transformer';
-import { User } from '../user/user.entity';
+import { User } from '../user/domain/user.entity';
 import * as moment from 'moment';
 import { InvalidDateException } from './exception/invalid-date-exception';
 import { PagerDto } from '../interface/pager-dto';

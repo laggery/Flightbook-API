@@ -8,7 +8,7 @@ import { Place } from '../place/place.entity';
 import { PagerDto } from '../interface/pager-dto';
 import { FlightValidation } from './flight-validation.entity';
 import { FlightValidationState } from './flight-validation-state';
-import { User } from '../user/user.entity';
+import { User } from '../user/domain/user.entity';
 import { School } from '../training/school/school.entity';
 
 @Injectable()

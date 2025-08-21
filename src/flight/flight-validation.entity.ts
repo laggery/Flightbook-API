@@ -1,5 +1,5 @@
 import { Column, JoinColumn, ManyToOne } from "typeorm";
-import { User } from "../user/user.entity";
+import { User } from "../user/domain/user.entity";
 import { School } from "../training/school/school.entity";
 import { FlightValidationState } from "./flight-validation-state";
 
