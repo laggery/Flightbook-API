@@ -4,6 +4,9 @@ import { HttpService } from '@nestjs/axios';
 import { EmailService } from '../email/email.service';
 import { TestBed } from '@automock/jest';
 
+process.env.STRIPE_SECRET_KEY = 'STRIPE_SECRET_KEY';
+process.env.STRIPE_ENDPOINT_SECRET = 'STRIPE_ENDPOINT_SECRET';
+
 describe('Payment Facade', () => {
   let facade: PaymentFacade,
       userRepository: jest.Mocked<UserRepository>,
