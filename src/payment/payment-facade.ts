@@ -21,7 +21,7 @@ export class PaymentFacade {
         private readonly emailService: EmailService
     ) {
         this.stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-            apiVersion: '2022-11-15',
+            apiVersion: '2025-08-27.basil',
         });
         this.endpointSecret = env.STRIPE_ENDPOINT_SECRET;
     }
@@ -44,7 +44,7 @@ export class PaymentFacade {
 
         const session = await this.stripe.checkout.sessions.create({
             locale: stripeLocale as Stripe.Checkout.SessionCreateParams.Locale,
-            payment_method_types: ['card', 'twint'],
+            payment_method_types: ['card', 'paypal'],
             line_items: [{
                 price: env.STRIPE_PRICE,
                 quantity: 1,
