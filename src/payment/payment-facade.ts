@@ -44,7 +44,7 @@ export class PaymentFacade {
 
         const session = await this.stripe.checkout.sessions.create({
             locale: stripeLocale as Stripe.Checkout.SessionCreateParams.Locale,
-            payment_method_types: ['card', 'paypal'],
+            payment_method_types: ['card'],
             line_items: [{
                 price: env.STRIPE_PRICE,
                 quantity: 1,
