@@ -1,7 +1,7 @@
 import { TestBed } from '@automock/jest';
 import { NewsFacade } from './news.facade';
 import { NewsRepository } from './news.repository';
-import { TestUtil } from '../../test/test.util';
+import { Testdata } from '../../test/testdata';
 
 describe('NewsFacade', () => {
   let newsFacade: NewsFacade;
@@ -16,7 +16,7 @@ describe('NewsFacade', () => {
 
   it('Should get news', async () => {
     // given
-    const mockNews = TestUtil.createNews('de');
+    const mockNews = Testdata.createNews('de');
 
     newsRepository.getNews.mockResolvedValue([mockNews]);
 

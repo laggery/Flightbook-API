@@ -3,8 +3,12 @@ import { News } from "../src/news/news.entity";
 import { readFileSync } from "fs";
 import * as path from 'path';
 import { ControlSheet } from "../src/training/control-sheet/control-sheet.entity";
+import { Place } from "../src/place/place.entity";
+import { PlaceDto } from "../src/place/interface/place-dto";
+import { PlaceMapper } from "../src/place/place.mapper";
 
-export class TestUtil {
+export class Testdata {
+    public static EMAIL = "test@user.com";
 
     public static request = {
         user: {
@@ -23,6 +27,19 @@ export class TestUtil {
         news.text = 'text';
         news.language = language;
         return news;
+    }
+
+    public static createPlaceDto(name: string): PlaceDto {
+        return PlaceMapper.toPlaceDto(this.createPlace(name));
+    }
+
+    public static createPlace(name: string): Place {
+        const place = new Place();
+        place.name = name;
+        place.altitude = 1000;
+        place.country = 'CH'
+        place.notes = "notice"
+        return place;
     }
 
     public static createControlSheet(userCanEdit: boolean): ControlSheet {

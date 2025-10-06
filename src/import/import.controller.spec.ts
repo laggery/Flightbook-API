@@ -1,6 +1,6 @@
 import { TestBed } from '@automock/jest';
 import { ImportController } from './import.controller';
-import { TestUtil } from '../../test/test.util';
+import { Testdata } from '../../test/testdata';
 import { ImportResultDto, ResultDto } from './interface/import-result-dto';
 import { ImportFacade } from './import.facade';
 import { ImportType } from './import-type';
@@ -28,12 +28,12 @@ describe('ImportController', () => {
     const importResultDto = new ImportResultDto();
     importResultDto.place = new ResultDto();
     importResultDto.place.inserted = 1;
-    const placeCsv = TestUtil.readFile("places.csv");
+    const placeCsv = Testdata.readFile("places.csv");
 
     facade.importFbPlaces.mockResolvedValue(importResultDto);
 
     // when
-    const response = await controller.importData(TestUtil.request, placeCsv, { type: ImportType.FB_PLACES });
+    const response = await controller.importData(Testdata.request, placeCsv, { type: ImportType.FB_PLACES });
 
     // then
     expect(facade.importFbPlaces).toHaveBeenCalled();
@@ -45,12 +45,12 @@ describe('ImportController', () => {
     const importResultDto = new ImportResultDto();
     importResultDto.place = new ResultDto();
     importResultDto.place.inserted = 1;
-    const placeCsv = TestUtil.readFile("flugbuch.csv");
+    const placeCsv = Testdata.readFile("flugbuch.csv");
 
     facade.importFlugbuch.mockResolvedValue(importResultDto);
 
     // when
-    const response = await controller.importData(TestUtil.request, placeCsv, { type: ImportType.FLUGBUCH });
+    const response = await controller.importData(Testdata.request, placeCsv, { type: ImportType.FLUGBUCH });
 
     // then
     expect(facade.importFlugbuch).toHaveBeenCalled();
@@ -59,7 +59,7 @@ describe('ImportController', () => {
 
   it('has import Error', async () => {
     // given
-    const placeCsv = TestUtil.readFile("places.csv");
+    const placeCsv = Testdata.readFile("places.csv");
     facade.importFbPlaces.mockImplementation(() => {
       throw ImportException.importFailedException();
     });
@@ -68,7 +68,7 @@ describe('ImportController', () => {
     
     expect(async () => {
       // when
-      await controller.importData(TestUtil.request, placeCsv, { type: ImportType.FB_PLACES });
+      await controller.importData(Testdata.request, placeCsv, { type: ImportType.FB_PLACES });
 
       // then
       expect(facade.importFbPlaces).toHaveBeenCalled();

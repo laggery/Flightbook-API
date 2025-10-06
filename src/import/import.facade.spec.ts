@@ -5,7 +5,7 @@ import { PlaceRepository } from '../place/place.repository';
 import { GliderRepository } from '../glider/glider.repository';
 import { EntityManager } from 'typeorm';
 import { I18nService } from 'nestjs-i18n';
-import { TestUtil } from '../../test/test.util';
+import { Testdata } from '../../test/testdata';
 
 describe('ImportFacade', () => {
   let facade: ImportFacade,
@@ -39,10 +39,10 @@ describe('ImportFacade', () => {
 
   it('Import places', async () => {
     // given
-    const mockUser = TestUtil.createUser();
+    const mockUser = Testdata.createUser();
     userRepository.getUserById.mockReturnValue(Promise.resolve(mockUser));
 
-    const csv = TestUtil.readFile("places.csv");
+    const csv = Testdata.readFile("places.csv");
     placeRepository.convertEpsg4326toEpsg3857.mockReturnValue(Promise.resolve([{st_asgeojson: '{"coordinates":[1,1]}'}]));
 
     // when
@@ -55,10 +55,10 @@ describe('ImportFacade', () => {
 
   it('Import flugbuch', async () => {
     // given
-    const mockUser = TestUtil.createUser();
+    const mockUser = Testdata.createUser();
     userRepository.getUserById.mockReturnValue(Promise.resolve(mockUser));
 
-    const csv = TestUtil.readFile("flugbuch.csv");
+    const csv = Testdata.readFile("flugbuch.csv");
 
     // when
     const importResultDto = await facade.importFlugbuch(csv, mockUser.id);
@@ -69,10 +69,10 @@ describe('ImportFacade', () => {
 
   it('Import VFRnav', async () => {
     // given
-    const mockUser = TestUtil.createUser();
+    const mockUser = Testdata.createUser();
     userRepository.getUserById.mockReturnValue(Promise.resolve(mockUser));
 
-    const csv = TestUtil.readFile("VFRnav.xlsx");
+    const csv = Testdata.readFile("VFRnav.xlsx");
 
     // when
     const importResultDto = await facade.importVfr(csv, mockUser.id);

@@ -4,7 +4,7 @@ import { NewsModule } from '../../../src/news/news.module';
 import { NewsRepository } from '../../../src/news/news.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dbTestConfig } from '../db-test-config';
-import { TestUtil } from '../../test.util';
+import { Testdata } from '../../testdata';
 
 describe('NewsRepository', () => {
   let newsRepository: NewsRepository
@@ -28,7 +28,7 @@ describe('NewsRepository', () => {
 
   it('Should get news', async () => {
     // given
-    const news = TestUtil.createNews('de');
+    const news = Testdata.createNews('de');
 
     await newsRepository.save(news);
 
