@@ -2,7 +2,6 @@ import * as request from 'supertest';
 import { Testdata } from '../testdata';
 import { BaseE2ETest } from '../base-e2e-test';
 import { JwtTestHelper } from '../jwt-helper';
-import { create } from 'domain';
 import e = require('express');
 
 describe('Places (e2e)', () => {
@@ -31,39 +30,6 @@ describe('Places (e2e)', () => {
         );
       });
   });
-
-  it('/places pager (GET)', async () => {
-    // given
-    const user = await testInstance.getUserByEmail(Testdata.EMAIL);
-    const place = Testdata.createPlace("Riederalp");
-    place.user = user;
-    await testInstance.placeRepository.save(place);
-
-    const place2 = Testdata.createPlace("Fiesch");
-    place2.user = user;
-    await testInstance.placeRepository.save(place2);
-
-    const place3 = Testdata.createPlace("Belalp");
-    place3.user = user;
-    await testInstance.placeRepository.save(place3);
-
-    const keycloakToken = JwtTestHelper.createKeycloakToken();
-
-    //when
-    return request(testInstance.app.getHttpServer())
-      .get('/places/pager?page=1&limit=2')
-      .set('Authorization', `Bearer ${keycloakToken}`)
-      .expect(200)
-      .then(response => {
-        expect(response.body).toMatchObject({
-          itemCount: 2,
-          totalItems: 3,
-          itemsPerPage: 2,
-          currentPage: 1
-        });
-      });
-  });
-
 
   it('/places by name (GET)', async () => {
     // given

@@ -6,7 +6,6 @@ import { User } from '../user/domain/user.entity';
 import { Place } from './place.entity';
 import { plainToClass } from 'class-transformer';
 import { PlaceAlreadyExistsException } from './exception/place-already-exists-exception';
-import { PagerDto } from '../interface/pager-dto';
 import { PlaceMapper } from './place.mapper';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
@@ -23,10 +22,6 @@ export class PlaceFacade {
     async getPlaces(token: any, query: any): Promise<PlaceDto[]> {
         const list: Place[] = await this.placeRepository.getPlaces(token, query);
         return PlaceMapper.toPlaceDtoList(list);
-    }
-
-    async getPlacesPager(token: any, query: any): Promise<PagerDto> {
-        return this.placeRepository.getPlacesPager(token, query);
     }
 
     async getPlacesByName(token: any,  query: any, name: string): Promise<PlaceDto[]> {

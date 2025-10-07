@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, HttpCode, Put, Param, Delete, Query, UseGuards, Request } from '@nestjs/common';
 import { PlaceDto } from './interface/place-dto';
 import { PlaceFacade } from './place.facade';
-import { PagerDto } from '../interface/pager-dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { FeatureCollection } from 'geojson';
 import { CompositeAuthGuard } from '../auth/guard/composite-auth.guard';
@@ -31,12 +30,6 @@ export class PlaceController {
     @Get()
     getPlaces(@Request() req, @Query() query): Promise<PlaceDto[]> {
         return this.placeFacade.getPlaces(req.user, query);
-    }
-
-    @UseGuards(CompositeAuthGuard)
-    @Get('pager')
-    getPlacesPager(@Request() req, @Query() query): Promise<PagerDto> {
-        return this.placeFacade.getPlacesPager(req.user, query);
     }
 
     @UseGuards(CompositeAuthGuard)
