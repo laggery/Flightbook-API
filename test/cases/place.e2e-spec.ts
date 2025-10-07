@@ -2,7 +2,6 @@ import * as request from 'supertest';
 import { Testdata } from '../testdata';
 import { BaseE2ETest } from '../base-e2e-test';
 import { JwtTestHelper } from '../jwt-helper';
-import e = require('express');
 
 describe('Places (e2e)', () => {
   const testInstance = new BaseE2ETest();
@@ -14,7 +13,6 @@ describe('Places (e2e)', () => {
   it('/places (GET)', async () => {
     // given
     const place = Testdata.createPlace("Riederalp");
-    place.user = await testInstance.getUserByEmail(Testdata.EMAIL);
     await testInstance.placeRepository.save(place);
     const keycloakToken = JwtTestHelper.createKeycloakToken();
 
@@ -25,25 +23,25 @@ describe('Places (e2e)', () => {
       .expect(200)
       .then(response => {
         expect(response.body).toHaveLength(1);
-        expect(response.body[0]).toMatchObject(
-          Testdata.createPlace("Riederalp")
-        );
+        expect(response.body[0]).toEqual({
+          id: expect.any(Number),
+          name: place.name,
+          altitude: place.altitude,
+          country: place.country,
+          notes: place.notes
+        });
       });
   });
 
   it('/places by name (GET)', async () => {
     // given
-    const user = await testInstance.getUserByEmail(Testdata.EMAIL);
     const place = Testdata.createPlace("Riederalp");
-    place.user = user;
     await testInstance.placeRepository.save(place);
 
     const place2 = Testdata.createPlace("Fiesch");
-    place2.user = user;
     await testInstance.placeRepository.save(place2);
 
     const place3 = Testdata.createPlace("Belalp");
-    place3.user = user;
     await testInstance.placeRepository.save(place3);
 
     const keycloakToken = JwtTestHelper.createKeycloakToken();
@@ -52,7 +50,6 @@ describe('Places (e2e)', () => {
     return request(testInstance.app.getHttpServer())
       .get(`/places/ie`)
       .set('Authorization', `Bearer ${keycloakToken}`)
-      .send(Testdata.createPlaceDto("Riederalp"))
       .expect(200)
       .then(async (response) => {
         expect(response.body).toHaveLength(2);
@@ -75,7 +72,7 @@ describe('Places (e2e)', () => {
       .then(async (response) => {
         expect(response.body).toBeDefined();
         expect(response.body.id).toBeDefined();
-        expect(response.body).toMatchObject({
+        expect(response.body).toEqual({
           id: expect.any(Number),
           name: placeDto.name,
           altitude: placeDto.altitude,
@@ -100,7 +97,6 @@ describe('Places (e2e)', () => {
   it('/places already exists (POST)', async () => {
     // given
     const place = Testdata.createPlace("Riederalp");
-    place.user = await testInstance.getUserByEmail(Testdata.EMAIL);
     await testInstance.placeRepository.save(place);
 
     const keycloakToken = JwtTestHelper.createKeycloakToken();
@@ -120,7 +116,6 @@ describe('Places (e2e)', () => {
   it('/places (PUT)', async () => {
     // given
     const place = Testdata.createPlace("Riederalp");
-    place.user = await testInstance.getUserByEmail(Testdata.EMAIL);
     await testInstance.placeRepository.save(place);
     const keycloakToken = JwtTestHelper.createKeycloakToken();
 
@@ -135,7 +130,7 @@ describe('Places (e2e)', () => {
       .then(async (response) => {
         expect(response.body).toBeDefined();
         expect(response.body.id).toBeDefined();
-        expect(response.body).toMatchObject({
+        expect(response.body).toEqual({
           id: expect.any(Number),
           name: placeDto.name,
           altitude: placeDto.altitude,
@@ -148,6 +143,7 @@ describe('Places (e2e)', () => {
         });
         expect(db).toBeDefined();
         expect(db).toMatchObject({
+          id: response.body.id,
           name: placeDto.name,
           altitude: placeDto.altitude,
           country: placeDto.country,
@@ -159,7 +155,6 @@ describe('Places (e2e)', () => {
   it('/places (DELETE)', async () => {
     // given
     const place = Testdata.createPlace("Riederalp");
-    place.user = await testInstance.getUserByEmail(Testdata.EMAIL);
     await testInstance.placeRepository.save(place);
     const keycloakToken = JwtTestHelper.createKeycloakToken();
 

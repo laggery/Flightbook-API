@@ -3,6 +3,7 @@ import { TestingModule } from '@nestjs/testing';
 import { DataSource, Repository } from 'typeorm';
 import { News } from '../src/news/news.entity';
 import { User } from '../src/user/domain/user.entity';
+import { Testdata } from './testdata';
 
 export class BaseE2ETest {
   public get app(): INestApplication {
@@ -26,11 +27,19 @@ export class BaseE2ETest {
   }
 
   public get placeRepository(): Repository<any> {
-    return (global as any).testPlaceSheetRepository;
+    return (global as any).testPlaceRepository;
+  }
+
+  public get gliderRepository(): Repository<any> {
+    return (global as any).testGliderRepository;
   }
 
   public get controlSheetRepository(): Repository<any> {
     return (global as any).testControlSheetRepository;
+  }
+
+  public getDefaultUser(): Promise<User> {
+    return this.getUserByEmail(Testdata.EMAIL);
   }
 
   public getUserByEmail(email: string): Promise<User> {
@@ -48,6 +57,7 @@ export class BaseE2ETest {
     // For places, we need to handle foreign key constraints
     // Option 1: Delete instead of truncate to respect foreign keys
     await this.placeRepository.delete({});
+    await this.gliderRepository.delete({});
   }
 
   getRepository<T>(entity: new (...args: any[]) => T): Repository<T> {

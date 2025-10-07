@@ -9,6 +9,7 @@ import { Testdata } from "./testdata";
 import { MockKeycloakStrategy } from "./mock-keycloak.strategy";
 import { KeycloakStrategy } from "../src/auth/strategy/keycloak.strategy";
 import { PlaceRepository } from "../src/place/place.repository";
+import { GliderRepository } from "../src/glider/glider.repository";
 
 const init = async () => {
     await initPostgreSql();
@@ -49,6 +50,7 @@ const init = async () => {
     const controlSheetRepository = moduleFixture.get<ControlSheetRepository>(ControlSheetRepository);
     const userRepository = moduleFixture.get<UserRepository>(UserRepository);
     const placeRepository = moduleFixture.get<PlaceRepository>(PlaceRepository);
+    const gliderRepository = moduleFixture.get<GliderRepository>(GliderRepository);
 
     // Store globally for all tests to use
     (global as any).testApp = app;
@@ -57,7 +59,8 @@ const init = async () => {
     (global as any).testNewsRepository = newsRepository;
     (global as any).testUserRepository = userRepository;
     (global as any).testControlSheetRepository = controlSheetRepository;
-    (global as any).testPlaceSheetRepository = placeRepository;
+    (global as any).testPlaceRepository = placeRepository;
+    (global as any).testGliderRepository = gliderRepository;
 
     await userRepository.save(Testdata.createUser());
 };

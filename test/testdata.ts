@@ -6,6 +6,9 @@ import { ControlSheet } from "../src/training/control-sheet/control-sheet.entity
 import { Place } from "../src/place/place.entity";
 import { PlaceDto } from "../src/place/interface/place-dto";
 import { PlaceMapper } from "../src/place/place.mapper";
+import { Glider } from "../src/glider/glider.entity";
+import { plainToClass } from "class-transformer";
+import { GliderDto } from "../src/glider/interface/glider-dto";
 
 export class Testdata {
     public static EMAIL = "test@user.com";
@@ -39,7 +42,24 @@ export class Testdata {
         place.altitude = 1000;
         place.country = 'CH'
         place.notes = "notice"
+        place.user = this.createUser();
         return place;
+    }
+
+    public static createGliderDto(brand: string, name: string, tandem: boolean): GliderDto {
+        return plainToClass(GliderDto, this.createGlider(brand, name, tandem));
+    }
+
+    public static createGlider(brand: string, name: string, tandem: boolean): Glider {
+        const glider = new Glider();
+        glider.brand = brand;
+        glider.name = name;
+        glider.buyDate = '2020-01-01';
+        glider.note = "note";
+        glider.tandem = tandem;
+        glider.archived = false;
+        glider.user = this.createUser();
+        return glider;
     }
 
     public static createControlSheet(userCanEdit: boolean): ControlSheet {
