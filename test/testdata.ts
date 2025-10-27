@@ -11,6 +11,7 @@ import { plainToClass } from "class-transformer";
 import { GliderDto } from "../src/glider/interface/glider-dto";
 import { Flight } from "../src/flight/flight.entity";
 import { FlightDto } from "../src/flight/interface/flight-dto";
+import { UserWriteDto } from "src/user/interface/user-write-dto";
 
 export class Testdata {
     public static EMAIL = "test@user.com";
@@ -103,6 +104,22 @@ export class Testdata {
         controlSheet.level.id = 1;
         controlSheet.user = this.createUser();
         return controlSheet;
+    }
+
+    public static createUserDto(
+        firstname: string,
+        lastname: string,
+        email: string
+    ): UserWriteDto {
+        const user: UserWriteDto = {
+            firstname: firstname,
+            lastname: lastname,
+            email: email,
+            password: "Password123!",
+            phone: undefined,
+            config: undefined
+        };
+        return user;
     }
 
     public static createUser(): User {

@@ -12,6 +12,8 @@ import { PlaceRepository } from "../src/place/place.repository";
 import { GliderRepository } from "../src/glider/glider.repository";
 import { FlightRepository } from "../src/flight/flight.repository";
 import { VERSION_NEUTRAL, VersioningType } from "@nestjs/common";
+import { KeycloakService } from "../src/auth/service/keycloak.service";
+import { MockKeycloakService } from "./mock-keycloak.service";
 
 const init = async () => {
     process.env.TZ = 'UTC';
@@ -45,6 +47,8 @@ const init = async () => {
         .useValue(testDataSource)
         .overrideProvider(KeycloakStrategy)
         .useClass(MockKeycloakStrategy)
+        .overrideProvider(KeycloakService)
+        .useClass(MockKeycloakService)
         .compile();
 
     const app = moduleFixture.createNestApplication();
