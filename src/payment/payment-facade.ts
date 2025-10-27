@@ -42,7 +42,13 @@ export class PaymentFacade {
             stripeLocale = lang;
         }
 
-        const session = await this.stripe.checkout.sessions.create({
+        // Check for existing customer first
+        const existingCustomers = await this.stripe.customers.list({
+            email: user.email,
+            limit: 1
+        });
+
+        const sessionParam: Stripe.Checkout.SessionCreateParams = {
             locale: stripeLocale as Stripe.Checkout.SessionCreateParams.Locale,
             payment_method_types: ['card'],
             line_items: [{
@@ -53,9 +59,15 @@ export class PaymentFacade {
             success_url: `${callbackUrl}/success`,
             cancel_url: `${callbackUrl}/cancel`,
             client_reference_id: userId.toString(),
-            customer_email: user.email,
-            allow_promotion_codes: true
-        });
+            allow_promotion_codes: true,
+            // Conditionally set either customer or customer_email
+            ...(existingCustomers.data.length > 0 
+                ? { customer: existingCustomers.data[0].id }
+                : { customer_email: user.email }
+            )
+        };
+
+        const session = await this.stripe.checkout.sessions.create(sessionParam);
         return { id: session.id, url: session.url };
     }
 
