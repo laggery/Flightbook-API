@@ -10,8 +10,12 @@ import { MockKeycloakStrategy } from "./mock-keycloak.strategy";
 import { KeycloakStrategy } from "../src/auth/strategy/keycloak.strategy";
 import { PlaceRepository } from "../src/place/place.repository";
 import { GliderRepository } from "../src/glider/glider.repository";
+import { FlightRepository } from "../src/flight/flight.repository";
+import { VERSION_NEUTRAL, VersioningType } from "@nestjs/common";
 
 const init = async () => {
+    process.env.TZ = 'UTC';
+
     await initPostgreSql();
     process.env.JWT_SECRET = 'test-secret';
     process.env.STRIPE_ENDPOINT_SECRET = 'test';
@@ -44,6 +48,10 @@ const init = async () => {
         .compile();
 
     const app = moduleFixture.createNestApplication();
+    app.enableVersioning({
+        type: VersioningType.URI,
+        defaultVersion: VERSION_NEUTRAL
+    });
     await app.init();
 
     const newsRepository = moduleFixture.get<NewsRepository>(NewsRepository);
@@ -51,6 +59,7 @@ const init = async () => {
     const userRepository = moduleFixture.get<UserRepository>(UserRepository);
     const placeRepository = moduleFixture.get<PlaceRepository>(PlaceRepository);
     const gliderRepository = moduleFixture.get<GliderRepository>(GliderRepository);
+    const flightRepository = moduleFixture.get<FlightRepository>(FlightRepository);
 
     // Store globally for all tests to use
     (global as any).testApp = app;
@@ -61,6 +70,7 @@ const init = async () => {
     (global as any).testControlSheetRepository = controlSheetRepository;
     (global as any).testPlaceRepository = placeRepository;
     (global as any).testGliderRepository = gliderRepository;
+    (global as any).testFlightRepository = flightRepository;
 
     await userRepository.save(Testdata.createUser());
 };
@@ -71,6 +81,7 @@ const initPostgreSql = async () => {
         .withDatabase("flightbook_test")
         .withPassword("flightbook_test")
         .withUser("postgres")
+        .withEnvironment({ "TZ": "UTC" })
         .withCopyFilesToContainer([{
             source: "./test/init-schema.sql",
             target: "/docker-entrypoint-initdb.d/init-schema.sql"

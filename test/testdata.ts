@@ -9,6 +9,8 @@ import { PlaceMapper } from "../src/place/place.mapper";
 import { Glider } from "../src/glider/glider.entity";
 import { plainToClass } from "class-transformer";
 import { GliderDto } from "../src/glider/interface/glider-dto";
+import { Flight } from "../src/flight/flight.entity";
+import { FlightDto } from "../src/flight/interface/flight-dto";
 
 export class Testdata {
     public static EMAIL = "test@user.com";
@@ -22,7 +24,7 @@ export class Testdata {
     public static token = {
         userId: 1
     }
-    
+
     public static createNews(language: string): News {
         const news = new News();
         news.date = '01.01.2024';
@@ -60,6 +62,36 @@ export class Testdata {
         glider.archived = false;
         glider.user = this.createUser();
         return glider;
+    }
+
+    public static createFlightDto(
+        start: Place,
+        landing: Place,
+        glider: Glider,
+        date?: string,
+        timestamp?: Date
+    ): FlightDto {
+        return plainToClass(FlightDto, this.createFlight(start, landing, glider, date, timestamp));
+    }
+
+    public static createFlight(
+        start?: Place,
+        landing?: Place,
+        glider?: Glider,
+        date?: string,
+        timestamp?: Date
+    ): Flight {
+        const flight = new Flight();
+        flight.date = date || '2024-01-01';
+        flight.start = start || this.createPlace("Start");
+        flight.landing = landing || this.createPlace("Landing");
+        flight.glider = glider || this.createGlider("Brand", "Name", false);
+        flight.km = 100.2;
+        flight.time = "01:30";
+        flight.description = "description";
+        flight.user = this.createUser();
+        flight.timestamp = timestamp || new Date();
+        return flight;
     }
 
     public static createControlSheet(userCanEdit: boolean): ControlSheet {

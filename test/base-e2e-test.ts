@@ -38,6 +38,10 @@ export class BaseE2ETest {
     return (global as any).testControlSheetRepository;
   }
 
+  public get flightRepository(): Repository<any> {
+    return (global as any).testFlightRepository;
+  }
+
   public getDefaultUser(): Promise<User> {
     return this.getUserByEmail(Testdata.EMAIL);
   }
@@ -56,6 +60,7 @@ export class BaseE2ETest {
     
     // For places, we need to handle foreign key constraints
     // Option 1: Delete instead of truncate to respect foreign keys
+    await this.flightRepository.delete({});
     await this.placeRepository.delete({});
     await this.gliderRepository.delete({});
   }
