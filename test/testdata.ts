@@ -12,6 +12,9 @@ import { GliderDto } from "../src/glider/interface/glider-dto";
 import { Flight } from "../src/flight/flight.entity";
 import { FlightDto } from "../src/flight/interface/flight-dto";
 import { UserWriteDto } from "src/user/interface/user-write-dto";
+import { School } from "../src/training/school/school.entity";
+import { SchoolDto } from "../src/training/school/interface/school-dto";
+import { TeamMember } from "../src/training/team-member/team-member.entity";
 
 export class Testdata {
     public static EMAIL = "test@user.com";
@@ -120,6 +123,35 @@ export class Testdata {
             config: undefined
         };
         return user;
+    }
+
+    public static createSchoolDto(name: string): SchoolDto {
+        return plainToClass(SchoolDto, this.createSchool(name));
+    }
+
+    public static createSchool(name: string): School {
+        const school = new School();
+        school.name = name;
+        school.address1 = "address";
+        school.address2 = "address2";
+        school.plz = "1234";
+        school.city = "city";
+        school.phone = "0123456789";
+        school.email = "school@example.com";
+        school.language = "de";
+        school.configuration = {
+            validateFlights: true,
+            userCanEditControlSheet: true
+        };
+        return school;
+    }
+
+    public static createTeamMember(school: School, user: User, isAdmin: boolean = false): TeamMember {
+        const teamMember = new TeamMember();
+        teamMember.school = school;
+        teamMember.user = user;
+        teamMember.admin = isAdmin;
+        return teamMember;
     }
 
     public static createUser(): User {

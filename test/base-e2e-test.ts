@@ -42,6 +42,14 @@ export class BaseE2ETest {
     return (global as any).testFlightRepository;
   }
 
+  public get schoolRepository(): Repository<any> {
+    return (global as any).testSchoolRepository;
+  }
+
+  public get teamMemberRepository(): Repository<any> {
+    return (global as any).testTeamMemberRepository;
+  }
+
   public getDefaultUser(): Promise<User> {
     return this.getUserByEmail(Testdata.EMAIL);
   }
@@ -55,15 +63,24 @@ export class BaseE2ETest {
   async cleanupBetweenTests() {
     // Clean up data between tests - order matters due to foreign key constraints
     // Clear child tables first, then parent tables
+    
+    // Clear tables with no foreign key dependencies first
     await this.newsRepository.clear();
     await this.controlSheetRepository.clear();
     
-    // For places, we need to handle foreign key constraints
-    // Option 1: Delete instead of truncate to respect foreign keys
+    // Clear flight-related data (flights depend on places and gliders)
     await this.flightRepository.delete({});
+    
+    // Clear team_member before school (team_member has FK to school)
+    await this.teamMemberRepository.delete({});
+    
+    // Now safe to delete schools
+    await this.schoolRepository.delete({});
+    
+    // Clear remaining tables
     await this.placeRepository.delete({});
     await this.gliderRepository.delete({});
-    
+
     // Delete all users except the one with test@user.com email
     await this.userRepository.delete({
         email: Not('test@user.com')

@@ -3,7 +3,7 @@ import * as jwt from 'jsonwebtoken';
 export class JwtTestHelper {
   static createKeycloakToken(payload: any = {}) {
     const defaultPayload = {
-      sub: '1',
+      sub: 1,
       name: 'Test User',
       email: 'test@user.com',
       preferred_username: 'testuser',

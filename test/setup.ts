@@ -14,6 +14,8 @@ import { FlightRepository } from "../src/flight/flight.repository";
 import { VERSION_NEUTRAL, VersioningType } from "@nestjs/common";
 import { KeycloakService } from "../src/auth/service/keycloak.service";
 import { MockKeycloakService } from "./mock-keycloak.service";
+import { SchoolRepository } from "../src/training/school/school.repository";
+import { TeamMemberRepository } from "../src/training/team-member/team-member.repository";
 
 const init = async () => {
     process.env.TZ = 'UTC';
@@ -64,6 +66,8 @@ const init = async () => {
     const placeRepository = moduleFixture.get<PlaceRepository>(PlaceRepository);
     const gliderRepository = moduleFixture.get<GliderRepository>(GliderRepository);
     const flightRepository = moduleFixture.get<FlightRepository>(FlightRepository);
+    const schoolRepository = moduleFixture.get<SchoolRepository>(SchoolRepository);
+    const teamMemberRepository = moduleFixture.get<TeamMemberRepository>(TeamMemberRepository);
 
     // Store globally for all tests to use
     (global as any).testApp = app;
@@ -75,6 +79,8 @@ const init = async () => {
     (global as any).testPlaceRepository = placeRepository;
     (global as any).testGliderRepository = gliderRepository;
     (global as any).testFlightRepository = flightRepository;
+    (global as any).testSchoolRepository = schoolRepository;
+    (global as any).testTeamMemberRepository = teamMemberRepository;
 
     await userRepository.save(Testdata.createUser());
 };
