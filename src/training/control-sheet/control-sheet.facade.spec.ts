@@ -74,7 +74,7 @@ describe('ControlSheetFacade', () => {
     // given
     const mockControlSheet = Testdata.createControlSheet(true);
     controlSheetRepository.getControlSheetByUserId.mockResolvedValue(mockControlSheet);
-    const mockUser = Testdata.createUser();
+    const mockUser = Testdata.getDefaultUser();
     userRepository.getUserById.mockReturnValue(Promise.resolve(mockUser));
 
     const controlSheetDto = plainToClass(ControlSheetDto, mockControlSheet);
@@ -91,7 +91,7 @@ describe('ControlSheetFacade', () => {
     // given
     const mockControlSheet = Testdata.createControlSheet(false);
     controlSheetRepository.getControlSheetByUserId.mockResolvedValue(mockControlSheet);
-    const mockUser = Testdata.createUser();
+    const mockUser = Testdata.getDefaultUser();
     userRepository.getUserById.mockReturnValue(Promise.resolve(mockUser));
 
     const controlSheetDto = plainToClass(ControlSheetDto, mockControlSheet);

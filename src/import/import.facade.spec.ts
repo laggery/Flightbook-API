@@ -39,7 +39,7 @@ describe('ImportFacade', () => {
 
   it('Import places', async () => {
     // given
-    const mockUser = Testdata.createUser();
+    const mockUser = Testdata.getDefaultUser();
     userRepository.getUserById.mockReturnValue(Promise.resolve(mockUser));
 
     const csv = Testdata.readFile("places.csv");
@@ -55,7 +55,7 @@ describe('ImportFacade', () => {
 
   it('Import flugbuch', async () => {
     // given
-    const mockUser = Testdata.createUser();
+    const mockUser = Testdata.getDefaultUser();
     userRepository.getUserById.mockReturnValue(Promise.resolve(mockUser));
 
     const csv = Testdata.readFile("flugbuch.csv");
@@ -69,7 +69,7 @@ describe('ImportFacade', () => {
 
   it('Import VFRnav', async () => {
     // given
-    const mockUser = Testdata.createUser();
+    const mockUser = Testdata.getDefaultUser();
     userRepository.getUserById.mockReturnValue(Promise.resolve(mockUser));
 
     const csv = Testdata.readFile("VFRnav.xlsx");

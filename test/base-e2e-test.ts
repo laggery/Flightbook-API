@@ -50,6 +50,14 @@ export class BaseE2ETest {
     return (global as any).testTeamMemberRepository;
   }
 
+  public get enrollmentRepository(): Repository<any> {
+    return (global as any).testEnrollmentRepository;
+  }
+
+  public get studentRepository(): Repository<any> {
+    return (global as any).testStudentRepository;
+  }
+
   public getDefaultUser(): Promise<User> {
     return this.getUserByEmail(Testdata.EMAIL);
   }
@@ -61,29 +69,35 @@ export class BaseE2ETest {
   }
 
   async cleanupBetweenTests() {
-    // Clean up data between tests - order matters due to foreign key constraints
-    // Clear child tables first, then parent tables
-    
-    // Clear tables with no foreign key dependencies first
+    // Clear tables in the correct order (child tables first)
+    // 1. Clear tables with no dependencies first
     await this.newsRepository.clear();
     await this.controlSheetRepository.clear();
     
-    // Clear flight-related data (flights depend on places and gliders)
+    // 2. Clear flight-related data (flights might reference places/gliders)
     await this.flightRepository.delete({});
     
-    // Clear team_member before school (team_member has FK to school)
+    // 3. Clear training-related data in correct order
+    // team_member depends on school and user
     await this.teamMemberRepository.delete({});
     
-    // Now safe to delete schools
+    // student might depend on school  
+    await this.studentRepository.delete({});
+    
+    // enrollment might depend on school
+    await this.enrollmentRepository.delete({});
+    
+    // Now safe to delete schools (no more references)
     await this.schoolRepository.delete({});
     
-    // Clear remaining tables
+    // 4. Clear other independent tables
     await this.placeRepository.delete({});
     await this.gliderRepository.delete({});
 
-    // Delete all users except the one with test@user.com email
+    // 5. Delete all users except the default test user (do this last)
+    const defaultUser = Testdata.getDefaultUser();
     await this.userRepository.delete({
-        email: Not('test@user.com')
+      email: Not(defaultUser.email)
     });
   }
 

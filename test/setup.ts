@@ -16,6 +16,8 @@ import { KeycloakService } from "../src/auth/service/keycloak.service";
 import { MockKeycloakService } from "./mock-keycloak.service";
 import { SchoolRepository } from "../src/training/school/school.repository";
 import { TeamMemberRepository } from "../src/training/team-member/team-member.repository";
+import { EnrollmentRepository } from "../src/training/enrollment/enrollment.repository";
+import { StudentRepository } from "../src/training/student/student.repository";
 
 const init = async () => {
     process.env.TZ = 'UTC';
@@ -68,6 +70,8 @@ const init = async () => {
     const flightRepository = moduleFixture.get<FlightRepository>(FlightRepository);
     const schoolRepository = moduleFixture.get<SchoolRepository>(SchoolRepository);
     const teamMemberRepository = moduleFixture.get<TeamMemberRepository>(TeamMemberRepository);
+    const enrollmentRepository = moduleFixture.get<EnrollmentRepository>(EnrollmentRepository);
+    const studentRepository = moduleFixture.get<StudentRepository>(StudentRepository);
 
     // Store globally for all tests to use
     (global as any).testApp = app;
@@ -81,8 +85,10 @@ const init = async () => {
     (global as any).testFlightRepository = flightRepository;
     (global as any).testSchoolRepository = schoolRepository;
     (global as any).testTeamMemberRepository = teamMemberRepository;
+    (global as any).testEnrollmentRepository = enrollmentRepository;
+    (global as any).testStudentRepository = studentRepository;
 
-    await userRepository.save(Testdata.createUser());
+    await userRepository.save(Testdata.getDefaultUser());
 };
 
 const initPostgreSql = async () => {

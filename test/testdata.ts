@@ -15,6 +15,9 @@ import { UserWriteDto } from "src/user/interface/user-write-dto";
 import { School } from "../src/training/school/school.entity";
 import { SchoolDto } from "../src/training/school/interface/school-dto";
 import { TeamMember } from "../src/training/team-member/team-member.entity";
+import { Enrollment } from "../src/training/enrollment/enrollment.entity";
+import { randomStringGenerator } from "@nestjs/common/utils/random-string-generator.util";
+import { EnrollmentType } from "../src/training/enrollment/enrollment-type";
 
 export class Testdata {
     public static EMAIL = "test@user.com";
@@ -48,7 +51,7 @@ export class Testdata {
         place.altitude = 1000;
         place.country = 'CH'
         place.notes = "notice"
-        place.user = this.createUser();
+        place.user = this.getDefaultUser();
         return place;
     }
 
@@ -64,7 +67,7 @@ export class Testdata {
         glider.note = "note";
         glider.tandem = tandem;
         glider.archived = false;
-        glider.user = this.createUser();
+        glider.user = this.getDefaultUser();
         return glider;
     }
 
@@ -93,7 +96,7 @@ export class Testdata {
         flight.km = 100.2;
         flight.time = "01:30";
         flight.description = "description";
-        flight.user = this.createUser();
+        flight.user = this.getDefaultUser();
         flight.timestamp = timestamp || new Date();
         return flight;
     }
@@ -105,7 +108,7 @@ export class Testdata {
         controlSheet.trainingHill.id = 1;
         controlSheet.theory.id = 1;
         controlSheet.level.id = 1;
-        controlSheet.user = this.createUser();
+        controlSheet.user = this.getDefaultUser();
         return controlSheet;
     }
 
@@ -146,6 +149,16 @@ export class Testdata {
         return school;
     }
 
+    public static createEnrollment(school: School, email: string, type: EnrollmentType): Enrollment {
+        const enrollment = new Enrollment();
+        enrollment.school = school;
+        enrollment.email = email;
+        enrollment.expireAt = new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
+        enrollment.token = randomStringGenerator();
+        enrollment.type = type;
+        return enrollment;
+    }
+
     public static createTeamMember(school: School, user: User, isAdmin: boolean = false): TeamMember {
         const teamMember = new TeamMember();
         teamMember.school = school;
@@ -154,7 +167,15 @@ export class Testdata {
         return teamMember;
     }
 
-    public static createUser(): User {
+    public static createUser(email?: string): User {
+        const user = new User();
+        user.firstname = "test";
+        user.lastname = "user";
+        user.email = email || this.EMAIL;
+        return user;
+    }
+
+    public static getDefaultUser(): User {
         const user = new User();
         user.id = 1;
         user.firstname = "test";
