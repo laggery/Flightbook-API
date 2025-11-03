@@ -4,4 +4,9 @@ export class UserConfig {
     dabsLinkDisabled: boolean;
     links: string[];
   };
+  notifications: {
+    email: {
+      appointment: boolean;
+    };
+  };
 }
