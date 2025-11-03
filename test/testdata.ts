@@ -21,6 +21,8 @@ import { EnrollmentType } from "../src/training/enrollment/enrollment-type";
 
 export class Testdata {
     public static EMAIL = "test@user.com";
+    public static INSTRUCTOR_APP_ORIGIN = "http://localhost:4200";
+    public static MOBILE_APP_ORIGIN = "http://localhost:3000";
 
     public static request = {
         user: {

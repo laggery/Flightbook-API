@@ -259,7 +259,7 @@ describe('V2 Users (e2e)', () => {
       .post('/v2/users')
       .set('Authorization', `Bearer ${keycloakToken}`)
       .set('accept-language', 'de')
-      .set('origin', 'http://localhost:3000')
+      .set('origin', Testdata.MOBILE_APP_ORIGIN)
       .send(userDto)
       .expect(201)
       .then(async (response) => {
@@ -278,7 +278,7 @@ describe('V2 Users (e2e)', () => {
       .post('/v2/users')
       .set('Authorization', `Bearer ${keycloakToken}`)
       .set('accept-language', 'de')
-      .set('origin', 'http://localhost:4200')
+      .set('origin', Testdata.INSTRUCTOR_APP_ORIGIN)
       .send(userDto)
       .expect(201)
       .then(async (response) => {

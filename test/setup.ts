@@ -26,6 +26,8 @@ const init = async () => {
     process.env.JWT_SECRET = 'test-secret';
     process.env.STRIPE_ENDPOINT_SECRET = 'test';
     process.env.STRIPE_SECRET_KEY = 'test';
+    process.env.ORIGIN_INSTRUCTOR = Testdata.INSTRUCTOR_APP_ORIGIN;
+    process.env.ORIGIN_MOBILE = Testdata.MOBILE_APP_ORIGIN;
 
     // Create test DataSource
     const testDataSource = new DataSource({
