@@ -123,4 +123,8 @@ export class User {
   clearNotificationToken() {
     this.notificationToken = null;
   }
+
+  isAppointmentEmailNotificationEnabled(): boolean {
+    return this.config?.notifications?.email?.appointment ?? true;
+  }
 }

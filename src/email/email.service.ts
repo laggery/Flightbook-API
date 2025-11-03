@@ -109,8 +109,14 @@ export class EmailService {
         email.replyTo = appointment.instructor? appointment.instructor.email : appointment.school.email;
         email.bccAddress = "";
         students.forEach((student: Student) => {
-            email.bccAddress += student.user.email + ";"
+            if (student.user.isAppointmentEmailNotificationEnabled()) {
+                email.bccAddress += student.user.email + ";"
+            }
         });
+
+        if (email.bccAddress.length <= 0) {
+            return;
+        }
 
         const i18n = I18nContext.current();
 
@@ -148,8 +154,14 @@ export class EmailService {
         email.replyTo = appointment.instructor? appointment.instructor.email : appointment.school.email;
         email.bccAddress = "";
         students.forEach((student: Student) => {
-            email.bccAddress += student.user.email + ";"
+            if (student.user.isAppointmentEmailNotificationEnabled()) {
+                email.bccAddress += student.user.email + ";"
+            }
         });
+
+        if (email.bccAddress.length <= 0) {
+            return;
+        }
 
         const i18n = I18nContext.current();
 
@@ -205,6 +217,10 @@ export class EmailService {
     }
 
     sendInformWaitingStudent(school: SchoolDto, appointment: Appointment, subscription: Subscription) {
+        if (!subscription.user.isAppointmentEmailNotificationEnabled()) {
+            return;
+        }
+
         const i18n = I18nContext.current();
         const email = new EmailBodyDto();
 
