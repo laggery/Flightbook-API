@@ -202,7 +202,7 @@ export class EnrollmentFacade {
             teamMember.admin = false;
             teamMember.school= enrollment.school;
             teamMember.user = user;
-            this.teamMemberRepository.save(teamMember);
+            await this.teamMemberRepository.save(teamMember);
         }
 
         return true;
