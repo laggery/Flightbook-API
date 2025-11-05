@@ -2,7 +2,7 @@ import { ControlSheetFacade } from './control-sheet.facade';
 import { ControlSheetRepository } from './control-sheet.repository';
 import { UserRepository } from '../../user/user.repository';
 import { TestBed } from '@automock/jest';
-import { TestUtil } from '../../../test/test.util';
+import { Testdata } from '../../../test/testdata';
 import { ControlSheet } from './control-sheet.entity';
 import { ControlSheetDto } from './interface/control-sheet-dto';
 import { plainToClass } from 'class-transformer';
@@ -27,7 +27,7 @@ describe('ControlSheetFacade', () => {
     controlSheetRepository.getControlSheetByUserId.mockResolvedValue(mockControlSheet);
 
     // when
-    const controlSheet = await facade.getControlSheet(TestUtil.token);
+    const controlSheet = await facade.getControlSheet(Testdata.token);
 
     // then
     expect(controlSheetRepository.getControlSheetByUserId).toHaveBeenCalled();
@@ -54,14 +54,14 @@ describe('ControlSheetFacade', () => {
 
   it('Student should not be able to edit control sheet', async () => {
     // given
-    const mockControlSheet = TestUtil.createControlSheet(false);
+    const mockControlSheet = Testdata.createControlSheet(false);
     controlSheetRepository.getControlSheetByUserId.mockResolvedValue(mockControlSheet);
 
     const controlSheetDto = plainToClass(ControlSheetDto, mockControlSheet);
 
     // when
     const exception = async() => {
-      await facade.studentCreateUpdateControlSheet(TestUtil.token, controlSheetDto);
+      await facade.studentCreateUpdateControlSheet(Testdata.token, controlSheetDto);
     }
 
     // then
@@ -72,15 +72,15 @@ describe('ControlSheetFacade', () => {
 
   it('Student should be able to edit control sheet', async () => {
     // given
-    const mockControlSheet = TestUtil.createControlSheet(true);
+    const mockControlSheet = Testdata.createControlSheet(true);
     controlSheetRepository.getControlSheetByUserId.mockResolvedValue(mockControlSheet);
-    const mockUser = TestUtil.createUser();
+    const mockUser = Testdata.getDefaultUser();
     userRepository.getUserById.mockReturnValue(Promise.resolve(mockUser));
 
     const controlSheetDto = plainToClass(ControlSheetDto, mockControlSheet);
 
     // when
-    await facade.studentCreateUpdateControlSheet(TestUtil.token, controlSheetDto);
+    await facade.studentCreateUpdateControlSheet(Testdata.token, controlSheetDto);
 
     // then
     expect(controlSheetRepository.getControlSheetByUserId).toHaveBeenCalledTimes(2);
@@ -89,15 +89,15 @@ describe('ControlSheetFacade', () => {
 
   it('Instructor should be able to edit control sheet', async () => {
     // given
-    const mockControlSheet = TestUtil.createControlSheet(false);
+    const mockControlSheet = Testdata.createControlSheet(false);
     controlSheetRepository.getControlSheetByUserId.mockResolvedValue(mockControlSheet);
-    const mockUser = TestUtil.createUser();
+    const mockUser = Testdata.getDefaultUser();
     userRepository.getUserById.mockReturnValue(Promise.resolve(mockUser));
 
     const controlSheetDto = plainToClass(ControlSheetDto, mockControlSheet);
 
     // when
-    await facade.instructorCreateUpdateControlSheet(TestUtil.token, controlSheetDto);
+    await facade.instructorCreateUpdateControlSheet(Testdata.token, controlSheetDto);
 
     // then
     expect(controlSheetRepository.getControlSheetByUserId).toHaveBeenCalledTimes(1);

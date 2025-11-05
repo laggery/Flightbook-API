@@ -14,7 +14,6 @@ import {
 import { FlightDto } from './interface/flight-dto';
 import { FlightFacade } from './flight.facade';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
-import { PagerDto } from '../interface/pager-dto';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CompositeAuthGuard } from '../auth/guard/composite-auth.guard';
 @Controller('flights')
@@ -29,12 +28,6 @@ export class FlightController {
     @Get()
     getFlights(@Request() req, @Query() query): Promise<FlightDto[]> {
         return this.flightFacade.getFlights(req.user, query);
-    }
-
-    @UseGuards(CompositeAuthGuard)
-    @Get('pager')
-    getFlightsPager(@Request() req, @Query() query): Promise<PagerDto> {
-        return this.flightFacade.getFlightsPager(req.user, query);
     }
 
     @UseGuards(CompositeAuthGuard)

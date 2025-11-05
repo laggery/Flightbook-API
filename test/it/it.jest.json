@@ -12,4 +12,4 @@
     },
     "globalSetup": "./test/it/setup.ts",
     "globalTeardown": "./test/it/teardown.ts"
-  }
+}

@@ -2,7 +2,6 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Glider } from './glider.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
-import { PagerDto } from '../interface/pager-dto';
 
 @Injectable()
 export class GliderRepository extends Repository<Glider> {
@@ -50,25 +49,6 @@ export class GliderRepository extends Repository<Glider> {
         .where("glider.name ILIKE :name", { name })
         .andWhere("glider.user.id = :userId", { userId: token.userId })
         .getOne();
-    }
-
-    async getGlidersPager(token: any, query: any): Promise<PagerDto> {
-        const pagerDto = new PagerDto();
-
-        let builder = this.repository.createQueryBuilder('glider')
-            .where(`user_id = ${token.userId}`);
-
-        builder = GliderRepository.addQueryParams(builder, query);
-        const entityNumber: [Glider[], number] = await builder.getManyAndCount();
-
-        const [first, second] = entityNumber;
-        const { offset, limit } = query;
-        pagerDto.itemCount = first.length;
-        pagerDto.totalItems = second;
-        pagerDto.itemsPerPage = (query && limit) ? Number(limit) : pagerDto.itemCount;
-        pagerDto.totalPages =  (query && limit) ?  Math.ceil(pagerDto.totalItems / Number(limit)) : pagerDto.totalItems;
-        pagerDto.currentPage = (query && offset) ? (offset >= pagerDto.totalItems ? null : Math.floor(parseInt(offset) / parseInt(limit)) + 1) : 1;
-        return pagerDto;
     }
 
     private static addQueryParams(builder: SelectQueryBuilder<Glider>, query: any): SelectQueryBuilder<Glider> {

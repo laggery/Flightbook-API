@@ -1,6 +1,6 @@
 import { NewsRepository } from './news.repository';
 import { TestBed } from '@automock/jest';
-import { TestUtil } from '../../test/test.util';
+import { Testdata } from '../../test/testdata';
 
 describe('NewsRepository', () => {
   let newsRepository: NewsRepository;
@@ -13,7 +13,7 @@ describe('NewsRepository', () => {
 
   it('Should get news', async () => {
     // given - team name
-    const mockNews = TestUtil.createNews('de');
+    const mockNews = Testdata.createNews('de');
 
     const findSpy = jest
         .spyOn(newsRepository, 'find')

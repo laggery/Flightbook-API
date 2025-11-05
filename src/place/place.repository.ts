@@ -2,7 +2,6 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ILike } from 'typeorm';
 import { Place } from './place.entity';
-import { PagerDto } from '../interface/pager-dto';
 
 @Injectable()
 export class PlaceRepository extends Repository<Place> {
@@ -41,36 +40,6 @@ export class PlaceRepository extends Repository<Place> {
         }
 
         return await this.repository.find(options);
-    }
-
-    async getPlacesPager(token: any, query: any): Promise<PagerDto> {
-        const pagerDto = new PagerDto();
-
-        const builder = this.repository.createQueryBuilder('place')
-            .where(`user_id = ${token.userId}`);
-
-        if (query?.limit) {
-            if (Number.isNaN(Number(query.limit))) {
-                throw new BadRequestException("limit is not a number");
-            }
-            builder.limit(query.limit);
-        }
-
-        if (query?.offset) {
-            if (Number.isNaN(Number(query.offset))) {
-                throw new BadRequestException("offset is not a number");
-            }
-            builder.offset(query.offset);
-        }
-
-        const entityNumber: [Place[], number] = await builder.getManyAndCount();
-
-        pagerDto.itemCount = entityNumber[0].length;
-        pagerDto.totalItems = entityNumber[1];
-        pagerDto.itemsPerPage = (query && query.limit) ? Number(query.limit) : pagerDto.itemCount;
-        pagerDto.totalPages =  (query && query.limit) ?  Math.ceil(pagerDto.totalItems / Number(query.limit)) : pagerDto.totalItems;
-        pagerDto.currentPage = (query && query.offset) ? (query.offset >= pagerDto.totalItems ? null : Math.floor(parseInt(query.offset) / parseInt(query.limit)) + 1) : 1;
-        return pagerDto;
     }
 
     async getPlaceById(token: any, id: number) {

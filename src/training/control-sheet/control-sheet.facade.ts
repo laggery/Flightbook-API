@@ -26,7 +26,7 @@ export class ControlSheetFacade {
         }
         const controlSheet: ControlSheet = plainToInstance(ControlSheet, controlSheetDto);
         controlSheet.userCanEdit = undefined;
-        controlSheet.level = currentSheet.level;
+        controlSheet.level = currentSheet?.level;
         return this.createUpdateControlSheet(token, controlSheet);
     }
 

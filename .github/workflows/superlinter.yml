@@ -6,7 +6,7 @@ on:
       - 'master'
 
 jobs:
-  unit_test:
+  e2e_test:
     runs-on: ubuntu-latest
     steps:
       - 
@@ -21,25 +21,9 @@ jobs:
         run: npm install
       - 
         name: Run tests
-        run: npm run test
-  it_test:
-    runs-on: ubuntu-latest
-    steps:
-      - 
-        uses: actions/checkout@v4
-      - 
-        name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - 
-        name: Install dependencies
-        run: npm install
-      - 
-        name: Run tests
-        run: npm run test:it
+        run: npm run test:e2e
   docker:
-    needs: [unit_test, it_test]
+    needs: [e2e_test]
     runs-on: ubuntu-latest
     steps:
       -

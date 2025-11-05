@@ -16,11 +16,10 @@ export class SchoolGuard implements CanActivate {
     const schoolId = params.id;
     return new Promise<boolean>((resolve, reject) => {
       this.teamMemberRepository.getTeamMembersBySchoolId(schoolId).then((res: TeamMember[]) => {
-        res.find((teamMember: TeamMember) => {
-          if (teamMember.user.id === request.user.userId) {
-            return resolve(true)
-          }
-        })
+        const foundMember = res.find((teamMember: TeamMember) => teamMember.user.id === request.user.userId);
+        if (foundMember){
+          return resolve(true);
+        }
         return resolve(false);
       }).catch((error) => {
         return reject(false);

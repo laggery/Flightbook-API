@@ -2,7 +2,6 @@ import { Controller, UseGuards, Get, Request, Query, Post, Body, Put, Param, Del
 import { GliderFacade } from './glider.facade';
 import { CompositeAuthGuard } from '../auth/guard/composite-auth.guard';
 import { GliderDto } from './interface/glider-dto';
-import { PagerDto } from '../interface/pager-dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('gliders')
@@ -22,12 +21,6 @@ export class GliderController {
     @Get('name/:name')
     getGliderByName(@Request() req, @Param('name') name: string): Promise<GliderDto> {
         return this.gliderFacade.getGliderbyName(req.user, name);
-    }
-
-    @UseGuards(CompositeAuthGuard)
-    @Get('pager')
-    getGlidersPager(@Request() req, @Query() query): Promise<PagerDto> {
-        return this.gliderFacade.getGlidersPager(req.user, query);
     }
 
     @UseGuards(CompositeAuthGuard)

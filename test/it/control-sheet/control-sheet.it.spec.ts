@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dbTestConfig } from '../db-test-config';
-import { TestUtil } from '../../test.util';
+import { Testdata } from '../../testdata';
 import { ControlSheetRepository } from '../../../src/training/control-sheet/control-sheet.repository';
 import { ControlSheetModule } from '../../../src/training/control-sheet/control-sheet.module';
 
@@ -27,7 +27,7 @@ describe('ControlSheetRepository', () => {
 
   it('Should get control sheet', async () => {
     // given
-    const controlSheet = TestUtil.createControlSheet(true);
+    const controlSheet = Testdata.createControlSheet(true);
 
     await controlSheetRepository.save(controlSheet);
 

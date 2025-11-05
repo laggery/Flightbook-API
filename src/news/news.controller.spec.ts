@@ -1,7 +1,7 @@
 import { NewsController } from './news.controller';
 import { NewsFacade } from './news.facade';
 import { TestBed } from '@automock/jest';
-import { TestUtil } from '../../test/test.util';
+import { Testdata } from '../../test/testdata';
 
 describe('News Controller', () => {
   let controller: NewsController;
@@ -16,7 +16,7 @@ describe('News Controller', () => {
 
   it('Should get news', async () => {
     // given - team name
-    const mockNews = TestUtil.createNews('de');
+    const mockNews = Testdata.createNews('de');
 
     newsFacade.getNews.mockResolvedValue([mockNews]);
 
