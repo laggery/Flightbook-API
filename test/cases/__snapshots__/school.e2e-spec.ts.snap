@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Schools (e2e) /schools (POST) 1`] = `
+{
+  "address1": "address",
+  "address2": "address2",
+  "city": "city",
+  "configuration": {
+    "userCanEditControlSheet": true,
+    "validateFlights": true,
+  },
+  "email": "school@example.com",
+  "language": "de",
+  "name": "School 1",
+  "phone": "0123456789",
+  "plz": "1234",
+}
+`;
+
+exports[`Schools (e2e) /schools (POST) 2`] = `
+{
+  "address1": "address",
+  "address2": "address2",
+  "city": "city",
+  "configuration": {
+    "userCanEditControlSheet": true,
+    "validateFlights": true,
+  },
+  "email": "school@example.com",
+  "language": "de",
+  "name": "School 1",
+  "phone": "0123456789",
+  "plz": "1234",
+}
+`;
+
+exports[`Schools (e2e) /schools/configuration (PUT) 1`] = `
+{
+  "address1": "address",
+  "address2": "address2",
+  "city": "city",
+  "configuration": {
+    "userCanEditControlSheet": false,
+    "validateFlights": false,
+  },
+  "email": "school@example.com",
+  "language": "de",
+  "name": "School 1",
+  "phone": "0123456789",
+  "plz": "1234",
+}
+`;
+
+exports[`Schools (e2e) /schools/configuration (PUT) 2`] = `
+{
+  "address1": "address",
+  "address2": "address2",
+  "city": "city",
+  "configuration": {
+    "userCanEditControlSheet": false,
+    "validateFlights": false,
+  },
+  "email": "school@example.com",
+  "language": "de",
+  "name": "School 1",
+  "phone": "0123456789",
+  "plz": "1234",
+}
+`;

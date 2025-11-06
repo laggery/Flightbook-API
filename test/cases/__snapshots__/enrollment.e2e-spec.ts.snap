@@ -1,0 +1,119 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Enrollments (e2e) /:token (GET) 1`] = `
+{
+  "email": "test@user.com",
+  "expireAt": Any<String>,
+  "isUser": true,
+  "school": {
+    "address1": "address",
+    "address2": "address2",
+    "city": "city",
+    "configuration": {
+      "userCanEditControlSheet": true,
+      "validateFlights": true,
+    },
+    "email": "school@example.com",
+    "language": "de",
+    "name": "School 1",
+    "phone": "0123456789",
+    "plz": "1234",
+  },
+  "token": Any<String>,
+  "type": "TEAM_MEMBER",
+}
+`;
+
+exports[`Enrollments (e2e) /:token (GET) 2`] = `
+{
+  "email": "test@user.com",
+  "expireAt": {},
+  "isFree": false,
+  "token": Any<String>,
+  "type": "TEAM_MEMBER",
+}
+`;
+
+exports[`Enrollments (e2e) /:token Student (POST) 1`] = `
+{
+  "isArchived": false,
+  "isTandem": false,
+  "school": {
+    "address1": "address",
+    "address2": "address2",
+    "city": "city",
+    "configuration": {
+      "userCanEditControlSheet": true,
+      "validateFlights": true,
+    },
+    "email": "school@example.com",
+    "language": "de",
+    "name": "School 1",
+    "phone": "0123456789",
+    "plz": "1234",
+  },
+  "timestamp": {},
+  "user": {
+    "config": null,
+    "confirmationToken": null,
+    "createdAt": null,
+    "email": "test@user.com",
+    "enabled": true,
+    "firstname": "test",
+    "keycloakId": null,
+    "lastLogin": null,
+    "lastname": "user",
+    "loginType": "LOCAL",
+    "notificationToken": null,
+    "password": null,
+    "passwordRequestedAt": null,
+    "paymentExempted": true,
+    "phone": null,
+    "salt": null,
+    "socialloginId": null,
+    "token": null,
+    "validatedAt": null,
+  },
+}
+`;
+
+exports[`Enrollments (e2e) /:token Team member (POST) 1`] = `
+{
+  "admin": false,
+  "school": {
+    "address1": "address",
+    "address2": "address2",
+    "city": "city",
+    "configuration": {
+      "userCanEditControlSheet": true,
+      "validateFlights": true,
+    },
+    "email": "school@example.com",
+    "language": "de",
+    "name": "School 1",
+    "phone": "0123456789",
+    "plz": "1234",
+  },
+  "user": {
+    "config": null,
+    "confirmationToken": null,
+    "createdAt": null,
+    "email": "test@user.com",
+    "enabled": true,
+    "firstname": "test",
+    "keycloakId": null,
+    "lastLogin": null,
+    "lastname": "user",
+    "loginType": "LOCAL",
+    "notificationToken": null,
+    "password": null,
+    "passwordRequestedAt": null,
+    "paymentExempted": true,
+    "phone": null,
+    "salt": null,
+    "socialloginId": null,
+    "token": null,
+    "validatedAt": null,
+  },
+}
+`;

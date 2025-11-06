@@ -2,6 +2,7 @@ import * as request from 'supertest';
 import { Testdata } from '../testdata';
 import { BaseE2ETest } from '../base-e2e-test';
 import { JwtTestHelper } from '../jwt-helper';
+import { removeIds } from '../utils/snapshot-utils';
 
 describe('Gliders (e2e)', () => {
   const testInstance = new BaseE2ETest();
@@ -27,30 +28,8 @@ describe('Gliders (e2e)', () => {
       .expect(200)
       .then(response => {
         expect(response.body).toHaveLength(2);
-        expect(response.body[0]).toEqual({
-          id: expect.any(Number),
-          brand: glider2.brand,
-          name: glider2.name,
-          buyDate: glider2.buyDate,
-          tandem: glider2.tandem,
-          archived: glider2.archived,
-          note: glider2.note,
-          checks: null,
-          nbFlights: "0",
-          time: null
-        });
-        expect(response.body[1]).toEqual({
-          id: expect.any(Number),
-          brand: glider.brand,
-          name: glider.name,
-          buyDate: glider.buyDate,
-          tandem: glider.tandem,
-          archived: glider.archived,
-          note: glider.note,
-          checks: null,
-          nbFlights: "0",
-          time: null
-        });
+        expect(removeIds(response.body[0])).toMatchSnapshot();
+        expect(removeIds(response.body[1])).toMatchSnapshot();
       });
   });
 
@@ -73,18 +52,7 @@ describe('Gliders (e2e)', () => {
       .set('Authorization', `Bearer ${keycloakToken}`)
       .expect(200)
       .then(async (response) => {
-        expect(response.body).toEqual({
-          id: expect.any(Number),
-          brand: glider2.brand,
-          name: glider2.name,
-          buyDate: glider2.buyDate,
-          tandem: glider2.tandem,
-          archived: glider2.archived,
-          note: glider2.note,
-          checks: null,
-          nbFlights: null,
-          time: null
-        });
+        expect(removeIds(response.body)).toMatchSnapshot();
       });
   });
 
@@ -100,33 +68,14 @@ describe('Gliders (e2e)', () => {
       .send(gliderDto)
       .expect(201)
       .then(async (response) => {
-        expect(response.body).toBeDefined();
         expect(response.body.id).toBeDefined();
-        expect(response.body).toEqual({
-          id: expect.any(Number),
-          brand: gliderDto.brand,
-          name: gliderDto.name,
-          buyDate: gliderDto.buyDate,
-          tandem: gliderDto.tandem,
-          archived: gliderDto.archived,
-          note: gliderDto.note,
-          checks: null,
-          nbFlights: null,
-          time: null
-        });
+        expect(removeIds(response.body)).toMatchSnapshot();
 
         const db = await testInstance.gliderRepository.findOne({
           where: { id: response.body.id }
         });
-        expect(db).toBeDefined();
-        expect(db).toMatchObject({
-          id: response.body.id,
-          brand: gliderDto.brand,
-          name: gliderDto.name,
-          buyDate: gliderDto.buyDate,
-          tandem: gliderDto.tandem,
-          archived: gliderDto.archived
-        });
+        expect(removeIds(db)).toMatchSnapshot();
+        expect(db.id).toEqual(response.body.id);
       });
   });
 
@@ -145,33 +94,14 @@ describe('Gliders (e2e)', () => {
       .send(gliderDto)
       .expect(200)
       .then(async (response) => {
-        expect(response.body).toBeDefined();
         expect(response.body.id).toBeDefined();
-        expect(response.body).toMatchObject({
-          id: expect.any(Number),
-          brand: gliderDto.brand,
-          name: gliderDto.name,
-          buyDate: gliderDto.buyDate,
-          tandem: gliderDto.tandem,
-          archived: gliderDto.archived,
-          note: gliderDto.note,
-          checks: null,
-          nbFlights: null,
-          time: null
-        });
+        expect(removeIds(response.body)).toMatchSnapshot();
 
         const db = await testInstance.gliderRepository.findOne({
           where: { id: response.body.id }
         });
-        expect(db).toBeDefined();
-        expect(db).toMatchObject({
-          id: response.body.id,
-          brand: gliderDto.brand,
-          name: gliderDto.name,
-          buyDate: gliderDto.buyDate,
-          tandem: gliderDto.tandem,
-          archived: gliderDto.archived
-        });
+        expect(removeIds(db)).toMatchSnapshot();
+        expect(db.id).toEqual(response.body.id);
       });
   });
 

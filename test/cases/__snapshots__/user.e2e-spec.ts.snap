@@ -1,0 +1,152 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Users (e2e) /users (POST) 1`] = `
+{
+  "config": null,
+  "email": "a@a.com",
+  "firstname": "a",
+  "lastname": "a",
+  "loginType": "LOCAL",
+  "phone": null,
+}
+`;
+
+exports[`Users (e2e) /users (POST) 2`] = `
+{
+  "config": null,
+  "confirmationToken": null,
+  "createdAt": {},
+  "email": "a@a.com",
+  "enabled": true,
+  "firstname": "a",
+  "keycloakId": "mocked-keycloak-user-id",
+  "lastLogin": null,
+  "lastname": "a",
+  "loginType": "LOCAL",
+  "notificationToken": null,
+  "password": Any<String>,
+  "passwordRequestedAt": null,
+  "paymentExempted": false,
+  "phone": null,
+  "salt": null,
+  "socialloginId": null,
+  "token": null,
+  "validatedAt": {},
+}
+`;
+
+exports[`Users (e2e) /users (PUT) 1`] = `
+{
+  "config": null,
+  "email": "a@a.com",
+  "firstname": "updated-name",
+  "lastname": "updated-lastname",
+  "loginType": "LOCAL",
+  "phone": null,
+}
+`;
+
+exports[`Users (e2e) /users (PUT) 2`] = `
+{
+  "config": null,
+  "confirmationToken": null,
+  "createdAt": null,
+  "email": "a@a.com",
+  "enabled": true,
+  "firstname": "updated-name",
+  "keycloakId": "mocked-keycloak-user-id",
+  "lastLogin": null,
+  "lastname": "updated-lastname",
+  "loginType": "LOCAL",
+  "notificationToken": null,
+  "password": Any<String>,
+  "passwordRequestedAt": null,
+  "paymentExempted": false,
+  "phone": null,
+  "salt": null,
+  "socialloginId": null,
+  "token": null,
+  "validatedAt": {},
+}
+`;
+
+exports[`Users (e2e) /users get the current user (GET) 1`] = `
+{
+  "config": null,
+  "email": "a@a.com",
+  "firstname": "a",
+  "lastname": "a",
+  "loginType": "LOCAL",
+  "phone": null,
+}
+`;
+
+exports[`V2 Users (e2e) /v2/users instructor app (POST) 1`] = `
+{
+  "config": null,
+  "email": "a@a.com",
+  "firstname": "a",
+  "lastname": "a",
+  "loginType": "LOCAL",
+  "phone": null,
+}
+`;
+
+exports[`V2 Users (e2e) /v2/users instructor app (POST) 2`] = `
+{
+  "config": null,
+  "confirmationToken": null,
+  "createdAt": {},
+  "email": "a@a.com",
+  "enabled": true,
+  "firstname": "a",
+  "keycloakId": "mocked-keycloak-user-id",
+  "lastLogin": null,
+  "lastname": "a",
+  "loginType": "LOCAL",
+  "notificationToken": null,
+  "password": Any<String>,
+  "passwordRequestedAt": null,
+  "paymentExempted": false,
+  "phone": null,
+  "salt": null,
+  "socialloginId": null,
+  "token": null,
+  "validatedAt": {},
+}
+`;
+
+exports[`V2 Users (e2e) /v2/users mobile app (POST) 1`] = `
+{
+  "config": null,
+  "email": "a@a.com",
+  "firstname": "a",
+  "lastname": "a",
+  "loginType": "LOCAL",
+  "phone": null,
+}
+`;
+
+exports[`V2 Users (e2e) /v2/users mobile app (POST) 2`] = `
+{
+  "config": null,
+  "confirmationToken": Any<String>,
+  "createdAt": {},
+  "email": "a@a.com",
+  "enabled": true,
+  "firstname": "a",
+  "keycloakId": "mocked-keycloak-user-id",
+  "lastLogin": null,
+  "lastname": "a",
+  "loginType": "LOCAL",
+  "notificationToken": null,
+  "password": Any<String>,
+  "passwordRequestedAt": null,
+  "paymentExempted": false,
+  "phone": null,
+  "salt": null,
+  "socialloginId": null,
+  "token": null,
+  "validatedAt": null,
+}
+`;

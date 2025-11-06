@@ -1,0 +1,337 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Flights (e2e) /flights (POST) 1`] = `
+{
+  "date": "2025-01-02",
+  "description": "description",
+  "glider": {
+    "archived": false,
+    "brand": "Advance",
+    "buyDate": "2020-01-01",
+    "checks": null,
+    "name": "Bibeta 6",
+    "nbFlights": null,
+    "note": "note",
+    "tandem": true,
+    "time": null,
+  },
+  "igc": null,
+  "km": 100.2,
+  "landing": {
+    "altitude": 1000,
+    "country": "CH",
+    "name": "Fiesch",
+    "notes": "notice",
+  },
+  "price": null,
+  "shvAlone": false,
+  "start": {
+    "altitude": 1000,
+    "country": "CH",
+    "name": "riederalp",
+    "notes": "notice",
+  },
+  "time": "01:30",
+  "validation": {
+    "comment": null,
+    "state": null,
+    "timestamp": null,
+  },
+}
+`;
+
+exports[`Flights (e2e) /flights (POST) 2`] = `
+{
+  "date": "2025-01-02",
+  "description": "description",
+  "igc": null,
+  "km": 100.2,
+  "price": null,
+  "shvAlone": false,
+  "time": "01:30:00",
+  "timestamp": {},
+  "userId": 1,
+  "validation": {
+    "comment": null,
+    "state": null,
+    "timestamp": null,
+  },
+}
+`;
+
+exports[`Flights (e2e) /flights (PUT) 1`] = `
+{
+  "date": "2025-01-01",
+  "description": "Updated description",
+  "glider": {
+    "archived": false,
+    "brand": "Advance",
+    "buyDate": "2020-01-01",
+    "checks": null,
+    "name": "Bibeta 6",
+    "nbFlights": null,
+    "note": "note",
+    "tandem": true,
+    "time": null,
+  },
+  "igc": null,
+  "km": 200.5,
+  "landing": {
+    "altitude": 1000,
+    "country": "CH",
+    "name": "Fiesch",
+    "notes": "notice",
+  },
+  "price": null,
+  "start": {
+    "altitude": 1000,
+    "country": "CH",
+    "name": "riederalp",
+    "notes": "notice",
+  },
+  "time": "02:15",
+  "validation": {
+    "comment": null,
+    "state": null,
+    "timestamp": null,
+  },
+}
+`;
+
+exports[`Flights (e2e) /flights (PUT) 2`] = `
+{
+  "date": "2025-01-01",
+  "description": "Updated description",
+  "igc": null,
+  "km": 200.5,
+  "price": null,
+  "shvAlone": false,
+  "time": "02:15:00",
+  "timestamp": {},
+  "userId": 1,
+  "validation": {
+    "comment": null,
+    "state": null,
+    "timestamp": null,
+  },
+}
+`;
+
+exports[`Flights (e2e) /flights/:id (GET) 1`] = `
+{
+  "date": "2025-01-01",
+  "description": "description",
+  "glider": {
+    "archived": false,
+    "brand": "Advance",
+    "buyDate": "2020-01-01",
+    "checks": null,
+    "name": "Bibeta 6",
+    "nbFlights": null,
+    "note": "note",
+    "tandem": true,
+    "time": null,
+    "userId": 1,
+  },
+  "igc": null,
+  "km": 100.2,
+  "landing": {
+    "altitude": 1000,
+    "country": "CH",
+    "name": "Fiesch",
+    "notes": "notice",
+    "point": null,
+  },
+  "price": null,
+  "shvAlone": false,
+  "start": {
+    "altitude": 1000,
+    "country": "CH",
+    "name": "riederalp",
+    "notes": "notice",
+    "point": null,
+  },
+  "time": "01:30:00",
+  "validation": {
+    "comment": null,
+    "instructor": null,
+    "school": null,
+    "state": null,
+    "timestamp": null,
+  },
+}
+`;
+
+exports[`Flights (e2e) /flights/statistic (GET) 1`] = `
+{
+  "average": "5400.000000",
+  "bestDistance": 100.2,
+  "income": null,
+  "nbFlights": 4,
+  "nbLandingplaces": 3,
+  "nbStartplaces": 3,
+  "time": "21600.000000",
+  "totalDistance": 400.8,
+}
+`;
+
+exports[`V2 Flights (e2e) /v2/flights (GET) 1`] = `
+{
+  "currentPage": 1,
+  "entity": [
+    {
+      "date": "2025-01-03T00:00:00.000Z",
+      "description": "description",
+      "glider": {
+        "archived": false,
+        "brand": "Gin",
+        "buy_date": "2020-01-01T00:00:00.000Z",
+        "checks": null,
+        "name": "Yeti",
+        "nbFlights": null,
+        "note": "note",
+        "tandem": false,
+        "time": null,
+        "user_id": 1,
+      },
+      "igc": null,
+      "km": 100.2,
+      "landing": {
+        "altitude": 1000,
+        "country": "CH",
+        "name": "Bitsch",
+        "notes": "notice",
+      },
+      "number": "4",
+      "price": null,
+      "shvAlone": false,
+      "start": {
+        "altitude": 1000,
+        "country": "CH",
+        "name": "Belalp",
+        "notes": "notice",
+      },
+      "time": "01:30:00",
+    },
+    {
+      "date": "2025-01-02T00:00:00.000Z",
+      "description": "description",
+      "glider": {
+        "archived": false,
+        "brand": "Ozone",
+        "buy_date": "2020-01-01T00:00:00.000Z",
+        "checks": null,
+        "name": "Delta",
+        "nbFlights": null,
+        "note": "note",
+        "tandem": false,
+        "time": null,
+        "user_id": 1,
+      },
+      "igc": null,
+      "km": 100.2,
+      "landing": {
+        "altitude": 1000,
+        "country": "CH",
+        "name": "Belalp",
+        "notes": "notice",
+      },
+      "number": "3",
+      "price": null,
+      "shvAlone": false,
+      "start": {
+        "altitude": 1000,
+        "country": "CH",
+        "name": "Fiesch",
+        "notes": "notice",
+      },
+      "time": "01:30:00",
+    },
+    {
+      "date": "2025-01-01T00:00:00.000Z",
+      "description": "description",
+      "glider": {
+        "archived": false,
+        "brand": "Advance",
+        "buy_date": "2020-01-01T00:00:00.000Z",
+        "checks": null,
+        "name": "Bibeta 6",
+        "nbFlights": null,
+        "note": "note",
+        "tandem": true,
+        "time": null,
+        "user_id": 1,
+      },
+      "igc": null,
+      "km": 100.2,
+      "landing": {
+        "altitude": 1000,
+        "country": "CH",
+        "name": "Fiesch",
+        "notes": "notice",
+      },
+      "number": "2",
+      "price": null,
+      "shvAlone": false,
+      "start": {
+        "altitude": 1000,
+        "country": "CH",
+        "name": "riederalp",
+        "notes": "notice",
+      },
+      "time": "01:30:00",
+    },
+    {
+      "date": "2025-01-01T00:00:00.000Z",
+      "description": "description",
+      "glider": {
+        "archived": false,
+        "brand": "Advance",
+        "buy_date": "2020-01-01T00:00:00.000Z",
+        "checks": null,
+        "name": "Bibeta 6",
+        "nbFlights": null,
+        "note": "note",
+        "tandem": true,
+        "time": null,
+        "user_id": 1,
+      },
+      "igc": null,
+      "km": 100.2,
+      "landing": {
+        "altitude": 1000,
+        "country": "CH",
+        "name": "Fiesch",
+        "notes": "notice",
+      },
+      "number": "1",
+      "price": null,
+      "shvAlone": false,
+      "start": {
+        "altitude": 1000,
+        "country": "CH",
+        "name": "riederalp",
+        "notes": "notice",
+      },
+      "time": "01:30:00",
+    },
+  ],
+  "itemCount": 4,
+  "itemsPerPage": 100,
+  "totalItems": 4,
+  "totalPages": 1,
+}
+`;
+
+exports[`V2 Flights (e2e) /v2/flights/statistic (GET) 1`] = `
+{
+  "average": "5400.000000",
+  "bestDistance": 100.2,
+  "income": 0,
+  "nbFlights": 4,
+  "time": "21600.000000",
+  "totalDistance": 400.8,
+  "type": "yearly",
+  "year": "2025",
+}
+`;

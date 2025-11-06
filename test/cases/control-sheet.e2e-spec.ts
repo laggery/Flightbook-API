@@ -3,6 +3,7 @@ import { Testdata } from '../testdata';
 import { BaseE2ETest } from '../base-e2e-test';
 import { JwtTestHelper } from '../jwt-helper';
 import { ControlSheet } from '../../src/training/control-sheet/control-sheet.entity';
+import { removeIds } from '../utils/snapshot-utils';
 
 describe('Student ControlSheet (e2e)', () => {
   const testInstance = new BaseE2ETest();
@@ -23,27 +24,7 @@ describe('Student ControlSheet (e2e)', () => {
       .set('Authorization', `Bearer ${keycloakToken}`)
       .expect(200)
       .then(response => {
-        expect(response.body).toBeDefined();
-
-        let keys = Object.keys(response.body.trainingHill);
-        keys.forEach((key) => {
-          expect(response.body.trainingHill[key]).toEqual(controlSheet.trainingHill[key]);
-        });
-
-        keys = Object.keys(response.body.altitudeFlight);
-        keys.forEach((key) => {
-          expect(response.body.altitudeFlight[key]).toEqual(controlSheet.altitudeFlight[key]);
-        });
-
-        keys = Object.keys(response.body.theory);
-        keys.forEach((key) => {
-          expect(response.body.theory[key]).toEqual(controlSheet.theory[key]);
-        });
-
-        keys = Object.keys(response.body.level);
-        keys.forEach((key) => {
-          expect(response.body.level[key]).toEqual(controlSheet.level[key]);
-        });
+        expect(removeIds(response.body)).toMatchSnapshot();
       });
   });
 
@@ -61,17 +42,15 @@ describe('Student ControlSheet (e2e)', () => {
       .send(controlSheet)
       .expect(201)
       .then(async (response) => {
-        expect(response.body).toBeDefined();
+        expect(removeIds(response.body)).toMatchSnapshot();
         expect(response.body.id).toBeDefined();
-        expect(response.body.trainingHill.aufziehen).toEqual(controlSheet.trainingHill.aufziehen);
 
         const db = await testInstance.controlSheetRepository.findOne({
             where: { id: response.body.id },
             relations: ['trainingHill', 'altitudeFlight', 'theory', 'level', 'user']
         });
-
-        expect(db).toBeDefined();
-        expect(db.trainingHill.aufziehen).toEqual(controlSheet.trainingHill.aufziehen);
+        expect(removeIds(db)).toMatchSnapshot();
+        expect(db.id).toEqual(response.body.id);
       });
   });
 });

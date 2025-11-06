@@ -3,6 +3,7 @@ import { Testdata } from '../testdata';
 import { BaseE2ETest } from '../base-e2e-test';
 import { JwtTestHelper } from '../jwt-helper';
 import { EnrollmentType } from '../../src/training/enrollment/enrollment-type';
+import { removeIds } from '../utils/snapshot-utils';
 
 describe('Enrollments (e2e)', () => {
   const testInstance = new BaseE2ETest();
@@ -25,38 +26,16 @@ describe('Enrollments (e2e)', () => {
       .set('Authorization', `Bearer ${keycloakToken}`)
       .expect(200)
       .then(async (response) => {
-        expect(response.body).toBeDefined();
-        expect(response.body).toEqual({
-          email: Testdata.EMAIL,
-          token: enrollment.token,
-          expireAt: enrollment.expireAt.toISOString(),
-          type: EnrollmentType.TEAM_MEMBER,
-          school: {
-            id: expect.any(Number),
-            name: school.name,
-            address1: school.address1,
-            address2: school.address2,
-            plz: school.plz,
-            city: school.city,
-            phone: school.phone,
-            email: school.email,
-            language: school.language,
-            configuration: school.configuration
-          },
-          isUser: true
+        expect(removeIds(response.body)).toMatchSnapshot({ 
+          expireAt: expect.any(String),
+          token: expect.any(String)
         });
 
         const db = await testInstance.enrollmentRepository.findOne({
           where: { email: response.body.email }
         });
-        expect(db).toBeDefined();
-        expect(db).toMatchObject({
-          id: enrollment.id,
-          email: Testdata.EMAIL,
-          token: enrollment.token,
-          expireAt: enrollment.expireAt,
-          type: EnrollmentType.TEAM_MEMBER,
-          isFree: false
+        expect(removeIds(db)).toMatchSnapshot({ 
+          token: expect.any(String)
         });
       });
   });
@@ -81,18 +60,7 @@ describe('Enrollments (e2e)', () => {
             id: Testdata.getDefaultUser().id
           } }
         });
-        expect(db).toBeDefined();
-        expect(db).toMatchObject({
-          id: expect.any(Number),
-          admin: false,
-          school: {
-            id: school.id
-          },
-          user: {
-            id: Testdata.getDefaultUser().id,
-            email: Testdata.EMAIL
-          }
-        });
+        expect(removeIds(db)).toMatchSnapshot();
       });
   });
 
@@ -116,19 +84,7 @@ describe('Enrollments (e2e)', () => {
             id: Testdata.getDefaultUser().id
           } }
         });
-        expect(db).toBeDefined();
-        expect(db).toMatchObject({
-          id: expect.any(Number),
-          isArchived: false,
-          isTandem: false,
-          school: {
-            id: school.id
-          },
-          user: {
-            id: Testdata.getDefaultUser().id,
-            email: Testdata.EMAIL
-          }
-        });
+        expect(removeIds(db)).toMatchSnapshot();
       });
   });
 });

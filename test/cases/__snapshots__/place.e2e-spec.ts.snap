@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Places (e2e) /places (GET) 1`] = `
+{
+  "altitude": 1000,
+  "country": "CH",
+  "name": "Riederalp",
+  "notes": "notice",
+}
+`;
+
+exports[`Places (e2e) /places (POST) 1`] = `
+{
+  "altitude": 1000,
+  "country": "CH",
+  "name": "Riederalp",
+  "notes": "notice",
+}
+`;
+
+exports[`Places (e2e) /places (POST) 2`] = `
+{
+  "altitude": 1000,
+  "country": "CH",
+  "name": "Riederalp",
+  "notes": "notice",
+  "point": null,
+  "userId": 1,
+}
+`;
+
+exports[`Places (e2e) /places (PUT) 1`] = `
+{
+  "altitude": 1000,
+  "country": "CH",
+  "name": "Fiesch",
+  "notes": "notice",
+}
+`;
+
+exports[`Places (e2e) /places (PUT) 2`] = `
+{
+  "altitude": 1000,
+  "country": "CH",
+  "name": "Fiesch",
+  "notes": "notice",
+  "point": null,
+  "userId": 1,
+}
+`;

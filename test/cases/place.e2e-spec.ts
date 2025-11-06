@@ -2,6 +2,7 @@ import * as request from 'supertest';
 import { Testdata } from '../testdata';
 import { BaseE2ETest } from '../base-e2e-test';
 import { JwtTestHelper } from '../jwt-helper';
+import { removeIds } from '../utils/snapshot-utils';
 
 describe('Places (e2e)', () => {
   const testInstance = new BaseE2ETest();
@@ -23,13 +24,7 @@ describe('Places (e2e)', () => {
       .expect(200)
       .then(response => {
         expect(response.body).toHaveLength(1);
-        expect(response.body[0]).toEqual({
-          id: expect.any(Number),
-          name: place.name,
-          altitude: place.altitude,
-          country: place.country,
-          notes: place.notes
-        });
+        expect(removeIds(response.body[0])).toMatchSnapshot();
       });
   });
 
@@ -70,27 +65,14 @@ describe('Places (e2e)', () => {
       .send(placeDto)
       .expect(201)
       .then(async (response) => {
-        expect(response.body).toBeDefined();
         expect(response.body.id).toBeDefined();
-        expect(response.body).toEqual({
-          id: expect.any(Number),
-          name: placeDto.name,
-          altitude: placeDto.altitude,
-          country: placeDto.country,
-          notes: placeDto.notes
-        });
+        expect(removeIds(response.body)).toMatchSnapshot();
 
         const db = await testInstance.placeRepository.findOne({
           where: { id: response.body.id }
         });
-        expect(db).toBeDefined();
-        expect(db).toMatchObject({
-          id: response.body.id,
-          name: placeDto.name,
-          altitude: placeDto.altitude,
-          country: placeDto.country,
-          notes: placeDto.notes
-        });
+        expect(removeIds(db)).toMatchSnapshot();
+        expect(db.id).toEqual(response.body.id);
       });
   });
 
@@ -128,27 +110,14 @@ describe('Places (e2e)', () => {
       .send(placeDto)
       .expect(200)
       .then(async (response) => {
-        expect(response.body).toBeDefined();
         expect(response.body.id).toBeDefined();
-        expect(response.body).toEqual({
-          id: expect.any(Number),
-          name: placeDto.name,
-          altitude: placeDto.altitude,
-          country: placeDto.country,
-          notes: placeDto.notes
-        });
+        expect(removeIds(response.body)).toMatchSnapshot();
 
         const db = await testInstance.placeRepository.findOne({
           where: { id: response.body.id }
         });
-        expect(db).toBeDefined();
-        expect(db).toMatchObject({
-          id: response.body.id,
-          name: placeDto.name,
-          altitude: placeDto.altitude,
-          country: placeDto.country,
-          notes: placeDto.notes
-        });
+        expect(removeIds(db)).toMatchSnapshot();
+        expect(db.id).toEqual(response.body.id);
       });
   });
 

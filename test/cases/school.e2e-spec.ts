@@ -4,6 +4,7 @@ import { BaseE2ETest } from '../base-e2e-test';
 import { JwtTestHelper } from '../jwt-helper';
 import { SchoolDto } from '../../src/training/school/interface/school-dto';
 import { plainToClass } from 'class-transformer';
+import { removeIds } from '../utils/snapshot-utils';
 
 describe('Schools (e2e)', () => {
   const testInstance = new BaseE2ETest();
@@ -24,8 +25,6 @@ describe('Schools (e2e)', () => {
       .send(schoolDto)
       .expect(201)
       .then(async (response) => {
-        expect(response.body).toBeDefined();
-        expect(response.body.id).toBeDefined();
         await assertSchool(testInstance, response.body, schoolDto);
       });
   });
@@ -44,7 +43,6 @@ describe('Schools (e2e)', () => {
       .send(Testdata.createSchoolDto("School 1"))
       .expect(409)
       .then(async (response) => {
-        expect(response.body).toBeDefined();
         expect(response.body.message).toEqual('The school already exists.');
       });
   });
@@ -73,41 +71,18 @@ describe('Schools (e2e)', () => {
       .send(school.configuration)
       .expect(200)
       .then(async (response) => {
-        expect(response.body).toBeDefined();
-        expect(response.body.id).toBeDefined();
         await assertSchool(testInstance, response.body, plainToClass(SchoolDto, school));
       });
   });
 });
 
 async function assertSchool(testInstance: any, received: any, expected: SchoolDto) {
-  expect(received).toEqual({
-    id: expect.any(Number),
-    name: expected.name,
-    address1: expected.address1,
-    address2: expected.address2,
-    plz: expected.plz,
-    city: expected.city,
-    phone: expected.phone,
-    email: expected.email,
-    language: expected.language,
-    configuration: expected.configuration
-  });
+  expect(removeIds(received)).toMatchSnapshot();
+  expect(received.id).toBeDefined();
 
   const db = await testInstance.schoolRepository.findOne({
     where: { name: received.name }
   });
-  expect(db).toBeDefined();
-  expect(db).toMatchObject({
-    id: expect.any(Number),
-    name: expected.name,
-    address1: expected.address1,
-    address2: expected.address2,
-    plz: expected.plz,
-    city: expected.city,
-    phone: expected.phone,
-    email: expected.email,
-    language: expected.language,
-    configuration: expected.configuration
-  });
+  expect(removeIds(db)).toMatchSnapshot();
+  expect(db.id).toEqual(received.id);
 }

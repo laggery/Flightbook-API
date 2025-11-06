@@ -6,6 +6,7 @@ import { UserWriteDto } from '../../src/user/interface/user-write-dto';
 import { User } from '../../src/user/domain/user.entity';
 import * as bcrypt from 'bcrypt';
 import { plainToInstance } from 'class-transformer';
+import { removeIds } from '../utils/snapshot-utils';
 
 describe('Users (e2e)', () => {
   const testInstance = new BaseE2ETest();
@@ -20,6 +21,7 @@ describe('Users (e2e)', () => {
     user.firstname = "a";
     user.lastname = "a";
     user.email = "a@a.com";
+    user.password = "password";
     await testInstance.userRepository.save(user);
     const keycloakToken = JwtTestHelper.createKeycloakToken({
       sub: user.id.toString()
@@ -31,6 +33,7 @@ describe('Users (e2e)', () => {
       .set('Authorization', `Bearer ${keycloakToken}`)
       .expect(200)
       .then(async (response) => {
+        expect(response.body).toMatchSnapshot();
         expect(response.body).toEqual({
           firstname: user.firstname,
           lastname: user.lastname,
@@ -54,8 +57,7 @@ describe('Users (e2e)', () => {
       .send(userDto)
       .expect(201)
       .then(async (response) => {
-        expect(response.body).toBeDefined();
-        await assertUser(testInstance, response, userDto, true);
+        await assertUser(testInstance, response.body, userDto, true);
       });
   });
 
@@ -85,6 +87,7 @@ describe('Users (e2e)', () => {
     user.validatedAt = new Date();
     user.keycloakId = "mocked-keycloak-user-id";
     user.paymentExempted = false;
+    user.password = "password";
     await testInstance.userRepository.save(user);
 
     const userDto = {
@@ -103,8 +106,7 @@ describe('Users (e2e)', () => {
       .send(userDto)
       .expect(200)
       .then(async (response) => {
-        expect(response.body).toBeDefined();
-        await assertUser(testInstance, response, userDto, true);
+        await assertUser(testInstance, response.body, userDto, true);
       });
   });
 
@@ -263,8 +265,7 @@ describe('V2 Users (e2e)', () => {
       .send(userDto)
       .expect(201)
       .then(async (response) => {
-        expect(response.body).toBeDefined();
-        await assertUser(testInstance, response, userDto);
+        await assertUser(testInstance, response.body, userDto);
       });
   });
 
@@ -282,8 +283,7 @@ describe('V2 Users (e2e)', () => {
       .send(userDto)
       .expect(201)
       .then(async (response) => {
-        expect(response.body).toBeDefined();
-        await assertUser(testInstance, response, userDto, true);
+        await assertUser(testInstance, response.body, userDto, true);
       });
   });
 
@@ -299,36 +299,23 @@ describe('V2 Users (e2e)', () => {
       .send(userDto)
       .expect(409)
       .then(async (response) => {
-        expect(response.body).toBeDefined();
         expect(response.body.message).toEqual('The user already exists.');
       });
   });
 });
 
 async function assertUser(testInstance: any, received: any, expected: UserWriteDto, isValidated = false) {
-  expect(received.body).toEqual({
-    firstname: expected.firstname,
-    lastname: expected.lastname,
-    email: expected.email,
-    config: null,
-    loginType: 'LOCAL',
-    phone: null
-  });
+  expect(removeIds(received)).toMatchSnapshot();
 
   const db = await testInstance.userRepository.findOne({
-    where: { email: received.body.email }
+    where: { email: received.email }
   });
-  expect(db).toBeDefined();
-  expect(db).toMatchObject({
-    id: expect.any(Number),
-    firstname: expected.firstname,
-    lastname: expected.lastname,
-    email: expected.email,
-    keycloakId: 'mocked-keycloak-user-id',
-    paymentExempted: false,
-    confirmationToken: isValidated ? null : expect.any(String),
-    enabled: true
-  });
+  expect(removeIds(db)).toMatchSnapshot(
+    {
+      confirmationToken: isValidated ? null : expect.any(String),
+      password: expect.any(String)
+    }
+  );
 
   if (isValidated) {
     expect(db.validatedAt).toBeDefined();

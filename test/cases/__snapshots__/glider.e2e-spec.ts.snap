@@ -1,0 +1,101 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Gliders (e2e) /gliders (GET) 1`] = `
+{
+  "archived": false,
+  "brand": "Advance",
+  "buyDate": "2020-01-01",
+  "checks": null,
+  "name": "Bibeta 6",
+  "nbFlights": "0",
+  "note": "note",
+  "tandem": true,
+  "time": null,
+}
+`;
+
+exports[`Gliders (e2e) /gliders (GET) 2`] = `
+{
+  "archived": false,
+  "brand": "Ozone",
+  "buyDate": "2020-01-01",
+  "checks": null,
+  "name": "Ultralite",
+  "nbFlights": "0",
+  "note": "note",
+  "tandem": false,
+  "time": null,
+}
+`;
+
+exports[`Gliders (e2e) /gliders (POST) 1`] = `
+{
+  "archived": false,
+  "brand": "Ozone",
+  "buyDate": "2020-01-01",
+  "checks": null,
+  "name": "Ultralite",
+  "nbFlights": null,
+  "note": "note",
+  "tandem": false,
+  "time": null,
+}
+`;
+
+exports[`Gliders (e2e) /gliders (POST) 2`] = `
+{
+  "archived": false,
+  "brand": "Ozone",
+  "buyDate": "2020-01-01",
+  "checks": null,
+  "name": "Ultralite",
+  "nbFlights": null,
+  "note": "note",
+  "tandem": false,
+  "time": null,
+  "userId": 1,
+}
+`;
+
+exports[`Gliders (e2e) /gliders (PUT) 1`] = `
+{
+  "archived": false,
+  "brand": "Ozone",
+  "buyDate": "2020-01-01",
+  "checks": null,
+  "name": "Magnum",
+  "nbFlights": null,
+  "note": "note",
+  "tandem": true,
+  "time": null,
+}
+`;
+
+exports[`Gliders (e2e) /gliders (PUT) 2`] = `
+{
+  "archived": false,
+  "brand": "Ozone",
+  "buyDate": "2020-01-01",
+  "checks": null,
+  "name": "Magnum",
+  "nbFlights": null,
+  "note": "note",
+  "tandem": true,
+  "time": null,
+  "userId": 1,
+}
+`;
+
+exports[`Gliders (e2e) /gliders/name/:name return most similar glider (GET) 1`] = `
+{
+  "archived": false,
+  "brand": "Advance",
+  "buyDate": "2020-01-01",
+  "checks": null,
+  "name": "Bibeta 6",
+  "nbFlights": null,
+  "note": "note",
+  "tandem": true,
+  "time": null,
+}
+`;

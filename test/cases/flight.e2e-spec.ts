@@ -5,6 +5,7 @@ import { JwtTestHelper } from '../jwt-helper';
 import { Flight } from '../../src/flight/flight.entity';
 import { FlightDto } from '../../src/flight/interface/flight-dto';
 import { plainToClass } from 'class-transformer';
+import { removeIds } from '../utils/snapshot-utils';
 
 describe('Flights (e2e)', () => {
   const testInstance = new BaseE2ETest();
@@ -50,8 +51,7 @@ describe('Flights (e2e)', () => {
       .set('Authorization', `Bearer ${keycloakToken}`)
       .expect(200)
       .then(response => {
-        expect(response.body).toBeDefined();
-        assertFlight(response.body, expectedFlightDto);
+        expect(removeIds(response.body)).toMatchSnapshot();
       });
   });
 
@@ -69,23 +69,17 @@ describe('Flights (e2e)', () => {
       .send(flightDto)
       .expect(201)
       .then(async (response) => {
-        expect(response.body).toBeDefined();
-        assertFlight(response.body, flightDto);
+        expect(response.body.id).toBeDefined();
+        expect(removeIds(response.body)).toMatchSnapshot();
 
         const db = await testInstance.flightRepository.findOne({
           where: { id: response.body.id }
         });
-        expect(db).toBeDefined();
-        expect(db).toMatchObject({
-          id: response.body.id,
-          date: response.body.date.substring(0, 10),
-          km: response.body.km,
-          time: response.body.time + ':00',
-          description: response.body.description,
-          gliderId: response.body.glider.id,
-          startId: response.body.start.id,
-          landingId: response.body.landing.id,
-        });
+        expect(removeIds(db)).toMatchSnapshot();
+        expect(db.id).toEqual(response.body.id);
+        expect(db.gliderId).toEqual(response.body.glider.id);
+        expect(db.startId).toEqual(response.body.start.id);
+        expect(db.landingId).toEqual(response.body.landing.id);
       });
   });
 
@@ -107,24 +101,17 @@ describe('Flights (e2e)', () => {
       .send(flightDto)
       .expect(200)
       .then(async (response) => {
-        expect(response.body).toBeDefined();
         expect(response.body.id).toBeDefined();
-        assertFlight(response.body, flightDto);
+        expect(removeIds(response.body)).toMatchSnapshot();
 
         const db = await testInstance.flightRepository.findOne({
           where: { id: response.body.id }
         });
-        expect(db).toBeDefined();
-        expect(db).toMatchObject({
-          id: response.body.id,
-          date: response.body.date.substring(0, 10),
-          km: response.body.km,
-          time: response.body.time + ':00',
-          description: response.body.description,
-          gliderId: response.body.glider.id,
-          startId: response.body.start.id,
-          landingId: response.body.landing.id,
-        });
+        expect(removeIds(db)).toMatchSnapshot();
+        expect(db.id).toEqual(response.body.id);
+        expect(db.gliderId).toEqual(response.body.glider.id);
+        expect(db.startId).toEqual(response.body.start.id);
+        expect(db.landingId).toEqual(response.body.landing.id);
       });
   });
 
@@ -154,14 +141,7 @@ describe('Flights (e2e)', () => {
       .set('Authorization', `Bearer ${keycloakToken}`)
       .expect(200)
       .then(response => {
-        expect(response.body).toBeDefined();
-        expect(response.body.time).toEqual("21600.000000");
-        expect(response.body.average).toEqual("5400.000000");
-        expect(response.body.totalDistance).toEqual(400.8);
-        expect(response.body.bestDistance).toEqual(100.2);
-        expect(response.body.nbFlights).toEqual(4);
-        expect(response.body.nbLandingplaces).toEqual(3);
-        expect(response.body.nbStartplaces).toEqual(3);
+        expect(response.body).toMatchSnapshot();
       });
   });
 
@@ -215,11 +195,8 @@ describe('V2 Flights (e2e)', () => {
       .set('Authorization', `Bearer ${keycloakToken}`)
       .expect(200)
       .then(response => {
+        expect(removeIds(response.body)).toMatchSnapshot();
         expect(response.body.entity).toHaveLength(4);
-        expect(response.body.currentPage).toBe(1);
-        expect(response.body.itemCount).toBe(4);
-        expect(response.body.totalItems).toBe(4);
-        expect(response.body.totalPages).toBe(1);
 
         // Flights should be ordered by date desc, then by timestamp desc
         assertFlight(response.body.entity[0], storedFlights[3]);
@@ -241,13 +218,7 @@ describe('V2 Flights (e2e)', () => {
       .then(response => {
         expect(response.body).toBeInstanceOf(Array);
         expect(response.body.length).toBeGreaterThanOrEqual(1);
-        expect(response.body[0].nbFlights).toEqual(4);
-        expect(response.body[0].average).toEqual("5400.000000");
-        expect(response.body[0].time).toEqual("21600.000000");
-        expect(response.body[0].totalDistance).toEqual(400.8);
-        expect(response.body[0].bestDistance).toEqual(100.2);
-        expect(response.body[0].type).toEqual("yearly");
-        expect(response.body[0].year).toEqual("2025");
+        expect(response.body[0]).toMatchSnapshot();
       });
   });
 });

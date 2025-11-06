@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NewsController (e2e) /news (GET) 1`] = `
+{
+  "date": "2024-01-01",
+  "language": "de",
+  "text": "text",
+  "title": "title",
+}
+`;

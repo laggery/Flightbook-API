@@ -1,6 +1,7 @@
 import * as request from 'supertest';
 import { Testdata } from '../testdata';
 import { BaseE2ETest } from '../base-e2e-test';
+import { removeIds } from '../utils/snapshot-utils';
 
 describe('NewsController (e2e)', () => {
   const testInstance = new BaseE2ETest();
@@ -20,13 +21,7 @@ describe('NewsController (e2e)', () => {
       .expect(200)
       .then(response => {
         expect(response.body).toHaveLength(1);
-        expect(response.body[0]).toMatchObject({
-          id: expect.any(Number),
-          date: '2024-01-01',
-          title: 'title',
-          text: 'text',
-          language: 'de'
-        });
+        expect(removeIds(response.body[0])).toMatchSnapshot();
       });
   });
 });
