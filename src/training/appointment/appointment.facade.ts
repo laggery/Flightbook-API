@@ -207,8 +207,8 @@ export class AppointmentFacade {
 
     async getAppointmentsByInstructorId(instructorId, query: any): Promise<PagerEntityDto<AppointmentDto[]>> {
         const appointmentsPager = await this.appointmentRepository.getAppointmentsByInstructorId(instructorId, query);
-        for await (const appointment of appointmentsPager[0]) {
-            for await (const subscription of appointment.subscriptions) {
+        for (const appointment of appointmentsPager[0]) {
+            for (const subscription of appointment.subscriptions) {
                 subscription.user.flights = [];
                 subscription.user.flights = await this.flightRepository.getFlights({ userId: subscription.user.id }, { from: moment(appointment.scheduling).format('YYYY-MM-DD'), to: moment(appointment.scheduling).format('YYYY-MM-DD') });
             }
