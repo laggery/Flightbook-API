@@ -50,7 +50,6 @@ export class FlightRepository extends Repository<Flight> {
             Object.keys(raw).forEach(key => {
                 if (key.startsWith('flight')) {
                     if (key.startsWith('flight_shv_alone')) {
-                        const name = key.substring(7, key.length);
                         data.shvAlone = Boolean(raw[key]);
                     } else if (key.startsWith('flight_validation')) {
                         const name = key.substring(18, key.length);
@@ -66,7 +65,9 @@ export class FlightRepository extends Repository<Flight> {
                 if (key.startsWith('glider')) {
                     if (!data.glider) data.glider = new Glider();
                     const name = key.substring(7, key.length);
-                    data["glider"][name] = raw[key];
+                    if (name !== 'user_id'){
+                        data["glider"][name] = raw[key];
+                    }
                 }
                 if (key.startsWith('start')) {
                     if (!data.start) data.start = new Place();

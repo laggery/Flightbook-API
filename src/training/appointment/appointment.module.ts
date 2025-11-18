@@ -12,11 +12,13 @@ import { AppointmentTypeRepository } from './appointment-type.repository';
 import { Appointment } from './appointment.entity';
 import { AppointmentFacade } from './appointment.facade';
 import { AppointmentRepository } from './appointment.repository';
+import { FlightRepository } from '../../flight/flight.repository';
+import { Flight } from '../../flight/flight.entity';
 
 @Module({
   imports: [
     UserModule,
-    TypeOrmModule.forFeature([Appointment, AppointmentType]),
+    TypeOrmModule.forFeature([Appointment, AppointmentType, Flight]),
     forwardRef(() => SchoolModule),
     SubscriptionModule,
     StudentModule,
@@ -28,7 +30,8 @@ import { AppointmentRepository } from './appointment.repository';
     AppointmentRepository,
     AppointmentTypeRepository,
     AppointmentTypeFacade,
-    EmailService
+    EmailService,
+    FlightRepository
   ],
   exports: [
     AppointmentFacade,

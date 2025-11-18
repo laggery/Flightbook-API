@@ -100,6 +100,51 @@ export class AppointmentRepository {
         return entityNumber;
     }
 
+    async getAppointmentsByInstructorId(instructorId: number, query: any): Promise<[Appointment[], number]> {
+        const options: any = {
+            relations: {
+                subscriptions:{
+                    user: true
+                },
+                school: true,
+                guestSubscriptions: true,
+                takeOffCoordinator: true,
+                type: true
+            },
+            where: {
+                instructor: {
+                    id: instructorId
+                }
+            },
+            order: {
+                scheduling: 'DESC'
+            }
+        };
+
+        if (query && query.from && query.to) {
+            options.where.scheduling = Between(`${query.from}`, `${query.to} 23:59:00.000000`);
+        } else if (query && query.from) {
+            options.where.scheduling = MoreThanOrEqual(query.from);
+        } else if (query && query.to) {
+            options.where.scheduling = LessThanOrEqual(query.to);
+        }
+
+        const state = State[query?.state];
+        if (query && query.state && state) {
+            options.where.state = state;
+        }
+
+        if (query && query.school_id) {
+            options.where.school = {
+                id: query.school_id
+            };
+        }
+
+        let entityNumber: [Appointment[], number] = await this.appointmentRepository.findAndCount(options);
+
+        return entityNumber;
+    }
+
     // @TODO Can be removed after migrate to typeorm 0.3.x and added order by for sub objects
     private orderSubscriptionByTimestampAsc(subscriptions: Subscription[]): Subscription[] {
         return subscriptions.sort((a: Subscription, b: Subscription) => a.timestamp.getTime() - b.timestamp.getTime());

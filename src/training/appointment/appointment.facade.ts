@@ -27,6 +27,8 @@ import { GuestSubscription } from '../subscription/guest-subscription.entity';
 import { GuestSubscriptionDto } from '../subscription/interface/guest-subscription-dto';
 import { GuestSubscriptionRepository } from '../subscription/guest-subscription.repository';
 import { StudentMapper } from '../student/student.mapper';
+import { FlightRepository } from '../../flight/flight.repository';
+import moment = require('moment');
 
 @Injectable()
 export class AppointmentFacade {
@@ -40,7 +42,8 @@ export class AppointmentFacade {
         private schoolRepository: SchoolRepository,
         private userRepository: UserRepository,
         private emailService: EmailService,
-        private notificationsService: NotificationsService
+        private notificationsService: NotificationsService,
+        private flightRepository: FlightRepository
     ) { }
 
     async createAppointment(schoolId: number, appointmentDto: AppointmentDto): Promise<AppointmentDto> {
@@ -194,6 +197,24 @@ export class AppointmentFacade {
         const appointmentsPager = await this.appointmentRepository.getAppointmentsBySchoolId(schoolId, query);
         const entityPager = new PagerEntityDto<AppointmentDto[]>();
         entityPager.entity = await this.generateWaitingList(AppointmentMapper.toAppointmentDtoList(appointmentsPager[0]), schoolId);
+        entityPager.itemCount = appointmentsPager[0].length;
+        entityPager.totalItems = appointmentsPager[1];
+        entityPager.itemsPerPage = (query?.limit) ? Number(query.limit) : entityPager.itemCount;
+        entityPager.totalPages = (query?.limit) ? Math.ceil(entityPager.totalItems / Number(query.limit)) : entityPager.totalItems;
+        entityPager.currentPage = (query?.offset) ? (query.offset >= entityPager.totalItems ? null : Math.floor(parseInt(query.offset) / parseInt(query.limit)) + 1) : 1;
+        return entityPager;
+    }
+
+    async getAppointmentsByInstructorId(instructorId, query: any): Promise<PagerEntityDto<AppointmentDto[]>> {
+        const appointmentsPager = await this.appointmentRepository.getAppointmentsByInstructorId(instructorId, query);
+        for await (const appointment of appointmentsPager[0]) {
+            for await (const subscription of appointment.subscriptions) {
+                subscription.user.flights = [];
+                subscription.user.flights = await this.flightRepository.getFlights({ userId: subscription.user.id }, { from: moment(appointment.scheduling).format('YYYY-MM-DD'), to: moment(appointment.scheduling).format('YYYY-MM-DD') });
+            }
+        }
+        const entityPager = new PagerEntityDto<AppointmentDto[]>();
+        entityPager.entity = AppointmentMapper.toAppointmentDtoList(appointmentsPager[0]);
         entityPager.itemCount = appointmentsPager[0].length;
         entityPager.totalItems = appointmentsPager[1];
         entityPager.itemsPerPage = (query?.limit) ? Number(query.limit) : entityPager.itemCount;

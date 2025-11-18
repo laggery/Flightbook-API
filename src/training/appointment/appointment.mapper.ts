@@ -4,10 +4,10 @@ import { Appointment } from "./appointment.entity";
 import { UserReadDto } from '../../user/interface/user-read-dto';
 import { Subscription } from "../subscription/subscription.entity";
 import { SubscriptionDto } from "../subscription/interface/subscription-dto";
-import { AppointmentType } from "./appointment-type.entity";
 import { GuestSubscriptionDto } from "../subscription/interface/guest-subscription-dto";
 import { GuestSubscription } from "../subscription/guest-subscription.entity";
 import { AppointmentTypeDto } from "./interface/appointment-type-dto";
+import { FlightDto } from "../../flight/interface/flight-dto";
 
 export class AppointmentMapper {
 
@@ -43,7 +43,7 @@ export class AppointmentMapper {
             const subscriptionDtoList: SubscriptionDto[] = [];
             subscriptions.forEach((subscription: Subscription) => {
                 const subscriptionDto = plainToInstance(SubscriptionDto, subscription);
-                subscriptionDto.user =  new UserReadDto(subscription.user.email, subscription.user.firstname, subscription.user.lastname, subscription.user.phone);
+                subscriptionDto.user =  new UserReadDto(subscription.user.email, subscription.user.firstname, subscription.user.lastname, subscription.user.phone, plainToInstance(FlightDto, subscription.user.flights));
 
                 subscriptionDtoList.push(subscriptionDto);
             })

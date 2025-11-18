@@ -118,6 +118,12 @@ export class InstructorController {
         return this.appointmentTypeFacade.updateAppointmentType(appointmentTypeId, id, appointmentTypeDto);
     }
 
+    @UseGuards(CompositeAuthGuard)
+    @Get('/appointments')
+    getAppointmentsByInstructorId(@Request() req, @Query() query): Promise<PagerEntityDto<AppointmentDto[]>> {
+        return this.appointmentFacade.getAppointmentsByInstructorId(req.user.userId, query);
+    }
+
     @UseGuards(CompositeAuthGuard, StudentGuard)
     @Put('/schools/:school_id/students/:id/flights/validate-all')
     @HttpCode(204)

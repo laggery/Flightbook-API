@@ -3,16 +3,19 @@ import { LoginType } from "../login-type";
 import { ApiPropertyOptional } from "@nestjs/swagger";
 import { IsOptional, ValidateNested } from "class-validator";
 import { UserConfigDto } from "./user-config-dto";
+import { FlightDto } from "src/flight/interface/flight-dto";
 
 @Exclude()
 export class UserReadDto {
 
-    constructor(email: string, firstname: string, lastname: string, phone: string, loginType?: LoginType) {
+    constructor(email: string, firstname: string, lastname: string, phone: string, flights: FlightDto[] = []) {
         this.email = email;
         this.firstname = firstname;
         this.lastname = lastname;
         this.phone = phone;
-        this.loginType = loginType;
+        if (flights?.length > 0) {
+            this.flights = flights;
+        }
     }
 
     @Expose()
@@ -31,4 +34,6 @@ export class UserReadDto {
     @IsOptional()
     @Type(() => UserConfigDto)
     readonly config?: UserConfigDto
+    @Expose()
+    readonly flights: FlightDto[];
 }
