@@ -201,7 +201,7 @@ export class InstructorController {
     @UseGuards(CompositeAuthGuard, StudentGuard)
     @Delete('/students/:id/notes/:noteId')
     @HttpCode(204)
-    removeNote(@Request() req, id: number, @Param('noteId') noteId: number, @Param('studendId') studendId: number) {
-        this.noteFacade.removeNote(noteId);
+    async removeNote(@Request() req, id: number, @Param('noteId') noteId: number, @Param('studendId') studendId: number) {
+        await this.noteFacade.removeNote(noteId);
     }
 }

@@ -98,7 +98,7 @@ export class BaseE2ETest {
     // 1. Clear tables with no dependencies first
     await this.newsRepository.clear();
     await this.controlSheetRepository.clear();
-    await this.noteRepository.delete({});
+    await this.noteRepository.clear();
     
     // 2. Clear flight-related data (flights might reference places/gliders)
     await this.flightRepository.delete({});
