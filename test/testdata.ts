@@ -21,6 +21,8 @@ import { EnrollmentType } from "../src/training/enrollment/enrollment-type";
 import { Student } from "../src/training/student/student.entity";
 import { Note } from "../src/training/note/note.entity";
 import { NoteDto } from "../src/training/note/interface/note-dto";
+import { EmergencyContact } from "../src/training/emergency-contact/emergency-contact.entity";
+import { EmergencyContactDto } from "../src/training/emergency-contact/interface/emergency-contact-dto";
 
 export class Testdata {
     public static EMAIL = "test@user.com";
@@ -209,6 +211,20 @@ export class Testdata {
         user.lastname = "user";
         user.email = "test@user.com";
         return user;
+    }
+
+    public static createEmergencyContactDto(user: User): EmergencyContactDto {
+        return plainToClass(EmergencyContactDto, this.createEmergencyContact(user));
+    }
+
+    public static createEmergencyContact(user: User): EmergencyContact {
+        const emergencyContact = new EmergencyContact();
+        emergencyContact.user = user;
+        emergencyContact.firstname = "emergency firstname";
+        emergencyContact.lastname = "emergency lastname";
+        emergencyContact.phone = "0123456789";
+        emergencyContact.additionalInformation = "emergency additional information";
+        return emergencyContact;
     }
 
     public static readFile(fileName: string): Express.Multer.File {

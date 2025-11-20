@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`instructor emergency contacts (e2e) /instructor/students/:id/emergency-contacts (GET) 1`] = `
+[
+  {
+    "additionalInformation": "emergency additional information",
+    "firstname": "emergency firstname",
+    "lastname": "emergency lastname",
+    "phone": "0123456789",
+  },
+]
+`;
+
+exports[`student emergency contacts (e2e) /student/emergency-contacts (GET) 1`] = `
+[
+  {
+    "additionalInformation": "emergency additional information",
+    "firstname": "emergency firstname",
+    "lastname": "emergency lastname",
+    "phone": "0123456789",
+  },
+]
+`;
+
+exports[`student emergency contacts (e2e) /student/emergency-contacts (POST) 1`] = `
+{
+  "additionalInformation": "emergency additional information",
+  "firstname": "emergency firstname",
+  "lastname": "emergency lastname",
+  "phone": "0123456789",
+}
+`;
+
+exports[`student emergency contacts (e2e) /student/emergency-contacts (POST) 2`] = `
+{
+  "additionalInformation": "emergency additional information",
+  "firstname": "emergency firstname",
+  "lastname": "emergency lastname",
+  "phone": "0123456789",
+}
+`;
+
+exports[`student emergency contacts (e2e) /student/emergency-contacts (POST) 3`] = `
+{
+  "additionalInformation": "emergency additional information",
+  "firstname": "emergency firstname 2",
+  "lastname": "emergency lastname",
+  "phone": "0123456789",
+}
+`;
+
+exports[`student emergency contacts (e2e) /student/emergency-contacts (POST) 4`] = `
+{
+  "additionalInformation": "emergency additional information",
+  "firstname": "emergency firstname 2",
+  "lastname": "emergency lastname",
+  "phone": "0123456789",
+}
+`;
