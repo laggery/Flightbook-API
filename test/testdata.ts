@@ -18,6 +18,9 @@ import { TeamMember } from "../src/training/team-member/team-member.entity";
 import { Enrollment } from "../src/training/enrollment/enrollment.entity";
 import { randomStringGenerator } from "@nestjs/common/utils/random-string-generator.util";
 import { EnrollmentType } from "../src/training/enrollment/enrollment-type";
+import { Student } from "../src/training/student/student.entity";
+import { Note } from "../src/training/note/note.entity";
+import { NoteDto } from "../src/training/note/interface/note-dto";
 
 export class Testdata {
     public static EMAIL = "test@user.com";
@@ -114,6 +117,19 @@ export class Testdata {
         return controlSheet;
     }
 
+    public static createNoteDto(student: Student): NoteDto {
+        return plainToClass(NoteDto, this.createNote(student));
+    }
+
+    public static createNote(student: Student): Note {
+        const note = new Note();
+        note.text = "note";
+        note.date = new Date("2024-01-01");
+        note.title = "title";
+        note.student = student;
+        return note;
+    }
+
     public static createUserDto(
         firstname: string,
         lastname: string,
@@ -169,10 +185,19 @@ export class Testdata {
         return teamMember;
     }
 
-    public static createUser(email?: string): User {
+    public static createStudent(user: User, school: School): Student {
+        const student = new Student();
+        student.user = user;
+        student.school = school;
+        student.isArchived = false;
+        student.isTandem = false;
+        return student;
+    }
+
+    public static createUser(email?: string, firstname?: string, lastname?: string): User {
         const user = new User();
-        user.firstname = "test";
-        user.lastname = "user";
+        user.firstname = firstname || "test";
+        user.lastname = lastname || "user";
         user.email = email || this.EMAIL;
         return user;
     }

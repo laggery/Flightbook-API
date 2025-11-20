@@ -187,7 +187,7 @@ export class InstructorController {
     }
 
     @UseGuards(CompositeAuthGuard, StudentGuard)
-    @Post('/students/:id/notes/:noteId')
+    @Put('/students/:id/notes/:noteId')
     putNotes(@Request() req, @Param('id') id: number, @Param('noteId') noteId: number, @Body() noteDto: NoteDto): Promise<NoteDto> {
         return this.noteFacade.updateNote(noteId, id, noteDto);
     }

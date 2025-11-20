@@ -4,6 +4,8 @@ import { DataSource, Not, Repository } from 'typeorm';
 import { News } from '../src/news/news.entity';
 import { User } from '../src/user/domain/user.entity';
 import { Testdata } from './testdata';
+import { School } from '../src/training/school/school.entity';
+import { Student } from '../src/training/student/student.entity';
 
 export class BaseE2ETest {
   public get app(): INestApplication {
@@ -58,6 +60,10 @@ export class BaseE2ETest {
     return (global as any).testStudentRepository;
   }
 
+  public get noteRepository(): Repository<any> {
+    return (global as any).testNoteRepository;
+  }
+
   public getDefaultUser(): Promise<User> {
     return this.getUserByEmail(Testdata.EMAIL);
   }
@@ -68,11 +74,31 @@ export class BaseE2ETest {
     }})
   }
 
+  public async createSchoolData(): Promise<{ studentUser: User, instructorUser: User, testSchool: School, student: Student }> {
+    const studentUser = await this.userRepository.save(Testdata.createUser("student@student.com", "student", "student"));
+    const instructorUser = await this.userRepository.save(Testdata.createUser("instructor@instructor.com", "instructor", "instructor"));
+    const testSchool = await this.schoolRepository.save(Testdata.createSchool("test school"));
+    await this.teamMemberRepository.save(Testdata.createTeamMember(testSchool, instructorUser, true));
+    const student = await this.studentRepository.save(Testdata.createStudent(studentUser, testSchool));
+
+    return {
+      studentUser: studentUser,
+      instructorUser: instructorUser,
+      testSchool: testSchool,
+      student: student,
+    };
+  }
+
+  public getData(): any {
+    return (global as any).data;
+  }
+
   async cleanupBetweenTests() {
     // Clear tables in the correct order (child tables first)
     // 1. Clear tables with no dependencies first
     await this.newsRepository.clear();
     await this.controlSheetRepository.clear();
+    await this.noteRepository.delete({});
     
     // 2. Clear flight-related data (flights might reference places/gliders)
     await this.flightRepository.delete({});

@@ -1,0 +1,117 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`instructor note (e2e) /instructor/students/:id/notes (GET) 1`] = `
+{
+  "currentPage": 1,
+  "entity": [
+    {
+      "date": "2024-01-01T00:00:00.000Z",
+      "text": "note",
+      "timestamp": Any<String>,
+      "title": "title",
+    },
+  ],
+  "itemCount": 1,
+  "itemsPerPage": 100,
+  "totalItems": 1,
+  "totalPages": 1,
+}
+`;
+
+exports[`instructor note (e2e) /instructor/students/:id/notes (POST) 1`] = `
+{
+  "date": "2024-01-01T00:00:00.000Z",
+  "student": {
+    "isArchived": false,
+    "isTandem": false,
+    "school": {
+      "address1": "address",
+      "address2": "address2",
+      "city": "city",
+      "configuration": {
+        "userCanEditControlSheet": true,
+        "validateFlights": true,
+      },
+      "email": "school@example.com",
+      "language": "de",
+      "name": "test school",
+      "phone": "0123456789",
+      "plz": "1234",
+    },
+    "timestamp": Any<String>,
+    "user": {
+      "config": null,
+      "confirmationToken": null,
+      "createdAt": null,
+      "email": "student@student.com",
+      "enabled": true,
+      "firstname": "student",
+      "keycloakId": null,
+      "lastLogin": null,
+      "lastname": "student",
+      "loginType": "LOCAL",
+      "notificationToken": null,
+      "password": null,
+      "passwordRequestedAt": null,
+      "paymentExempted": true,
+      "phone": null,
+      "salt": null,
+      "socialloginId": null,
+      "token": null,
+      "validatedAt": null,
+    },
+  },
+  "text": "note",
+  "timestamp": Any<String>,
+  "title": "title",
+}
+`;
+
+exports[`instructor note (e2e) /instructor/students/:id/notes (PUT) 1`] = `
+{
+  "date": "2024-01-01T00:00:00.000Z",
+  "student": {
+    "isArchived": false,
+    "isTandem": false,
+    "school": {
+      "address1": "address",
+      "address2": "address2",
+      "city": "city",
+      "configuration": {
+        "userCanEditControlSheet": true,
+        "validateFlights": true,
+      },
+      "email": "school@example.com",
+      "language": "de",
+      "name": "test school",
+      "phone": "0123456789",
+      "plz": "1234",
+    },
+    "timestamp": Any<String>,
+    "user": {
+      "config": null,
+      "confirmationToken": null,
+      "createdAt": null,
+      "email": "student@student.com",
+      "enabled": true,
+      "firstname": "student",
+      "keycloakId": null,
+      "lastLogin": null,
+      "lastname": "student",
+      "loginType": "LOCAL",
+      "notificationToken": null,
+      "password": null,
+      "passwordRequestedAt": null,
+      "paymentExempted": true,
+      "phone": null,
+      "salt": null,
+      "socialloginId": null,
+      "token": null,
+      "validatedAt": null,
+    },
+  },
+  "text": "new text",
+  "timestamp": Any<String>,
+  "title": "new title",
+}
+`;
