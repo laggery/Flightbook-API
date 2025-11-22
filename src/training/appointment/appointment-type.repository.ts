@@ -4,15 +4,13 @@ import { FindManyOptions, Repository, SelectQueryBuilder } from 'typeorm';
 import { AppointmentType } from './appointment-type.entity';
 
 @Injectable()
-export class AppointmentTypeRepository {
+export class AppointmentTypeRepository extends Repository<AppointmentType> {
 
     constructor(
         @InjectRepository(AppointmentType)
-        private readonly appointmentTypeRepository: Repository<AppointmentType>
-    ) { }
-
-    async saveAppointmentType(type: AppointmentType): Promise<AppointmentType | undefined> {
-        return await this.appointmentTypeRepository.save(type);
+        repository: Repository<AppointmentType>
+    ) {
+        super(repository.target, repository.manager, repository.queryRunner);
     }
 
     async getAppointmentTypesBySchoolId(schoolId: number, query: any): Promise<AppointmentType[]> {
@@ -34,14 +32,14 @@ export class AppointmentTypeRepository {
         options = this.addQueryParams(options, query);
 
 
-        return this.appointmentTypeRepository.find(options);
+        return this.find(options);
     }
 
     async getAppointmentTypesById(id: number): Promise<AppointmentType | undefined> {
         if (!id) {
             return undefined;
         }
-        return this.appointmentTypeRepository.findOne({
+        return this.findOne({
             where: {
                 id: id
             }

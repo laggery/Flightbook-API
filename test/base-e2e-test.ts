@@ -68,6 +68,10 @@ export class BaseE2ETest {
     return (global as any).testEmergencyContactRepository;
   }
 
+  public get appointmentTypeRepository(): Repository<any> {
+    return (global as any).testAppointmentTypeRepository;
+  }
+
   public getDefaultUser(): Promise<User> {
     return this.getUserByEmail(Testdata.EMAIL);
   }
@@ -104,6 +108,7 @@ export class BaseE2ETest {
     await this.controlSheetRepository.clear();
     await this.noteRepository.clear();
     await this.emergencyContactRepository.clear();
+    await this.appointmentTypeRepository.delete({});
     
     // 2. Clear flight-related data (flights might reference places/gliders)
     await this.flightRepository.delete({});

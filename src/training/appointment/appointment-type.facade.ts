@@ -41,7 +41,7 @@ export class AppointmentTypeFacade {
             type.instructor = instructorEntity;
         }
 
-        const appointmentTypeResp: AppointmentType = await this.appointmentTypeRepository.saveAppointmentType(type);
+        const appointmentTypeResp: AppointmentType = await this.appointmentTypeRepository.save(type);
 
         return plainToInstance(AppointmentTypeDto, appointmentTypeResp);
     }
@@ -73,7 +73,7 @@ export class AppointmentTypeFacade {
             type.instructor = null;
         }
 
-        const appointmentTypeResp: AppointmentType = await this.appointmentTypeRepository.saveAppointmentType(type);
+        const appointmentTypeResp: AppointmentType = await this.appointmentTypeRepository.save(type);
 
         return plainToInstance(AppointmentTypeDto, appointmentTypeResp);
     }

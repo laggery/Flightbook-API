@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`instructor appointment type (e2e) /instructor/schools/:id/appointment-types (GET) 1`] = `[]`;
+
+exports[`instructor appointment type (e2e) /instructor/schools/:id/appointment-types (POST) 1`] = `
+{
+  "archived": false,
+  "color": "color",
+  "maxPeople": 1,
+  "meetingPoint": "meeting point",
+  "name": "appointment type",
+  "time": "08:00",
+}
+`;
+
+exports[`instructor appointment type (e2e) /instructor/schools/:id/appointment-types (POST) 2`] = `
+AppointmentType {
+  "archived": false,
+  "color": "color",
+  "id": 2,
+  "maxPeople": 1,
+  "meetingPoint": "meeting point",
+  "name": "appointment type",
+  "time": "08:00:00",
+}
+`;
+
+exports[`instructor appointment type (e2e) /instructor/schools/:id/appointment-types (PUT) 1`] = `
+{
+  "color": "color",
+  "instructor": null,
+  "maxPeople": 1,
+  "meetingPoint": "meeting point",
+  "name": "new name",
+  "time": "08:00",
+}
+`;
+
+exports[`instructor appointment type (e2e) /instructor/schools/:id/appointment-types (PUT) 2`] = `
+AppointmentType {
+  "archived": false,
+  "color": "color",
+  "id": 3,
+  "maxPeople": 1,
+  "meetingPoint": "meeting point",
+  "name": "new name",
+  "time": "08:00:00",
+}
+`;

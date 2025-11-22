@@ -20,6 +20,7 @@ import { EnrollmentRepository } from "../src/training/enrollment/enrollment.repo
 import { StudentRepository } from "../src/training/student/student.repository";
 import { NoteRepository } from "../src/training/note/note.repository";
 import { EmergencyContactRepository } from "../src/training/emergency-contact/emergency-contact.repository";
+import { AppointmentTypeRepository } from "../src/training/appointment/appointment-type.repository";
 
 const init = async () => {
     process.env.TZ = 'UTC';
@@ -78,6 +79,7 @@ const init = async () => {
     const studentRepository = moduleFixture.get<StudentRepository>(StudentRepository);
     const noteRepository = moduleFixture.get<NoteRepository>(NoteRepository);
     const emergencyContactRepository = moduleFixture.get<EmergencyContactRepository>(EmergencyContactRepository);
+    const appointmentTypeRepository = moduleFixture.get<AppointmentTypeRepository>(AppointmentTypeRepository);
 
     // Store globally for all tests to use
     (global as any).testApp = app;
@@ -95,6 +97,7 @@ const init = async () => {
     (global as any).testStudentRepository = studentRepository;
     (global as any).testNoteRepository = noteRepository;
     (global as any).testEmergencyContactRepository = emergencyContactRepository;
+    (global as any).testAppointmentTypeRepository = appointmentTypeRepository;
 
     await userRepository.save(Testdata.getDefaultUser());
 };

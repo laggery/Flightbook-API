@@ -23,6 +23,8 @@ import { Note } from "../src/training/note/note.entity";
 import { NoteDto } from "../src/training/note/interface/note-dto";
 import { EmergencyContact } from "../src/training/emergency-contact/emergency-contact.entity";
 import { EmergencyContactDto } from "../src/training/emergency-contact/interface/emergency-contact-dto";
+import { AppointmentType } from "../src/training/appointment/appointment-type.entity";
+import { AppointmentTypeDto } from "../src/training/appointment/interface/appointment-type-dto";
 
 export class Testdata {
     public static EMAIL = "test@user.com";
@@ -131,6 +133,20 @@ export class Testdata {
         note.title = "title";
         note.student = student;
         return note;
+    }
+
+    public static createAppointmentTypeDto(): AppointmentTypeDto {
+        return plainToClass(AppointmentTypeDto, this.createAppointmentType("appointment type"));
+    }
+
+    public static createAppointmentType(name: string): AppointmentType {
+        const appointmentType = new AppointmentType();
+        appointmentType.name = name;
+        appointmentType.meetingPoint = "meeting point";
+        appointmentType.maxPeople = 1;
+        appointmentType.color = "color";
+        appointmentType.time = "08:00";
+        return appointmentType;
     }
 
     public static createUserDto(
