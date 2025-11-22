@@ -52,13 +52,13 @@ export class Testdata {
         return PlaceMapper.toPlaceDto(this.createPlace(name));
     }
 
-    public static createPlace(name: string): Place {
+    public static createPlace(name: string, user?: User): Place {
         const place = new Place();
         place.name = name;
         place.altitude = 1000;
         place.country = 'CH'
         place.notes = "notice"
-        place.user = this.getDefaultUser();
+        place.user = user || this.getDefaultUser();
         return place;
     }
 
@@ -66,7 +66,7 @@ export class Testdata {
         return plainToClass(GliderDto, this.createGlider(brand, name, tandem));
     }
 
-    public static createGlider(brand: string, name: string, tandem: boolean): Glider {
+    public static createGlider(brand: string, name: string, tandem: boolean, user?: User): Glider {
         const glider = new Glider();
         glider.brand = brand;
         glider.name = name;
@@ -74,7 +74,7 @@ export class Testdata {
         glider.note = "note";
         glider.tandem = tandem;
         glider.archived = false;
-        glider.user = this.getDefaultUser();
+        glider.user = user || this.getDefaultUser();
         return glider;
     }
 
@@ -93,7 +93,8 @@ export class Testdata {
         landing?: Place,
         glider?: Glider,
         date?: string,
-        timestamp?: Date
+        timestamp?: Date,
+        user?: User
     ): Flight {
         const flight = new Flight();
         flight.date = date || '2024-01-01';
@@ -103,7 +104,7 @@ export class Testdata {
         flight.km = 100.2;
         flight.time = "01:30";
         flight.description = "description";
-        flight.user = this.getDefaultUser();
+        flight.user = user || this.getDefaultUser();
         flight.timestamp = timestamp || new Date();
         return flight;
     }

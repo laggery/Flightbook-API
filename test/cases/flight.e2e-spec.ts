@@ -6,6 +6,8 @@ import { Flight } from '../../src/flight/flight.entity';
 import { FlightDto } from '../../src/flight/interface/flight-dto';
 import { plainToClass } from 'class-transformer';
 import { removeIds } from '../utils/snapshot-utils';
+import { User } from '../../src/user/domain/user.entity';
+import { FlightValidationState } from '../../src/flight/flight-validation-state';
 
 describe('Flights (e2e)', () => {
   const testInstance = new BaseE2ETest();
@@ -223,14 +225,144 @@ describe('V2 Flights (e2e)', () => {
   });
 });
 
-async function createData(testInstance: BaseE2ETest): Promise<Flight[]> {
+describe('Instructor Flight (e2e)', () => {
+  const testInstance = new BaseE2ETest();
+  const storedFlights: Flight[] = [];
+  let schoolTestData: any;
+
+  beforeEach(async () => {
+    await testInstance.cleanupBetweenTests();
+    schoolTestData = await testInstance.createSchoolData();
+    storedFlights.length = 0;
+    storedFlights.push(...(await createData(testInstance, schoolTestData.studentUser)));
+  });
+
+  it('/instructor/students/:id/flights (GET)', async () => {
+    // given
+    const keycloakToken = JwtTestHelper.createKeycloakToken({ sub: schoolTestData.instructorUser.id, email: schoolTestData.instructorUser.email });
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .get(`/instructor/students/${schoolTestData.student.id}/flights`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .expect(200)
+      .then(response => {
+        expect(response.body.entity).toHaveLength(4);
+
+        // Flights should be ordered by date desc, then by timestamp desc
+        assertFlight(response.body.entity[0], storedFlights[3]);
+        assertFlight(response.body.entity[1], storedFlights[2]);
+        assertFlight(response.body.entity[2], storedFlights[1]);
+        assertFlight(response.body.entity[3], storedFlights[0]);
+      });
+  });
+
+  it('/instructor/students/:id/flights/:flightId (PUT)', async () => {
+    // given
+    const keycloakToken = JwtTestHelper.createKeycloakToken({ sub: schoolTestData.instructorUser.id, email: schoolTestData.instructorUser.email });
+    const flightDto = {
+      ...plainToClass(FlightDto, storedFlights[0]),
+      shvAlone: true
+    };
+    expect(storedFlights[0].shvAlone).toBe(false);
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .put(`/instructor/students/${schoolTestData.student.id}/flights/${storedFlights[0].id}`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .send(flightDto)
+      .expect(200)
+      .then(async (response) => {
+        expect(response.body).toBeDefined();
+        expect(response.body.shvAlone).toBe(true);
+
+        const db = await testInstance.flightRepository.findOne({
+          where: { id: response.body.id }
+        });
+        expect(db.shvAlone).toBe(true);
+      });
+  });
+});
+
+describe('Instructor Flight Validation (e2e)', () => {
+  const testInstance = new BaseE2ETest();
+  const storedFlights: Flight[] = [];
+  let schoolTestData: any;
+
+  beforeEach(async () => {
+    await testInstance.cleanupBetweenTests();
+    schoolTestData = await testInstance.createSchoolData();
+    storedFlights.length = 0;
+    storedFlights.push(...(await createData(testInstance, schoolTestData.studentUser)));
+  });
+
+  it('/instructor/schools/:school_id/students/:id/flights/:flightId (PUT)', async () => {
+    // given
+    const keycloakToken = JwtTestHelper.createKeycloakToken({ sub: schoolTestData.instructorUser.id, email: schoolTestData.instructorUser.email });
+    const flightValidationDto = {
+      state: FlightValidationState.VALIDATED,
+      comment: 'Validated',
+      instructor: schoolTestData.instructorUser,
+      school: schoolTestData.school
+    };
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .put(`/instructor/schools/${schoolTestData.testSchool.id}/students/${schoolTestData.student.id}/flights/${storedFlights[0].id}`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .send(flightValidationDto)
+      .expect(200)
+      .then(async (response) => {
+        expect(removeIds(response.body)).toMatchSnapshot({
+          validation: {
+            timestamp: expect.any(String)
+          }
+        });
+
+        const db = await testInstance.flightRepository.findOne({
+          where: { id: response.body.id }
+        });
+        expect(db.validation.state).toBe(FlightValidationState.VALIDATED);
+        expect(db.validation.comment).toBe('Validated');
+      });
+  });
+
+  it('/instructor/schools/:school_id/students/:id/flights/validate-all (PUT)', async () => {
+    // given
+    const keycloakToken = JwtTestHelper.createKeycloakToken({ sub: schoolTestData.instructorUser.id, email: schoolTestData.instructorUser.email });
+    const flightValidationDto = {
+      state: FlightValidationState.VALIDATED,
+      instructor: schoolTestData.instructorUser,
+      school: schoolTestData.school
+    };
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .put(`/instructor/schools/${schoolTestData.testSchool.id}/students/${schoolTestData.student.id}/flights/validate-all`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .send(flightValidationDto)
+      .expect(204)
+      .then(async () => {
+        for (const flight of storedFlights) {
+          const db = await testInstance.flightRepository.findOne({
+            where: { id: flight.id }
+          });
+          expect(db.validation.state).toBe(FlightValidationState.VALIDATED);
+          expect(db.validation.comment).toBeNull();
+        }
+      });
+  });
+});
+
+
+async function createData(testInstance: BaseE2ETest, user?: User): Promise<Flight[]> {
   // Create places
   const places = [
-    Testdata.createPlace("riederalp"),
-    Testdata.createPlace("Fiesch"),
-    Testdata.createPlace("Belalp"),
-    Testdata.createPlace("Bitsch"),
-    Testdata.createPlace("Zermatt")
+    Testdata.createPlace("riederalp", user),
+    Testdata.createPlace("Fiesch", user),
+    Testdata.createPlace("Belalp", user),
+    Testdata.createPlace("Bitsch", user),
+    Testdata.createPlace("Zermatt", user)
   ];
   for (const place of places) {
     await testInstance.placeRepository.save(place);
@@ -241,9 +373,9 @@ async function createData(testInstance: BaseE2ETest): Promise<Flight[]> {
 
   // Create gliders
   const gliders = [
-    Testdata.createGlider("Advance", "Bibeta 6", true),
-    Testdata.createGlider("Ozone", "Delta", false),
-    Testdata.createGlider("Gin", "Yeti", false)
+    Testdata.createGlider("Advance", "Bibeta 6", true, user),
+    Testdata.createGlider("Ozone", "Delta", false, user),
+    Testdata.createGlider("Gin", "Yeti", false, user)
   ];
   for (const g of gliders) {
     await testInstance.gliderRepository.save(g);
@@ -253,10 +385,10 @@ async function createData(testInstance: BaseE2ETest): Promise<Flight[]> {
   expect(countGliders).toEqual(3);
 
   const flights = [
-    Testdata.createFlight(places[0], places[1], gliders[0], '2025-01-01', new Date('2025-01-01T10:00:00Z')),
-    Testdata.createFlight(places[0], places[1], gliders[0], '2025-01-01', new Date('2025-01-01T12:00:00Z')), // Duplicate flight on same day with different timestamp
-    Testdata.createFlight(places[1], places[2], gliders[1], '2025-01-02'),
-    Testdata.createFlight(places[2], places[3], gliders[2], '2025-01-03')
+    Testdata.createFlight(places[0], places[1], gliders[0], '2025-01-01', new Date('2025-01-01T10:00:00Z'), user),
+    Testdata.createFlight(places[0], places[1], gliders[0], '2025-01-01', new Date('2025-01-01T12:00:00Z'), user), // Duplicate flight on same day with different timestamp
+    Testdata.createFlight(places[1], places[2], gliders[1], '2025-01-02', undefined, user),
+    Testdata.createFlight(places[2], places[3], gliders[2], '2025-01-03', undefined, user)
   ];
 
   for (const f of flights) {

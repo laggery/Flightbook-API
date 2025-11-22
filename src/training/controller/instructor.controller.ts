@@ -127,8 +127,8 @@ export class InstructorController {
     @UseGuards(CompositeAuthGuard, StudentGuard)
     @Put('/schools/:school_id/students/:id/flights/validate-all')
     @HttpCode(204)
-    validateAllStudentFlight(@Request() req, @Param('school_id') schoolId: number, @Param('id') id: number, @Body() flightValidationDto: FlightValidationDto) {
-        return this.studentFacade.validateAllStudentFlight(id, schoolId, req.user.userId, flightValidationDto);
+    async validateAllStudentFlight(@Request() req, @Param('school_id') schoolId: number, @Param('id') id: number, @Body() flightValidationDto: FlightValidationDto) {
+        return await this.studentFacade.validateAllStudentFlight(id, schoolId, req.user.userId, flightValidationDto);
     }
 
     @UseGuards(CompositeAuthGuard, StudentGuard)
@@ -140,8 +140,8 @@ export class InstructorController {
     @UseGuards(CompositeAuthGuard, StudentGuard)
     @Delete('/students/:id')
     @HttpCode(204)
-    removeStudent(@Request() req, @Param('id') studendId: number): Promise<StudentDto> {
-        return this.studentFacade.archiveStudent(studendId);
+    async removeStudent(@Request() req, @Param('id') studendId: number): Promise<StudentDto> {
+        return await this.studentFacade.archiveStudent(studendId);
     }
 
     @UseGuards(CompositeAuthGuard, StudentGuard)

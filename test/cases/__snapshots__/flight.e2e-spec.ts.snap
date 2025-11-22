@@ -175,6 +175,71 @@ exports[`Flights (e2e) /flights/statistic (GET) 1`] = `
 }
 `;
 
+exports[`Instructor Flight Validation (e2e) /instructor/schools/:school_id/students/:id/flights/:flightId (PUT) 1`] = `
+{
+  "date": "2025-01-01",
+  "description": "description",
+  "glider": {
+    "archived": false,
+    "brand": "Advance",
+    "buyDate": "2020-01-01",
+    "checks": null,
+    "name": "Bibeta 6",
+    "nbFlights": null,
+    "note": "note",
+    "tandem": true,
+    "time": null,
+    "userId": 6,
+  },
+  "igc": null,
+  "km": 100.2,
+  "landing": {
+    "altitude": 1000,
+    "country": "CH",
+    "name": "Fiesch",
+    "notes": "notice",
+    "point": null,
+  },
+  "price": null,
+  "shvAlone": false,
+  "start": {
+    "altitude": 1000,
+    "country": "CH",
+    "name": "riederalp",
+    "notes": "notice",
+    "point": null,
+  },
+  "time": "01:30:00",
+  "validation": {
+    "comment": "Validated",
+    "instructor": {
+      "config": null,
+      "email": "instructor@instructor.com",
+      "firstname": "instructor",
+      "lastname": "instructor",
+      "loginType": "LOCAL",
+      "phone": null,
+    },
+    "school": {
+      "address1": "address",
+      "address2": "address2",
+      "city": "city",
+      "configuration": {
+        "userCanEditControlSheet": true,
+        "validateFlights": true,
+      },
+      "email": "school@example.com",
+      "language": "de",
+      "name": "test school",
+      "phone": "0123456789",
+      "plz": "1234",
+    },
+    "state": "VALIDATED",
+    "timestamp": Any<String>,
+  },
+}
+`;
+
 exports[`V2 Flights (e2e) /v2/flights (GET) 1`] = `
 {
   "currentPage": 1,
