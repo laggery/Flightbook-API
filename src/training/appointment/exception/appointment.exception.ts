@@ -1,4 +1,4 @@
-import { UnprocessableEntityException } from "@nestjs/common";
+import { BadRequestException, UnprocessableEntityException } from "@nestjs/common";
 
 export class AppointmentException {
 
@@ -12,5 +12,9 @@ export class AppointmentException {
 
     public static invalidAppointmentTypeId() {
         throw new UnprocessableEntityException("An appointment type id must be provided and be valid")
+    }
+
+    public static invalidUnsubscribe() {
+        throw new BadRequestException("Invalid unsubscribe: user must be subscribed to the appointment")
     }
 }

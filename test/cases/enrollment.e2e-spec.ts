@@ -26,7 +26,7 @@ describe('Enrollments (e2e)', () => {
       .set('Authorization', `Bearer ${keycloakToken}`)
       .expect(200)
       .then(async (response) => {
-        expect(removeIds(response.body)).toMatchSnapshot({ 
+        expect(removeIds(response.body)).toMatchSnapshot({
           expireAt: expect.any(String),
           token: expect.any(String)
         });
@@ -34,7 +34,7 @@ describe('Enrollments (e2e)', () => {
         const db = await testInstance.enrollmentRepository.findOne({
           where: { email: response.body.email }
         });
-        expect(removeIds(db)).toMatchSnapshot({ 
+        expect(removeIds(db)).toMatchSnapshot({
           token: expect.any(String)
         });
       });
@@ -56,9 +56,11 @@ describe('Enrollments (e2e)', () => {
       .then(async (response) => {
         const db = await testInstance.teamMemberRepository.findOne({
           relations: ['user', 'school'],
-          where: { user: {
-            id: Testdata.getDefaultUser().id
-          } }
+          where: {
+            user: {
+              id: Testdata.getDefaultUser().id
+            }
+          }
         });
         expect(removeIds(db)).toMatchSnapshot();
       });
@@ -80,11 +82,58 @@ describe('Enrollments (e2e)', () => {
       .then(async (response) => {
         const db = await testInstance.studentRepository.findOne({
           relations: ['user', 'school'],
-          where: { user: {
-            id: Testdata.getDefaultUser().id
-          } }
+          where: {
+            user: {
+              id: Testdata.getDefaultUser().id
+            }
+          }
         });
         expect(removeIds(db)).toMatchSnapshot();
+      });
+  });
+});
+
+describe('Student controller enrollment (e2e)', () => {
+  const testInstance = new BaseE2ETest();
+
+  beforeEach(async () => {
+    await testInstance.cleanupBetweenTests();
+  });
+
+  it('student/schools/:schoolId/enrollment/:token/free Not free (GET)', async () => {
+    // given
+    const school = Testdata.createSchool("School 1");
+    await testInstance.schoolRepository.save(school);
+    const enrollment = Testdata.createEnrollment(school, Testdata.EMAIL, EnrollmentType.STUDENT);
+    await testInstance.enrollmentRepository.save(enrollment);
+    const keycloakToken = JwtTestHelper.createKeycloakToken();
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .get(`/student/schools/${school.id}/enrollment/${enrollment.token}/free`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .expect(200)
+      .then(async (response) => {
+        expect(JSON.parse(response.text)).toBe(false);
+      });
+  });
+
+  it('student/schools/:schoolId/enrollment/:token/free Free (GET)', async () => {
+    // given
+    const school = Testdata.createSchool("School 1");
+    await testInstance.schoolRepository.save(school);
+    const enrollment = Testdata.createEnrollment(school, Testdata.EMAIL, EnrollmentType.STUDENT);
+    enrollment.isFree = true;
+    await testInstance.enrollmentRepository.save(enrollment);
+    const keycloakToken = JwtTestHelper.createKeycloakToken();
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .get(`/student/schools/${school.id}/enrollment/${enrollment.token}/free`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .expect(200)
+      .then(async (response) => {
+        expect(JSON.parse(response.text)).toBe(true);
       });
   });
 });

@@ -50,7 +50,7 @@ export class AppointmentFacade {
         let appointment: Appointment = plainToInstance(Appointment, appointmentDto);
         await this.appointmentValidityCheck(appointmentDto, schoolId, appointment);
 
-        const appointmentResp: Appointment = await this.appointmentRepository.saveAppointment(appointment);
+        const appointmentResp: Appointment = await this.appointmentRepository.save(appointment);
 
         const students = await this.studentRepository.getStudentsBySchoolId(schoolId, false);
 
@@ -129,7 +129,7 @@ export class AppointmentFacade {
             this.notificationsService.sendAppointmentStateChanged(appointment);
         }
 
-        const appointmentResp: Appointment = await this.appointmentRepository.saveAppointment(appointment);
+        const appointmentResp: Appointment = await this.appointmentRepository.save(appointment);
         return await this.generateWaitingList(AppointmentMapper.toAppointmentDto(appointmentResp), schoolId);
     }
 
@@ -153,7 +153,7 @@ export class AppointmentFacade {
         }
         appointment.subscriptions.push(subscription);
 
-        const appointmentResp: Appointment = await this.appointmentRepository.saveAppointment(appointment);
+        const appointmentResp: Appointment = await this.appointmentRepository.save(appointment);
         return await this.generateWaitingList(AppointmentMapper.toAppointmentDto(appointmentResp), appointment.school.id);
     }
 
@@ -186,8 +186,11 @@ export class AppointmentFacade {
             });
 
             const subscriptionToDelete = appointment.removeUserSubscription(userId);
+            if (!subscriptionToDelete) {
+                throw AppointmentException.invalidUnsubscribe();
+            }
 
-            this.subscriptionRepository.remove(subscriptionToDelete);
+            await this.subscriptionRepository.remove(subscriptionToDelete);
             this.emailService.sendUnsubscribeEmail(school, appointment, subscriptionToDelete);
         }
         return AppointmentMapper.toAppointmentDto(appointment);

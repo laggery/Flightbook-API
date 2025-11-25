@@ -67,3 +67,22 @@ exports[`Schools (e2e) /schools/configuration (PUT) 2`] = `
   "plz": "1234",
 }
 `;
+
+exports[`Student schools (e2e) /student/schools (GET) 1`] = `
+[
+  {
+    "address1": "address",
+    "address2": "address2",
+    "city": "city",
+    "configuration": {
+      "userCanEditControlSheet": true,
+      "validateFlights": true,
+    },
+    "email": "school@example.com",
+    "language": "de",
+    "name": "test school",
+    "phone": "0123456789",
+    "plz": "1234",
+  },
+]
+`;

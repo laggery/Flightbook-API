@@ -49,7 +49,9 @@ describe('instructor appointment type (e2e)', () => {
         const db = await testInstance.appointmentTypeRepository.findOne({
           where: { id: response.body.id }
         });
-        expect(db).toMatchSnapshot();
+        expect(db).toMatchSnapshot({
+          id: expect.any(Number)
+        });
       });
   });
 
@@ -78,7 +80,9 @@ describe('instructor appointment type (e2e)', () => {
         const db = await testInstance.appointmentTypeRepository.findOne({
           where: { id: response.body.id }
         });
-        expect(db).toMatchSnapshot();
+        expect(db).toMatchSnapshot({
+          id: expect.any(Number)
+        });
       });
   });
 });

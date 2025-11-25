@@ -131,7 +131,6 @@ exports[`Flights (e2e) /flights/:id (GET) 1`] = `
     "note": "note",
     "tandem": true,
     "time": null,
-    "userId": 1,
   },
   "igc": null,
   "km": 100.2,
@@ -189,7 +188,6 @@ exports[`Instructor Flight Validation (e2e) /instructor/schools/:school_id/stude
     "note": "note",
     "tandem": true,
     "time": null,
-    "userId": 6,
   },
   "igc": null,
   "km": 100.2,
@@ -250,7 +248,6 @@ exports[`V2 Flights (e2e) /v2/flights (GET) 1`] = `
       "glider": {
         "archived": false,
         "brand": "Gin",
-        "buy_date": "2020-01-01T00:00:00.000Z",
         "checks": null,
         "name": "Yeti",
         "nbFlights": null,
@@ -283,7 +280,6 @@ exports[`V2 Flights (e2e) /v2/flights (GET) 1`] = `
       "glider": {
         "archived": false,
         "brand": "Ozone",
-        "buy_date": "2020-01-01T00:00:00.000Z",
         "checks": null,
         "name": "Delta",
         "nbFlights": null,
@@ -316,7 +312,6 @@ exports[`V2 Flights (e2e) /v2/flights (GET) 1`] = `
       "glider": {
         "archived": false,
         "brand": "Advance",
-        "buy_date": "2020-01-01T00:00:00.000Z",
         "checks": null,
         "name": "Bibeta 6",
         "nbFlights": null,
@@ -349,7 +344,6 @@ exports[`V2 Flights (e2e) /v2/flights (GET) 1`] = `
       "glider": {
         "archived": false,
         "brand": "Advance",
-        "buy_date": "2020-01-01T00:00:00.000Z",
         "checks": null,
         "name": "Bibeta 6",
         "nbFlights": null,

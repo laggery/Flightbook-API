@@ -7,19 +7,17 @@ import { State } from './state';
 import { GuestSubscription } from '../subscription/guest-subscription.entity';
 
 @Injectable()
-export class AppointmentRepository {
+export class AppointmentRepository extends Repository<Appointment> {
 
     constructor(
         @InjectRepository(Appointment)
-        private readonly appointmentRepository: Repository<Appointment>
-    ) { }
-
-    async saveAppointment(appointment: Appointment): Promise<Appointment | undefined> {
-        return await this.appointmentRepository.save(appointment);
-    }
+        repository: Repository<Appointment>
+    ) { 
+        super(repository.target, repository.manager, repository.queryRunner);
+     }
 
     async getAppointmentById(id: number): Promise<Appointment> {
-        let appointment = await this.appointmentRepository.findOneOrFail({
+        let appointment = await this.findOneOrFail({
             relations: {
                 subscriptions:{
                     user: true
@@ -91,7 +89,7 @@ export class AppointmentRepository {
             };
         }
 
-        let entityNumber: [Appointment[], number] = await this.appointmentRepository.findAndCount(options);
+        let entityNumber: [Appointment[], number] = await this.findAndCount(options);
         entityNumber[0].forEach((appointment: Appointment) => {
             appointment.subscriptions = this.orderSubscriptionByTimestampAsc(appointment.subscriptions);
             appointment.guestSubscriptions = this.orderGuestSubscriptionById(appointment.guestSubscriptions);
@@ -140,7 +138,7 @@ export class AppointmentRepository {
             };
         }
 
-        let entityNumber: [Appointment[], number] = await this.appointmentRepository.findAndCount(options);
+        let entityNumber: [Appointment[], number] = await this.findAndCount(options);
 
         return entityNumber;
     }

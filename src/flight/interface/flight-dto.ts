@@ -13,15 +13,18 @@ export class FlightDto {
     readonly number: number;
     @ApiProperty()
     @Expose()
+    @Type(() => GliderDto)
     readonly glider: GliderDto;
     @ApiProperty()
     @Expose()
     readonly date: string;
     @ApiPropertyOptional()
     @Expose()
+    // @Type(() => PlaceDto)
     readonly start?: PlaceDto;
     @ApiPropertyOptional()
     @Expose()
+    // @Type(() => PlaceDto)
     readonly landing?: PlaceDto;
     @ApiPropertyOptional()
     @Expose()

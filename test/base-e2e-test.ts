@@ -4,8 +4,10 @@ import { DataSource, Not, Repository } from 'typeorm';
 import { News } from '../src/news/news.entity';
 import { User } from '../src/user/domain/user.entity';
 import { Testdata } from './testdata';
+import { AppointmentBuilderTest } from './utils/appointment-builder-test';
 import { School } from '../src/training/school/school.entity';
 import { Student } from '../src/training/student/student.entity';
+import { Appointment } from '../src/training/appointment/appointment.entity';
 
 export class BaseE2ETest {
   public get app(): INestApplication {
@@ -72,6 +74,14 @@ export class BaseE2ETest {
     return (global as any).testAppointmentTypeRepository;
   }
 
+  public get appointmentRepository(): Repository<any> {
+    return (global as any).testAppointmentRepository;
+  }
+
+  public get subscriptionRepository(): Repository<any> {
+    return (global as any).testSubscriptionRepository;
+  }
+
   public getDefaultUser(): Promise<User> {
     return this.getUserByEmail(Testdata.EMAIL);
   }
@@ -82,10 +92,10 @@ export class BaseE2ETest {
     }})
   }
 
-  public async createSchoolData(): Promise<{ studentUser: User, instructorUser: User, testSchool: School, student: Student }> {
-    const studentUser = await this.userRepository.save(Testdata.createUser("student@student.com", "student", "student"));
-    const instructorUser = await this.userRepository.save(Testdata.createUser("instructor@instructor.com", "instructor", "instructor"));
-    const testSchool = await this.schoolRepository.save(Testdata.createSchool("test school"));
+  public async createSchoolData(studentEmail?: string, instructorEmail?: string, schoolName?: string): Promise<{ studentUser: User, instructorUser: User, testSchool: School, student: Student }> {
+    const studentUser = await this.userRepository.save(Testdata.createUser(studentEmail || "student@student.com", "student", "student"));
+    const instructorUser = await this.userRepository.save(Testdata.createUser(instructorEmail || "instructor@instructor.com", "instructor", "instructor"));
+    const testSchool = await this.schoolRepository.save(Testdata.createSchool(schoolName || "test school"));
     await this.teamMemberRepository.save(Testdata.createTeamMember(testSchool, instructorUser, true));
     const student = await this.studentRepository.save(Testdata.createStudent(studentUser, testSchool));
 
@@ -94,6 +104,25 @@ export class BaseE2ETest {
       instructorUser: instructorUser,
       testSchool: testSchool,
       student: student,
+    };
+  }
+
+  public async createSchoolDataWithAppointment(studentEmail?: string, instructorEmail?: string, schoolName?: string, appointmentTypeName?: string) {
+    const baseSchool = await this.createSchoolData(studentEmail, instructorEmail, schoolName);
+    const appointmentType = await this.appointmentTypeRepository.save(Testdata.createAppointmentType(appointmentTypeName || "appointment type 1"));
+    const appointments: Appointment[] = [];
+    const date = new Date("2025-11-24T12:00:00");
+    for (let i = 0; i < 4; i++) {
+      const appoitment = new AppointmentBuilderTest(baseSchool.testSchool, baseSchool.instructorUser)
+          .setAppointmentType(appointmentType)
+          .setScheduling(date)
+          .build();
+      appointments.push(await this.appointmentRepository.save(appoitment));
+      date.setDate(date.getDate() + 1);
+    }
+    return {
+      ...baseSchool,
+      appointments: appointments,
     };
   }
 
@@ -108,6 +137,9 @@ export class BaseE2ETest {
     await this.controlSheetRepository.clear();
     await this.noteRepository.clear();
     await this.emergencyContactRepository.clear();
+    
+    await this.subscriptionRepository.delete({});
+    await this.appointmentRepository.delete({});
     await this.appointmentTypeRepository.delete({});
     
     // 2. Clear flight-related data (flights might reference places/gliders)

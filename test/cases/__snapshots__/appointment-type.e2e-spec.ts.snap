@@ -14,10 +14,10 @@ exports[`instructor appointment type (e2e) /instructor/schools/:id/appointment-t
 `;
 
 exports[`instructor appointment type (e2e) /instructor/schools/:id/appointment-types (POST) 2`] = `
-AppointmentType {
+{
   "archived": false,
   "color": "color",
-  "id": 2,
+  "id": Any<Number>,
   "maxPeople": 1,
   "meetingPoint": "meeting point",
   "name": "appointment type",
@@ -37,10 +37,10 @@ exports[`instructor appointment type (e2e) /instructor/schools/:id/appointment-t
 `;
 
 exports[`instructor appointment type (e2e) /instructor/schools/:id/appointment-types (PUT) 2`] = `
-AppointmentType {
+{
   "archived": false,
   "color": "color",
-  "id": 3,
+  "id": Any<Number>,
   "maxPeople": 1,
   "meetingPoint": "meeting point",
   "name": "new name",

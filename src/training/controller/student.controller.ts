@@ -80,7 +80,7 @@ export class StudentController {
             throw new UnauthorizedException();
         }
 
-        return this.appointmentFacade.addSubscriptionToAppointment(appointmentId, req.user.userId);
+        return await this.appointmentFacade.addSubscriptionToAppointment(appointmentId, req.user.userId);
     }
 
     @UseGuards(CompositeAuthGuard)
@@ -98,7 +98,7 @@ export class StudentController {
             throw new UnauthorizedException();
         }
 
-        return this.appointmentFacade.deleteSubscriptionFromAppointment(appointmentId, req.user.userId, studentInSchool);
+        return await this.appointmentFacade.deleteSubscriptionFromAppointment(appointmentId, req.user.userId, studentInSchool);
     }
 
     @UseGuards(CompositeAuthGuard)

@@ -55,7 +55,7 @@ export class TeamMemberFacade {
         return teamMemberDto;
     }
 
-    async isUserTeamMemberFromSchool(schoolId: number, userId: number) {
+    async isUserTeamMemberFromSchool(schoolId: number, userId: number): Promise<boolean> {
         const teamMember = await this.teamMemberRepository.getTeamMembersByUserIdAndSchoolId(schoolId, userId);
         if (teamMember) {
             return true;

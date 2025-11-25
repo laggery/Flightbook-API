@@ -94,6 +94,12 @@ export class InstructorController {
         return this.appointmentFacade.getAppointmentsBySchoolId(id, query);
     }
 
+    @UseGuards(CompositeAuthGuard)
+    @Get('/appointments')
+    getAppointmentsByInstructorId(@Request() req, @Query() query): Promise<PagerEntityDto<AppointmentDto[]>> {
+        return this.appointmentFacade.getAppointmentsByInstructorId(req.user.userId, query);
+    }
+
     @UseGuards(CompositeAuthGuard, SchoolGuard)
     @Get('/schools/:id/appointments/:appointment_id/students')
     getAppointmentSubscriptions(@Param('id') id: number, @Param('appointment_id') appointmentId: number): Promise<StudentDto[]> {
@@ -116,12 +122,6 @@ export class InstructorController {
     @Put('/schools/:id/appointment-types/:appointmentTypes_id')
     putAppointmentType(@Param('id') id: number, @Param('appointmentTypes_id') appointmentTypeId: number, @Body() appointmentTypeDto: AppointmentTypeDto): Promise<AppointmentTypeDto> {
         return this.appointmentTypeFacade.updateAppointmentType(appointmentTypeId, id, appointmentTypeDto);
-    }
-
-    @UseGuards(CompositeAuthGuard)
-    @Get('/appointments')
-    getAppointmentsByInstructorId(@Request() req, @Query() query): Promise<PagerEntityDto<AppointmentDto[]>> {
-        return this.appointmentFacade.getAppointmentsByInstructorId(req.user.userId, query);
     }
 
     @UseGuards(CompositeAuthGuard, StudentGuard)
