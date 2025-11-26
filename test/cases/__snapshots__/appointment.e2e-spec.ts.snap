@@ -1,5 +1,204 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`instructor appointment (e2e) /instructor/appointments (GET) 1`] = `
+{
+  "description": "description",
+  "guestSubscriptions": [],
+  "maxPeople": 1,
+  "meetingPoint": "meeting point",
+  "scheduling": "2025-11-27T12:00:00.000Z",
+  "school": {
+    "address1": "address",
+    "address2": "address2",
+    "city": "city",
+    "configuration": {
+      "userCanEditControlSheet": true,
+      "validateFlights": true,
+    },
+    "email": "school@example.com",
+    "language": "de",
+    "name": "test school",
+    "phone": "0123456789",
+    "plz": "1234",
+  },
+  "state": "CONFIRMED",
+  "subscriptions": [],
+  "takeOffCoordinatorText": "takeoff coordinator",
+  "type": {
+    "archived": false,
+    "color": "color",
+    "maxPeople": 1,
+    "meetingPoint": "meeting point",
+    "name": "appointment type 1",
+    "time": "08:00:00",
+  },
+}
+`;
+
+exports[`instructor appointment (e2e) /instructor/schools/:id/appointments (GET) 1`] = `
+{
+  "countGuestSubscription": 0,
+  "countSubscription": 0,
+  "countWaitingList": 0,
+  "description": "description",
+  "guestSubscriptions": [],
+  "instructor": {
+    "email": "instructor@instructor.com",
+    "firstname": "instructor",
+    "lastname": "instructor",
+    "phone": null,
+  },
+  "maxPeople": 1,
+  "meetingPoint": "meeting point",
+  "scheduling": "2025-11-27T12:00:00.000Z",
+  "state": "CONFIRMED",
+  "subscriptions": [],
+  "takeOffCoordinatorText": "takeoff coordinator",
+  "type": {
+    "archived": false,
+    "color": "color",
+    "maxPeople": 1,
+    "meetingPoint": "meeting point",
+    "name": "appointment type 1",
+    "time": "08:00:00",
+  },
+}
+`;
+
+exports[`instructor appointment (e2e) /instructor/schools/:id/appointments (POST) 1`] = `
+{
+  "countGuestSubscription": 1,
+  "countSubscription": 1,
+  "countWaitingList": 0,
+  "description": "description",
+  "guestSubscriptions": [
+    {
+      "firstname": "guest",
+      "lastname": "guest",
+    },
+  ],
+  "instructor": {
+    "email": "test@user.com",
+    "firstname": "test",
+    "lastname": "user",
+    "phone": null,
+  },
+  "maxPeople": 1,
+  "meetingPoint": "meeting point",
+  "scheduling": "2025-11-24T12:00:00.000Z",
+  "school": {
+    "address1": "address",
+    "address2": "address2",
+    "city": "city",
+    "configuration": {
+      "userCanEditControlSheet": true,
+      "validateFlights": true,
+    },
+    "email": "school@example.com",
+    "language": "de",
+    "name": "test school",
+    "phone": "0123456789",
+    "plz": "1234",
+  },
+  "state": "ANNOUNCED",
+  "subscriptions": [
+    {
+      "student": {
+        "isArchived": false,
+        "isTandem": false,
+        "statistic": null,
+        "user": {
+          "email": "student@student.com",
+          "firstname": "student",
+          "lastname": "student",
+          "loginType": "LOCAL",
+          "phone": null,
+        },
+      },
+      "user": {
+        "email": "student@student.com",
+        "firstname": "student",
+        "lastname": "student",
+        "phone": null,
+      },
+      "waitingList": false,
+    },
+  ],
+  "takeOffCoordinatorText": "takeoff coordinator",
+}
+`;
+
+exports[`instructor appointment (e2e) /instructor/schools/:id/appointments (PUT) 1`] = `
+{
+  "countGuestSubscription": 1,
+  "countSubscription": 1,
+  "countWaitingList": 0,
+  "description": "description",
+  "guestSubscriptions": [
+    {
+      "firstname": "guest",
+      "lastname": "guest",
+    },
+  ],
+  "instructor": {
+    "email": "instructor@instructor.com",
+    "firstname": "instructor",
+    "lastname": "instructor",
+    "phone": null,
+  },
+  "maxPeople": 1,
+  "meetingPoint": "meeting point",
+  "scheduling": "2025-11-28T12:00:00.000Z",
+  "school": {
+    "address1": "address",
+    "address2": "address2",
+    "city": "city",
+    "configuration": {
+      "userCanEditControlSheet": true,
+      "validateFlights": true,
+    },
+    "email": "school@example.com",
+    "language": "de",
+    "name": "test school",
+    "phone": "0123456789",
+    "plz": "1234",
+  },
+  "state": "CANCELED",
+  "subscriptions": [
+    {
+      "student": {
+        "isArchived": false,
+        "isTandem": false,
+        "statistic": null,
+        "user": {
+          "email": "student@student.com",
+          "firstname": "student",
+          "lastname": "student",
+          "loginType": "LOCAL",
+          "phone": null,
+        },
+      },
+      "user": {
+        "email": "student@student.com",
+        "firstname": "student",
+        "lastname": "student",
+        "phone": null,
+      },
+      "waitingList": false,
+    },
+  ],
+  "takeOffCoordinatorText": "takeoff coordinator",
+  "type": {
+    "archived": false,
+    "color": "color",
+    "maxPeople": 1,
+    "meetingPoint": "meeting point",
+    "name": "appointment type 1",
+    "time": "08:00:00",
+  },
+}
+`;
+
 exports[`student appointment (e2e) /student/schools/:id/appointments (GET) 1`] = `
 {
   "countGuestSubscription": 0,

@@ -8,6 +8,7 @@ import { AppointmentBuilderTest } from './utils/appointment-builder-test';
 import { School } from '../src/training/school/school.entity';
 import { Student } from '../src/training/student/student.entity';
 import { Appointment } from '../src/training/appointment/appointment.entity';
+import { TeamMember } from '../src/training/team-member/team-member.entity';
 
 export class BaseE2ETest {
   public get app(): INestApplication {
@@ -82,6 +83,10 @@ export class BaseE2ETest {
     return (global as any).testSubscriptionRepository;
   }
 
+  public get guestSubscriptionRepository(): Repository<any> {
+    return (global as any).testGuestSubscriptionRepository;
+  }
+
   public getDefaultUser(): Promise<User> {
     return this.getUserByEmail(Testdata.EMAIL);
   }
@@ -92,11 +97,11 @@ export class BaseE2ETest {
     }})
   }
 
-  public async createSchoolData(studentEmail?: string, instructorEmail?: string, schoolName?: string): Promise<{ studentUser: User, instructorUser: User, testSchool: School, student: Student }> {
+  public async createSchoolData(studentEmail?: string, instructorEmail?: string, schoolName?: string): Promise<{ studentUser: User, instructorUser: User, testSchool: School, student: Student, teamMember: TeamMember }> {
     const studentUser = await this.userRepository.save(Testdata.createUser(studentEmail || "student@student.com", "student", "student"));
     const instructorUser = await this.userRepository.save(Testdata.createUser(instructorEmail || "instructor@instructor.com", "instructor", "instructor"));
     const testSchool = await this.schoolRepository.save(Testdata.createSchool(schoolName || "test school"));
-    await this.teamMemberRepository.save(Testdata.createTeamMember(testSchool, instructorUser, true));
+    const teamMember = await this.teamMemberRepository.save(Testdata.createTeamMember(testSchool, instructorUser, true));
     const student = await this.studentRepository.save(Testdata.createStudent(studentUser, testSchool));
 
     return {
@@ -104,6 +109,7 @@ export class BaseE2ETest {
       instructorUser: instructorUser,
       testSchool: testSchool,
       student: student,
+      teamMember: teamMember
     };
   }
 
@@ -139,6 +145,7 @@ export class BaseE2ETest {
     await this.emergencyContactRepository.clear();
     
     await this.subscriptionRepository.delete({});
+    await this.guestSubscriptionRepository.delete({});
     await this.appointmentRepository.delete({});
     await this.appointmentTypeRepository.delete({});
     

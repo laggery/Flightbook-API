@@ -107,6 +107,38 @@ describe('Student schools (e2e)', () => {
   });
 });
 
+describe('instructor schools (e2e)', () => {
+  const testInstance = new BaseE2ETest();
+
+  beforeEach(async () => {
+    await testInstance.cleanupBetweenTests();
+  });
+
+  it('/instructor/schools (GET)', async () => {
+    // given
+    const { instructorUser } = await testInstance.createSchoolData();
+    
+    // Create a second school
+    const { testSchool } = await testInstance.createSchoolData("student2@student.com", "instructor2@instructor.com", "School 2");
+    await testInstance.teamMemberRepository.save(Testdata.createTeamMember(testSchool, instructorUser, true));
+    const keycloakToken = JwtTestHelper.createKeycloakToken({ sub: instructorUser.id, email: instructorUser.email });
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .get(`/instructor/schools`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .expect(200)
+      .then(async (response) => {
+        expect(response.body).toHaveLength(2);
+        expect(removeIds(response.body)).toMatchSnapshot();
+
+        const db = await testInstance.schoolRepository.find();
+
+        expect(db).toHaveLength(2);
+      });
+  });
+});
+
 async function assertSchool(testInstance: any, received: any, expected: SchoolDto) {
   expect(removeIds(received)).toMatchSnapshot();
   expect(received.id).toBeDefined();

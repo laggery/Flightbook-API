@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`instructor student (e2e) /instructor/schools/:id/appointments/:appointment_id/students (GET) 1`] = `
+[
+  {
+    "controlSheet": null,
+    "emergencyContacts": [],
+    "isArchived": false,
+    "isTandem": false,
+    "statistic": {
+      "average": null,
+      "bestDistance": null,
+      "income": null,
+      "nbFlights": 0,
+      "nbLandingplaces": 0,
+      "nbStartplaces": 0,
+      "time": null,
+      "totalDistance": null,
+    },
+    "user": {
+      "email": "student@student.com",
+      "firstname": "student",
+      "lastname": "student",
+      "loginType": "LOCAL",
+      "phone": null,
+    },
+  },
+]
+`;
+
+exports[`instructor student (e2e) /instructor/schools/:id/students (GET) 1`] = `
+[
+  {
+    "countNotValidatedFlights": 0,
+    "isArchived": false,
+    "isTandem": false,
+    "statistic": {
+      "average": null,
+      "bestDistance": null,
+      "income": null,
+      "nbFlights": 0,
+      "nbLandingplaces": 0,
+      "nbStartplaces": 0,
+      "time": null,
+      "totalDistance": null,
+    },
+    "user": {
+      "email": "student@student.com",
+      "firstname": "student",
+      "lastname": "student",
+      "loginType": "LOCAL",
+      "phone": null,
+    },
+  },
+]
+`;

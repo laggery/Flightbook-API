@@ -54,7 +54,7 @@ export class AppointmentFacade {
 
         const students = await this.studentRepository.getStudentsBySchoolId(schoolId, false);
 
-        if (appointment.subscriptions.length > 0) {
+        if (appointment.subscriptions?.length > 0) {
             const addedStudents = [];
             appointment.subscriptions.forEach((subscription: Subscription) => {
                 const index = students.findIndex((student: Student) => student.user.email === subscription.user.email);
@@ -288,7 +288,7 @@ export class AppointmentFacade {
         appointmentDtoList.forEach((appointmentDto: AppointmentDto) => {
             let countSubscription = 0;
             let countWaitingList = 0;
-            appointmentDto.subscriptions.forEach((subscriptionDto: SubscriptionDto) => {
+            appointmentDto.subscriptions?.forEach((subscriptionDto: SubscriptionDto) => {
                 const foundStudent = students.find((student: Student) => student.user.email === subscriptionDto.user.email);
                 if (!foundStudent)  {
                     Logger.debug("Student not found - subscriptionDto", subscriptionDto);

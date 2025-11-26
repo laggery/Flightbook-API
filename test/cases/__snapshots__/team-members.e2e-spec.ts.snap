@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`instructor team members (e2e) /instructor/schools/:id/team-members (GET) 1`] = `
+[
+  {
+    "admin": true,
+    "user": {
+      "email": "instructor@instructor.com",
+      "firstname": "instructor",
+      "lastname": "instructor",
+      "loginType": "LOCAL",
+      "phone": null,
+    },
+  },
+]
+`;
