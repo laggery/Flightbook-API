@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tandem passenger confirmations (e2e) /tandem/passenger-confirmations (GET) 1`] = `
+{
+  "canUseData": true,
+  "date": "2024-01-01T00:00:00.000Z",
+  "email": "email",
+  "firstname": "firstname",
+  "lastname": "lastname",
+  "phone": "phone",
+  "place": "place",
+  "signature": "signature",
+  "signatureMimeType": "image/svg+xml",
+  "validation": {
+    "fullyUnderstoodInstructions": true,
+    "noHealthProblems": true,
+    "understandRisks": true,
+    "undertakePilotInstructions": true,
+  },
+}
+`;
+
+exports[`Tandem passenger confirmations (e2e) /tandem/passenger-confirmations (POST) 1`] = `
+{
+  "canUseData": true,
+  "date": "2024-01-01T00:00:00.000Z",
+  "email": "email",
+  "firstname": "firstname",
+  "lastname": "lastname",
+  "phone": "phone",
+  "place": "place",
+  "signature": "signature",
+  "signatureMimeType": "image/svg+xml",
+  "timestamp": Any<String>,
+  "user": {
+    "config": null,
+    "confirmationToken": null,
+    "createdAt": null,
+    "email": "test@user.com",
+    "enabled": true,
+    "firstname": "test",
+    "keycloakId": null,
+    "lastLogin": null,
+    "lastname": "user",
+    "loginType": "LOCAL",
+    "notificationToken": null,
+    "password": null,
+    "passwordRequestedAt": null,
+    "paymentExempted": true,
+    "phone": null,
+    "salt": null,
+    "socialloginId": null,
+    "token": null,
+    "validatedAt": null,
+  },
+  "validation": {
+    "fullyUnderstoodInstructions": true,
+    "noHealthProblems": true,
+    "understandRisks": true,
+    "undertakePilotInstructions": true,
+  },
+}
+`;

@@ -25,7 +25,7 @@ export class PassengerConfirmationFacade {
         return this.passengerConfirmationRepository.save(passengerConfirmation);
     }
 
-    async getPassengerConfirmations(userId: number, query: any): Promise<any> {
+    async getPassengerConfirmations(userId: number, query: any): Promise<PagerEntityDto<PassengerConfirmationDto[]>> {
         const response = await this.passengerConfirmationRepository.getPassengerConfirmation(userId, query);
         const entityPager = new PagerEntityDto<PassengerConfirmationDto[]>();
         entityPager.entity = plainToInstance(PassengerConfirmationDto, response[0] as PassengerConfirmation[]);

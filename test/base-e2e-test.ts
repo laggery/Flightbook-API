@@ -87,6 +87,10 @@ export class BaseE2ETest {
     return (global as any).testGuestSubscriptionRepository;
   }
 
+  public get passengerConfirmationRepository(): Repository<any> {
+    return (global as any).testPassengerConfirmationRepository;
+  }
+
   public getDefaultUser(): Promise<User> {
     return this.getUserByEmail(Testdata.EMAIL);
   }
@@ -143,6 +147,7 @@ export class BaseE2ETest {
     await this.controlSheetRepository.clear();
     await this.noteRepository.clear();
     await this.emergencyContactRepository.clear();
+    await this.passengerConfirmationRepository.clear();
     
     await this.subscriptionRepository.delete({});
     await this.guestSubscriptionRepository.delete({});

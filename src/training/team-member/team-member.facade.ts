@@ -48,7 +48,7 @@ export class TeamMemberFacade {
             throw new UnauthorizedException();
         }
 
-        this.teamMemberRepository.remove(teamMember)
+        await this.teamMemberRepository.remove(teamMember)
         const teamMemberDto = plainToClass(TeamMemberDto, teamMember);
         teamMemberDto.user = plainToClass(UserReadIdDto, teamMember.user);
 

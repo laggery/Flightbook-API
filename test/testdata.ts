@@ -25,6 +25,8 @@ import { EmergencyContact } from "../src/training/emergency-contact/emergency-co
 import { EmergencyContactDto } from "../src/training/emergency-contact/interface/emergency-contact-dto";
 import { AppointmentType } from "../src/training/appointment/appointment-type.entity";
 import { AppointmentTypeDto } from "../src/training/appointment/interface/appointment-type-dto";
+import { PassengerConfirmation } from "../src/tandem/passenger-confirmation/passenger-confirmation.entity";
+import { PassengerConfirmationDto } from "../src/tandem/passenger-confirmation/interface/passenger-confirmation-dto";
 
 export class Testdata {
     public static EMAIL = "test@user.com";
@@ -133,6 +135,31 @@ export class Testdata {
         note.title = "title";
         note.student = student;
         return note;
+    }
+
+    public static createPassengerConfirmationDto(): PassengerConfirmationDto {
+        return plainToClass(PassengerConfirmationDto, this.createPassengerConfirmation());
+    }
+
+    public static createPassengerConfirmation(): PassengerConfirmation {
+        const passengerConfirmation = new PassengerConfirmation();
+        passengerConfirmation.date = new Date("2024-01-01");
+        passengerConfirmation.firstname = "firstname";
+        passengerConfirmation.lastname = "lastname";
+        passengerConfirmation.email = "email";
+        passengerConfirmation.phone = "phone";
+        passengerConfirmation.place = "place";
+        passengerConfirmation.validation = {
+            fullyUnderstoodInstructions: true,
+            undertakePilotInstructions: true,
+            noHealthProblems: true,
+            understandRisks: true
+        };
+        passengerConfirmation.canUseData = true;
+        passengerConfirmation.signature = "signature";
+        passengerConfirmation.signatureMimeType = "image/svg+xml";
+        passengerConfirmation.user = this.getDefaultUser();
+        return passengerConfirmation;
     }
 
     public static createAppointmentTypeDto(): AppointmentTypeDto {

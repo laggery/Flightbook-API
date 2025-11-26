@@ -72,8 +72,8 @@ export class InstructorController {
     @UseGuards(CompositeAuthGuard, SchoolGuard)
     @Delete('/schools/:id/team-members/:teamMemberId')
     @HttpCode(204)
-    deleteTeamMember(@Param('id') id: number, @Param('teamMemberId') teamMemberId: number): Promise<TeamMemberDto>{
-        return this.teamMembersFacade.deleteTeamMember(teamMemberId);
+    async deleteTeamMember(@Param('id') id: number, @Param('teamMemberId') teamMemberId: number): Promise<TeamMemberDto>{
+        return await this.teamMembersFacade.deleteTeamMember(teamMemberId);
     }
 
     @UseGuards(CompositeAuthGuard, SchoolGuard)
