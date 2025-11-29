@@ -1,5 +1,4 @@
 import { EnrollmentFacade } from '../enrollment/enrollment.facade';
-import { TestBed } from '@automock/jest';
 import { InstructorController } from './instructor.controller';
 import { StudentFacade } from '../student/student.facade';
 import { SchoolFacade } from '../school/school.facade';
@@ -18,15 +17,20 @@ describe('Instructor Controller', () => {
       noteFacade: jest.Mocked<NoteFacade>;
 
   beforeAll(async () => {
-    const { unit, unitRef } = TestBed.create(InstructorController).compile();
-
-    controller = unit;
-    studentFacade = unitRef.get(StudentFacade);
-    teamMembersFacade = unitRef.get(TeamMemberFacade);
-    enrollmentFacade = unitRef.get(EnrollmentFacade);
-    appointmentFacade = unitRef.get(AppointmentFacade);
-    appointmentTypeFacade = unitRef.get(AppointmentTypeFacade);
-    noteFacade = unitRef.get(NoteFacade);
+    studentFacade = {} as any;
+    teamMembersFacade = {} as any;
+    enrollmentFacade = {} as any;
+    appointmentFacade = {} as any;
+    appointmentTypeFacade = {} as any;
+    noteFacade = {} as any;
+    controller = new InstructorController(
+      studentFacade,
+      teamMembersFacade,
+      enrollmentFacade,
+      appointmentFacade,
+      appointmentTypeFacade,
+      noteFacade
+    );
   });
 
   it('should be defined', () => {

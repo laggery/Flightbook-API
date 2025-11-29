@@ -1,14 +1,14 @@
 import { NotificationsService } from './notifications.service';
-import { TestBed } from '@automock/jest';
+import { UserRepository } from '../../user/user.repository';
 
 describe('NotificationsService', () => {
   let service: NotificationsService;
+  let userRepository: jest.Mocked<UserRepository>;
   let json: jest.Mocked<JSON>;
 
   beforeAll(async () => {
-    const { unit, unitRef } = TestBed.create(NotificationsService).compile();
-
-    service = unit;
+    userRepository = {} as any;
+    service = new NotificationsService(userRepository);
   });
 
   it('should be defined', () => {

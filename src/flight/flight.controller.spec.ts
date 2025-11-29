@@ -1,16 +1,13 @@
 import { FlightController } from './flight.controller';
 import { FlightFacade } from './flight.facade';
-import { TestBed } from '@automock/jest';
 
 describe('Flight Controller', () => {
   let controller: FlightController;
   let facade: jest.Mocked<FlightFacade>;
 
   beforeAll(async () => {
-    const { unit, unitRef } = TestBed.create(FlightController).compile();
-
-    controller = unit;
-    facade = unitRef.get(FlightFacade);
+    facade = {} as any;
+    controller = new FlightController(facade);
   });
 
   it('should be defined', () => {

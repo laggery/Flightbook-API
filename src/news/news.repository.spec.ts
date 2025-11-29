@@ -1,14 +1,14 @@
 import { NewsRepository } from './news.repository';
-import { TestBed } from '@automock/jest';
 import { Testdata } from '../../test/testdata';
+import { Repository } from 'typeorm';
+import { News } from './news.entity';
 
 describe('NewsRepository', () => {
   let newsRepository: NewsRepository;
 
   beforeAll(async () => {
-    const { unit, unitRef } = TestBed.create(NewsRepository).compile();
-
-    newsRepository = unit;
+    const repository = {} as Repository<News>;
+    newsRepository = new NewsRepository(repository);
   });
 
   it('Should get news', async () => {

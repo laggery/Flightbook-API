@@ -1,15 +1,34 @@
 {
-    "moduleFileExtensions": [
-        "js",
-        "json",
-        "ts"
-      ],
-    "rootDir": "..",
-    "testEnvironment": "node",
-    "testRegex": ".e2e-spec.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "globalSetup": "./test/setup.ts",
-    "globalTeardown": "./test/teardown.ts"
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "rootDir": "..",
+  "testEnvironment": "node",
+  "testRegex": ".e2e-spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "globalSetup": "./test/setup.ts",
+  "globalTeardown": "./test/teardown.ts",
+  "collectCoverageFrom": [
+    "src/**/*.ts",
+    "!src/**/*.spec.ts",
+    "!src/**/*.e2e-spec.ts",
+    "!src/main.ts",
+    "!src/**/*.module.ts",
+    "!src/**/*.entity.ts",
+    "!src/**/*.interface.ts",
+    "!src/**/interface/**",
+    "!src/**/exception/**",
+    "!src/db/migrations/**"
+  ],
+  "coverageDirectory": "./coverage/e2e",
+  "coverageReporters": [
+    "text",
+    "lcov",
+    "html"
+  ],
+  "coverageProvider": "v8"
 }

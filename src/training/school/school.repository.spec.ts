@@ -1,13 +1,13 @@
 import { SchoolRepository } from './school.repository';
-import { TestBed } from '@automock/jest';
+import { Repository } from 'typeorm';
+import { School } from './school.entity';
 
 describe('School Repository', () => {
   let schoolRepository: SchoolRepository;
 
   beforeAll(async () => {
-    const { unit, unitRef } = TestBed.create(SchoolRepository).compile();
-
-    schoolRepository = unit;
+    const repository = {} as Repository<School>;
+    schoolRepository = new SchoolRepository(repository);
   });
 
   it('should be defined', () => {

@@ -1,6 +1,5 @@
 import { NewsController } from './news.controller';
 import { NewsFacade } from './news.facade';
-import { TestBed } from '@automock/jest';
 import { Testdata } from '../../test/testdata';
 
 describe('News Controller', () => {
@@ -8,10 +7,10 @@ describe('News Controller', () => {
   let newsFacade: jest.Mocked<NewsFacade>;
 
   beforeAll(async () => {
-    const { unit, unitRef } = TestBed.create(NewsController).compile();
-
-    controller = unit;
-    newsFacade = unitRef.get(NewsFacade);
+    newsFacade = {
+      getNews: jest.fn(),
+    } as any;
+    controller = new NewsController(newsFacade);
   });
 
   it('Should get news', async () => {

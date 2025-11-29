@@ -1,13 +1,13 @@
-import { TestBed } from '@automock/jest';
 import { PassengerConfirmationRepository } from './passenger-confirmation.repository';
+import { Repository } from 'typeorm';
+import { PassengerConfirmation } from './passenger-confirmation.entity';
 
 describe('PassengerConfirmation Repository', () => {
   let passengerConfirmationRepository: PassengerConfirmationRepository;
 
   beforeAll(async () => {
-    const { unit, unitRef } = TestBed.create(PassengerConfirmationRepository).compile();
-
-    passengerConfirmationRepository = unit;
+    const repository = {} as Repository<PassengerConfirmation>;
+    passengerConfirmationRepository = new PassengerConfirmationRepository(repository);
   });
 
   it('should be defined', () => {

@@ -1,5 +1,4 @@
 import { TeamMemberFacade } from './team-member.facade';
-import { TestBed } from '@automock/jest';
 import { TeamMemberRepository } from './team-member.repository';
 
 describe('TeamMemberFacade', () => {
@@ -7,10 +6,8 @@ describe('TeamMemberFacade', () => {
   let teamMemberRepository: jest.Mocked<TeamMemberRepository>;
 
   beforeAll(async () => {
-    const { unit, unitRef } = TestBed.create(TeamMemberFacade).compile();
-
-    facade = unit;
-    teamMemberRepository = unitRef.get(TeamMemberRepository);
+    teamMemberRepository = {} as any;
+    facade = new TeamMemberFacade(teamMemberRepository);
   });
 
   it('should be defined', () => {

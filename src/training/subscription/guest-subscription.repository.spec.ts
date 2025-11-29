@@ -1,13 +1,13 @@
-import { TestBed } from '@automock/jest';
+import { Repository } from 'typeorm';
+import { GuestSubscription } from './guest-subscription.entity';
 import { GuestSubscriptionRepository } from './guest-subscription.repository';
 
 describe('GuestSubscription Repository', () => {
   let guestSubscriptionRepository: GuestSubscriptionRepository;
 
   beforeAll(async () => {
-    const { unit, unitRef } = TestBed.create(GuestSubscriptionRepository).compile();
-
-    guestSubscriptionRepository = unit;
+    const repository = {} as Repository<GuestSubscription>;
+    guestSubscriptionRepository = new GuestSubscriptionRepository(repository);
   });
 
   it('should be defined', () => {

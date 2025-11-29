@@ -1,7 +1,6 @@
 import { GliderFacade } from './glider.facade';
 import { GliderRepository } from './glider.repository';
 import { UserRepository } from '../user/user.repository';
-import { TestBed } from '@automock/jest';
 
 describe('GliderFacade', () => {
   let provider: GliderFacade,
@@ -9,11 +8,9 @@ describe('GliderFacade', () => {
       userRepository: jest.Mocked<UserRepository>;
 
   beforeAll(async () => {
-    const { unit, unitRef } = TestBed.create(GliderFacade).compile();
-
-    provider = unit;
-    gliderRepository = unitRef.get(GliderRepository);
-    userRepository = unitRef.get(UserRepository);
+    gliderRepository = {} as any;
+    userRepository = {} as any;
+    provider = new GliderFacade(gliderRepository, userRepository);
   });
 
   it('should be defined', () => {

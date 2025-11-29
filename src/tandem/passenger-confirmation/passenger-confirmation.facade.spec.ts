@@ -1,7 +1,6 @@
 import { PassengerConfirmationFacade } from './passenger-confirmation.facade';
 import { PassengerConfirmationRepository } from './passenger-confirmation.repository';
 import { UserRepository } from '../../user/user.repository';
-import { TestBed } from '@automock/jest';
 
 describe('PassengerConfirmationFacade', () => {
   let facade: PassengerConfirmationFacade,
@@ -9,11 +8,9 @@ describe('PassengerConfirmationFacade', () => {
       userRepository: jest.Mocked<UserRepository>;
 
   beforeAll(async () => {
-    const { unit, unitRef } = TestBed.create(PassengerConfirmationFacade).compile();
-
-    facade = unit;
-    passengerConfirmationRepository = unitRef.get(PassengerConfirmationRepository);
-    userRepository = unitRef.get(UserRepository);
+    passengerConfirmationRepository = {} as any;
+    userRepository = {} as any;
+    facade = new PassengerConfirmationFacade(userRepository, passengerConfirmationRepository);
   });
 
   it('should be defined', () => {

@@ -1,13 +1,13 @@
 import { GliderRepository } from './glider.repository';
-import { TestBed } from '@automock/jest';
+import { Repository } from 'typeorm';
+import { Glider } from './glider.entity';
 
 describe('Glider Repository', () => {
   let gliderRepository: GliderRepository;
 
   beforeAll(async () => {
-    const { unit, unitRef } = TestBed.create(GliderRepository).compile();
-
-    gliderRepository = unit;
+    const repository = {} as Repository<Glider>;
+    gliderRepository = new GliderRepository(repository);
   });
 
   it('should be defined', () => {

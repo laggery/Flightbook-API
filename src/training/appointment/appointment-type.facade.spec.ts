@@ -1,5 +1,4 @@
 import { UserRepository } from '../../user/user.repository';
-import { TestBed } from '@automock/jest';
 import { SchoolRepository } from '../school/school.repository';
 import { AppointmentTypeRepository } from './appointment-type.repository';
 import { AppointmentTypeFacade } from './appointment-type.facade';
@@ -11,12 +10,10 @@ describe('AppointmentFacade', () => {
       userRepository: jest.Mocked<UserRepository>;
 
   beforeAll(async () => {
-    const { unit, unitRef } = TestBed.create(AppointmentTypeFacade).compile();
-
-    facade = unit;
-    appointmentTypeRepository = unitRef.get(AppointmentTypeRepository);
-    schoolRepository = unitRef.get(SchoolRepository);
-    userRepository = unitRef.get(UserRepository);
+    appointmentTypeRepository = {} as any;
+    schoolRepository = {} as any;
+    userRepository = {} as any;
+    facade = new AppointmentTypeFacade(appointmentTypeRepository, schoolRepository, userRepository);
   });
 
   it('should be defined', () => {

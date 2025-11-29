@@ -3,23 +3,29 @@ import { AppointmentRepository } from '../appointment/appointment.repository';
 import { FlightFacade } from '../../flight/flight.facade';
 import { ControlSheetFacade } from '../control-sheet/control-sheet.facade';
 import { StudentRepository } from './student.repository';
-import { TestBed } from '@automock/jest';
+import { SchoolRepository } from '../school/school.repository';
+import { NoteRepository } from '../note/note.repository';
+import { EmergencyContactFacade } from '../emergency-contact/emergency-contact.facade';
 
 describe('StudentFacade', () => {
   let facade: StudentFacade,
       appointmentRepository: jest.Mocked<AppointmentRepository>,
       flightFacade: jest.Mocked<FlightFacade>,
       controlSheetFacade: jest.Mocked<ControlSheetFacade>,
-      studentRepository: jest.Mocked<StudentRepository>;
+      studentRepository: jest.Mocked<StudentRepository>,
+      schoolRepository: jest.Mocked<SchoolRepository>,
+      noteRepository: jest.Mocked<NoteRepository>,
+      emergencyContactFacade: jest.Mocked<EmergencyContactFacade>;
 
   beforeAll(async () => {
-    const { unit, unitRef } = TestBed.create(StudentFacade).compile();
-
-    facade = unit;
-    appointmentRepository = unitRef.get(AppointmentRepository);
-    flightFacade = unitRef.get(FlightFacade);
-    controlSheetFacade = unitRef.get(ControlSheetFacade);
-    studentRepository = unitRef.get(StudentRepository);
+    studentRepository = {} as any;
+    schoolRepository = {} as any;
+    appointmentRepository = {} as any;
+    noteRepository = {} as any;
+    flightFacade = {} as any;
+    controlSheetFacade = {} as any;
+    emergencyContactFacade = {} as any;
+    facade = new StudentFacade(studentRepository, schoolRepository, appointmentRepository, noteRepository, flightFacade, controlSheetFacade, emergencyContactFacade);
   });
 
   it('should be defined', () => {

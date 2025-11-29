@@ -1,13 +1,10 @@
 import { EmailService } from './email.service';
-import { TestBed } from '@automock/jest';
 
 describe('EmailService', () => {
   let service: EmailService;
 
   beforeAll(async () => {
-    const { unit, unitRef } = TestBed.create(EmailService).compile();
-
-    service = unit;
+    service = new EmailService();
   });
 
   it('should be defined', () => {

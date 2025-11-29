@@ -1,13 +1,13 @@
 import { EnrollmentRepository } from './enrollment.repository';
-import { TestBed } from '@automock/jest';
+import { Repository } from 'typeorm';
+import { Enrollment } from './enrollment.entity';
 
 describe('Enrollment Repository', () => {
   let enrollmentRepository: EnrollmentRepository;
 
   beforeAll(async () => {
-    const { unit, unitRef } = TestBed.create(EnrollmentRepository).compile();
-
-    enrollmentRepository = unit;
+    const repository = {} as Repository<Enrollment>;
+    enrollmentRepository = new EnrollmentRepository(repository);
   });
 
   it('should be defined', () => {

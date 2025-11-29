@@ -1,4 +1,3 @@
-import { TestBed } from '@automock/jest';
 import { ImportController } from './import.controller';
 import { Testdata } from '../../test/testdata';
 import { ImportResultDto, ResultDto } from './interface/import-result-dto';
@@ -15,12 +14,18 @@ describe('ImportController', () => {
   let emailService: jest.Mocked<EmailService>;
 
   beforeEach(async () => {
-    const { unit, unitRef } = TestBed.create(ImportController).compile();
-
-    controller = unit;
-    facade = unitRef.get(ImportFacade);
-    fileUploadService = unitRef.get(FileUploadService);
-    emailService = unitRef.get(EmailService);
+    facade = {
+      importFbPlaces: jest.fn(),
+      importFlugbuch: jest.fn(),
+      getImportTypes: jest.fn(),
+    } as any;
+    emailService = {
+      sendErrorMessageToAdmin: jest.fn(),
+    } as any;
+    fileUploadService = {
+      uploadErrorImportFile: jest.fn(),
+    } as any;
+    controller = new ImportController(facade, emailService, fileUploadService);
   });
 
   it('Import fb places', async () => {

@@ -125,7 +125,6 @@ const initPostgreSql = async () => {
             source: "./test/init-schema.sql",
             target: "/docker-entrypoint-initdb.d/init-schema.sql"
         }])
-        .withExposedPorts(54322)
         .start();
 
     global.pg = pg;

@@ -1,7 +1,6 @@
 import { ControlSheetFacade } from './control-sheet.facade';
 import { ControlSheetRepository } from './control-sheet.repository';
 import { UserRepository } from '../../user/user.repository';
-import { TestBed } from '@automock/jest';
 import { Testdata } from '../../../test/testdata';
 import { ControlSheet } from './control-sheet.entity';
 import { ControlSheetDto } from './interface/control-sheet-dto';
@@ -14,11 +13,14 @@ describe('ControlSheetFacade', () => {
       userRepository: jest.Mocked<UserRepository>;
 
   beforeEach(async () => {
-    const { unit, unitRef } = TestBed.create(ControlSheetFacade).compile();
-
-    facade = unit;
-    controlSheetRepository = unitRef.get(ControlSheetRepository);
-    userRepository = unitRef.get(UserRepository);
+    controlSheetRepository = {
+      getControlSheetByUserId: jest.fn(),
+      save: jest.fn(),
+    } as any;
+    userRepository = {
+      getUserById: jest.fn(),
+    } as any;
+    facade = new ControlSheetFacade(controlSheetRepository, userRepository);
   });
 
   it('Should get control sheet', async () => {

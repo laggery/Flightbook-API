@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Tandem passenger confirmations (e2e) /tandem/passenger-confirmations (GET) 1`] = `
 {

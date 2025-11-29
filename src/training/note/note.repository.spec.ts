@@ -1,13 +1,13 @@
 import { NoteRepository } from './note.repository';
-import { TestBed } from '@automock/jest';
+import { Repository } from 'typeorm';
+import { Note } from './note.entity';
 
 describe('Note Repository', () => {
   let noteRepository: NoteRepository;
 
   beforeAll(async () => {
-    const { unit, unitRef } = TestBed.create(NoteRepository).compile();
-
-    noteRepository = unit;
+    const repository = {} as Repository<Note>;
+    noteRepository = new NoteRepository(repository);
   });
 
   it('should be defined', () => {

@@ -4,7 +4,7 @@ import { PlaceFacade } from '../place/place.facade';
 import { UserRepository } from '../user/user.repository';
 import { GliderFacade } from '../glider/glider.facade';
 import { FileUploadService } from '../fileupload/file-upload.service';
-import { TestBed } from '@automock/jest';
+import { NotificationsService } from '../shared/services/notifications.service';
 
 describe('FlightFacade', () => {
   let provider: FlightFacade,
@@ -12,17 +12,17 @@ describe('FlightFacade', () => {
       placeFacade: jest.Mocked<PlaceFacade>,
       gliderFacade: jest.Mocked<GliderFacade>,
       userRepository: jest.Mocked<UserRepository>,
-      fileUploadService: jest.Mocked<FileUploadService>
+      fileUploadService: jest.Mocked<FileUploadService>,
+      notificationsService: jest.Mocked<NotificationsService>
 
   beforeAll(async () => {
-    const { unit, unitRef } = TestBed.create(FlightFacade).compile();
-
-    provider = unit;
-    flightService = unitRef.get(FlightRepository);
-    placeFacade = unitRef.get(PlaceFacade);
-    gliderFacade = unitRef.get(GliderFacade);
-    userRepository = unitRef.get(UserRepository);
-    fileUploadService = unitRef.get(FileUploadService);
+    flightService = {} as any;
+    placeFacade = {} as any;
+    gliderFacade = {} as any;
+    userRepository = {} as any;
+    fileUploadService = {} as any;
+    notificationsService = {} as any;
+    provider = new FlightFacade(flightService, placeFacade, gliderFacade, userRepository, fileUploadService, notificationsService);
   });
 
   it('should be defined', () => {

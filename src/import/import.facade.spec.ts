@@ -1,5 +1,4 @@
 import { UserRepository } from '../user/user.repository';
-import { TestBed } from '@automock/jest';
 import { ImportFacade } from './import.facade';
 import { PlaceRepository } from '../place/place.repository';
 import { GliderRepository } from '../glider/glider.repository';
@@ -16,14 +15,31 @@ describe('ImportFacade', () => {
       i18nService: jest.Mocked<I18nService>
 
    beforeEach(async () => {
-    const { unit, unitRef } = TestBed.create(ImportFacade).compile();
+    placeRepository = {
+      convertEpsg4326toEpsg3857: jest.fn(),
+    } as any;
 
-    facade = unit;
-    placeRepository = unitRef.get(PlaceRepository);
-    gliderRepository = unitRef.get(GliderRepository);
-    userRepository = unitRef.get(UserRepository);
-    entityManager = unitRef.get(EntityManager);
-    i18nService = unitRef.get(I18nService);
+    gliderRepository = {} as any;
+
+    userRepository = {
+      getUserById: jest.fn(),
+    } as any;
+
+    entityManager = {
+      transaction: jest.fn(),
+    } as any;
+
+    i18nService = {
+      t: jest.fn(),
+    } as any;
+
+    facade = new ImportFacade(
+      gliderRepository,
+      placeRepository,
+      userRepository,
+      entityManager,
+      i18nService
+    );
   });
 
   it('Check import type enum', async () => {
@@ -49,7 +65,7 @@ describe('ImportFacade', () => {
     const importResultDto = await facade.importFbPlaces(csv, mockUser.id);
 
     // then
-    expect(entityManager.transaction).toBeCalledTimes(1);
+    expect(entityManager.transaction).toHaveBeenCalledTimes(1);
     // expect(importResultDto.place.inserted).toBe(2);
   });
 
@@ -64,7 +80,7 @@ describe('ImportFacade', () => {
     const importResultDto = await facade.importFlugbuch(csv, mockUser.id);
 
     // then
-    expect(entityManager.transaction).toBeCalledTimes(1);
+    expect(entityManager.transaction).toHaveBeenCalledTimes(1);
   });
 
   it('Import VFRnav', async () => {
@@ -78,6 +94,6 @@ describe('ImportFacade', () => {
     const importResultDto = await facade.importVfr(csv, mockUser.id);
 
     // then
-    expect(entityManager.transaction).toBeCalledTimes(1);
+    expect(entityManager.transaction).toHaveBeenCalledTimes(1);
   });
 });

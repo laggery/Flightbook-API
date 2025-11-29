@@ -1,4 +1,3 @@
-import { TestBed } from '@automock/jest';
 import { NoteFacade } from './note.facade';
 import { NoteRepository } from './note.repository';
 import { StudentRepository } from '../student/student.repository';
@@ -9,11 +8,9 @@ describe('NoteFacade', () => {
       studentRepository: jest.Mocked<StudentRepository>;
 
   beforeAll(async () => {
-    const { unit, unitRef } = TestBed.create(NoteFacade).compile();
-
-    facade = unit;
-    noteRepository = unitRef.get(NoteRepository);
-    studentRepository = unitRef.get(StudentRepository);
+    noteRepository = {} as any;
+    studentRepository = {} as any;
+    facade = new NoteFacade(noteRepository, studentRepository);
   });
 
   it('should be defined', () => {
