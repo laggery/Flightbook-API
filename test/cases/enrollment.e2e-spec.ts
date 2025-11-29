@@ -92,6 +92,21 @@ describe('Enrollments (e2e)', () => {
         expect(removeIds(db)).toMatchSnapshot();
       });
   });
+
+  it('/:token Student enrollment not found (POST)', async () => {
+    // given
+    const school = Testdata.createSchool("School 1");
+    await testInstance.schoolRepository.save(school);
+    const enrollment = Testdata.createEnrollment(school, Testdata.EMAIL, EnrollmentType.STUDENT);
+    await testInstance.enrollmentRepository.save(enrollment);
+    const keycloakToken = JwtTestHelper.createKeycloakToken();
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .post(`/enrollments/anytoken`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .expect(404)
+  });
 });
 
 describe('Student controller enrollment (e2e)', () => {
