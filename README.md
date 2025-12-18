@@ -88,7 +88,7 @@ npm run start:dev
 
 ## Db migration scripts
 ```
-npm run migration:generate --name=appointmentType
+MIGRATION_NAME=appointmentType npm run migration:generate
 ```
 
 ## Security

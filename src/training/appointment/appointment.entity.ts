@@ -15,6 +15,9 @@ export class Appointment {
     @Column("timestamptz", { name: 'scheduling', nullable: false })
     scheduling: Date;
 
+    @Column("timestamptz", { name: 'deadline', nullable: true })
+    deadline: Date;
+
     @Column("character varying", { name: "meeting_point", nullable: true })
     meetingPoint: string;
 

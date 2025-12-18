@@ -27,6 +27,9 @@ export class AppointmentType {
     @Column("time", { name: "time", nullable: true })
     time: string;
 
+    @Column("integer", { name: "deadline_offset_hours", nullable: true })
+    deadlineOffsetHours: number;
+
     @ManyToOne(() => School, (school) => school.appointmentTypes, {
         onDelete: "RESTRICT",
         onUpdate: "RESTRICT",

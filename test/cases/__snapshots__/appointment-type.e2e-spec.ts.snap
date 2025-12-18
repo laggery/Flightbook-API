@@ -6,6 +6,7 @@ exports[`instructor appointment type (e2e) /instructor/schools/:id/appointment-t
 {
   "archived": false,
   "color": "color",
+  "deadlineOffsetHours": 1,
   "maxPeople": 1,
   "meetingPoint": "meeting point",
   "name": "appointment type",
@@ -17,6 +18,7 @@ exports[`instructor appointment type (e2e) /instructor/schools/:id/appointment-t
 {
   "archived": false,
   "color": "color",
+  "deadlineOffsetHours": 1,
   "id": Any<Number>,
   "maxPeople": 1,
   "meetingPoint": "meeting point",
@@ -28,6 +30,7 @@ exports[`instructor appointment type (e2e) /instructor/schools/:id/appointment-t
 exports[`instructor appointment type (e2e) /instructor/schools/:id/appointment-types (PUT) 1`] = `
 {
   "color": "color",
+  "deadlineOffsetHours": 1,
   "instructor": null,
   "maxPeople": 1,
   "meetingPoint": "meeting point",
@@ -40,6 +43,7 @@ exports[`instructor appointment type (e2e) /instructor/schools/:id/appointment-t
 {
   "archived": false,
   "color": "color",
+  "deadlineOffsetHours": 1,
   "id": Any<Number>,
   "maxPeople": 1,
   "meetingPoint": "meeting point",

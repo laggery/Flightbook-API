@@ -17,4 +17,8 @@ export class AppointmentException {
     public static invalidUnsubscribe() {
         throw new BadRequestException("Invalid unsubscribe: user must be subscribed to the appointment")
     }
+
+    public static deadlinePassedException() {
+        throw new BadRequestException("Deadline passed")
+    }
 }

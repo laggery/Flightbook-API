@@ -35,4 +35,8 @@ export class AppointmentTypeDto {
     @Expose()
     @ApiPropertyOptional()
     readonly time: string;
+
+    @Expose()
+    @ApiPropertyOptional()
+    readonly deadlineOffsetHours: number;
 }

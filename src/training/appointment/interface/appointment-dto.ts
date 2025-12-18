@@ -18,6 +18,10 @@ export class AppointmentDto {
 
     @Expose()
     @ApiPropertyOptional()
+    readonly deadline: Date;
+
+    @Expose()
+    @ApiPropertyOptional()
     readonly meetingPoint: string;
 
     @Expose()

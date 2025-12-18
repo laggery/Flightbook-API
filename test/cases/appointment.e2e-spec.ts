@@ -9,6 +9,7 @@ import { GuestSubscription } from '../../src/training/subscription/guest-subscri
 import { plainToClass } from 'class-transformer';
 import { AppointmentDto } from '../../src/training/appointment/interface/appointment-dto';
 import { State } from '../../src/training/appointment/state';
+import moment = require('moment');
 
 describe('student appointment (e2e)', () => {
   const testInstance = new BaseE2ETest();
@@ -73,6 +74,25 @@ describe('student appointment (e2e)', () => {
       });
   });
 
+  it('/student/schools/:schoolId/appointments/:appointmentId/subscriptions deadline passed (POST)', async () => {
+    // given
+    const { studentUser, student, testSchool, appointments } = await testInstance.createSchoolDataWithAppointment();
+    appointments[0].deadline = moment().subtract(1, 'hour').toDate();
+    appointments[0].scheduling = new Date();
+    await testInstance.appointmentRepository.save(appointments[0]);
+
+    const keycloakToken = JwtTestHelper.createKeycloakToken({ sub: studentUser.id, email: studentUser.email });
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .post(`/student/schools/${testSchool.id}/appointments/${appointments[0].id}/subscriptions`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .expect(400)
+      .then(async (response) => {
+        expect(response.body.message).toEqual("Deadline passed");
+      });
+  });
+
   it('/student/schools/:schoolId/appointments/:appointmentId/subscriptions waiting list (POST)', async () => {
     // given
     const { studentUser, student, testSchool, appointments } = await testInstance.createSchoolDataWithAppointment();
@@ -110,6 +130,30 @@ describe('student appointment (e2e)', () => {
       .post(`/student/schools/${testSchool.id}/appointments/${appointments[0].id}/subscriptions`)
       .set('Authorization', `Bearer ${keycloakToken}`)
       .expect(401);
+  });
+
+  it('/student/schools/:schoolId/appointments/:appointmentId/subscriptions deadline passed (DELETE)', async () => {
+    // given
+    const { studentUser, testSchool, appointments } = await testInstance.createSchoolDataWithAppointment();
+    appointments[0].deadline = moment().subtract(1, 'hour').toDate();
+    appointments[0].scheduling = new Date();
+    await testInstance.appointmentRepository.save(appointments[0]);
+    
+    const subscription = new Subscription();
+    subscription.appointment = appointments[0];
+    subscription.user = studentUser;
+    await testInstance.subscriptionRepository.save(subscription);
+
+    const keycloakToken = JwtTestHelper.createKeycloakToken({ sub: studentUser.id, email: studentUser.email });
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .delete(`/student/schools/${testSchool.id}/appointments/${appointments[0].id}/subscriptions`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .expect(400)
+      .then(async (response) => {
+        expect(response.body.message).toEqual("Deadline passed");
+      });
   });
 
   it('/student/schools/:schoolId/appointments/:appointmentId/subscriptions (DELETE)', async () => {
@@ -233,6 +277,7 @@ describe('instructor appointment (e2e)', () => {
     const defaultUser = Testdata.getDefaultUser();
     const appointment = new AppointmentBuilderTest(testSchool, defaultUser)
       .setScheduling(new Date("2025-11-24T12:00:00"))
+      .setDeadline(new Date("2025-11-24T12:00:00"))
       .setState(State.ANNOUNCED)
       .build();
     const guestSubscription = new GuestSubscription();

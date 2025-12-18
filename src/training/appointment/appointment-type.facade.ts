@@ -47,7 +47,7 @@ export class AppointmentTypeFacade {
     }
 
     async updateAppointmentType(id: number, schoolId: number, appointmentTypeDto: AppointmentTypeDto): Promise<AppointmentTypeDto> {
-        const { name, archived, color, maxPeople, meetingPoint, time, instructor } = appointmentTypeDto;
+        const { name, archived, color, maxPeople, meetingPoint, time, deadlineOffsetHours, instructor } = appointmentTypeDto;
         let type: AppointmentType = await this.appointmentTypeRepository.getAppointmentTypesById(id);
         if (!type) {
             AppointmentException.invalidAppointmentTypeId();
@@ -61,6 +61,7 @@ export class AppointmentTypeFacade {
         type.maxPeople = maxPeople || null;
         type.meetingPoint = meetingPoint || null;
         type.time = time || null;
+        type.deadlineOffsetHours = deadlineOffsetHours || null;
 
         if (instructor && instructor.email) {
             const instructorEntity: User = await this.userRepository.getUserByEmail(instructor.email);

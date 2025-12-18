@@ -2,6 +2,7 @@
 
 exports[`instructor appointment (e2e) /instructor/appointments (GET) 1`] = `
 {
+  "deadline": null,
   "description": "description",
   "guestSubscriptions": [],
   "maxPeople": 1,
@@ -27,6 +28,7 @@ exports[`instructor appointment (e2e) /instructor/appointments (GET) 1`] = `
   "type": {
     "archived": false,
     "color": "color",
+    "deadlineOffsetHours": 1,
     "maxPeople": 1,
     "meetingPoint": "meeting point",
     "name": "appointment type 1",
@@ -40,6 +42,7 @@ exports[`instructor appointment (e2e) /instructor/schools/:id/appointments (GET)
   "countGuestSubscription": 0,
   "countSubscription": 0,
   "countWaitingList": 0,
+  "deadline": null,
   "description": "description",
   "guestSubscriptions": [],
   "instructor": {
@@ -57,6 +60,7 @@ exports[`instructor appointment (e2e) /instructor/schools/:id/appointments (GET)
   "type": {
     "archived": false,
     "color": "color",
+    "deadlineOffsetHours": 1,
     "maxPeople": 1,
     "meetingPoint": "meeting point",
     "name": "appointment type 1",
@@ -70,6 +74,7 @@ exports[`instructor appointment (e2e) /instructor/schools/:id/appointments (POST
   "countGuestSubscription": 1,
   "countSubscription": 1,
   "countWaitingList": 0,
+  "deadline": "2025-11-24T12:00:00.000Z",
   "description": "description",
   "guestSubscriptions": [
     {
@@ -133,6 +138,7 @@ exports[`instructor appointment (e2e) /instructor/schools/:id/appointments (PUT)
   "countGuestSubscription": 1,
   "countSubscription": 1,
   "countWaitingList": 0,
+  "deadline": null,
   "description": "description",
   "guestSubscriptions": [
     {
@@ -191,6 +197,7 @@ exports[`instructor appointment (e2e) /instructor/schools/:id/appointments (PUT)
   "type": {
     "archived": false,
     "color": "color",
+    "deadlineOffsetHours": 1,
     "maxPeople": 1,
     "meetingPoint": "meeting point",
     "name": "appointment type 1",
@@ -204,6 +211,7 @@ exports[`student appointment (e2e) /student/schools/:id/appointments (GET) 1`] =
   "countGuestSubscription": 0,
   "countSubscription": 0,
   "countWaitingList": 0,
+  "deadline": null,
   "description": "description",
   "guestSubscriptions": [],
   "instructor": {
@@ -221,6 +229,7 @@ exports[`student appointment (e2e) /student/schools/:id/appointments (GET) 1`] =
   "type": {
     "archived": false,
     "color": "color",
+    "deadlineOffsetHours": 1,
     "maxPeople": 1,
     "meetingPoint": "meeting point",
     "name": "appointment type 1",
@@ -234,6 +243,7 @@ exports[`student appointment (e2e) /student/schools/:id/appointments/:appointmen
   "countGuestSubscription": 0,
   "countSubscription": 0,
   "countWaitingList": 0,
+  "deadline": null,
   "description": "description",
   "guestSubscriptions": [],
   "instructor": {
@@ -265,6 +275,7 @@ exports[`student appointment (e2e) /student/schools/:id/appointments/:appointmen
   "type": {
     "archived": false,
     "color": "color",
+    "deadlineOffsetHours": 1,
     "maxPeople": 1,
     "meetingPoint": "meeting point",
     "name": "appointment type 1",
@@ -278,6 +289,7 @@ exports[`student appointment (e2e) /student/schools/:schoolId/appointments/:appo
   "countGuestSubscription": 0,
   "countSubscription": 1,
   "countWaitingList": 0,
+  "deadline": null,
   "description": "description",
   "guestSubscriptions": [],
   "instructor": {
@@ -331,6 +343,7 @@ exports[`student appointment (e2e) /student/schools/:schoolId/appointments/:appo
   "type": {
     "archived": false,
     "color": "color",
+    "deadlineOffsetHours": 1,
     "maxPeople": 1,
     "meetingPoint": "meeting point",
     "name": "appointment type 1",
@@ -352,6 +365,7 @@ exports[`student appointment (e2e) /student/schools/:schoolId/appointments/:appo
   "countGuestSubscription": 0,
   "countSubscription": 1,
   "countWaitingList": 1,
+  "deadline": null,
   "description": "description",
   "guestSubscriptions": [],
   "instructor": {
@@ -426,6 +440,7 @@ exports[`student appointment (e2e) /student/schools/:schoolId/appointments/:appo
   "type": {
     "archived": false,
     "color": "color",
+    "deadlineOffsetHours": 1,
     "maxPeople": 1,
     "meetingPoint": "meeting point",
     "name": "appointment type 1",

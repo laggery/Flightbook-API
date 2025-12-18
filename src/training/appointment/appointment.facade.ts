@@ -83,6 +83,7 @@ export class AppointmentFacade {
         appointment.maxPeople = appointmentDto.maxPeople;
         appointment.meetingPoint = appointmentDto.meetingPoint;
         appointment.scheduling = appointmentDto.scheduling;
+        appointment.deadline = appointmentDto.deadline;
         appointment.state = appointmentDto.state;
         appointment.takeOffCoordinatorText = appointmentDto.takeOffCoordinatorText == "" ? null : appointmentDto.takeOffCoordinatorText;
         appointment.timestamp = new Date();
@@ -135,6 +136,11 @@ export class AppointmentFacade {
 
     async addSubscriptionToAppointment(appointmentId: number, userId: number): Promise<AppointmentDto> {
         const appointment: Appointment = await this.appointmentRepository.getAppointmentById(appointmentId);
+        
+        if (appointment.deadline && appointment.deadline < new Date()) {
+            throw AppointmentException.deadlinePassedException();
+        }
+        
         const user: User = await this.userRepository.getUserById(userId);
         const subscription = new Subscription();
         subscription.user = user
@@ -159,6 +165,11 @@ export class AppointmentFacade {
 
     async deleteSubscriptionFromAppointment(appointmentId: number, userId: number, school: SchoolDto): Promise<AppointmentDto> {
         const appointment: Appointment = await this.appointmentRepository.getAppointmentById(appointmentId);
+        
+        if (appointment.deadline && appointment.deadline < new Date()) {
+            throw AppointmentException.deadlinePassedException();
+        }
+
         if (appointment.subscriptions) {
 
             // Inform waiting student

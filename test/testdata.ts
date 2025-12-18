@@ -173,6 +173,7 @@ export class Testdata {
         appointmentType.maxPeople = 1;
         appointmentType.color = "color";
         appointmentType.time = "08:00";
+        appointmentType.deadlineOffsetHours = 1;
         return appointmentType;
     }
 

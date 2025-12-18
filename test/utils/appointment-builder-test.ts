@@ -25,6 +25,11 @@ export class AppointmentBuilderTest {
     return this;
   }
 
+  setDeadline(deadline: Date): this {
+    this.appointment.deadline = deadline;
+    return this;
+  }
+
   setMeetingPoint(meetingPoint: string): this {
     this.appointment.meetingPoint = meetingPoint;
     return this;
