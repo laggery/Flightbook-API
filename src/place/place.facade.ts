@@ -98,7 +98,7 @@ export class PlaceFacade {
         }
 
         try {
-            const countryResp: any = await firstValueFrom(this.httpService.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${query.lat}&lon=${query.lng}`));
+            const countryResp: any = await firstValueFrom(this.httpService.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${query.lat}&lon=${query.lng}`, { headers: { 'User-Agent': 'Flightbook-API' } }));
             placeDto.country = countryResp?.data?.address?.country_code;
         } catch (exception) {
             Logger.warn("Country request error", exception);
@@ -109,7 +109,7 @@ export class PlaceFacade {
 
     async searchOpenstreetmapPlace(name: string): Promise<FeatureCollection> {
         try {
-            const altResp =  await firstValueFrom(this.httpService.get(`https://nominatim.openstreetmap.org/search?q=${encodeURI(name)}&format=geojson&limit=1`));
+            const altResp =  await firstValueFrom(this.httpService.get(`https://nominatim.openstreetmap.org/search?q=${encodeURI(name)}&format=geojson&limit=1`, { headers: { 'User-Agent': 'Flightbook-API' } }));
             return altResp.data;
         } catch (exception) {
             Logger.warn("Openstreetmap search place error", exception);
