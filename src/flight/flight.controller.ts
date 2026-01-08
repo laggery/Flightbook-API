@@ -16,6 +16,7 @@ import { FlightFacade } from './flight.facade';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CompositeAuthGuard } from '../auth/guard/composite-auth.guard';
+import { FlightValidationState } from './flight-validation-state';
 @Controller('flights')
 @ApiTags('Flight')
 @ApiBearerAuth('jwt')
@@ -26,12 +27,14 @@ export class FlightController {
     @ApiOperation({deprecated: true})
     @UseGuards(CompositeAuthGuard)
     @Get()
+    @ApiQuery({ name: 'validation-state', required: false, enum: FlightValidationState })
     getFlights(@Request() req, @Query() query): Promise<FlightDto[]> {
         return this.flightFacade.getFlights(req.user, query);
     }
 
     @UseGuards(CompositeAuthGuard)
     @ApiQuery({ name: 'years', required: false })
+    @ApiQuery({ name: 'validation-state', required: false, enum: FlightValidationState })
     @Get('statistic')
     getStatistic(@Request() req, @Query() query): Promise<FlightStatisticDto | FlightStatisticDto[]> {
         return this.flightFacade.getStatisticV1(req.user, query);

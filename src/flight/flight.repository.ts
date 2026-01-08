@@ -309,6 +309,10 @@ export class FlightRepository extends Repository<Flight> {
         if (query && query.timestamp) {
             builder.andWhere(`flight.timestamp <= '${new Date(query.timestamp).toISOString()}'`);
         }
+
+        if (query && query["validation-state"] !== undefined) {
+            builder.andWhere(`flight.validation_state = '${query["validation-state"]}'`);
+        }
         return builder
     }
 

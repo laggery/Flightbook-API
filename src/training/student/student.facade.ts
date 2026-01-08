@@ -19,6 +19,7 @@ import { EmergencyContactDto } from '../emergency-contact/interface/emergency-co
 import { SchoolException } from '../school/exception/school.exception';
 import { SchoolRepository } from '../school/school.repository';
 import { FlightValidationDto } from '../../flight/interface/flight-validation-dto';
+import { FlightValidationState } from '../../flight/flight-validation-state';
 
 @Injectable()
 export class StudentFacade {
@@ -45,6 +46,9 @@ export class StudentFacade {
             if (student.isTandem) {
                 query["glider-type"] = 1;
             }
+            if (student.school.configuration.validateFlights) {
+                query["validation-state"] = FlightValidationState.VALIDATED;
+            }
 
             let studentDto = StudentMapper.toStudentDto(student, await this.flightFacade.getGlobalStatistic({ userId: student.user.id }, query));
             const flightList = await this.flightFacade.getFlights({ userId: student.user.id }, query)
@@ -65,9 +69,22 @@ export class StudentFacade {
         const studentDtoList: StudentDto[] = [];
         for (const subscription of appointment.subscriptions) {
             const student = await this.studentRepository.getStudentByUserIdAndSchoolId(subscription.user.id, appointment.school.id);
-            const statistics = await this.flightFacade.getGlobalStatistic({ userId: subscription.user.id }, {});
+            
+            let query: any = {
+                limit: 1
+            };
+
+            if (student.isTandem) {
+                query["glider-type"] = 1;
+            }
+
+            if (appointment.school.configuration.validateFlights) {
+                query["validation-state"] = FlightValidationState.VALIDATED;
+            }
+            
+            const statistics = await this.flightFacade.getGlobalStatistic({ userId: subscription.user.id }, query);
             let studentDto = StudentMapper.toStudentDto(student, statistics);
-            const flightList = await this.flightFacade.getFlights({ userId: subscription.user.id }, { limit: 1 })
+            const flightList = await this.flightFacade.getFlights({ userId: subscription.user.id }, query)
 
             if (flightList.length >= 1) {
                 studentDto.lastFlight = flightList[0];
