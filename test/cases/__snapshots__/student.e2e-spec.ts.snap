@@ -12,6 +12,7 @@ exports[`instructor student (e2e) /instructor/schools/:id/appointments/:appointm
       "bestDistance": null,
       "income": null,
       "nbFlights": 0,
+      "nbFlightsAlone": 0,
       "nbLandingplaces": 0,
       "nbStartplaces": 0,
       "time": null,
@@ -31,6 +32,7 @@ exports[`instructor student (e2e) /instructor/schools/:id/appointments/:appointm
 exports[`instructor student (e2e) /instructor/schools/:id/students (GET) 1`] = `
 [
   {
+    "controlSheet": null,
     "countNotValidatedFlights": 0,
     "isArchived": false,
     "isTandem": false,
@@ -39,6 +41,7 @@ exports[`instructor student (e2e) /instructor/schools/:id/students (GET) 1`] = `
       "bestDistance": null,
       "income": null,
       "nbFlights": 0,
+      "nbFlightsAlone": 0,
       "nbLandingplaces": 0,
       "nbStartplaces": 0,
       "time": null,

@@ -167,6 +167,7 @@ exports[`Flights (e2e) /flights/statistic (GET) 1`] = `
   "bestDistance": 100.2,
   "income": null,
   "nbFlights": 4,
+  "nbFlightsAlone": 0,
   "nbLandingplaces": 3,
   "nbStartplaces": 3,
   "time": "21600.000000",
