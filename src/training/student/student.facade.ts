@@ -52,13 +52,13 @@ export class StudentFacade {
 
             let studentDto = StudentMapper.toStudentDto(student, await this.flightFacade.getGlobalStatistic({ userId: student.user.id }, query));
             const flightList = await this.flightFacade.getFlights({ userId: student.user.id }, query)
-
             if (flightList.length >= 1) {
                 studentDto.lastFlight = flightList[0];
             }
 
             studentDto.countNotValidatedFlights = await this.flightFacade.countNotValidatedFlights({ userId: student.user.id }, student.isTandem);
-
+            studentDto.controlSheet = await this.controlSheetFacade.getControlSheet({ userId: student.user.id });
+            
             studentDtoList.push(studentDto);
         }
         return studentDtoList;

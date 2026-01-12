@@ -105,6 +105,7 @@ export class FlightRepository extends Repository<Flight> {
     async getGlobalStatistic(token: any, query: any): Promise<FlightStatisticDto> {
         let builder = this.repository.createQueryBuilder('flight')
             .select('count(flight.id)::int', "nbFlights")
+            .addSelect('count(CASE WHEN flight.shv_alone = true THEN 1 END)::int', "nbFlightsAlone")
             .addSelect("EXTRACT(epoch FROM Sum(flight.time))", "time")
             .addSelect('Sum(flight.price)', "income")
             .addSelect('Sum(flight.km)', "totalDistance")
