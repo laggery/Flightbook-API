@@ -23,5 +23,10 @@
             "description":"Questi dati provengono dall'applicazione XContest.org.",
             "fileType": "json"
         }
+    },
+    "versionCheck": {
+        "forceUpdate": "Questa versione non è più supportata. Aggiorna l’app per continuare.",
+        "optionalUpdate": "È disponibile una nuova versione dell’app. Si consiglia di effettuare l’aggiornamento.",
+        "upToDate": "La tua app è aggiornata."
     }
 }

@@ -35,6 +35,10 @@ const init = async () => {
     process.env.STRIPE_SECRET_KEY = 'test';
     process.env.ORIGIN_INSTRUCTOR = Testdata.INSTRUCTOR_APP_ORIGIN;
     process.env.ORIGIN_MOBILE = Testdata.MOBILE_APP_ORIGIN;
+    process.env.ANDROID_MINIMAL_VERSION_BUILD = '1';
+    process.env.IOS_MINIMAL_VERSION_BUILD = '1';
+    process.env.ANDROID_LATEST_BUILD = '2';
+    process.env.IOS_LATEST_BUILD = '2';
 
     // Create test DataSource
     const testDataSource = new DataSource({

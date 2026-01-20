@@ -25,5 +25,10 @@
             "description":"You can import data from the XContest.org application.",
             "fileType": "json"
         }
+    },
+    "versionCheck": {
+        "forceUpdate": "This version is no longer supported. Please update the app to continue.",
+        "optionalUpdate": "A new version of the app is available. Updating is recommended.",
+        "upToDate": "Your app is up to date."
     }
 }

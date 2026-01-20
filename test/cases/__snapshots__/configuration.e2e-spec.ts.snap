@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`ConfigurationController (e2e) /map (GET) 1`] = `
+{
+  "attributions": "<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>",
+  "crossOrigin": "anonymous",
+  "url": "https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.jpg?key=ts2WMeemP66lQY6PWb9N",
+}
+`;
+
+exports[`ConfigurationController (e2e) /version-check Force update (POST) 1`] = `
+{
+  "latest_build": 2,
+  "message": "Diese Version wird nicht mehr unterstützt. Bitte aktualisiere die App, um fortzufahren.",
+  "min_supported_build": 1,
+  "status": "force_update",
+  "update_url": "https://apps.apple.com/app/id1046316231",
+}
+`;
+
+exports[`ConfigurationController (e2e) /version-check Optional update (POST) 1`] = `
+{
+  "latest_build": 2,
+  "message": "Eine neue Version der App ist verfügbar. Ein Update wird empfohlen.",
+  "min_supported_build": 1,
+  "status": "optional_update",
+  "update_url": "https://apps.apple.com/app/id1046316231",
+}
+`;
+
+exports[`ConfigurationController (e2e) /version-check Up to date (POST) 1`] = `
+{
+  "latest_build": 2,
+  "message": "Deine App ist auf dem neuesten Stand.",
+  "min_supported_build": 1,
+  "status": "up_to_date",
+  "update_url": "https://apps.apple.com/app/id1046316231",
+}
+`;

@@ -1,22 +1,25 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { MapConfigurationDto } from './interface/map-configuration-dto';
 import { CompositeAuthGuard } from '../auth/guard/composite-auth.guard';
+import { VersionCheckRequestDto } from './interface/version-check-request.dto';
+import { VersionCheckResponseDto } from './interface/version-check-response.dto';
+import { ConfigurationFacade } from './configuration.facade';
 
 @Controller('configuration')
 @ApiTags('Configuration')
 @ApiBearerAuth('jwt')
 export class ConfigurationController {
-    constructor() {}
+    constructor(private readonly configurationFacade: ConfigurationFacade) {}
 
     @UseGuards(CompositeAuthGuard)
     @Get('map')
     getMapConfiguration(): MapConfigurationDto {
-        const mapConfigurationDto = {
-            url: process.env.MAP_URL || 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            attributions: process.env.MAP_ATTRIBUTIONS || '<a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>',
-            crossOrigin: process.env.MAP_CROSS_ORIGIN || 'anonymous'
-        };
-        return mapConfigurationDto;
+        return this.configurationFacade.getMapConfiguration();
+    }
+
+    @Post('version-check')
+    checkVersion(@Body() request: VersionCheckRequestDto): VersionCheckResponseDto {
+        return this.configurationFacade.checkVersion(request);
     }
 }
