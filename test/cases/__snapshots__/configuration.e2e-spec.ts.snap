@@ -2,9 +2,9 @@
 
 exports[`ConfigurationController (e2e) /map (GET) 1`] = `
 {
-  "attributions": "<a href="https://www.maptiler.com/copyright/" target="_blank">© MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap contributors</a>",
+  "attributions": "Test Attribution",
   "crossOrigin": "anonymous",
-  "url": "https://api.maptiler.com/maps/openstreetmap/{z}/{x}/{y}.jpg?key=ts2WMeemP66lQY6PWb9N",
+  "url": "https://example.com/map",
 }
 `;
 

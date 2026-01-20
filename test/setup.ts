@@ -39,6 +39,9 @@ const init = async () => {
     process.env.IOS_MINIMAL_VERSION_BUILD = '1';
     process.env.ANDROID_LATEST_BUILD = '2';
     process.env.IOS_LATEST_BUILD = '2';
+    process.env.MAP_URL = 'https://example.com/map';
+    process.env.MAP_ATTRIBUTIONS = 'Test Attribution';
+    process.env.MAP_CROSS_ORIGIN = 'anonymous';
 
     // Create test DataSource
     const testDataSource = new DataSource({
