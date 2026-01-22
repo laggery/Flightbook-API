@@ -81,10 +81,10 @@ MAP_CROSS_ORIGIN=
 # Version Check (Mobile App)
 ANDROID_MINIMAL_VERSION_BUILD=
 ANDROID_LATEST_BUILD=
-ANDROID_UPDATE_URL=
+ANDROID_APP_ID=
 IOS_MINIMAL_VERSION_BUILD=
 IOS_LATEST_BUILD=
-IOS_UPDATE_URL=
+IOS_APP_ID=
 ```
 
 Open minio http://localhost:9001/ and create a new bucket with name `flightbook-bucket`

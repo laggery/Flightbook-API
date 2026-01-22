@@ -16,8 +16,8 @@ export class VersionCheckResponseDto {
   @ApiProperty({ example: 263 })
   readonly latest_build: number;
 
-  @ApiProperty({ example: 'market://details?id=com.my.app' })
-  readonly update_url: string;
+  @ApiProperty({ example: 'com.my.app' })
+  readonly app_id: string;
 
   @ApiProperty({ example: 'Please update the app to continue using it.' })
   readonly message: string;

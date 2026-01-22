@@ -32,9 +32,9 @@ export class ConfigurationFacade {
                 : process.env.IOS_LATEST_BUILD || '0'
         );
         
-        const updateUrl = isAndroid
-            ? process.env.ANDROID_UPDATE_URL || 'market://details?id=ch.flightbook.MobileFlight'
-            : process.env.IOS_UPDATE_URL || 'https://apps.apple.com/app/id1046316231';
+        const appId = isAndroid
+            ? process.env.ANDROID_APP_ID || 'ch.flightbook.MobileFlight'
+            : process.env.IOS_APP_ID || 'id1046316231';
 
         let status: UpdateStatus;
         let message: string;
@@ -55,7 +55,7 @@ export class ConfigurationFacade {
             status,
             min_supported_build: minBuild,
             latest_build: latestBuild,
-            update_url: updateUrl,
+            app_id: appId,
             message,
         };
     }
