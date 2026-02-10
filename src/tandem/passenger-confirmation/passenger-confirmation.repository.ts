@@ -21,6 +21,7 @@ export class PassengerConfirmationRepository extends Repository<PassengerConfirm
             const options: any = {
                 relations: {
                     user: true,
+                    tandemSchool: true
                 },
                 where: {
                     user: {

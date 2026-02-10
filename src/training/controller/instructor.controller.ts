@@ -22,6 +22,8 @@ import { NoteFacade } from '../note/note.facade';
 import { CompositeAuthGuard } from '../../auth/guard/composite-auth.guard';
 import { EmergencyContactDto } from '../emergency-contact/interface/emergency-contact-dto';
 import { FlightValidationDto } from '../../flight/interface/flight-validation-dto';
+import { TandemPilotFacade } from '../tandem-pilot/tandem-pilot.facade';
+import { TandemPilotDto } from '../tandem-pilot/interface/tandem-pilot-dto';
 
 @Controller('instructor')
 @ApiTags('Instructor')
@@ -34,7 +36,8 @@ export class InstructorController {
         private enrollmentFacade: EnrollmentFacade,
         private appointmentFacade: AppointmentFacade,
         private appointmentTypeFacade: AppointmentTypeFacade,
-        private noteFacade: NoteFacade
+        private noteFacade: NoteFacade,
+        private tandemPilotFacade: TandemPilotFacade
     ){}
 
     @UseGuards(CompositeAuthGuard)
@@ -204,4 +207,30 @@ export class InstructorController {
     async removeNote(@Request() req, id: number, @Param('noteId') noteId: number, @Param('studendId') studendId: number) {
         await this.noteFacade.removeNote(noteId);
     }
+
+    // Tandem School endpoints
+    @UseGuards(CompositeAuthGuard, SchoolGuard)
+    @Post('/schools/:id/tandem-pilots/enrollment')
+    @HttpCode(204)
+    postTandemPilotsEnrollment(@Headers('origin') origin: string, @Param('id') id: number, @Body() enrollmentWriteDto: EnrollmentWriteDto): Promise<EnrollmentDto> {
+        return this.enrollmentFacade.createTandemPilotEnrollment(id, enrollmentWriteDto, origin);
+    }
+
+    @UseGuards(CompositeAuthGuard, SchoolGuard)
+    @Get('/schools/:id/tandem-pilots')
+    getTandemPilots(@Query('archived') archived: boolean, @Param('id') id: number): Promise<TandemPilotDto[]> {
+        return this.tandemPilotFacade.getTandemPilotsBySchoolId(id, archived);
+    }
+
+    // @UseGuards(CompositeAuthGuard, SchoolGuard)
+    // @Get('/schools/:id/tandem-pilots/passenger-confirmations')
+    // getPassengerConfirmationsBySchoolId(@Param('id') id: number): Promise<PassengerConfirmationDto[]> {
+    //     return this.passengerConfirmationFacade.getPassengerConfirmationsBySchoolId(id);
+    // }
+
+    // @UseGuards(CompositeAuthGuard, SchoolGuard)
+    // @Get('/schools/:id/tandem-pilots/flights')
+    // getFlightsBySchoolId(@Param('id') id: number): Promise<PagerEntityDto<FlightDto[]>> {
+    //     return this.tandemPilotsFacade.getFlightsBySchoolId(id);
+    // }
 }

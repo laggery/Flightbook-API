@@ -8,7 +8,6 @@ exports[`instructor team members (e2e) /instructor/schools/:id/team-members (GET
       "email": "instructor@instructor.com",
       "firstname": "instructor",
       "lastname": "instructor",
-      "loginType": "LOCAL",
       "phone": null,
     },
   },

@@ -13,4 +13,8 @@ export class FlightException {
     public static invalidDateException() {
         throw new UnprocessableEntityException("The flight date must be provided an be a valid Date")
     }
+
+    public static cannotChangePaidFlightException() {
+        throw new UnprocessableEntityException("Cannot change flight when payment is already completed");
+    }
 }

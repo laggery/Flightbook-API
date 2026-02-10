@@ -10,6 +10,8 @@ import { FlightValidation } from './flight-validation.entity';
 import { FlightValidationState } from './flight-validation-state';
 import { User } from '../user/domain/user.entity';
 import { School } from '../training/school/school.entity';
+import { TandemSchoolData } from './tandem-school-data.entity';
+import { TandemSchoolPaymentState } from './tandem-school-payment-state';
 
 @Injectable()
 export class FlightRepository extends Repository<Flight> {
@@ -30,6 +32,8 @@ export class FlightRepository extends Repository<Flight> {
             .leftJoinAndSelect('flight.landing', 'landing', 'landing.id = flight.landing_id')
             .leftJoinAndSelect('flight.validation.instructor', 'instructor', 'instructor.id = flight.validation_user_id')
             .leftJoinAndSelect('flight.validation.school', 'school', 'school.id = flight.validation_school_id')
+            .leftJoinAndSelect('flight.tandemSchoolData.tandemSchool', 'tandemSchool', 'tandemSchool.id = flight.tandem_school_id')
+            .leftJoinAndSelect('flight.tandemSchoolData.instructor', 'tandemPayer', 'tandemPayer.id = flight.tandem_school_payment_user_id')
             .where(`flight.user_id = ${token.userId}`);
 
         builder = FlightRepository.addQueryParams(builder, query);
@@ -56,6 +60,18 @@ export class FlightRepository extends Repository<Flight> {
                         if (name !== 'user_id' && name !== 'school_id' && raw[key] !== null) {
                             if (!data.validation) data.validation = new FlightValidation();
                             data["validation"][name] = raw[key];
+                        }
+                    } else if (key.startsWith('flight_tandem_school')) {
+                        const name = key.substring(21, key.length);
+                        if (name !== 'user_id' && name !== 'school_id' && name !== 'id' && raw[key] !== null) {
+                            if (!data.tandemSchoolData) data.tandemSchoolData = new TandemSchoolData();
+                            if (name === 'payment_state') {
+                                data.tandemSchoolData.paymentState = raw[key] as unknown as TandemSchoolPaymentState;
+                            } else if (name === 'payment_comment') {
+                                data.tandemSchoolData.paymentComment = raw[key] as unknown as string;
+                            } else if (name === 'payment_timestamp') {
+                                data.tandemSchoolData.paymentTimestamp = raw[key] as unknown as Date;
+                            }
                         }
                     } else {
                         const name = key.substring(7, key.length);
@@ -93,6 +109,24 @@ export class FlightRepository extends Repository<Flight> {
                         if (!data.validation.school) data.validation.school = new School();
                         const name = key.substring(7, key.length);
                         data["validation"]["school"][name] = raw[key];
+                    }
+                }
+                if (key.startsWith('tandemSchool')) {
+                    if (raw[key] !== null) {
+                        if (!data.tandemSchoolData) data.tandemSchoolData = new TandemSchoolData();
+                        if (!data.tandemSchoolData.tandemSchool) data.tandemSchoolData.tandemSchool = new School();
+                        const name = key.substring(13, key.length);
+                        if (name !== 'configuration') {
+                            data["tandemSchoolData"]["tandemSchool"][name] = raw[key];
+                        }
+                    }
+                }
+                if (key.startsWith('tandemPayer')) {
+                    if (raw[key] !== null) {
+                        if (!data.tandemSchoolData) data.tandemSchoolData = new TandemSchoolData();
+                        if (!data.tandemSchoolData.instructor) data.tandemSchoolData.instructor = new User();
+                        const name = key.substring(12, key.length);
+                        data["tandemSchoolData"]["instructor"][name] = raw[key];
                     }
                 }
             })
@@ -237,6 +271,10 @@ export class FlightRepository extends Repository<Flight> {
                 validation: {
                     instructor: true,
                     school: true
+                },
+                tandemSchoolData: {
+                    instructor: true,
+                    tandemSchool: true
                 }
             },
             where: {

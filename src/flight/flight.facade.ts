@@ -22,6 +22,8 @@ import { SchoolException } from '../training/school/exception/school.exception';
 import { FlightValidationDto } from './interface/flight-validation-dto';
 import { FlightValidationState } from './flight-validation-state';
 import { NotificationsService } from '../shared/services/notifications.service';
+import { SchoolRepository } from '../training/school/school.repository';
+import { TandemSchoolPaymentState } from './tandem-school-payment-state';
 
 @Injectable()
 export class FlightFacade {
@@ -32,7 +34,8 @@ export class FlightFacade {
         private gliderFacade: GliderFacade,
         private userRepository: UserRepository,
         private fileUploadService: FileUploadService,
-        private notificationsService: NotificationsService
+        private notificationsService: NotificationsService,
+        private schoolRepository: SchoolRepository
     ) { }
 
     async getFlights(token: any, query: any): Promise<FlightDto[]> {
@@ -101,6 +104,15 @@ export class FlightFacade {
         flight.user = user;
         flight.validation = null;
 
+        if (flightDto.tandemSchoolData?.tandemSchool) {
+            flight.tandemSchoolData.tandemSchool = await this.schoolRepository.getSchoolById(flightDto.tandemSchoolData.tandemSchool.id);
+            // In Case of duplicate flight, the payment data is not duplicated
+            flight.tandemSchoolData.paymentComment = null;
+            flight.tandemSchoolData.paymentState = null;
+            flight.tandemSchoolData.paymentTimestamp = null;
+            flight.tandemSchoolData.instructor = null;
+        }
+
         const flightResp: Flight = await this.flightService.save(flight);
         return plainToClass(FlightDto, flightResp);
     }
@@ -110,6 +122,10 @@ export class FlightFacade {
 
         if (!flight) {
             FlightException.notFoundException();
+        }
+
+        if (flight.tandemSchoolData?.paymentState == TandemSchoolPaymentState.PAID) {
+            FlightException.cannotChangePaidFlightException();
         }
 
         flight = await this.flightValidityCheck(flightDto, flight, token);
@@ -123,6 +139,11 @@ export class FlightFacade {
 
         if (flight.validation) {
             flight.validation.state = null;
+        }
+
+
+        if (flightDto.tandemSchoolData?.tandemSchool) {
+            flight.tandemSchoolData.tandemSchool = await this.schoolRepository.getSchoolById(flightDto.tandemSchoolData.tandemSchool.id);
         }
 
         const flightResp: Flight = await this.flightService.save(flight);
@@ -232,6 +253,12 @@ export class FlightFacade {
                 landingDto = await this.placeFacade.createPlace(token, landing);
             }
             flight.landing = plainToClass(Place, landingDto);
+        }
+
+        // Check if tandem school exist
+        if (flight.tandemSchoolData?.tandemSchool?.id) {
+            const school: School = await this.schoolRepository.getSchoolById(flight.tandemSchoolData.tandemSchool.id);
+            flight.tandemSchoolData.tandemSchool = school;
         }
 
         return flight;

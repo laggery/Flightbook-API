@@ -1,6 +1,7 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Exclude, Expose, Type } from "class-transformer";
 import { IsBoolean, IsDate, IsNotEmpty, ValidateNested } from "class-validator";
+import { SchoolDto } from "../../../training/school/interface/school-dto";
 
 @Exclude()
 export class PassengerConfirmationValidationDto {
@@ -87,4 +88,10 @@ export class PassengerConfirmationDto {
     @ApiProperty()
     @IsNotEmpty()
     readonly canUseData: boolean;
+
+    @ApiPropertyOptional()
+    @Expose()
+    @ValidateNested()
+    @Type(() => SchoolDto)
+    readonly tandemSchool: SchoolDto | null;
 }

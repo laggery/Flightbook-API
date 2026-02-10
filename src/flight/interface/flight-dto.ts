@@ -4,6 +4,7 @@ import { GliderDto } from "../../glider/interface/glider-dto";
 import { PlaceDto } from "../../place/interface/place-dto";
 import { Igc } from "./igc";
 import { FlightValidationDto } from "./flight-validation-dto";
+import { TandemSchoolDataDto } from "./tandem-school-data-dto";
 
 @Exclude()
 export class FlightDto {
@@ -47,4 +48,9 @@ export class FlightDto {
     @Expose()
     @Type(() => FlightValidationDto)
     readonly validation: FlightValidationDto;
+    
+    @ApiPropertyOptional()
+    @Expose()
+    @Type(() => TandemSchoolDataDto)
+    readonly tandemSchoolData: TandemSchoolDataDto;
 }

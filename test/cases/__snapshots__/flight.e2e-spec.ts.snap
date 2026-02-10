@@ -31,6 +31,11 @@ exports[`Flights (e2e) /flights (POST) 1`] = `
     "name": "riederalp",
     "notes": "notice",
   },
+  "tandemSchoolData": {
+    "paymentComment": null,
+    "paymentState": null,
+    "paymentTimestamp": null,
+  },
   "time": "01:30",
   "validation": {
     "comment": null,
@@ -48,6 +53,11 @@ exports[`Flights (e2e) /flights (POST) 2`] = `
   "km": 100.2,
   "price": null,
   "shvAlone": false,
+  "tandemSchoolData": {
+    "paymentComment": null,
+    "paymentState": null,
+    "paymentTimestamp": null,
+  },
   "time": "01:30:00",
   "timestamp": {},
   "userId": 1,
@@ -89,6 +99,11 @@ exports[`Flights (e2e) /flights (PUT) 1`] = `
     "name": "riederalp",
     "notes": "notice",
   },
+  "tandemSchoolData": {
+    "paymentComment": null,
+    "paymentState": null,
+    "paymentTimestamp": null,
+  },
   "time": "02:15",
   "validation": {
     "comment": null,
@@ -106,6 +121,11 @@ exports[`Flights (e2e) /flights (PUT) 2`] = `
   "km": 200.5,
   "price": null,
   "shvAlone": false,
+  "tandemSchoolData": {
+    "paymentComment": null,
+    "paymentState": null,
+    "paymentTimestamp": null,
+  },
   "time": "02:15:00",
   "timestamp": {},
   "userId": 1,
@@ -149,6 +169,13 @@ exports[`Flights (e2e) /flights/:id (GET) 1`] = `
     "name": "riederalp",
     "notes": "notice",
     "point": null,
+  },
+  "tandemSchoolData": {
+    "instructor": null,
+    "paymentComment": null,
+    "paymentState": null,
+    "paymentTimestamp": null,
+    "tandemSchool": null,
   },
   "time": "01:30:00",
   "validation": {
@@ -207,6 +234,13 @@ exports[`Instructor Flight Validation (e2e) /instructor/schools/:school_id/stude
     "name": "riederalp",
     "notes": "notice",
     "point": null,
+  },
+  "tandemSchoolData": {
+    "instructor": null,
+    "paymentComment": null,
+    "paymentState": null,
+    "paymentTimestamp": null,
+    "tandemSchool": null,
   },
   "time": "01:30:00",
   "validation": {
