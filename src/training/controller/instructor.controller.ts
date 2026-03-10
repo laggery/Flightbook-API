@@ -22,10 +22,6 @@ import { NoteFacade } from '../note/note.facade';
 import { CompositeAuthGuard } from '../../auth/guard/composite-auth.guard';
 import { EmergencyContactDto } from '../emergency-contact/interface/emergency-contact-dto';
 import { FlightValidationDto } from '../../flight/interface/flight-validation-dto';
-import { TandemPilotFacade } from '../tandem-pilot/tandem-pilot.facade';
-import { TandemPilotDto } from '../tandem-pilot/interface/tandem-pilot-dto';
-import { PassengerConfirmationDto } from 'src/tandem/passenger-confirmation/interface/passenger-confirmation-dto';
-import { TandemSchoolDataDto } from 'src/flight/interface/tandem-school-data-dto';
 
 @Controller('instructor')
 @ApiTags('Instructor')
@@ -38,8 +34,7 @@ export class InstructorController {
         private enrollmentFacade: EnrollmentFacade,
         private appointmentFacade: AppointmentFacade,
         private appointmentTypeFacade: AppointmentTypeFacade,
-        private noteFacade: NoteFacade,
-        private tandemPilotFacade: TandemPilotFacade
+        private noteFacade: NoteFacade
     ){}
 
     @UseGuards(CompositeAuthGuard)
@@ -208,44 +203,5 @@ export class InstructorController {
     @HttpCode(204)
     async removeNote(@Request() req, id: number, @Param('noteId') noteId: number, @Param('studendId') studendId: number) {
         await this.noteFacade.removeNote(noteId);
-    }
-
-    // Tandem School endpoints
-    @UseGuards(CompositeAuthGuard, SchoolGuard)
-    @Post('/schools/:id/tandem-pilots/enrollment')
-    @HttpCode(204)
-    postTandemPilotsEnrollment(@Headers('origin') origin: string, @Param('id') id: number, @Body() enrollmentWriteDto: EnrollmentWriteDto): Promise<EnrollmentDto> {
-        return this.enrollmentFacade.createTandemPilotEnrollment(id, enrollmentWriteDto, origin);
-    }
-
-    @UseGuards(CompositeAuthGuard, SchoolGuard)
-    @Get('/schools/:id/tandem-pilots')
-    getTandemPilots(@Query('archived') archived: boolean, @Param('id') id: number): Promise<TandemPilotDto[]> {
-        return this.tandemPilotFacade.getTandemPilotsBySchoolId(id, archived);
-    }
-
-    @UseGuards(CompositeAuthGuard, SchoolGuard)
-    @Delete('/schools/:id/tandem-pilots/:tandemPilotId')
-    @HttpCode(204)
-    async archiveTandemPilot(@Param('id') id: number, @Param('tandemPilotId') tandemPilotId: number): Promise<TandemPilotDto>{
-        return await this.tandemPilotFacade.archiveTandemPilot(tandemPilotId);
-    }
-
-    @UseGuards(CompositeAuthGuard, SchoolGuard)
-    @Get('/schools/:id/tandem-pilots/:tandemPilotId/passenger-confirmations')
-    getPassengerConfirmationsBySchoolId(@Param('id') id: number, @Query() query: any, @Param('tandemPilotId') tandemPilotId: number): Promise<PagerEntityDto<PassengerConfirmationDto[]>> {
-        return this.tandemPilotFacade.getPassengerConfirmationsByTandemPilotId(tandemPilotId, query);
-    }
-
-    @UseGuards(CompositeAuthGuard, SchoolGuard)
-    @Get('/schools/:id/tandem-pilots/:tandemPilotId/flights')
-    getTandemPilotFlights(@Request() req, @Query() query, @Param('id') id: number, @Param('tandemPilotId') tandemPilotId: number): Promise<PagerEntityDto<FlightDto[]>> {
-        return this.tandemPilotFacade.getTandemPilotFlights(id, tandemPilotId, query);
-    }
-
-    @UseGuards(CompositeAuthGuard, SchoolGuard)
-    @Put('/schools/:id/tandem-pilots/:tandemPilotId/flights/:flightId')
-    validateTandemPilotFlight(@Request() req, @Param('id') schoolId: number, @Param('tandemPilotId') tandemPilotId: number, @Param('flightId') flightId: number, @Body() tandemSchoolDataDto: TandemSchoolDataDto): Promise<FlightDto> {
-        return this.tandemPilotFacade.validateTandemPilotFlight(tandemPilotId, flightId, schoolId, req.user.userId, tandemSchoolDataDto);
     }
 }

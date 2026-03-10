@@ -6,7 +6,7 @@ import { EnrollmentController } from './controller/enrollment.controller';
 import { InstructorController } from './controller/instructor.controller';
 import { StudentController } from './controller/student.controller';
 import { EnrollmentModule } from './enrollment/enrollment.module';
-import { SchoolController } from './school/school.controller';
+import { SchoolController } from './controller/school.controller';
 import { SchoolModule } from './school/school.module';
 import { StudentModule } from './student/student.module';
 import { SubscriptionModule } from './subscription/subscription.module';

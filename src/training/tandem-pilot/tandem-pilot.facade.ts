@@ -7,12 +7,12 @@ import { TandemPilotDto } from './interface/tandem-pilot-dto';
 import { TandemPilotException } from './exception/tandem-pilot.exception';
 import { PassengerConfirmationDto } from '../../tandem/passenger-confirmation/interface/passenger-confirmation-dto';
 import { PassengerConfirmationFacade } from '../../tandem/passenger-confirmation/passenger-confirmation.facade';
-import { PagerEntityDto } from 'src/interface/pager-entity-dto';
-import { FlightDto } from 'src/flight/interface/flight-dto';
-import { FlightFacade } from 'src/flight/flight.facade';
+import { PagerEntityDto } from '../../interface/pager-entity-dto';
+import { FlightDto } from '../../flight/interface/flight-dto';
+import { FlightFacade } from '../../flight/flight.facade';
 import { SchoolException } from '../school/exception/school.exception';
 import { SchoolRepository } from '../school/school.repository';
-import { TandemSchoolDataDto } from 'src/flight/interface/tandem-school-data-dto';
+import { TandemSchoolDataDto } from '../../flight/interface/tandem-school-data-dto';
 
 @Injectable()
 export class TandemPilotFacade {

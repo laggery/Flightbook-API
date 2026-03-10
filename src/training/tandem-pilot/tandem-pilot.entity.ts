@@ -8,14 +8,14 @@ export class TandemPilot {
   @Column("integer", { primary: true, name: "id" })
   id: number;
 
-  @ManyToOne(() => User, (user) => user.students, {
+  @ManyToOne(() => User, (user) => user.tandemPilots, {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })
   @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
   user: User;
 
-  @ManyToOne(() => School, (school) => school.students, {
+  @ManyToOne(() => School, (school) => school.tandemPilots, {
     onDelete: "RESTRICT",
     onUpdate: "RESTRICT",
   })
