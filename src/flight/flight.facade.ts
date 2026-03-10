@@ -24,12 +24,14 @@ import { FlightValidationState } from './flight-validation-state';
 import { NotificationsService } from '../shared/services/notifications.service';
 import { SchoolRepository } from '../training/school/school.repository';
 import { TandemSchoolPaymentState } from './tandem-school-payment-state';
+import { TandemSchoolData } from './tandem-school-data.entity';
+import { TandemSchoolDataDto } from './interface/tandem-school-data-dto';
 
 @Injectable()
 export class FlightFacade {
 
     constructor(
-        private flightService: FlightRepository,
+        private flightRepository: FlightRepository,
         private placeFacade: PlaceFacade,
         private gliderFacade: GliderFacade,
         private userRepository: UserRepository,
@@ -39,26 +41,26 @@ export class FlightFacade {
     ) { }
 
     async getFlights(token: any, query: any): Promise<FlightDto[]> {
-        const list: Flight[] = await this.flightService.getFlights(token, query);
+        const list: Flight[] = await this.flightRepository.getFlights(token, query);
         return plainToInstance(FlightDto, list);
     }
 
     async getFlightById(token: any, id: number): Promise<FlightDto> {
-        const flight: Flight = await this.flightService.getFlightByIdWithRelations(token, id);
+        const flight: Flight = await this.flightRepository.getFlightByIdWithRelations(token, id);
         return plainToInstance(FlightDto, flight);
     }
 
     async countNotValidatedFlights(token: any, isTandem: boolean): Promise<number> {
-        return this.flightService.countNotValidatedFlights(token, isTandem);
+        return this.flightRepository.countNotValidatedFlights(token, isTandem);
     }
 
     async getFlightsPager(token: any, query: any): Promise<PagerEntityDto<FlightDto[]>> {
         const promiseList = [];
-        promiseList.push(this.flightService.getFlightsPager(token, query));
+        promiseList.push(this.flightRepository.getFlightsPager(token, query));
         if (!query.limit) {
             query.limit = 100;
         }
-        promiseList.push(this.flightService.getFlights(token, query));
+        promiseList.push(this.flightRepository.getFlights(token, query));
 
         let response = await Promise.all(promiseList);
         const pagerDto = response[0] as PagerEntityDto<FlightDto[]>;
@@ -68,9 +70,9 @@ export class FlightFacade {
 
     async getStatisticV1(token: any, query: any): Promise<FlightStatisticDto | FlightStatisticDto[]> {
         const statList: FlightStatisticDto[] = [];
-        statList.push(await this.flightService.getGlobalStatistic(token, query));
+        statList.push(await this.flightRepository.getGlobalStatistic(token, query));
         if (query.years && query.years === "1") {
-            statList.push(...await this.flightService.getStatisticYears(token, query))
+            statList.push(...await this.flightRepository.getStatisticYears(token, query))
             return statList;
         }
     
@@ -79,19 +81,19 @@ export class FlightFacade {
 
     async getStatisticV2(token: any, query: any): Promise<FlightStatisticDto[]> {
         if (!query.type || query.type == StatisticType.YEARLY) {
-            return this.flightService.getStatisticYears(token, query);
+            return this.flightRepository.getStatisticYears(token, query);
         } else if (query.type == StatisticType.MONTHLY) {
-            return this.flightService.getStatisticMonth(token, query);
+            return this.flightRepository.getStatisticMonth(token, query);
         } else if (query.type == StatisticType.GLOBAL) {
             const list: FlightStatisticDto[] = []
-            list.push(await this.flightService.getGlobalStatistic(token, query));
+            list.push(await this.flightRepository.getGlobalStatistic(token, query));
             return list;
         }
         return [];
     }
 
     async getGlobalStatistic(token: any, query: any): Promise<FlightStatisticDto> {
-        return this.flightService.getGlobalStatistic(token, query);
+        return this.flightRepository.getGlobalStatistic(token, query);
     }
 
     async createFlight(token: any, flightDto: FlightDto): Promise<FlightDto> {
@@ -113,12 +115,12 @@ export class FlightFacade {
             flight.tandemSchoolData.instructor = null;
         }
 
-        const flightResp: Flight = await this.flightService.save(flight);
+        const flightResp: Flight = await this.flightRepository.save(flight);
         return plainToClass(FlightDto, flightResp);
     }
 
     async updateFlight(token: any, id: number, flightDto: FlightDto): Promise<FlightDto> {
-        let flight: Flight = await this.flightService.getFlightById(token, id);
+        let flight: Flight = await this.flightRepository.getFlightById(token, id);
 
         if (!flight) {
             FlightException.notFoundException();
@@ -146,12 +148,12 @@ export class FlightFacade {
             flight.tandemSchoolData.tandemSchool = await this.schoolRepository.getSchoolById(flightDto.tandemSchoolData.tandemSchool.id);
         }
 
-        const flightResp: Flight = await this.flightService.save(flight);
+        const flightResp: Flight = await this.flightRepository.save(flight);
         return plainToClass(FlightDto, flightResp);
     }
 
     async updateFlightAlone(token: any, id: number, flightDto: FlightDto): Promise<FlightDto> {
-        let flight: Flight = await this.flightService.getFlightById(token, id);
+        let flight: Flight = await this.flightRepository.getFlightById(token, id);
 
         if (!flight) {
             FlightException.notFoundException();
@@ -159,12 +161,12 @@ export class FlightFacade {
 
         flight.shvAlone = flightDto.shvAlone === undefined ? false : flightDto.shvAlone;
 
-        const flightResp: Flight = await this.flightService.save(flight);
+        const flightResp: Flight = await this.flightRepository.save(flight);
         return plainToClass(FlightDto, flightResp);
     }
 
     async validateFlight(token: any, id: number, school: School, instructorId: number, flightValidationDto: FlightValidationDto): Promise<FlightDto> {
-        let flight: Flight = await this.flightService.getFlightByIdWithRelations(token, id);
+        let flight: Flight = await this.flightRepository.getFlightByIdWithRelations(token, id);
 
         if (!flight) {
             FlightException.notFoundException();
@@ -183,7 +185,7 @@ export class FlightFacade {
         flightValidation.comment = flightValidationDto.comment;
         flight.validation = flightValidation;
 
-        const flightResp: Flight = await this.flightService.save(flight);
+        const flightResp: Flight = await this.flightRepository.save(flight);
         if (flightResp.validation.state === FlightValidationState.REJECTED) {
             this.notificationsService.sendFlightValidationRejected(flightResp);
         }
@@ -196,12 +198,12 @@ export class FlightFacade {
             SchoolException.instructorNotFoundException();
         }
 
-        await this.flightService.validateAllFlight(token, school.id, instructorId, flightValidationDto.state);
+        await this.flightRepository.validateAllFlight(token, school.id, instructorId, flightValidationDto.state);
     }
 
     async removeFlight(token: any, id: number): Promise<FlightDto> {
-        const flight: Flight = await this.flightService.getFlightById(token, id);
-        const flightResp: Flight = await this.flightService.remove(flight);
+        const flight: Flight = await this.flightRepository.getFlightById(token, id);
+        const flightResp: Flight = await this.flightRepository.remove(flight);
         if (flight.igc && flight.igc.filepath){
             this.fileUploadService.deleteFile(token.userId, flight.igc.filepath);
         }
@@ -265,11 +267,40 @@ export class FlightFacade {
     }
 
     async nbFlightsByPlaceId(token: any, placeId: number) {
-        return this.flightService.countFlightsByPlaceId(token, placeId);
+        return this.flightRepository.countFlightsByPlaceId(token, placeId);
     }
 
     async nbFlightsByGliderId(token: any, gliderId: number) {
-        return this.flightService.countFlightsByGliderId(token, gliderId);
+        return this.flightRepository.countFlightsByGliderId(token, gliderId);
+    }
+
+    // Tandem methods
+    async updateFlightPayment(token: any, id: number, school: School, instructorId: number, tandemSchoolDataDto: TandemSchoolDataDto): Promise<FlightDto> {
+        let flight: Flight = await this.flightRepository.getFlightByIdWithRelations(token, id);
+
+        if (!flight) {
+            FlightException.notFoundException();
+        }
+
+        const instructor: User = await this.userRepository.getUserById(instructorId);
+        if (!instructor) {
+            SchoolException.instructorNotFoundException();
+        }
+
+        const tandemSchoolData: TandemSchoolData = new TandemSchoolData();
+        tandemSchoolData.instructor = instructor;
+        tandemSchoolData.tandemSchool = school;
+        tandemSchoolData.paymentTimestamp = new Date();
+        tandemSchoolData.paymentState = tandemSchoolDataDto.paymentState;
+        tandemSchoolData.paymentComment = tandemSchoolDataDto.paymentComment;
+        tandemSchoolData.paymentAmount = tandemSchoolDataDto.paymentAmount;
+        flight.tandemSchoolData = tandemSchoolData;
+
+        const flightResp: Flight = await this.flightRepository.save(flight);
+        if (flightResp.tandemSchoolData.paymentState === TandemSchoolPaymentState.REJECTED) {
+            this.notificationsService.sendFlightPaymentRejected(flightResp);
+        }
+        return plainToClass(FlightDto, flightResp);
     }
 
 }

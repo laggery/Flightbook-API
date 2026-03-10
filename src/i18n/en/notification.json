@@ -22,5 +22,11 @@
             "title": "Flight rejected",
             "body": "The flight from {date} was rejected."
         }
+    },
+    "flightPayment": {
+        "rejected": {
+            "title": "Payment rejected",
+            "body": "The payment for the flight from {date} was rejected."
+        }
     }
 }

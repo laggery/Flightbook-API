@@ -24,6 +24,8 @@ import { EmergencyContactDto } from '../emergency-contact/interface/emergency-co
 import { FlightValidationDto } from '../../flight/interface/flight-validation-dto';
 import { TandemPilotFacade } from '../tandem-pilot/tandem-pilot.facade';
 import { TandemPilotDto } from '../tandem-pilot/interface/tandem-pilot-dto';
+import { PassengerConfirmationDto } from 'src/tandem/passenger-confirmation/interface/passenger-confirmation-dto';
+import { TandemSchoolDataDto } from 'src/flight/interface/tandem-school-data-dto';
 
 @Controller('instructor')
 @ApiTags('Instructor')
@@ -222,15 +224,28 @@ export class InstructorController {
         return this.tandemPilotFacade.getTandemPilotsBySchoolId(id, archived);
     }
 
-    // @UseGuards(CompositeAuthGuard, SchoolGuard)
-    // @Get('/schools/:id/tandem-pilots/passenger-confirmations')
-    // getPassengerConfirmationsBySchoolId(@Param('id') id: number): Promise<PassengerConfirmationDto[]> {
-    //     return this.passengerConfirmationFacade.getPassengerConfirmationsBySchoolId(id);
-    // }
+    @UseGuards(CompositeAuthGuard, SchoolGuard)
+    @Delete('/schools/:id/tandem-pilots/:tandemPilotId')
+    @HttpCode(204)
+    async archiveTandemPilot(@Param('id') id: number, @Param('tandemPilotId') tandemPilotId: number): Promise<TandemPilotDto>{
+        return await this.tandemPilotFacade.archiveTandemPilot(tandemPilotId);
+    }
 
-    // @UseGuards(CompositeAuthGuard, SchoolGuard)
-    // @Get('/schools/:id/tandem-pilots/flights')
-    // getFlightsBySchoolId(@Param('id') id: number): Promise<PagerEntityDto<FlightDto[]>> {
-    //     return this.tandemPilotsFacade.getFlightsBySchoolId(id);
-    // }
+    @UseGuards(CompositeAuthGuard, SchoolGuard)
+    @Get('/schools/:id/tandem-pilots/:tandemPilotId/passenger-confirmations')
+    getPassengerConfirmationsBySchoolId(@Param('id') id: number, @Query() query: any, @Param('tandemPilotId') tandemPilotId: number): Promise<PagerEntityDto<PassengerConfirmationDto[]>> {
+        return this.tandemPilotFacade.getPassengerConfirmationsByTandemPilotId(tandemPilotId, query);
+    }
+
+    @UseGuards(CompositeAuthGuard, SchoolGuard)
+    @Get('/schools/:id/tandem-pilots/:tandemPilotId/flights')
+    getTandemPilotFlights(@Request() req, @Query() query, @Param('id') id: number, @Param('tandemPilotId') tandemPilotId: number): Promise<PagerEntityDto<FlightDto[]>> {
+        return this.tandemPilotFacade.getTandemPilotFlights(id, tandemPilotId, query);
+    }
+
+    @UseGuards(CompositeAuthGuard, SchoolGuard)
+    @Put('/schools/:id/tandem-pilots/:tandemPilotId/flights/:flightId')
+    validateTandemPilotFlight(@Request() req, @Param('id') schoolId: number, @Param('tandemPilotId') tandemPilotId: number, @Param('flightId') flightId: number, @Body() tandemSchoolDataDto: TandemSchoolDataDto): Promise<FlightDto> {
+        return this.tandemPilotFacade.validateTandemPilotFlight(tandemPilotId, flightId, schoolId, req.user.userId, tandemSchoolDataDto);
+    }
 }

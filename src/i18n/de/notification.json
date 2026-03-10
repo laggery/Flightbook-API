@@ -22,5 +22,11 @@
             "title": "Flug abgelehnt",
             "body": "Der Flug vom {date} wurde abgelehnt."
         }
+    },
+    "flightPayment": {
+        "rejected": {
+            "title": "Zahlung abgelehnt",
+            "body": "Die Zahlung für den Flug vom {date} wurde abgelehnt."
+        }
     }
 }

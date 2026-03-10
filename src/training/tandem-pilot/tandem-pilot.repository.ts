@@ -12,18 +12,6 @@ export class TandemPilotRepository extends Repository<TandemPilot> {
         super(repository.target, repository.manager, repository.queryRunner);
     }
 
-    // async getTandemPilotById(id: number): Promise<TandemPilot> {
-    //     return this.repository.findOneOrFail({
-    //         relations: {
-    //             user: true,
-    //             school: true
-    //         },
-    //         where: {
-    //             id
-    //         }
-    //     });
-    // }
-
     async getTandemPilotsBySchoolId(schoolId: number, archived?: boolean): Promise<TandemPilot[]> {
         let options: any = {
             relations: {
@@ -56,4 +44,16 @@ export class TandemPilotRepository extends Repository<TandemPilot> {
         };
         return this.repository.find(options);
     }
+
+    async getTandemPilotById(id: number): Promise<TandemPilot> {
+            return this.repository.findOneOrFail({
+                relations: {
+                    user: true,
+                    school: true
+                },
+                where: {
+                    id
+                }
+            });
+        }
 }

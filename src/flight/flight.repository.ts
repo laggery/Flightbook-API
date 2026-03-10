@@ -71,6 +71,8 @@ export class FlightRepository extends Repository<Flight> {
                                 data.tandemSchoolData.paymentComment = raw[key] as unknown as string;
                             } else if (name === 'payment_timestamp') {
                                 data.tandemSchoolData.paymentTimestamp = raw[key] as unknown as Date;
+                            } else if (name === 'payment_amount') {
+                                data.tandemSchoolData.paymentAmount = raw[key] as unknown as number;
                             }
                         }
                     } else {
@@ -352,6 +354,11 @@ export class FlightRepository extends Repository<Flight> {
         if (query && query["validation-state"] !== undefined) {
             builder.andWhere(`flight.validation_state = '${query["validation-state"]}'`);
         }
+
+        if (query && query["tandem-school-id"] !== undefined) {
+            builder.andWhere(`flight.tandem_school_id = '${query["tandem-school-id"]}'`);
+        }
+        
         return builder
     }
 

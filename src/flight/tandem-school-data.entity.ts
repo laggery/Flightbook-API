@@ -13,6 +13,9 @@ export class TandemSchoolData {
 
   @Column("text", { name: "tandem_school_payment_comment", nullable: true })
   paymentComment: string | null;
+
+  @Column("double precision", { name: "tandem_school_payment_amount", nullable: true })
+  paymentAmount: number | null;
       
   @ManyToOne(() => User, { nullable: true })
   @JoinColumn({ name: "tandem_school_payment_user_id" })

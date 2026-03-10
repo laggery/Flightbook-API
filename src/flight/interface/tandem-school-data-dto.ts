@@ -19,6 +19,10 @@ export class TandemSchoolDataDto {
 
   @ApiPropertyOptional()
   @Expose()
+  readonly paymentAmount: number | null;
+
+  @ApiPropertyOptional()
+  @Expose()
   @Type(() => UserReadDto)
   readonly instructor: UserReadDto | null;
 
