@@ -58,13 +58,15 @@ describe('Schools (e2e)', () => {
     await testInstance.teamMemberRepository.save(teamMember);
     const keycloakToken = JwtTestHelper.createKeycloakToken();
     expect(school.configuration).toEqual({
+      tandem: true,
       validateFlights: true,
       userCanEditControlSheet: true
     });
 
     school.configuration = {
       validateFlights: false,
-      userCanEditControlSheet: false
+      userCanEditControlSheet: false,
+      tandem: false
     };
 
     //when

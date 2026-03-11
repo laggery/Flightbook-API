@@ -6,6 +6,7 @@ exports[`Schools (e2e) /schools (POST) 1`] = `
   "address2": "address2",
   "city": "city",
   "configuration": {
+    "tandem": false,
     "userCanEditControlSheet": true,
     "validateFlights": true,
   },
@@ -23,6 +24,7 @@ exports[`Schools (e2e) /schools (POST) 2`] = `
   "address2": "address2",
   "city": "city",
   "configuration": {
+    "tandem": false,
     "userCanEditControlSheet": true,
     "validateFlights": true,
   },
@@ -40,6 +42,7 @@ exports[`Schools (e2e) /schools/configuration (PUT) 1`] = `
   "address2": "address2",
   "city": "city",
   "configuration": {
+    "tandem": true,
     "userCanEditControlSheet": false,
     "validateFlights": false,
   },
@@ -57,6 +60,7 @@ exports[`Schools (e2e) /schools/configuration (PUT) 2`] = `
   "address2": "address2",
   "city": "city",
   "configuration": {
+    "tandem": true,
     "userCanEditControlSheet": false,
     "validateFlights": false,
   },
@@ -314,6 +318,7 @@ exports[`Schools tandem pilots (e2e) /schools/:id/tandem-pilots/:tandemPilotId/f
       "address2": "address2",
       "city": "city",
       "configuration": {
+        "tandem": true,
         "userCanEditControlSheet": true,
         "validateFlights": true,
       },
@@ -352,6 +357,7 @@ exports[`Schools tandem pilots (e2e) /schools/:id/tandem-pilots/:tandemPilotId/p
       "address2": "address2",
       "city": "city",
       "configuration": {
+        "tandem": true,
         "userCanEditControlSheet": true,
         "validateFlights": true,
       },
@@ -378,6 +384,7 @@ exports[`Student schools (e2e) /student/schools (GET) 1`] = `
     "address2": "address2",
     "city": "city",
     "configuration": {
+      "tandem": true,
       "userCanEditControlSheet": true,
       "validateFlights": true,
     },
@@ -397,6 +404,7 @@ exports[`instructor schools (e2e) /instructor/schools (GET) 1`] = `
     "address2": "address2",
     "city": "city",
     "configuration": {
+      "tandem": true,
       "userCanEditControlSheet": true,
       "validateFlights": true,
     },
@@ -411,6 +419,7 @@ exports[`instructor schools (e2e) /instructor/schools (GET) 1`] = `
     "address2": "address2",
     "city": "city",
     "configuration": {
+      "tandem": true,
       "userCanEditControlSheet": true,
       "validateFlights": true,
     },

@@ -264,6 +264,7 @@ exports[`Instructor Flight Validation (e2e) /instructor/schools/:school_id/stude
       "address2": "address2",
       "city": "city",
       "configuration": {
+        "tandem": true,
         "userCanEditControlSheet": true,
         "validateFlights": true,
       },

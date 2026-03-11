@@ -10,6 +10,7 @@ exports[`Enrollments (e2e) /:token (GET) 1`] = `
     "address2": "address2",
     "city": "city",
     "configuration": {
+      "tandem": true,
       "userCanEditControlSheet": true,
       "validateFlights": true,
     },
@@ -43,6 +44,7 @@ exports[`Enrollments (e2e) /:token Student (POST) 1`] = `
     "address2": "address2",
     "city": "city",
     "configuration": {
+      "tandem": true,
       "userCanEditControlSheet": true,
       "validateFlights": true,
     },
@@ -85,6 +87,7 @@ exports[`Enrollments (e2e) /:token Team member (POST) 1`] = `
     "address2": "address2",
     "city": "city",
     "configuration": {
+      "tandem": true,
       "userCanEditControlSheet": true,
       "validateFlights": true,
     },

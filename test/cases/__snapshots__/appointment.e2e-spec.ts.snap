@@ -13,6 +13,7 @@ exports[`instructor appointment (e2e) /instructor/appointments (GET) 1`] = `
     "address2": "address2",
     "city": "city",
     "configuration": {
+      "tandem": true,
       "userCanEditControlSheet": true,
       "validateFlights": true,
     },
@@ -96,6 +97,7 @@ exports[`instructor appointment (e2e) /instructor/schools/:id/appointments (POST
     "address2": "address2",
     "city": "city",
     "configuration": {
+      "tandem": true,
       "userCanEditControlSheet": true,
       "validateFlights": true,
     },
@@ -159,6 +161,7 @@ exports[`instructor appointment (e2e) /instructor/schools/:id/appointments (PUT)
     "address2": "address2",
     "city": "city",
     "configuration": {
+      "tandem": true,
       "userCanEditControlSheet": true,
       "validateFlights": true,
     },
@@ -258,6 +261,7 @@ exports[`student appointment (e2e) /student/schools/:id/appointments/:appointmen
     "address2": "address2",
     "city": "city",
     "configuration": {
+      "tandem": true,
       "userCanEditControlSheet": true,
       "validateFlights": true,
     },
@@ -304,6 +308,7 @@ exports[`student appointment (e2e) /student/schools/:schoolId/appointments/:appo
     "address2": "address2",
     "city": "city",
     "configuration": {
+      "tandem": true,
       "userCanEditControlSheet": true,
       "validateFlights": true,
     },
@@ -379,6 +384,7 @@ exports[`student appointment (e2e) /student/schools/:schoolId/appointments/:appo
     "address2": "address2",
     "city": "city",
     "configuration": {
+      "tandem": true,
       "userCanEditControlSheet": true,
       "validateFlights": true,
     },

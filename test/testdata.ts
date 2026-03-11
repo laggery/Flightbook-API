@@ -224,7 +224,8 @@ export class Testdata {
         school.language = "de";
         school.configuration = {
             validateFlights: true,
-            userCanEditControlSheet: true
+            userCanEditControlSheet: true,
+            tandem: true
         };
         return school;
     }
