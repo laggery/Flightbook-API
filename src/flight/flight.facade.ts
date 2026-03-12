@@ -292,8 +292,8 @@ export class FlightFacade {
         tandemSchoolData.tandemSchool = school;
         tandemSchoolData.paymentTimestamp = new Date();
         tandemSchoolData.paymentState = tandemSchoolDataDto.paymentState;
-        tandemSchoolData.paymentComment = tandemSchoolDataDto.paymentComment;
-        tandemSchoolData.paymentAmount = tandemSchoolDataDto.paymentAmount;
+        tandemSchoolData.paymentComment = tandemSchoolDataDto?.paymentComment == '' ? null : tandemSchoolDataDto.paymentComment;
+        tandemSchoolData.paymentAmount = tandemSchoolDataDto?.paymentAmount == undefined ? null : tandemSchoolDataDto.paymentAmount;
         flight.tandemSchoolData = tandemSchoolData;
 
         const flightResp: Flight = await this.flightRepository.save(flight);

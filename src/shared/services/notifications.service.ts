@@ -226,7 +226,7 @@ export class NotificationsService {
 
     async sendFlightValidationRejected(flight: Flight) {
         if (!flight.user.notificationToken) {
-            Logger.debug("no notification to send for inform waiting student");
+            Logger.debug("no notification to send for inform validation rejection");
             return
         }
 
@@ -271,7 +271,7 @@ export class NotificationsService {
 
     async sendFlightPaymentRejected(flight: Flight) {
         if (!flight.user.notificationToken) {
-            Logger.debug("no notification to send for inform waiting student");
+            Logger.debug("no notification to send for inform payment rejection");
             return
         }
 
