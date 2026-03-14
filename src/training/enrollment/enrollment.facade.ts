@@ -21,6 +21,9 @@ import { ControlSheetRepository } from '../control-sheet/control-sheet.repositor
 import { User } from '../../user/domain/user.entity';
 import { ControlSheet } from '../control-sheet/control-sheet.entity';
 import { School } from '../school/school.entity';
+import { TandemPilotRepository } from '../tandem-pilot/tandem-pilot.repository';
+import { TandemPilotException } from '../tandem-pilot/exception/tandem-pilot.exception';
+import { TandemPilot } from '../tandem-pilot/tandem-pilot.entity';
 
 @Injectable()
 export class EnrollmentFacade {
@@ -29,6 +32,7 @@ export class EnrollmentFacade {
         private userRepository: UserRepository,
         private studentRepository: StudentRepository,
         private teamMemberRepository: TeamMemberRepository,
+        private tandemPilotRepository: TandemPilotRepository,
         private schoolRepository: SchoolRepository,
         private emailService: EmailService,
         private controlSheetRepository: ControlSheetRepository
@@ -116,6 +120,47 @@ export class EnrollmentFacade {
         return plainToClass(EnrollmentDto, enrollmentResp);
     }
 
+    async createTandemPilotEnrollment(schoolId: number, enrollmentWriteDto: EnrollmentWriteDto, origin: string): Promise<EnrollmentDto> {
+        const user = await this.userRepository.getUserByEmail(enrollmentWriteDto.email);
+        if (user) {
+            const tandemPilots = await this.tandemPilotRepository.getTandemPilotsBySchoolId(schoolId, false);
+            const foundTandemPilot = tandemPilots.find((tandemPilot: any) => tandemPilot.user.id === user.id);
+            if (foundTandemPilot) {
+                throw TandemPilotException.alreadyExistsException();
+            }
+        }
+
+        const enrollmentList = await this.enrollmentRepository.getTandemPilotEnrollmentByEmailAndSchoolId(enrollmentWriteDto.email, schoolId);
+        for (const enrollment of enrollmentList){
+            if (new Date() < new Date(enrollment.expireAt)) {
+                await this.emailService.sendTandemPilotEnrollement(enrollment, origin);
+                return plainToClass(EnrollmentDto, enrollment);
+            }
+        }
+
+        let uuid;
+        do {
+            uuid = randomStringGenerator();
+        } while (await this.enrollmentRepository.getEnrollmentByToken(uuid));
+
+        const enrollment = new Enrollment();
+        enrollment.type = EnrollmentType.TANDEM_PILOT;
+        enrollment.email = enrollmentWriteDto.email;
+        enrollment.school = await this.schoolRepository.getSchoolById(schoolId);
+        enrollment.token = uuid;
+
+        const expireAtDate = new Date();
+        expireAtDate.setDate(expireAtDate.getDate() + 7);
+
+        enrollment.expireAt = expireAtDate;
+
+        const enrollmentResp = this.enrollmentRepository.save(enrollment);
+
+        await this.emailService.sendTandemPilotEnrollement(enrollment, origin);
+
+        return plainToClass(EnrollmentDto, enrollmentResp);
+    }
+
     async isFreeEnrollment(token: string): Promise<boolean> {
         const enrollment = await this.enrollmentRepository.getEnrollmentByToken(token);
         if (!enrollment) {
@@ -173,7 +218,7 @@ export class EnrollmentFacade {
             throw new EnrollmentNotAllowedException();
         }
 
-        // check if user is already student or team member
+        // check if user is already student, team member or tandem pilot
         if (EnrollmentType.STUDENT == enrollment.type) {
             const students = await this.studentRepository.getStudentsBySchoolId(enrollment.school.id);
             const foundStudent = students.find((student: Student) => student.user.email === enrollment.email);
@@ -191,7 +236,7 @@ export class EnrollmentFacade {
                 const studentEntity = await this.studentRepository.save(student);
                 await this.addControlSheetToStudent(user, enrollment.school);
             }
-        } else {
+        } else if (EnrollmentType.TEAM_MEMBER == enrollment.type){
             const teamMembers = await this.teamMemberRepository.getTeamMembersBySchoolId(enrollment.school.id);
             const foundTeamMember = teamMembers.find((teamMember: TeamMember) => teamMember.user.email === enrollment.email);
             if (foundTeamMember) {
@@ -203,6 +248,21 @@ export class EnrollmentFacade {
             teamMember.school= enrollment.school;
             teamMember.user = user;
             await this.teamMemberRepository.save(teamMember);
+        } else {
+            const tandemPilots = await this.tandemPilotRepository.getTandemPilotsBySchoolId(enrollment.school.id);
+            const foundTandemPilot = tandemPilots.find((tandemPilot: TandemPilot) => tandemPilot.user.email === enrollment.email);
+            if (foundTandemPilot && !foundTandemPilot.isArchived) {
+                throw TandemPilotException.alreadyExistsException();
+            } else if (foundTandemPilot) {
+                foundTandemPilot.isArchived = false;
+                foundTandemPilot.timestamp = new Date(); 
+                await this.tandemPilotRepository.save(foundTandemPilot);
+            } else {
+                const tandemPilot = new TandemPilot();
+                tandemPilot.school = enrollment.school;
+                tandemPilot.user = user;
+                await this.tandemPilotRepository.save(tandemPilot);
+            }
         }
 
         return true;

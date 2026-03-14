@@ -12,4 +12,8 @@ export class SchoolConfigurationDto {
     @ApiPropertyOptional()
     @Expose()
     readonly userCanEditControlSheet: boolean;
+
+    @ApiPropertyOptional()
+    @Expose()
+    readonly tandem: boolean;
 }

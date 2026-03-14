@@ -13,6 +13,7 @@ import { Note } from '../note/note.entity';
 import { NoteRepository } from '../note/note.repository';
 import { ControlSheetRepository } from '../control-sheet/control-sheet.repository';
 import { ControlSheet } from '../control-sheet/control-sheet.entity';
+import { TandemPilotModule } from '../tandem-pilot/tandem-pilot.module';
 
 @Module({
     imports: [
@@ -21,7 +22,8 @@ import { ControlSheet } from '../control-sheet/control-sheet.entity';
         forwardRef(() => StudentModule),
         UserModule,
         forwardRef(() => SchoolModule),
-        forwardRef(() => TeamMemberModule)
+        forwardRef(() => TeamMemberModule),
+        forwardRef(() => TandemPilotModule)
     ],
     providers: [EnrollmentRepository, EnrollmentFacade, EmailService, NoteRepository, ControlSheetRepository],
     exports: [EnrollmentRepository, EnrollmentFacade],

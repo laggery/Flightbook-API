@@ -16,7 +16,7 @@ describe('Flights (e2e)', () => {
   beforeEach(async () => {
     await testInstance.cleanupBetweenTests();
     storedFlights.length = 0;
-    storedFlights.push(...(await createData(testInstance)));
+    storedFlights.push(...(await testInstance.createFlightData()));
   });
 
   it('/flights (GET)', async () => {
@@ -185,7 +185,7 @@ describe('V2 Flights (e2e)', () => {
   beforeEach(async () => {
     await testInstance.cleanupBetweenTests();
     storedFlights.length = 0;
-    storedFlights.push(...(await createData(testInstance)));
+    storedFlights.push(...(await testInstance.createFlightData()));
   });
   it('/v2/flights (GET)', async () => {
     // given
@@ -234,7 +234,7 @@ describe('Instructor Flight (e2e)', () => {
     await testInstance.cleanupBetweenTests();
     schoolTestData = await testInstance.createSchoolData();
     storedFlights.length = 0;
-    storedFlights.push(...(await createData(testInstance, schoolTestData.studentUser)));
+    storedFlights.push(...(await testInstance.createFlightData(schoolTestData.studentUser)));
   });
 
   it('/instructor/students/:id/flights (GET)', async () => {
@@ -293,7 +293,7 @@ describe('Instructor Flight Validation (e2e)', () => {
     await testInstance.cleanupBetweenTests();
     schoolTestData = await testInstance.createSchoolData();
     storedFlights.length = 0;
-    storedFlights.push(...(await createData(testInstance, schoolTestData.studentUser)));
+    storedFlights.push(...(await testInstance.createFlightData(schoolTestData.studentUser)));
   });
 
   it('/instructor/schools/:school_id/students/:id/flights/:flightId (PUT)', async () => {
@@ -353,53 +353,6 @@ describe('Instructor Flight Validation (e2e)', () => {
       });
   });
 });
-
-
-async function createData(testInstance: BaseE2ETest, user?: User): Promise<Flight[]> {
-  // Create places
-  const places = [
-    Testdata.createPlace("riederalp", user),
-    Testdata.createPlace("Fiesch", user),
-    Testdata.createPlace("Belalp", user),
-    Testdata.createPlace("Bitsch", user),
-    Testdata.createPlace("Zermatt", user)
-  ];
-  for (const place of places) {
-    await testInstance.placeRepository.save(place);
-  }
-
-  const countPlaces = await testInstance.placeRepository.count();
-  expect(countPlaces).toEqual(5);
-
-  // Create gliders
-  const gliders = [
-    Testdata.createGlider("Advance", "Bibeta 6", true, user),
-    Testdata.createGlider("Ozone", "Delta", false, user),
-    Testdata.createGlider("Gin", "Yeti", false, user)
-  ];
-  for (const g of gliders) {
-    await testInstance.gliderRepository.save(g);
-  }
-
-  const countGliders = await testInstance.gliderRepository.count();
-  expect(countGliders).toEqual(3);
-
-  const flights = [
-    Testdata.createFlight(places[0], places[1], gliders[0], '2025-01-01', new Date('2025-01-01T10:00:00Z'), user),
-    Testdata.createFlight(places[0], places[1], gliders[0], '2025-01-01', new Date('2025-01-01T12:00:00Z'), user), // Duplicate flight on same day with different timestamp
-    Testdata.createFlight(places[1], places[2], gliders[1], '2025-01-02', undefined, user),
-    Testdata.createFlight(places[2], places[3], gliders[2], '2025-01-03', undefined, user)
-  ];
-
-  for (const f of flights) {
-    await testInstance.flightRepository.save(f);
-  }
-
-  const countFlights = await testInstance.flightRepository.count();
-  expect(countFlights).toEqual(4);
-
-  return flights;
-}
 
 function assertFlight(received: any, expected: Flight | FlightDto) {
   expect(received).toMatchObject({

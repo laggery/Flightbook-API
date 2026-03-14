@@ -6,13 +6,15 @@ import { EnrollmentController } from './controller/enrollment.controller';
 import { InstructorController } from './controller/instructor.controller';
 import { StudentController } from './controller/student.controller';
 import { EnrollmentModule } from './enrollment/enrollment.module';
-import { SchoolController } from './school/school.controller';
+import { SchoolController } from './controller/school.controller';
 import { SchoolModule } from './school/school.module';
 import { StudentModule } from './student/student.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { TeamMemberModule } from './team-member/team-member.module';
 import { NoteModule } from './note/note.module';
 import { EmergencyContactModule } from './emergency-contact/emergency-contact.module';
+import { TandemPilotModule } from './tandem-pilot/tandem-pilot.module';
+import { TandemPilotController } from './controller/tandem-pilot.controller';
 
 @Module({
     imports: [
@@ -22,6 +24,7 @@ import { EmergencyContactModule } from './emergency-contact/emergency-contact.mo
       ControlSheetModule,
       StudentModule,
       TeamMemberModule,
+      TandemPilotModule,
       SchoolModule,
       EnrollmentModule,
       NoteModule,
@@ -30,6 +33,7 @@ import { EmergencyContactModule } from './emergency-contact/emergency-contact.mo
     controllers: [
         InstructorController,
         StudentController,
+        TandemPilotController,
         EnrollmentController,
         SchoolController
     ],

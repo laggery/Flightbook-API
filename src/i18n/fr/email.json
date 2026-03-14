@@ -26,6 +26,10 @@
         "teamMember": {
             "subject": "Membre de l'équipe {school}",
             "content": "<p>{school} vous invite à faire partie de son équipe. Vous pouvez accepter cette invitation en suivant le lien ci-dessous.</p><p> Lien: <a href='{link}'>{link}</a></p><p>Le lien expire le {date}</p>"
+        },
+        "tandemPilot": {
+            "subject": "Pilote tandem {school}",
+            "content": "<p>{school} vous invite à rejoindre leur équipe en tant que pilote tandem. Vous pouvez accepter cette invitation en suivant le lien ci-dessous.</p><p> Lien: <a href='{link}'>{link}</a></p><p>Le lien expire le {date}</p>"
         }
     },
     "payment": {

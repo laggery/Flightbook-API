@@ -9,6 +9,7 @@ import {Appointment} from "../../training/appointment/appointment.entity";
 import { Subscription } from "../../training/subscription/subscription.entity";
 import { EmergencyContact } from "../../training/emergency-contact/emergency-contact.entity";
 import { UserConfig } from "./user-config";
+import { TandemPilot } from "../../training/tandem-pilot/tandem-pilot.entity";
 
 @Index("idx_16606_idx_e12875dfb3b1d92d7d7c5377e2", ["email"], { unique: true })
 @Index("idx_16409_idx_e12875dfb3b1d92d7d7c5377e2", ["email"], { unique: true })
@@ -111,6 +112,9 @@ export class User {
 
   @OneToMany(() => EmergencyContact, (emergencyContact) => emergencyContact.user)
   emergencyContacts: EmergencyContact[];
+
+  @OneToMany(() => TandemPilot, (tandemPilot) => tandemPilot.user)
+  tandemPilots: TandemPilot[];
 
   clearToken() {
     this.token = null;

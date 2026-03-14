@@ -100,6 +100,27 @@ export class EmailService {
         }
     }
 
+    async sendTandemPilotEnrollement(enrollment: Enrollment, origin: string) {
+        const i18n = I18nContext.current();
+        const emailBody = new EmailBodyDto();
+        emailBody.toAddress = enrollment.email;
+        emailBody.subject = i18n.t('email.enrollment.tandemPilot.subject', { lang: enrollment.school.language });
+        emailBody.content = i18n.t('email.enrollment.tandemPilot.content', {
+            lang: enrollment.school.language,
+            args: {
+                school: enrollment.school.name,
+                link: `${origin}/enrollments/${enrollment.token}`,
+                date: moment(enrollment.expireAt).utc().format('DD.MM.YYYY HH:mm')
+            }
+        });
+
+        try {
+            await this.sendEmail(emailBody);
+        } catch (e) {
+            throw new HttpException("Email service is unavailable", 503);
+        }
+    }
+
     sendNewAppointment(students: Student[], appointment: Appointment) {
         if (students.length <= 0) {
             return;

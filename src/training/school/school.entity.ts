@@ -5,6 +5,7 @@ import { TeamMember } from "../team-member/team-member.entity";
 import {Appointment} from "../appointment/appointment.entity";
 import { AppointmentType } from "../appointment/appointment-type.entity";
 import { SchoolConfiguration } from "./school-configuration.entity";
+import { TandemPilot } from "../tandem-pilot/tandem-pilot.entity";
 
 @Entity("school")
 export class School {
@@ -44,6 +45,9 @@ export class School {
 
   @OneToMany(() => Student, (student) => student.school, { cascade: ['insert', 'update'] })
   students: Student[];
+  
+  @OneToMany(() => TandemPilot, (tandemPilot) => tandemPilot.school, { cascade: ['insert', 'update'] })
+  tandemPilots: TandemPilot[];
 
   @OneToMany(() => Enrollment, (enrollment) => enrollment.school, { cascade: ['insert', 'update'] })
   enrollments: Enrollment[];

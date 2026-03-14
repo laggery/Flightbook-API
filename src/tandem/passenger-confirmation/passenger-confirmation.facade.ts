@@ -6,13 +6,16 @@ import { PassengerConfirmationRepository } from './passenger-confirmation.reposi
 import { PassengerConfirmation } from './passenger-confirmation.entity';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { PagerEntityDto } from '../../interface/pager-entity-dto';
+import { SchoolRepository } from '../../training/school/school.repository';
+import { School } from '../../training/school/school.entity';
 
 @Injectable()
 export class PassengerConfirmationFacade {
 
     constructor(
         private readonly userRepository: UserRepository,
-        private readonly passengerConfirmationRepository: PassengerConfirmationRepository
+        private readonly passengerConfirmationRepository: PassengerConfirmationRepository,
+        private readonly schoolRepository: SchoolRepository
     ) { }
 
     async createPassengerConfirmation(userId: number, passengerConfirmationDto: PassengerConfirmationDto): Promise<any> {
@@ -21,8 +24,13 @@ export class PassengerConfirmationFacade {
 
         passengerConfirmation.id = null;
         passengerConfirmation.user = user;
+        if (passengerConfirmationDto.tandemSchool?.id) {
+            const school: School = await this.schoolRepository.getSchoolById(passengerConfirmationDto.tandemSchool.id);
+            passengerConfirmation.tandemSchool = school;
+        }
 
-        return this.passengerConfirmationRepository.save(passengerConfirmation);
+        const response = await this.passengerConfirmationRepository.save(passengerConfirmation);
+        return plainToClass(PassengerConfirmationDto, response);
     }
 
     async getPassengerConfirmations(userId: number, query: any): Promise<PagerEntityDto<PassengerConfirmationDto[]>> {

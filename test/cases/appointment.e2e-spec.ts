@@ -21,7 +21,7 @@ describe('student appointment (e2e)', () => {
   it('/student/schools/:id/appointments (GET)', async () => {
     // given
     const { studentUser, testSchool } = await testInstance.createSchoolDataWithAppointment();
-    await testInstance.createSchoolDataWithAppointment('student2@student.com', 'instructor2@instructor.com', 'test school 2', 'appointment type 2');
+    await testInstance.createSchoolDataWithAppointment('student2@student.com', 'instructor2@instructor.com', 'tandemPilot2@tandemPilot.com', 'test school 2', 'appointment type 2');
 
     const keycloakToken = JwtTestHelper.createKeycloakToken({ sub: studentUser.id, email: studentUser.email });
 
@@ -228,7 +228,7 @@ describe('instructor appointment (e2e)', () => {
   it('/instructor/schools/:id/appointments (GET)', async () => {
     // given
     const { instructorUser, testSchool } = await testInstance.createSchoolDataWithAppointment();
-    await testInstance.createSchoolDataWithAppointment('student2@student.com', 'instructor2@instructor.com', 'test school 2', 'appointment type 2');
+    await testInstance.createSchoolDataWithAppointment('student2@student.com', 'instructor2@instructor.com', 'tandemPilot2@tandemPilot.com', 'test school 2', 'appointment type 2');
 
     const keycloakToken = JwtTestHelper.createKeycloakToken({ sub: instructorUser.id, email: instructorUser.email });
 

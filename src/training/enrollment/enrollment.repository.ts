@@ -46,6 +46,22 @@ export class EnrollmentRepository extends Repository<Enrollment> {
         return this.find(options);
     }
 
+    async getTandemPilotEnrollmentByEmailAndSchoolId(email: string, schoolId: number): Promise<Enrollment[]> {
+        let options: any = {
+            relations: {
+                school: true
+            },
+            where: {
+                email: email,
+                school: {
+                    id: schoolId
+                },
+                type: EnrollmentType.TANDEM_PILOT
+            }
+        };
+        return this.find(options);
+    }
+
     async getEnrollmentByToken(token: string): Promise<Enrollment> {
         if (!token) {
             return undefined;

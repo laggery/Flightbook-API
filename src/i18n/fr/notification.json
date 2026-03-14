@@ -22,5 +22,11 @@
             "title": "Vol refusé",
             "body": "Le vol du {date} a été refusé."
         }
+    },
+    "flightPayment": {
+        "rejected": {
+            "title": "Paiement refusé",
+            "body": "Le paiement pour le vol du {date} a été refusé."
+        }
     }
 }

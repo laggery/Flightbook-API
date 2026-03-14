@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
 import { User } from "../../user/domain/user.entity";
+import { School } from "../../training/school/school.entity";
 
 @Entity("passenger_confirmation")
 export class PassengerConfirmation {
@@ -52,4 +53,8 @@ export class PassengerConfirmation {
     @ManyToOne(() => User, { nullable: false })
     @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
     user: User;
+
+    @ManyToOne(() => School, { nullable: true })
+    @JoinColumn({ name: "tandem_school_id" })
+    tandemSchool: School | null;
 }

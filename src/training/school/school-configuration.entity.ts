@@ -9,4 +9,7 @@ export class SchoolConfiguration {
 
   @Column("boolean", { name: "configuration_user_can_edit_controlsheet", default: true })
   userCanEditControlSheet: boolean;
+
+  @Column("boolean", { name: "configuration_tandem", default: false })
+  tandem: boolean;
 }

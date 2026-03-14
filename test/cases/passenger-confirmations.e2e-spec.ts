@@ -43,9 +43,7 @@ describe('Tandem passenger confirmations (e2e)', () => {
       .expect(201)
       .then(async (response) => {
         expect(response.body.id).toBeDefined();
-        expect(removeIds(response.body)).toMatchSnapshot({
-          timestamp: expect.any(String),
-        });
+        expect(removeIds(response.body)).toMatchSnapshot();
 
         const db = await testInstance.passengerConfirmationRepository.findOne({
           where: { id: response.body.id }

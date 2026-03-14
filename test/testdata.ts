@@ -11,7 +11,7 @@ import { plainToClass } from "class-transformer";
 import { GliderDto } from "../src/glider/interface/glider-dto";
 import { Flight } from "../src/flight/flight.entity";
 import { FlightDto } from "../src/flight/interface/flight-dto";
-import { UserWriteDto } from "src/user/interface/user-write-dto";
+import { UserWriteDto } from "../src/user/interface/user-write-dto";
 import { School } from "../src/training/school/school.entity";
 import { SchoolDto } from "../src/training/school/interface/school-dto";
 import { TeamMember } from "../src/training/team-member/team-member.entity";
@@ -27,6 +27,7 @@ import { AppointmentType } from "../src/training/appointment/appointment-type.en
 import { AppointmentTypeDto } from "../src/training/appointment/interface/appointment-type-dto";
 import { PassengerConfirmation } from "../src/tandem/passenger-confirmation/passenger-confirmation.entity";
 import { PassengerConfirmationDto } from "../src/tandem/passenger-confirmation/interface/passenger-confirmation-dto";
+import { TandemPilot } from "../src/training/tandem-pilot/tandem-pilot.entity";
 
 export class Testdata {
     public static EMAIL = "test@user.com";
@@ -98,7 +99,8 @@ export class Testdata {
         glider?: Glider,
         date?: string,
         timestamp?: Date,
-        user?: User
+        user?: User,
+        tandemSchool?: School
     ): Flight {
         const flight = new Flight();
         flight.date = date || '2024-01-01';
@@ -110,6 +112,16 @@ export class Testdata {
         flight.description = "description";
         flight.user = user || this.getDefaultUser();
         flight.timestamp = timestamp || new Date();
+        if (tandemSchool) {
+            flight.tandemSchoolData = {
+                tandemSchool: tandemSchool,
+                paymentState: undefined,
+                paymentComment: undefined,
+                paymentAmount: undefined,
+                instructor: undefined,
+                paymentTimestamp: undefined
+            };
+        }
         return flight;
     }
 
@@ -141,7 +153,7 @@ export class Testdata {
         return plainToClass(PassengerConfirmationDto, this.createPassengerConfirmation());
     }
 
-    public static createPassengerConfirmation(): PassengerConfirmation {
+    public static createPassengerConfirmation(school?: School, user?: User): PassengerConfirmation {
         const passengerConfirmation = new PassengerConfirmation();
         passengerConfirmation.date = new Date("2024-01-01");
         passengerConfirmation.firstname = "firstname";
@@ -158,7 +170,10 @@ export class Testdata {
         passengerConfirmation.canUseData = true;
         passengerConfirmation.signature = "signature";
         passengerConfirmation.signatureMimeType = "image/svg+xml";
-        passengerConfirmation.user = this.getDefaultUser();
+        passengerConfirmation.user = user || this.getDefaultUser();
+        if (school) {
+            passengerConfirmation.tandemSchool = school;
+        }
         return passengerConfirmation;
     }
 
@@ -209,7 +224,8 @@ export class Testdata {
         school.language = "de";
         school.configuration = {
             validateFlights: true,
-            userCanEditControlSheet: true
+            userCanEditControlSheet: true,
+            tandem: true
         };
         return school;
     }
@@ -239,6 +255,14 @@ export class Testdata {
         student.isArchived = false;
         student.isTandem = false;
         return student;
+    }
+
+    public static createTandemPilot(user: User, school: School): TandemPilot {
+        const tandemPilot = new TandemPilot();
+        tandemPilot.user = user;
+        tandemPilot.school = school;
+        tandemPilot.isArchived = false;
+        return tandemPilot;
     }
 
     public static createUser(email?: string, firstname?: string, lastname?: string): User {

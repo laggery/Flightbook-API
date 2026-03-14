@@ -25,6 +25,7 @@ import { AppointmentRepository } from "../src/training/appointment/appointment.r
 import { SubscriptionRepository } from "../src/training/subscription/subscription.repository";
 import { GuestSubscriptionRepository } from "../src/training/subscription/guest-subscription.repository";
 import { PassengerConfirmationRepository } from "../src/tandem/passenger-confirmation/passenger-confirmation.repository";
+import { TandemPilotRepository } from "../src/training/tandem-pilot/tandem-pilot.repository";
 
 const init = async () => {
     process.env.TZ = 'UTC';
@@ -95,6 +96,7 @@ const init = async () => {
     const subscriptionRepository = moduleFixture.get<SubscriptionRepository>(SubscriptionRepository);
     const guestSubscriptionRepository = moduleFixture.get<GuestSubscriptionRepository>(GuestSubscriptionRepository);
     const passengerConfirmationRepository = moduleFixture.get<PassengerConfirmationRepository>(PassengerConfirmationRepository);
+    const tandemPilotRepository = moduleFixture.get<TandemPilotRepository>(TandemPilotRepository);
 
     // Store globally for all tests to use
     (global as any).testApp = app;
@@ -117,6 +119,7 @@ const init = async () => {
     (global as any).testSubscriptionRepository = subscriptionRepository;
     (global as any).testGuestSubscriptionRepository = guestSubscriptionRepository;
     (global as any).testPassengerConfirmationRepository = passengerConfirmationRepository;
+    (global as any).testTandemPilotRepository = tandemPilotRepository;
 
     await userRepository.save(Testdata.getDefaultUser());
 };

@@ -11,11 +11,13 @@ import { FileUploadService } from '../fileupload/file-upload.service';
 import { FlightControllerV2 } from './flight.controllerV2';
 
 import { SharedModule } from '../shared/shared.module';
+import { School } from '../training/school/school.entity';
+import { SchoolRepository } from '../training/school/school.repository';
 
 @Module({
-  imports: [UserModule, TypeOrmModule.forFeature([Flight]), PlaceModule, GliderModule, SharedModule],
+  imports: [UserModule, TypeOrmModule.forFeature([Flight, School]), PlaceModule, GliderModule, SharedModule],
   controllers: [FlightController, FlightControllerV2],
-  providers: [FlightRepository, FlightFacade, FileUploadService],
+  providers: [FlightRepository, FlightFacade, FileUploadService, SchoolRepository],
   exports: [FlightFacade, FlightRepository]
 })
 export class FlightModule {}

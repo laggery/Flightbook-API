@@ -6,6 +6,7 @@ exports[`Schools (e2e) /schools (POST) 1`] = `
   "address2": "address2",
   "city": "city",
   "configuration": {
+    "tandem": false,
     "userCanEditControlSheet": true,
     "validateFlights": true,
   },
@@ -23,6 +24,7 @@ exports[`Schools (e2e) /schools (POST) 2`] = `
   "address2": "address2",
   "city": "city",
   "configuration": {
+    "tandem": false,
     "userCanEditControlSheet": true,
     "validateFlights": true,
   },
@@ -40,6 +42,7 @@ exports[`Schools (e2e) /schools/configuration (PUT) 1`] = `
   "address2": "address2",
   "city": "city",
   "configuration": {
+    "tandem": true,
     "userCanEditControlSheet": false,
     "validateFlights": false,
   },
@@ -57,6 +60,7 @@ exports[`Schools (e2e) /schools/configuration (PUT) 2`] = `
   "address2": "address2",
   "city": "city",
   "configuration": {
+    "tandem": true,
     "userCanEditControlSheet": false,
     "validateFlights": false,
   },
@@ -68,6 +72,311 @@ exports[`Schools (e2e) /schools/configuration (PUT) 2`] = `
 }
 `;
 
+exports[`Schools tandem pilots (e2e) /schools/:id/tandem-pilots (GET) 1`] = `
+[
+  {
+    "isArchived": false,
+    "user": {
+      "email": "tandem-pilot@tandem-pilot.com",
+      "firstname": "tandem-pilot",
+      "lastname": "tandem-pilot",
+      "phone": null,
+    },
+  },
+]
+`;
+
+exports[`Schools tandem pilots (e2e) /schools/:id/tandem-pilots/:tandemPilotId/flights (GET) 1`] = `
+[
+  {
+    "date": "2025-01-03T00:00:00.000Z",
+    "description": "description",
+    "glider": {
+      "archived": false,
+      "brand": "Gin",
+      "checks": null,
+      "name": "Yeti",
+      "nbFlights": null,
+      "note": "note",
+      "tandem": false,
+      "time": null,
+    },
+    "igc": null,
+    "km": 100.2,
+    "landing": {
+      "altitude": 1000,
+      "country": "CH",
+      "name": "Bitsch",
+      "notes": "notice",
+    },
+    "number": "4",
+    "price": null,
+    "shvAlone": false,
+    "start": {
+      "altitude": 1000,
+      "country": "CH",
+      "name": "Belalp",
+      "notes": "notice",
+    },
+    "tandemSchoolData": {
+      "tandemSchool": {
+        "address1": "address",
+        "address2": "address2",
+        "city": "city",
+        "email": "school@example.com",
+        "language": "de",
+        "name": "test school",
+        "phone": "0123456789",
+        "plz": "1234",
+      },
+    },
+    "time": "01:30:00",
+  },
+  {
+    "date": "2025-01-02T00:00:00.000Z",
+    "description": "description",
+    "glider": {
+      "archived": false,
+      "brand": "Ozone",
+      "checks": null,
+      "name": "Delta",
+      "nbFlights": null,
+      "note": "note",
+      "tandem": false,
+      "time": null,
+    },
+    "igc": null,
+    "km": 100.2,
+    "landing": {
+      "altitude": 1000,
+      "country": "CH",
+      "name": "Belalp",
+      "notes": "notice",
+    },
+    "number": "3",
+    "price": null,
+    "shvAlone": false,
+    "start": {
+      "altitude": 1000,
+      "country": "CH",
+      "name": "Fiesch",
+      "notes": "notice",
+    },
+    "tandemSchoolData": {
+      "tandemSchool": {
+        "address1": "address",
+        "address2": "address2",
+        "city": "city",
+        "email": "school@example.com",
+        "language": "de",
+        "name": "test school",
+        "phone": "0123456789",
+        "plz": "1234",
+      },
+    },
+    "time": "01:30:00",
+  },
+  {
+    "date": "2025-01-01T00:00:00.000Z",
+    "description": "description",
+    "glider": {
+      "archived": false,
+      "brand": "Advance",
+      "checks": null,
+      "name": "Bibeta 6",
+      "nbFlights": null,
+      "note": "note",
+      "tandem": true,
+      "time": null,
+    },
+    "igc": null,
+    "km": 100.2,
+    "landing": {
+      "altitude": 1000,
+      "country": "CH",
+      "name": "Fiesch",
+      "notes": "notice",
+    },
+    "number": "2",
+    "price": null,
+    "shvAlone": false,
+    "start": {
+      "altitude": 1000,
+      "country": "CH",
+      "name": "riederalp",
+      "notes": "notice",
+    },
+    "tandemSchoolData": {
+      "tandemSchool": {
+        "address1": "address",
+        "address2": "address2",
+        "city": "city",
+        "email": "school@example.com",
+        "language": "de",
+        "name": "test school",
+        "phone": "0123456789",
+        "plz": "1234",
+      },
+    },
+    "time": "01:30:00",
+  },
+  {
+    "date": "2025-01-01T00:00:00.000Z",
+    "description": "description",
+    "glider": {
+      "archived": false,
+      "brand": "Advance",
+      "checks": null,
+      "name": "Bibeta 6",
+      "nbFlights": null,
+      "note": "note",
+      "tandem": true,
+      "time": null,
+    },
+    "igc": null,
+    "km": 100.2,
+    "landing": {
+      "altitude": 1000,
+      "country": "CH",
+      "name": "Fiesch",
+      "notes": "notice",
+    },
+    "number": "1",
+    "price": null,
+    "shvAlone": false,
+    "start": {
+      "altitude": 1000,
+      "country": "CH",
+      "name": "riederalp",
+      "notes": "notice",
+    },
+    "tandemSchoolData": {
+      "tandemSchool": {
+        "address1": "address",
+        "address2": "address2",
+        "city": "city",
+        "email": "school@example.com",
+        "language": "de",
+        "name": "test school",
+        "phone": "0123456789",
+        "plz": "1234",
+      },
+    },
+    "time": "01:30:00",
+  },
+]
+`;
+
+exports[`Schools tandem pilots (e2e) /schools/:id/tandem-pilots/:tandemPilotId/flights/:flightId (PUT) 1`] = `
+{
+  "date": "2025-01-01",
+  "description": "description",
+  "glider": {
+    "archived": false,
+    "brand": "Advance",
+    "buyDate": "2020-01-01",
+    "checks": null,
+    "name": "Bibeta 6",
+    "nbFlights": null,
+    "note": "note",
+    "tandem": true,
+    "time": null,
+  },
+  "igc": null,
+  "km": 100.2,
+  "landing": {
+    "altitude": 1000,
+    "country": "CH",
+    "name": "Fiesch",
+    "notes": "notice",
+    "point": null,
+  },
+  "price": null,
+  "shvAlone": false,
+  "start": {
+    "altitude": 1000,
+    "country": "CH",
+    "name": "riederalp",
+    "notes": "notice",
+    "point": null,
+  },
+  "tandemSchoolData": {
+    "instructor": {
+      "config": null,
+      "email": "instructor@instructor.com",
+      "firstname": "instructor",
+      "lastname": "instructor",
+      "loginType": "LOCAL",
+      "phone": null,
+    },
+    "paymentAmount": 100,
+    "paymentComment": "paid",
+    "paymentState": "PAID",
+    "paymentTimestamp": Any<String>,
+    "tandemSchool": {
+      "address1": "address",
+      "address2": "address2",
+      "city": "city",
+      "configuration": {
+        "tandem": true,
+        "userCanEditControlSheet": true,
+        "validateFlights": true,
+      },
+      "email": "school@example.com",
+      "language": "de",
+      "name": "test school",
+      "phone": "0123456789",
+      "plz": "1234",
+    },
+  },
+  "time": "01:30:00",
+  "validation": {
+    "comment": null,
+    "instructor": null,
+    "school": null,
+    "state": null,
+    "timestamp": null,
+  },
+}
+`;
+
+exports[`Schools tandem pilots (e2e) /schools/:id/tandem-pilots/:tandemPilotId/passenger-confirmations (GET) 1`] = `
+[
+  {
+    "canUseData": true,
+    "date": "2024-01-01T00:00:00.000Z",
+    "email": "email",
+    "firstname": "firstname",
+    "lastname": "lastname",
+    "phone": "phone",
+    "place": "place",
+    "signature": "signature",
+    "signatureMimeType": "image/svg+xml",
+    "tandemSchool": {
+      "address1": "address",
+      "address2": "address2",
+      "city": "city",
+      "configuration": {
+        "tandem": true,
+        "userCanEditControlSheet": true,
+        "validateFlights": true,
+      },
+      "email": "school@example.com",
+      "language": "de",
+      "name": "test school",
+      "phone": "0123456789",
+      "plz": "1234",
+    },
+    "validation": {
+      "fullyUnderstoodInstructions": true,
+      "noHealthProblems": true,
+      "understandRisks": true,
+      "undertakePilotInstructions": true,
+    },
+  },
+]
+`;
+
 exports[`Student schools (e2e) /student/schools (GET) 1`] = `
 [
   {
@@ -75,6 +384,7 @@ exports[`Student schools (e2e) /student/schools (GET) 1`] = `
     "address2": "address2",
     "city": "city",
     "configuration": {
+      "tandem": true,
       "userCanEditControlSheet": true,
       "validateFlights": true,
     },
@@ -94,6 +404,7 @@ exports[`instructor schools (e2e) /instructor/schools (GET) 1`] = `
     "address2": "address2",
     "city": "city",
     "configuration": {
+      "tandem": true,
       "userCanEditControlSheet": true,
       "validateFlights": true,
     },
@@ -108,6 +419,7 @@ exports[`instructor schools (e2e) /instructor/schools (GET) 1`] = `
     "address2": "address2",
     "city": "city",
     "configuration": {
+      "tandem": true,
       "userCanEditControlSheet": true,
       "validateFlights": true,
     },
