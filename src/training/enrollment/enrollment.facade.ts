@@ -186,10 +186,16 @@ export class EnrollmentFacade {
             if (foundStudent) {
                 return null;
             }
-        } else {
+        } else if (EnrollmentType.TEAM_MEMBER == enrollment.type) {
             const teamMembers = await this.teamMemberRepository.getTeamMembersBySchoolId(enrollment.school.id);
             const foundTeamMember = teamMembers.find((teamMember: TeamMember) => teamMember.user.email === enrollment.email);
             if (foundTeamMember) {
+                return null;
+            }
+        } else {
+            const tandemPilots = await this.tandemPilotRepository.getTandemPilotsBySchoolId(enrollment.school.id);
+            const foundTandemPilot = tandemPilots.find((tandemPilot: TandemPilot) => tandemPilot.user.email === enrollment.email);
+            if (foundTandemPilot) {
                 return null;
             }
         }
