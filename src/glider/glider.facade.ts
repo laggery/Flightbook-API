@@ -68,6 +68,7 @@ export class GliderFacade {
         glider.tandem = gliderDto.tandem;
         glider.archived = gliderDto.archived;
         glider.note = gliderDto.note ? gliderDto.note : null;
+        glider.color = gliderDto.color ? gliderDto.color : null;
 
         if (gliderDto.checks?.length == 0) {
             glider.checks = null;

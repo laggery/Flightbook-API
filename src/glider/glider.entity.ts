@@ -31,6 +31,9 @@ export class Glider {
   @Column("character varying", { name: "name", length: 30 })
   name: string;
 
+  @Column("character varying", { name: "color", nullable: true })
+  color: string | null;
+
   @Column("boolean", { name: "tandem", default: () => "false" })
   tandem: boolean;
 

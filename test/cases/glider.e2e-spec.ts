@@ -3,6 +3,7 @@ import { Testdata } from '../testdata';
 import { BaseE2ETest } from '../base-e2e-test';
 import { JwtTestHelper } from '../jwt-helper';
 import { removeIds } from '../utils/snapshot-utils';
+import { GliderDto } from 'src/glider/interface/glider-dto';
 
 describe('Gliders (e2e)', () => {
   const testInstance = new BaseE2ETest();
@@ -85,7 +86,10 @@ describe('Gliders (e2e)', () => {
     await testInstance.gliderRepository.save(glider);
     const keycloakToken = JwtTestHelper.createKeycloakToken();
 
-    const gliderDto = Testdata.createGliderDto("Ozone", "Magnum", true);
+    const gliderDto: GliderDto = {
+      ...Testdata.createGliderDto("Ozone", "Magnum", true),
+      color: "red"
+    };
 
     //when
     return request(testInstance.app.getHttpServer())

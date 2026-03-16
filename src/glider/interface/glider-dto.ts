@@ -30,6 +30,9 @@ export class GliderDto {
     @ApiProperty()
     @Expose()
     readonly name: string;
+    @ApiPropertyOptional()
+    @Expose()
+    readonly color?: string;
     @ApiProperty()
     @Expose()
     readonly tandem: boolean;
