@@ -53,12 +53,15 @@ export class TandemPilotFacade {
         return plainToInstance(TandemPilotDto, tandemPilotResp);
     }
 
-    async getPassengerConfirmationsByTandemPilotId(tandemPilotId: number, query: any): Promise<PagerEntityDto<PassengerConfirmationDto[]>> {
+    async getPassengerConfirmationsByTandemPilotId(schoolId: number, tandemPilotId: number, query: any): Promise<PagerEntityDto<PassengerConfirmationDto[]>> {
         const tandemPilot = await this.tandemPilotRepository.getTandemPilotById(tandemPilotId);
 
         if (!tandemPilot) {
             throw TandemPilotException.notFoundException();
         }
+
+        query["tandem-school-id"] = schoolId;
+
         return await this.passengerConfirmationFacade.getPassengerConfirmations(tandemPilot.user.id, query);
     }
 

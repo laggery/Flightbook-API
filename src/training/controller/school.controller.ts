@@ -70,7 +70,7 @@ export class SchoolController {
     @UseGuards(CompositeAuthGuard, SchoolGuard)
     @Get('/:id/tandem-pilots/:tandemPilotId/passenger-confirmations')
     getPassengerConfirmationsBySchoolId(@Param('id') id: number, @Query() query: any, @Param('tandemPilotId') tandemPilotId: number): Promise<PagerEntityDto<PassengerConfirmationDto[]>> {
-        return this.tandemPilotFacade.getPassengerConfirmationsByTandemPilotId(tandemPilotId, query);
+        return this.tandemPilotFacade.getPassengerConfirmationsByTandemPilotId(id, tandemPilotId, query);
     }
 
     @UseGuards(CompositeAuthGuard, SchoolGuard)

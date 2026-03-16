@@ -54,6 +54,10 @@ export class PassengerConfirmationRepository extends Repository<PassengerConfirm
             } else if (query && query.to) {
                 options.where.scheduling = LessThanOrEqual(query.to);
             }
+
+            if (query && query["tandem-school-id"]) {
+                options.where.tandemSchool = { id: query["tandem-school-id"] };
+            }
     
             let entityNumber: [PassengerConfirmation[], number] = await this.findAndCount(options);
             return entityNumber;
