@@ -12,6 +12,7 @@ export class StudentDto {
     public lastFlight: FlightDto;
     public isArchived: boolean;
     public isTandem: boolean;
+    public isAppointmentActive: boolean;
     public controlSheet: ControlSheetDto;
     public emergencyContacts: EmergencyContactDto[];
     public lastNote: NoteDto;

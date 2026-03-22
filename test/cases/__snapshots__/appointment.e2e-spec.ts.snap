@@ -111,6 +111,7 @@ exports[`instructor appointment (e2e) /instructor/schools/:id/appointments (POST
   "subscriptions": [
     {
       "student": {
+        "isAppointmentActive": true,
         "isArchived": false,
         "isTandem": false,
         "statistic": null,
@@ -175,6 +176,7 @@ exports[`instructor appointment (e2e) /instructor/schools/:id/appointments (PUT)
   "subscriptions": [
     {
       "student": {
+        "isAppointmentActive": true,
         "isArchived": false,
         "isTandem": false,
         "statistic": null,
@@ -322,6 +324,7 @@ exports[`student appointment (e2e) /student/schools/:schoolId/appointments/:appo
   "subscriptions": [
     {
       "student": {
+        "isAppointmentActive": true,
         "isArchived": false,
         "isTandem": false,
         "statistic": null,
@@ -398,6 +401,7 @@ exports[`student appointment (e2e) /student/schools/:schoolId/appointments/:appo
   "subscriptions": [
     {
       "student": {
+        "isAppointmentActive": true,
         "isArchived": false,
         "isTandem": false,
         "statistic": null,
@@ -418,6 +422,7 @@ exports[`student appointment (e2e) /student/schools/:schoolId/appointments/:appo
     },
     {
       "student": {
+        "isAppointmentActive": true,
         "isArchived": false,
         "isTandem": false,
         "statistic": null,

@@ -89,4 +89,21 @@ export class StudentRepository extends Repository<Student> {
         };
         return this.repository.find(options);
     }
+
+    async getAppointmentActiveStudentsBySchoolId(schoolId: number): Promise<Student[]> {
+        let options: any = {
+            relations: {
+                user: true,
+                school: true
+            },
+            where: {
+                school: {
+                    id: schoolId
+                },
+                isAppointmentActive: true
+            }
+        };
+
+        return this.repository.find(options);    
+    }
 }

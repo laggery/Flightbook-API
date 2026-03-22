@@ -53,6 +53,29 @@ describe('instructor student (e2e)', () => {
       });
   });
 
+  it('/instructor/students/:id/appointment-access (PATCH)', async () => {
+    // given
+    const { student, instructorUser } = await testInstance.createSchoolData();
+    expect(student.isAppointmentActive).toBe(true);
+
+    const keycloakToken = JwtTestHelper.createKeycloakToken({ sub: instructorUser.id, email: instructorUser.email });
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .patch(`/instructor/students/${student.id}/appointment-access`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .send({ isAppointmentActive: false })
+      .expect(200)
+      .then(async (response) => {
+        expect(response.body.isAppointmentActive).toBe(false);
+
+        const db = await testInstance.studentRepository.findOne({
+          where: { id: response.body.id }
+        });
+        expect(db.isAppointmentActive).toBe(false);
+      });
+  });
+
   it('/instructor/schools/:id/students (GET)', async () => {
     // given
     const { instructorUser, testSchool } = await testInstance.createSchoolDataWithAppointment();

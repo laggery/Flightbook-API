@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Headers, HttpCode, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Headers, HttpCode, Param, Patch, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
 import { StudentGuard } from '../../auth/guard/student.guard';
 import { ControlSheetDto } from '../../training/control-sheet/interface/control-sheet-dto';
 import { FlightDto } from '../../flight/interface/flight-dto';
@@ -22,6 +22,7 @@ import { NoteFacade } from '../note/note.facade';
 import { CompositeAuthGuard } from '../../auth/guard/composite-auth.guard';
 import { EmergencyContactDto } from '../emergency-contact/interface/emergency-contact-dto';
 import { FlightValidationDto } from '../../flight/interface/flight-validation-dto';
+import { StudentUpdateDto } from '../student/interface/student-update-dto';
 
 @Controller('instructor')
 @ApiTags('Instructor')
@@ -142,6 +143,12 @@ export class InstructorController {
     @HttpCode(204)
     async removeStudent(@Request() req, @Param('id') studendId: number): Promise<StudentDto> {
         return await this.studentFacade.archiveStudent(studendId);
+    }
+
+    @UseGuards(CompositeAuthGuard, StudentGuard)
+    @Patch('/students/:id/appointment-access')
+    async updateStudentAppointmentAccess(@Request() req, @Param('id') studentId: number, @Body() updateDto: StudentUpdateDto): Promise<StudentDto> {
+        return await this.studentFacade.updateStudentAppointmentAccess(studentId, updateDto);
     }
 
     @UseGuards(CompositeAuthGuard, StudentGuard)

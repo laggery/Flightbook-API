@@ -232,6 +232,7 @@ export class EnrollmentFacade {
                 throw StudentException.alreadyExistsException();
             } else if (foundStudent) {
                 foundStudent.isArchived = false;
+                foundStudent.isAppointmentActive = true;
                 foundStudent.timestamp = new Date(); 
                 await this.studentRepository.save(foundStudent);
                 await this.addControlSheetToStudent(user, enrollment.school);

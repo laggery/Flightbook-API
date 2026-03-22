@@ -13,6 +13,7 @@ export class StudentMapper {
         studentDto.statistic = stat;
         studentDto.isArchived = student.isArchived;
         studentDto.isTandem = student.isTandem;
+        studentDto.isAppointmentActive = student.isAppointmentActive;
         return studentDto
     }
 }

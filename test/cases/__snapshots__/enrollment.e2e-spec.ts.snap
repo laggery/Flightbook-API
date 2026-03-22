@@ -37,6 +37,7 @@ exports[`Enrollments (e2e) /:token (GET) 2`] = `
 
 exports[`Enrollments (e2e) /:token Student (POST) 1`] = `
 {
+  "isAppointmentActive": true,
   "isArchived": false,
   "isTandem": false,
   "school": {

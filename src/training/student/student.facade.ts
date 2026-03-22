@@ -20,6 +20,7 @@ import { SchoolException } from '../school/exception/school.exception';
 import { SchoolRepository } from '../school/school.repository';
 import { FlightValidationDto } from '../../flight/interface/flight-validation-dto';
 import { FlightValidationState } from '../../flight/flight-validation-state';
+import { StudentUpdateDto } from './interface/student-update-dto';
 
 @Injectable()
 export class StudentFacade {
@@ -32,6 +33,14 @@ export class StudentFacade {
         private flightFacade: FlightFacade,
         private controlSheetFacade: ControlSheetFacade,
         private emergencyContactFacade: EmergencyContactFacade) { }
+
+    async getStudentByUserIdAndSchoolId(userId: number, schoolId: number): Promise<StudentDto | null> {
+        const student = await this.studentRepository.getStudentByUserIdAndSchoolId(userId, schoolId);
+        if (!student) {
+            return null;
+        }
+        return StudentMapper.toStudentDto(student, null);
+    }
 
     async getStudentsBySchoolId(id: number, archived: boolean): Promise<StudentDto[]> {
         const students = await this.studentRepository.getStudentsBySchoolId(id, archived);
@@ -108,10 +117,32 @@ export class StudentFacade {
             throw StudentException.notFoundException();
         }
 
+        if (!student.isArchived) {
+            student.timestamp = new Date();
+        }
+        
         student.isArchived = true;
-        student.timestamp = new Date();
+        student.isAppointmentActive = false;
 
         const studentResp = await this.studentRepository.save(student);
+        return StudentMapper.toStudentDto(studentResp, await this.flightFacade.getGlobalStatistic({ userId: studentResp.user.id }, {timestamp: studentResp.timestamp}));
+    }
+
+    async updateStudentAppointmentAccess(studentId: number, updateDto: StudentUpdateDto): Promise<StudentDto> {
+        const student = await this.studentRepository.getStudentById(studentId);
+        if (!student) {
+            throw StudentException.notFoundException();
+        }
+
+        const { isAppointmentActive } = updateDto;
+        if (isAppointmentActive !== undefined) {
+            student.isAppointmentActive = isAppointmentActive;
+        } else {
+            student.isAppointmentActive = false
+        }
+
+        const studentResp = await this.studentRepository.save(student);
+
         return StudentMapper.toStudentDto(studentResp, await this.flightFacade.getGlobalStatistic({ userId: studentResp.user.id }, {timestamp: studentResp.timestamp}));
     }
 
@@ -132,7 +163,7 @@ export class StudentFacade {
         const schoolsDto: SchoolDto[] = [];
 
         students.forEach((student: Student) => {
-            if (!student.isArchived){
+            if (!student.isArchived || (student.isArchived && student.isAppointmentActive)){
                 schoolsDto.push(plainToClass(SchoolDto, student.school));
             }
         });

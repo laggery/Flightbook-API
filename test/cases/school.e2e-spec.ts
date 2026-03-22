@@ -245,6 +245,27 @@ describe('Student schools (e2e)', () => {
         expect(db).toHaveLength(2);
       });
   });
+
+  it('/student/schools/:id (DELETE)', async () => {
+    // given
+    const { student } = await testInstance.createSchoolData();
+    expect(student.isArchived).toBe(false);
+
+    const keycloakToken = JwtTestHelper.createKeycloakToken({ sub: student.user.id, email: student.user.email });
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .delete(`/student/schools/${student.school.id}`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .expect(204)
+      .then(async () => {
+        const db = await testInstance.studentRepository.findOne({
+          where: { id: student.id }
+        });
+        expect(db.isArchived).toBe(true);
+        expect(db.isAppointmentActive).toBe(false);
+      });
+  });
 });
 
 describe('instructor schools (e2e)', () => {

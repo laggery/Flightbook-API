@@ -5,6 +5,7 @@ exports[`instructor student (e2e) /instructor/schools/:id/appointments/:appointm
   {
     "controlSheet": null,
     "emergencyContacts": [],
+    "isAppointmentActive": true,
     "isArchived": false,
     "isTandem": false,
     "statistic": {
@@ -33,6 +34,7 @@ exports[`instructor student (e2e) /instructor/schools/:id/students (GET) 1`] = `
   {
     "controlSheet": null,
     "countNotValidatedFlights": 0,
+    "isAppointmentActive": true,
     "isArchived": false,
     "isTandem": false,
     "statistic": {

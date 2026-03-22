@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Post, Query, Request, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { SchoolDto } from '../../training/school/interface/school-dto';
 import { StudentFacade } from '../../training/student/student.facade';
@@ -30,6 +30,17 @@ export class StudentController {
     @Get('schools')
     getSchoolsByUserId(@Request() req): Promise<SchoolDto[]> {
         return this.studentFacade.getActiveSchoolsByUserId(req.user.userId);
+    }
+
+    @UseGuards(CompositeAuthGuard)
+    @Delete('schools/:id')
+    @HttpCode(204)
+    async removeStudent(@Request() req, @Param('id', ParseIntPipe) schoolId: number): Promise<void> {
+        const student = await this.studentFacade.getStudentByUserIdAndSchoolId(req.user.userId, schoolId)
+        if (!student) {
+            throw new UnauthorizedException();
+        }
+        await this.studentFacade.archiveStudent(student.id);
     }
 
     @UseGuards(CompositeAuthGuard)

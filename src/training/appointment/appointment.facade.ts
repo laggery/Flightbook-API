@@ -52,7 +52,7 @@ export class AppointmentFacade {
 
         const appointmentResp: Appointment = await this.appointmentRepository.save(appointment);
 
-        const students = await this.studentRepository.getStudentsBySchoolId(schoolId, false);
+        const students = await this.studentRepository.getAppointmentActiveStudentsBySchoolId(schoolId);
 
         if (appointment.subscriptions?.length > 0) {
             const addedStudents = [];
@@ -174,7 +174,7 @@ export class AppointmentFacade {
 
             // Inform waiting student
             // Only for EMC student subscription - After migrate Subscription user to student the student request can be removed
-            const students = await this.studentRepository.getStudentsBySchoolId(school.id);
+            const students = await this.studentRepository.getAppointmentActiveStudentsBySchoolId(school.id);
             
             let countSubscription = 0;
             const waitingList = [];
@@ -295,7 +295,7 @@ export class AppointmentFacade {
     private async generateWaitingList(appointmentDtoOrList: AppointmentDto | AppointmentDto[], schoolId: number): Promise<AppointmentDto | AppointmentDto[]> {
         const appointmentDtoList = Array.isArray(appointmentDtoOrList) ? appointmentDtoOrList : [appointmentDtoOrList];
         // Only for EMC student subscription - After migrate Subscription user to student the student request can be removed
-        const students = await this.studentRepository.getStudentsBySchoolId(schoolId);
+        const students = await this.studentRepository.getAppointmentActiveStudentsBySchoolId(schoolId);
         appointmentDtoList.forEach((appointmentDto: AppointmentDto) => {
             let countSubscription = 0;
             let countWaitingList = 0;

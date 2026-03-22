@@ -35,6 +35,9 @@ export class Student {
   @Column("boolean", { name: "isTandem", default: () => "false" })
   isTandem: boolean;
 
+  @Column("boolean", { name: "isAppointmentActive", default: () => "true" })
+  isAppointmentActive: boolean;
+
   @OneToMany(() => Note, (note) => note.student)
   notes: Note[];
 
