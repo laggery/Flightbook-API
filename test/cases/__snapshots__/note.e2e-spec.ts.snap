@@ -30,9 +30,14 @@ exports[`instructor note (e2e) /instructor/students/:id/notes (POST) 1`] = `
       "address2": "address2",
       "city": "city",
       "configuration": {
-        "tandem": true,
-        "userCanEditControlSheet": true,
-        "validateFlights": true,
+        "schoolModule": {
+          "active": true,
+          "userCanEditControlSheet": true,
+          "validateFlights": true,
+        },
+        "tandemModule": {
+          "active": true,
+        },
       },
       "email": "school@example.com",
       "language": "de",
@@ -81,9 +86,14 @@ exports[`instructor note (e2e) /instructor/students/:id/notes (PUT) 1`] = `
       "address2": "address2",
       "city": "city",
       "configuration": {
-        "tandem": true,
-        "userCanEditControlSheet": true,
-        "validateFlights": true,
+        "schoolModule": {
+          "active": true,
+          "userCanEditControlSheet": true,
+          "validateFlights": true,
+        },
+        "tandemModule": {
+          "active": true,
+        },
       },
       "email": "school@example.com",
       "language": "de",

@@ -1,11 +1,11 @@
-import { Enrollment } from "../../training/enrollment/enrollment.entity";
-import { Student } from "../../training/student/student.entity";
+import { Enrollment } from "../../enrollment/enrollment.entity";
+import { Student } from "../../student/student.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { TeamMember } from "../team-member/team-member.entity";
-import {Appointment} from "../appointment/appointment.entity";
-import { AppointmentType } from "../appointment/appointment-type.entity";
-import { SchoolConfiguration } from "./school-configuration.entity";
-import { TandemPilot } from "../tandem-pilot/tandem-pilot.entity";
+import { TeamMember } from "../../team-member/team-member.entity";
+import {Appointment} from "../../appointment/appointment.entity";
+import { AppointmentType } from "../../appointment/appointment-type.entity";
+import { TandemPilot } from "../../tandem-pilot/tandem-pilot.entity";
+import { SchoolConfig } from "./school-config";
 
 @Entity("school")
 export class School {
@@ -37,8 +37,11 @@ export class School {
   @Column("character varying", { name: "language", length: 2 })
   language: string;
 
-  @Column(() => SchoolConfiguration, { prefix: false })
-  configuration: SchoolConfiguration;
+  // @Column(() => SchoolConfiguration, { prefix: false })
+  // configuration: SchoolConfiguration;
+
+  @Column("jsonb", { nullable: true, name: "config" })
+  configuration: SchoolConfig | null;
 
   @OneToMany(() => TeamMember, (teamMember) => teamMember.school, { cascade: ['insert', 'update'] })
   teamMembers: TeamMember[];
@@ -57,4 +60,24 @@ export class School {
 
   @OneToMany(() => AppointmentType, (appointmentType) => appointmentType.school, { cascade: ['insert', 'update'] })
   appointmentTypes: AppointmentType[];
+
+  mergeConfiguration(update: SchoolConfig): void {
+    if (!this.configuration) {
+      this.configuration = new SchoolConfig();
+    }
+
+    if (update.schoolModule) {
+      this.configuration.schoolModule = {
+        ...this.configuration.schoolModule,
+        ...update.schoolModule
+      };
+    }
+
+    if (update.tandemModule) {
+      this.configuration.tandemModule = {
+        ...this.configuration.tandemModule,
+        ...update.tandemModule
+      };
+    }
+  }
 }

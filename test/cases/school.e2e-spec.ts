@@ -58,15 +58,25 @@ describe('Schools (e2e)', () => {
     await testInstance.teamMemberRepository.save(teamMember);
     const keycloakToken = JwtTestHelper.createKeycloakToken();
     expect(school.configuration).toEqual({
-      tandem: true,
-      validateFlights: true,
-      userCanEditControlSheet: true
+      schoolModule: {
+        active: true,
+        validateFlights: true,
+        userCanEditControlSheet: true,
+      },
+      tandemModule: {
+        active: true
+      }
     });
 
     school.configuration = {
-      validateFlights: false,
-      userCanEditControlSheet: false,
-      tandem: false
+      schoolModule: {
+        active: false,
+        validateFlights: false,
+        userCanEditControlSheet: false,
+      },
+      tandemModule: {
+        active: false
+      }
     };
 
     //when
@@ -191,15 +201,15 @@ describe('Schools tandem pilots (e2e)', () => {
     const { instructorUser, testSchool, tandemPilot } = await testInstance.createSchoolData();
     const flights = await testInstance.createFlightData(tandemPilot.user, testSchool);
     const flightTandemSchoolData = {
-          paymentState: TandemSchoolPaymentState.PAID,
-          paymentComment: 'paid',
-          instructor: instructorUser,
-          tandemSchool: testSchool,
-          paymentAmount: 100
-        };
-    
+      paymentState: TandemSchoolPaymentState.PAID,
+      paymentComment: 'paid',
+      instructor: instructorUser,
+      tandemSchool: testSchool,
+      paymentAmount: 100
+    };
+
     const keycloakToken = JwtTestHelper.createKeycloakToken({ sub: instructorUser.id, email: instructorUser.email });
-    
+
     // when
     return request(testInstance.app.getHttpServer())
       .put(`/schools/${testSchool.id}/tandem-pilots/${tandemPilot.id}/flights/${flights[0].id}`)

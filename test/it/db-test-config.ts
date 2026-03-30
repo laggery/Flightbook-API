@@ -12,7 +12,7 @@ import { Appointment } from "../../src/training/appointment/appointment.entity";
 import { ControlSheet } from "../../src/training/control-sheet/control-sheet.entity";
 import { Enrollment } from "../../src/training/enrollment/enrollment.entity";
 import { Note } from "../../src/training/note/note.entity";
-import { School } from "../../src/training/school/school.entity";
+import { School } from "../../src/training/school/domain/school.entity";
 import { Student } from "../../src/training/student/student.entity";
 import { TeamMember } from "../../src/training/team-member/team-member.entity";
 import { User } from "../../src/user/domain/user.entity";

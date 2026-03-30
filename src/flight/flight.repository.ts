@@ -9,7 +9,7 @@ import { PagerDto } from '../interface/pager-dto';
 import { FlightValidation } from './flight-validation.entity';
 import { FlightValidationState } from './flight-validation-state';
 import { User } from '../user/domain/user.entity';
-import { School } from '../training/school/school.entity';
+import { School } from '../training/school/domain/school.entity';
 import { TandemSchoolData } from './tandem-school-data.entity';
 import { TandemSchoolPaymentState } from './tandem-school-payment-state';
 

@@ -1,6 +1,6 @@
 import { SchoolRepository } from './school.repository';
 import { Repository } from 'typeorm';
-import { School } from './school.entity';
+import { School } from './domain/school.entity';
 
 describe('School Repository', () => {
   let schoolRepository: SchoolRepository;

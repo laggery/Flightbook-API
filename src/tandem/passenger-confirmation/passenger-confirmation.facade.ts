@@ -7,7 +7,7 @@ import { PassengerConfirmation } from './passenger-confirmation.entity';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { PagerEntityDto } from '../../interface/pager-entity-dto';
 import { SchoolRepository } from '../../training/school/school.repository';
-import { School } from '../../training/school/school.entity';
+import { School } from '../../training/school/domain/school.entity';
 
 @Injectable()
 export class PassengerConfirmationFacade {

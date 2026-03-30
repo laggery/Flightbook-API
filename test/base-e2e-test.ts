@@ -5,7 +5,7 @@ import { News } from '../src/news/news.entity';
 import { User } from '../src/user/domain/user.entity';
 import { Testdata } from './testdata';
 import { AppointmentBuilderTest } from './utils/appointment-builder-test';
-import { School } from '../src/training/school/school.entity';
+import { School } from '../src/training/school/domain/school.entity';
 import { Student } from '../src/training/student/student.entity';
 import { Appointment } from '../src/training/appointment/appointment.entity';
 import { TeamMember } from '../src/training/team-member/team-member.entity';

@@ -20,7 +20,7 @@ import { TeamMemberException } from '../team-member/exception/team-member.except
 import { ControlSheetRepository } from '../control-sheet/control-sheet.repository';
 import { User } from '../../user/domain/user.entity';
 import { ControlSheet } from '../control-sheet/control-sheet.entity';
-import { School } from '../school/school.entity';
+import { School } from '../school/domain/school.entity';
 import { TandemPilotRepository } from '../tandem-pilot/tandem-pilot.repository';
 import { TandemPilotException } from '../tandem-pilot/exception/tandem-pilot.exception';
 import { TandemPilot } from '../tandem-pilot/tandem-pilot.entity';
@@ -280,7 +280,7 @@ export class EnrollmentFacade {
         if (!sheet) {
             const controlSheet = new ControlSheet();
             controlSheet.user = user;
-            controlSheet.userCanEdit = school.configuration.userCanEditControlSheet;
+            controlSheet.userCanEdit = school.configuration.schoolModule.userCanEditControlSheet;
             await this.controlSheetRepository.save(controlSheet);
         }
     }

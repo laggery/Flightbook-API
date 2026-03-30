@@ -2,7 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { StudentModule } from '../../training/student/student.module';
 import { UserModule } from '../../user/user.module';
-import { School } from './school.entity';
+import { School } from './domain/school.entity';
 import { SchoolFacade } from './school.facade';
 import { SchoolRepository } from './school.repository';
 

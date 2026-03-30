@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { SchoolException } from '../school/exception/school.exception';
-import { School } from '../school/school.entity';
+import { School } from '../school/domain/school.entity';
 import { SchoolRepository } from '../school/school.repository';
 import { AppointmentType } from './appointment-type.entity';
 import { AppointmentTypeRepository } from './appointment-type.repository';

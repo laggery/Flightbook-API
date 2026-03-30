@@ -1,7 +1,7 @@
 import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {State} from "./state";
 import {Subscription} from "../subscription/subscription.entity";
-import {School} from "../school/school.entity";
+import {School} from "../school/domain/school.entity";
 import {User} from "../../user/domain/user.entity";
 import { AppointmentType } from "./appointment-type.entity";
 import { GuestSubscription } from "../subscription/guest-subscription.entity";

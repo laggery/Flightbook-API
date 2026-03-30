@@ -4,11 +4,10 @@ import { User } from '../../user/domain/user.entity';
 import { UserRepository } from '../../user/user.repository';
 import { TeamMember } from '../team-member/team-member.entity';
 import { SchoolDto } from './interface/school-dto';
-import { School } from './school.entity';
+import { School } from './domain/school.entity';
 import { SchoolRepository } from './school.repository';
 import {SchoolException} from "./exception/school.exception";
-import { SchoolConfiguration } from './school-configuration.entity';
-import { SchoolConfigurationDto } from './interface/school-configuration-dto';
+import { SchoolConfig } from './domain/school-config';
 
 @Injectable()
 export class SchoolFacade {
@@ -27,9 +26,15 @@ export class SchoolFacade {
         const school: School = plainToInstance(School, schoolDto);
         school.id = null;
         school.address2 = schoolDto.address2 === '' ? null : schoolDto.address2;
-        school.configuration = new SchoolConfiguration();
-        school.configuration.validateFlights = true;
-        school.configuration.userCanEditControlSheet = true;
+        school.configuration = new SchoolConfig();
+        school.configuration.schoolModule = { 
+            active: true,
+            validateFlights: true,
+            userCanEditControlSheet: true
+        };
+        school.configuration.tandemModule = {
+            active: false
+        };
 
         // Check if name already existe for this user
         if (await this.schoolRepository.getSchoolByName(school.name)) {
@@ -74,7 +79,7 @@ export class SchoolFacade {
         return plainToClass(SchoolDto, schoolResp);
     }
 
-    async updateSchoolConfiguration(id: number, schoolConfigurationDto: SchoolConfigurationDto) {
+    async updateSchoolConfiguration(id: number, schoolConfigurationDto: SchoolConfig) {
         const school: School = await this.schoolRepository.getSchoolById(id);
 
         // Check if school exists
@@ -82,8 +87,7 @@ export class SchoolFacade {
             throw SchoolException.notFoundException();
         }
 
-        school.configuration.validateFlights = schoolConfigurationDto.validateFlights;
-        school.configuration.userCanEditControlSheet = schoolConfigurationDto.userCanEditControlSheet;
+        school.mergeConfiguration(schoolConfigurationDto);
 
         const schoolResp: School = await this.schoolRepository.save(school);
         return plainToClass(SchoolDto, schoolResp);

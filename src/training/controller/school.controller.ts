@@ -3,7 +3,6 @@ import { SchoolDto } from '../school/interface/school-dto';
 import { SchoolFacade } from '../school/school.facade';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CompositeAuthGuard } from '../../auth/guard/composite-auth.guard';
-import { SchoolConfigurationDto } from '../school/interface/school-configuration-dto';
 import { SchoolGuard } from '../../auth/guard/school.guard';
 import { TandemPilotDto } from '../tandem-pilot/interface/tandem-pilot-dto';
 import { EnrollmentFacade } from '../enrollment/enrollment.facade';
@@ -14,6 +13,7 @@ import { EnrollmentWriteDto } from '../enrollment/interface/enrollment-write-dto
 import { EnrollmentDto } from '../enrollment/interface/enrollment-dto';
 import { FlightDto } from '../../flight/interface/flight-dto';
 import { TandemSchoolDataDto } from '../../flight/interface/tandem-school-data-dto';
+import { SchoolConfig } from '../school/domain/school-config';
 
 @Controller('schools')
 @ApiTags('School')
@@ -34,7 +34,7 @@ export class SchoolController {
 
     @UseGuards(CompositeAuthGuard, SchoolGuard)
     @Put(':id/configuration')
-    updateSchoolConfiguration(@Param('id') id: number, @Body() schoolConfigurationDto: SchoolConfigurationDto): Promise<SchoolDto> {
+    updateSchoolConfiguration(@Param('id') id: number, @Body() schoolConfigurationDto: SchoolConfig): Promise<SchoolDto> {
         return this.schoolFacade.updateSchoolConfiguration(id, schoolConfigurationDto);
     }
 

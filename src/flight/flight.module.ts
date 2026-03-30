@@ -11,7 +11,7 @@ import { FileUploadService } from '../fileupload/file-upload.service';
 import { FlightControllerV2 } from './flight.controllerV2';
 
 import { SharedModule } from '../shared/shared.module';
-import { School } from '../training/school/school.entity';
+import { School } from '../training/school/domain/school.entity';
 import { SchoolRepository } from '../training/school/school.repository';
 
 @Module({

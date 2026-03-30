@@ -1,6 +1,6 @@
 import { User } from "../../user/domain/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { School } from "../school/school.entity";
+import { School } from "../school/domain/school.entity";
 
 @Entity("team_member")
 export class TeamMember {

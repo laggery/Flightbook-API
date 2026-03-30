@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Exclude, Expose, Type } from "class-transformer";
-import { IsEmail } from 'class-validator';
-import { SchoolConfigurationDto } from './school-configuration-dto';
+import { IsEmail, IsOptional, ValidateNested } from 'class-validator';
+import { SchoolConfig } from "../domain/school-config";
 
 @Exclude()
 export class SchoolDto {
@@ -33,8 +33,10 @@ export class SchoolDto {
     @ApiProperty()
     @Expose()
     readonly language: string;
-    @ApiPropertyOptional()
+    @ApiPropertyOptional({ type: SchoolConfig })
     @Expose()
-    @Type(() => SchoolConfigurationDto)
-    readonly configuration: SchoolConfigurationDto;
+    @ValidateNested()
+    @IsOptional()
+    @Type(() => SchoolConfig)
+    readonly configuration?: SchoolConfig
 }

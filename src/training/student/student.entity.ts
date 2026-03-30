@@ -1,6 +1,6 @@
 import { User } from "../../user/domain/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { School } from "../school/school.entity";
+import { School } from "../school/domain/school.entity";
 import { Note } from "../note/note.entity";
 
 @Entity("student")

@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassengerConfirmationRepository } from './passenger-confirmation.repository';
 import { UserModule } from '../../user/user.module';
 import { SchoolRepository } from '../../training/school/school.repository';
-import { School } from '../../training/school/school.entity';
+import { School } from '../../training/school/domain/school.entity';
 
 @Module({
   imports: [

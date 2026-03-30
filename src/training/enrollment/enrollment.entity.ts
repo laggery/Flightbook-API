@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { School } from "../school/school.entity";
+import { School } from "../school/domain/school.entity";
 import { EnrollmentType } from "./enrollment-type";
 
 @Entity("enrollment")

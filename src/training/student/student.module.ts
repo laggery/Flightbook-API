@@ -12,7 +12,7 @@ import { Note } from '../note/note.entity';
 import { NoteRepository } from '../note/note.repository';
 import { EmergencyContactModule } from '../emergency-contact/emergency-contact.module';
 import { SchoolRepository } from '../school/school.repository';
-import { School } from '../school/school.entity';
+import { School } from '../school/domain/school.entity';
 
 @Module({
     imports: [

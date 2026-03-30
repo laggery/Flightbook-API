@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
 import { User } from "../../user/domain/user.entity";
-import { School } from "../../training/school/school.entity";
+import { School } from "../../training/school/domain/school.entity";
 
 @Entity("passenger_confirmation")
 export class PassengerConfirmation {

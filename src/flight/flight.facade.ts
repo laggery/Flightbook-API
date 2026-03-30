@@ -16,7 +16,7 @@ import { FileUploadService } from '../fileupload/file-upload.service';
 import { PagerEntityDto } from '../interface/pager-entity-dto';
 import { StatisticType } from './statistic-type';
 import { FlightException } from './exception/flight.exception';
-import { School } from '../training/school/school.entity';
+import { School } from '../training/school/domain/school.entity';
 import { FlightValidation } from './flight-validation.entity';
 import { SchoolException } from '../training/school/exception/school.exception';
 import { FlightValidationDto } from './interface/flight-validation-dto';

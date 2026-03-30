@@ -12,7 +12,7 @@ import { GliderDto } from "../src/glider/interface/glider-dto";
 import { Flight } from "../src/flight/flight.entity";
 import { FlightDto } from "../src/flight/interface/flight-dto";
 import { UserWriteDto } from "../src/user/interface/user-write-dto";
-import { School } from "../src/training/school/school.entity";
+import { School } from "../src/training/school/domain/school.entity";
 import { SchoolDto } from "../src/training/school/interface/school-dto";
 import { TeamMember } from "../src/training/team-member/team-member.entity";
 import { Enrollment } from "../src/training/enrollment/enrollment.entity";
@@ -223,9 +223,14 @@ export class Testdata {
         school.email = "school@example.com";
         school.language = "de";
         school.configuration = {
-            validateFlights: true,
-            userCanEditControlSheet: true,
-            tandem: true
+            schoolModule: {
+                active: true,
+                validateFlights: true,
+                userCanEditControlSheet: true,
+            },
+            tandemModule: {
+                active: true
+            }
         };
         return school;
     }

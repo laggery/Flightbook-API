@@ -10,9 +10,14 @@ exports[`Enrollments (e2e) /:token (GET) 1`] = `
     "address2": "address2",
     "city": "city",
     "configuration": {
-      "tandem": true,
-      "userCanEditControlSheet": true,
-      "validateFlights": true,
+      "schoolModule": {
+        "active": true,
+        "userCanEditControlSheet": true,
+        "validateFlights": true,
+      },
+      "tandemModule": {
+        "active": true,
+      },
     },
     "email": "school@example.com",
     "language": "de",
@@ -45,9 +50,14 @@ exports[`Enrollments (e2e) /:token Student (POST) 1`] = `
     "address2": "address2",
     "city": "city",
     "configuration": {
-      "tandem": true,
-      "userCanEditControlSheet": true,
-      "validateFlights": true,
+      "schoolModule": {
+        "active": true,
+        "userCanEditControlSheet": true,
+        "validateFlights": true,
+      },
+      "tandemModule": {
+        "active": true,
+      },
     },
     "email": "school@example.com",
     "language": "de",
@@ -88,9 +98,14 @@ exports[`Enrollments (e2e) /:token Team member (POST) 1`] = `
     "address2": "address2",
     "city": "city",
     "configuration": {
-      "tandem": true,
-      "userCanEditControlSheet": true,
-      "validateFlights": true,
+      "schoolModule": {
+        "active": true,
+        "userCanEditControlSheet": true,
+        "validateFlights": true,
+      },
+      "tandemModule": {
+        "active": true,
+      },
     },
     "email": "school@example.com",
     "language": "de",

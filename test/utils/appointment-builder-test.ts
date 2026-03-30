@@ -1,4 +1,4 @@
-import { School } from "../../src/training/school/school.entity";
+import { School } from "../../src/training/school/domain/school.entity";
 import { Appointment } from "../../src/training/appointment/appointment.entity";
 import { State } from "../../src/training/appointment/state";
 import { User } from "../../src/user/domain/user.entity";

@@ -55,7 +55,7 @@ export class StudentFacade {
             if (student.isTandem) {
                 query["glider-type"] = 1;
             }
-            if (student.school.configuration.validateFlights) {
+            if (student.school.configuration?.schoolModule?.validateFlights) {
                 query["validation-state"] = FlightValidationState.VALIDATED;
             }
 
@@ -87,7 +87,7 @@ export class StudentFacade {
                 query["glider-type"] = 1;
             }
 
-            if (appointment.school.configuration.validateFlights) {
+            if (appointment.school.configuration.schoolModule.validateFlights) {
                 query["validation-state"] = FlightValidationState.VALIDATED;
             }
             

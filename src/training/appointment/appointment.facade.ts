@@ -3,7 +3,7 @@ import { AppointmentDto } from "./interface/appointment-dto";
 import { plainToInstance } from "class-transformer";
 import { Appointment } from "./appointment.entity";
 import { AppointmentRepository } from "./appointment.repository";
-import { School } from "../school/school.entity";
+import { School } from "../school/domain/school.entity";
 import { SchoolRepository } from "../school/school.repository";
 import { AppointmentException } from "./exception/appointment.exception";
 import { SchoolException } from "../school/exception/school.exception";

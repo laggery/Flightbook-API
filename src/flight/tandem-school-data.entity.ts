@@ -1,6 +1,6 @@
 import { Column, JoinColumn, ManyToOne } from "typeorm";
 import { User } from "../user/domain/user.entity";
-import { School } from "../training/school/school.entity";
+import { School } from "../training/school/domain/school.entity";
 import { TandemSchoolPaymentState } from "./tandem-school-payment-state";
 
 /**
