@@ -4,7 +4,34 @@ import { IsBoolean, IsDate, IsNotEmpty, ValidateNested } from "class-validator";
 import { SchoolDto } from "../../../training/school/interface/school-dto";
 
 @Exclude()
-export class PassengerConfirmationDto {
+export class PassengerConfirmationValidationDto {
+    @Expose()
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsBoolean()
+    readonly fullyUnderstoodInstructions: boolean;
+
+    @Expose()
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsBoolean()
+    readonly undertakePilotInstructions: boolean;
+
+    @Expose()
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsBoolean()
+    readonly noHealthProblems: boolean;
+
+    @Expose()
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsBoolean()
+    readonly understandRisks: boolean;
+}
+
+@Exclude()
+export class PassengerConfirmationLegacyDto {
     @Expose()
     readonly id: number;
 
@@ -53,8 +80,9 @@ export class PassengerConfirmationDto {
     @Expose()
     @ApiProperty()
     @IsNotEmpty()
-    @IsBoolean()
-    readonly validated: boolean;
+    @ValidateNested()
+    @Type(() => PassengerConfirmationValidationDto)
+    readonly validation: PassengerConfirmationValidationDto;
 
     @Expose()
     @ApiProperty()

@@ -161,12 +161,7 @@ export class Testdata {
         passengerConfirmation.email = "email";
         passengerConfirmation.phone = "phone";
         passengerConfirmation.place = "place";
-        passengerConfirmation.validation = {
-            fullyUnderstoodInstructions: true,
-            undertakePilotInstructions: true,
-            noHealthProblems: true,
-            understandRisks: true
-        };
+        passengerConfirmation.validated = true;
         passengerConfirmation.canUseData = true;
         passengerConfirmation.signature = "signature";
         passengerConfirmation.signatureMimeType = "image/svg+xml";

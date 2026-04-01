@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Tandem passenger confirmations (e2e) /tandem/passenger-confirmations (GET) 1`] = `
+exports[`Legacy passenger confirmations (e2e) /tandem/passenger-confirmations (GET) 1`] = `
 {
   "canUseData": true,
   "date": "2024-01-01T00:00:00.000Z",
@@ -12,6 +12,7 @@ exports[`Tandem passenger confirmations (e2e) /tandem/passenger-confirmations (G
   "signature": "signature",
   "signatureMimeType": "image/svg+xml",
   "tandemSchool": null,
+  "validated": true,
   "validation": {
     "fullyUnderstoodInstructions": true,
     "noHealthProblems": true,
@@ -21,7 +22,7 @@ exports[`Tandem passenger confirmations (e2e) /tandem/passenger-confirmations (G
 }
 `;
 
-exports[`Tandem passenger confirmations (e2e) /tandem/passenger-confirmations (POST) 1`] = `
+exports[`Legacy passenger confirmations (e2e) /tandem/passenger-confirmations (POST) 1`] = `
 {
   "canUseData": true,
   "date": "2024-01-01T00:00:00.000Z",
@@ -32,11 +33,43 @@ exports[`Tandem passenger confirmations (e2e) /tandem/passenger-confirmations (P
   "place": "place",
   "signature": "signature",
   "signatureMimeType": "image/svg+xml",
+  "validated": true,
   "validation": {
     "fullyUnderstoodInstructions": true,
     "noHealthProblems": true,
     "understandRisks": true,
     "undertakePilotInstructions": true,
   },
+}
+`;
+
+exports[`Passenger confirmations controller (e2e) /passenger-confirmations (GET) 1`] = `
+{
+  "canUseData": true,
+  "date": "2024-01-01T00:00:00.000Z",
+  "email": "email",
+  "firstname": "firstname",
+  "lastname": "lastname",
+  "phone": "phone",
+  "place": "place",
+  "signature": "signature",
+  "signatureMimeType": "image/svg+xml",
+  "tandemSchool": null,
+  "validated": true,
+}
+`;
+
+exports[`Passenger confirmations controller (e2e) /passenger-confirmations (POST) 1`] = `
+{
+  "canUseData": true,
+  "date": "2024-01-01T00:00:00.000Z",
+  "email": "email",
+  "firstname": "firstname",
+  "lastname": "lastname",
+  "phone": "phone",
+  "place": "place",
+  "signature": "signature",
+  "signatureMimeType": "image/svg+xml",
+  "validated": true,
 }
 `;

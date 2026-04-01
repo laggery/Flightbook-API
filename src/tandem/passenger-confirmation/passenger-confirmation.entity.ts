@@ -33,13 +33,8 @@ export class PassengerConfirmation {
     @Column("text", { nullable: false, name: "signature_mime_type" })
     signatureMimeType: string; // "image/svg+xml"
 
-    @Column("jsonb", { nullable: false })
-    validation: {
-        fullyUnderstoodInstructions: boolean;
-        undertakePilotInstructions: boolean;
-        noHealthProblems: boolean;
-        understandRisks: boolean;
-    };
+    @Column("boolean", { nullable: false, default: false })
+    validated: boolean;
 
     @Column("boolean", { name: "can_use_data", default: () => "false" })
     canUseData: boolean;

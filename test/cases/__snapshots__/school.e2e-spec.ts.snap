@@ -402,12 +402,7 @@ exports[`Schools tandem pilots (e2e) /schools/:id/tandem-pilots/:tandemPilotId/p
       "phone": "0123456789",
       "plz": "1234",
     },
-    "validation": {
-      "fullyUnderstoodInstructions": true,
-      "noHealthProblems": true,
-      "understandRisks": true,
-      "undertakePilotInstructions": true,
-    },
+    "validated": true,
   },
 ]
 `;
