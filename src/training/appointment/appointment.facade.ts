@@ -18,6 +18,8 @@ import { PagerEntityDto } from '../../interface/pager-entity-dto';
 import { EmailService } from '../../email/email.service';
 import { SchoolDto } from '../school/interface/school-dto';
 import { NotificationsService } from '../../shared/services/notifications.service';
+import { GoogleCalendarService } from '../../shared/services/google-calendar.service';
+import { SchoolFacade } from '../school/school.facade';
 import { StudentRepository } from '../student/student.repository';
 import { SubscriptionDto } from '../subscription/interface/subscription-dto';
 import { Student } from '../student/student.entity';
@@ -43,6 +45,8 @@ export class AppointmentFacade {
         private userRepository: UserRepository,
         private emailService: EmailService,
         private notificationsService: NotificationsService,
+        private googleCalendarService: GoogleCalendarService,
+        private schoolFacade: SchoolFacade,
         private flightRepository: FlightRepository
     ) { }
 
@@ -69,6 +73,13 @@ export class AppointmentFacade {
 
         this.emailService.sendNewAppointment(students, appointment);
         this.notificationsService.sendNewAppointment(students, appointment);
+
+        // Sync to Google Calendar
+        try {
+            await this.createOrUpdateAppointmentInGoogleCalendar(appointmentResp);
+        } catch (error) {
+            Logger.error('Failed to sync appointment to Google Calendar', error);
+        }
 
         return await this.generateWaitingList(AppointmentMapper.toAppointmentDto(appointmentResp), schoolId);
     }
@@ -131,6 +142,14 @@ export class AppointmentFacade {
         }
 
         const appointmentResp: Appointment = await this.appointmentRepository.save(appointment);
+
+        // Sync to Google Calendar
+        try {
+            await this.createOrUpdateAppointmentInGoogleCalendar(appointmentResp);
+        } catch (error) {
+            Logger.error('Failed to sync appointment to Google Calendar', error);
+        }
+
         return await this.generateWaitingList(AppointmentMapper.toAppointmentDto(appointmentResp), schoolId);
     }
 
@@ -322,5 +341,29 @@ export class AppointmentFacade {
             appointmentDto.countWaitingList = countWaitingList;
         });
         return appointmentDtoOrList;
+    }
+
+    private async createOrUpdateAppointmentInGoogleCalendar(appointment: Appointment): Promise<void> {
+        if (!appointment.school.configuration?.googleCalendar) {
+            return;
+        }
+
+        // Check if token needs refresh
+        if (this.googleCalendarService.isTokenExpired(appointment.school.configuration.googleCalendar.tokenExpiry)) {
+            await this.schoolFacade.refreshGoogleCalendarToken(appointment.school.id);
+            // Reload school after token refresh
+            appointment.school = await this.schoolRepository.getSchoolById(appointment.school.id);
+        }
+
+        // If appointment already has a Google Calendar event ID, update it; otherwise create new
+        if (appointment.googleCalendarEventId) {
+            await this.googleCalendarService.updateEvent(appointment, appointment.school);
+        } else {
+            const eventId = await this.googleCalendarService.createEvent(appointment, appointment.school);
+            if (eventId) {
+                appointment.googleCalendarEventId = eventId;
+                await this.appointmentRepository.save(appointment);
+            }
+        }
     }
 }

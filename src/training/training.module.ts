@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppointmentModule } from './appointment/appointment.module';
 import { ControlSheetModule } from './control-sheet/control-sheet.module';
@@ -15,9 +16,12 @@ import { NoteModule } from './note/note.module';
 import { EmergencyContactModule } from './emergency-contact/emergency-contact.module';
 import { TandemPilotModule } from './tandem-pilot/tandem-pilot.module';
 import { TandemPilotController } from './controller/tandem-pilot.controller';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
     imports: [
+      ConfigModule,
+      SharedModule,
       TypeOrmModule.forFeature([]),
       AppointmentModule,
       SubscriptionModule,

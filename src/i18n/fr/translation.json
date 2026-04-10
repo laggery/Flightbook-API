@@ -30,5 +30,12 @@
         "forceUpdate": "Cette version n'est plus supportée. Veuillez mettre à jour l'application pour continuer.",
         "optionalUpdate": "Une nouvelle version de l’application est disponible. Une mise à jour est recommandée.",
         "upToDate": "Votre application est à jour."
+    },
+    "appointment": {
+        "stateValue": {
+            "ANNOUNCED": "Annoncé",
+            "CONFIRMED": "Confirmé",
+            "CANCELED": "Annulé"
+        }
     }
 }

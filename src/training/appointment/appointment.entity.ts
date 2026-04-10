@@ -77,6 +77,9 @@ export class Appointment {
     @JoinColumn([{ name: "appointment_type_id", referencedColumnName: "id" }])
     type: AppointmentType | null;
 
+    @Column("character varying", { name: "google_calendar_event_id", nullable: true })
+    googleCalendarEventId: string | null;
+
     findSubscription(email: string) {
         return this.subscriptions.find((subscription: Subscription) => subscription.user.email === email);
     }

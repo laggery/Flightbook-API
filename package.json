@@ -45,6 +45,7 @@
     "csv-parse": "^6.1.0",
     "firebase-admin": "^13.7.0",
     "google-auth-library": "^10.5.0",
+    "googleapis": "^144.0.0",
     "helmet": "^8.1.0",
     "jwks-rsa": "^3.2.0",
     "moment": "^2.30.1",
