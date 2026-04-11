@@ -357,7 +357,7 @@ describe('Instructor Flight Validation (e2e)', () => {
 function assertFlight(received: any, expected: Flight | FlightDto) {
   expect(received).toMatchObject({
     id: expected.id ? expected.id : expect.any(Number),
-    date: expected instanceof Flight ? new Date(expected.date).toISOString() : expected.date,
+    date: expected.date,
     km: expected.km,
     time: expected instanceof Flight ? expected.time + ':00' : expected.time,
     description: expected.description,

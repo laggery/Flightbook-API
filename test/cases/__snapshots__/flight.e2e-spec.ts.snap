@@ -294,7 +294,7 @@ exports[`V2 Flights (e2e) /v2/flights (GET) 1`] = `
   "currentPage": 1,
   "entity": [
     {
-      "date": "2025-01-03T00:00:00.000Z",
+      "date": "2025-01-03",
       "description": "description",
       "glider": {
         "archived": false,
@@ -327,7 +327,7 @@ exports[`V2 Flights (e2e) /v2/flights (GET) 1`] = `
       "time": "01:30:00",
     },
     {
-      "date": "2025-01-02T00:00:00.000Z",
+      "date": "2025-01-02",
       "description": "description",
       "glider": {
         "archived": false,
@@ -360,7 +360,7 @@ exports[`V2 Flights (e2e) /v2/flights (GET) 1`] = `
       "time": "01:30:00",
     },
     {
-      "date": "2025-01-01T00:00:00.000Z",
+      "date": "2025-01-01",
       "description": "description",
       "glider": {
         "archived": false,
@@ -393,7 +393,7 @@ exports[`V2 Flights (e2e) /v2/flights (GET) 1`] = `
       "time": "01:30:00",
     },
     {
-      "date": "2025-01-01T00:00:00.000Z",
+      "date": "2025-01-01",
       "description": "description",
       "glider": {
         "archived": false,
