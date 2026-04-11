@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { Exclude, Expose, Type } from "class-transformer";
+import { Exclude, Expose, Type, Transform } from "class-transformer";
+import * as moment from "moment";
 import { GliderDto } from "../../glider/interface/glider-dto";
 import { PlaceDto } from "../../place/interface/place-dto";
 import { Igc } from "./igc";
@@ -18,6 +19,18 @@ export class FlightDto {
     readonly glider: GliderDto;
     @ApiProperty()
     @Expose()
+    @Transform(({ value }) => {
+        // Ensure date is always returned as YYYY-MM-DD string, never as Date object
+        // This is needed to avoid timezone issues when displaying dates in the frontend
+        if (!value) return null;
+        if (value instanceof Date) {
+            return moment(value).format('YYYY-MM-DD');
+        }
+        if (typeof value === 'string' && value.includes('T')) {
+            return value.substring(0, 10);
+        }
+        return value;
+    })
     readonly date: string;
     @ApiPropertyOptional()
     @Expose()
