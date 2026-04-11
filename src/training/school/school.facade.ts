@@ -164,7 +164,7 @@ export class SchoolFacade {
         }
 
         if (!school.configuration?.googleCalendar) {
-            throw new Error('Google Calendar not configured for this school');
+            throw SchoolException.googleCalendarNotConfiguredException();
         }
 
         try {
@@ -192,7 +192,7 @@ export class SchoolFacade {
         }
 
         if (!school.configuration?.googleCalendar) {
-            throw new Error('Google Calendar not configured for this school');
+            throw SchoolException.googleCalendarNotConfiguredException();
         }
 
         // Check if token needs refresh
@@ -214,7 +214,7 @@ export class SchoolFacade {
         }
 
         if (!school.configuration?.googleCalendar) {
-            throw new Error('Google Calendar not configured for this school');
+            throw SchoolException.googleCalendarNotConfiguredException();
         }
 
         school.configuration.googleCalendar.calendarId = calendarId;

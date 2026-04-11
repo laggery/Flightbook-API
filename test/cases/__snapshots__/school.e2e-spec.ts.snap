@@ -46,6 +46,26 @@ exports[`Schools (e2e) /schools (POST) 2`] = `
 }
 `;
 
+exports[`Schools (e2e) /schools/:id/google-calendar/calendars (GET) - success 1`] = `
+[
+  {
+    "id": "primary",
+    "primary": true,
+    "summary": "Primary Calendar",
+  },
+  {
+    "id": "calendar-2",
+    "primary": false,
+    "summary": "Secondary Calendar",
+  },
+  {
+    "id": "calendar-3",
+    "primary": false,
+    "summary": "Test Calendar",
+  },
+]
+`;
+
 exports[`Schools (e2e) /schools/configuration (PUT) 1`] = `
 {
   "address1": "address",

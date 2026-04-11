@@ -14,6 +14,8 @@ import { FlightRepository } from "../src/flight/flight.repository";
 import { VERSION_NEUTRAL, VersioningType } from "@nestjs/common";
 import { KeycloakService } from "../src/auth/service/keycloak.service";
 import { MockKeycloakService } from "./mock-keycloak.service";
+import { GoogleCalendarService } from "../src/shared/services/google-calendar.service";
+import { MockGoogleCalendarService } from "./mock-google-calendar.service";
 import { SchoolRepository } from "../src/training/school/school.repository";
 import { TeamMemberRepository } from "../src/training/team-member/team-member.repository";
 import { EnrollmentRepository } from "../src/training/enrollment/enrollment.repository";
@@ -70,6 +72,8 @@ const init = async () => {
         .useClass(MockKeycloakStrategy)
         .overrideProvider(KeycloakService)
         .useClass(MockKeycloakService)
+        .overrideProvider(GoogleCalendarService)
+        .useClass(MockGoogleCalendarService)
         .compile();
 
     const app = moduleFixture.createNestApplication();

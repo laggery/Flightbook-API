@@ -5,7 +5,7 @@ import { UserModule } from '../../user/user.module';
 import { School } from './domain/school.entity';
 import { SchoolFacade } from './school.facade';
 import { SchoolRepository } from './school.repository';
-import { SharedModule } from 'src/shared/shared.module';
+import { SharedModule } from '../../shared/shared.module';
 
 @Module({
   imports: [
