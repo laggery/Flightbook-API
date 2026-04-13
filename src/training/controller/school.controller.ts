@@ -137,6 +137,12 @@ export class SchoolController {
     }
 
     @UseGuards(CompositeAuthGuard, SchoolGuard)
+    @Get(':id/google-calendar/auth')
+    async getGoogleCalendarAuthUrl(@Param('id') id: number): Promise<{ authUrl: string }> {
+        return this.schoolFacade.getGoogleCalendarAuthUrl(id);
+    }
+
+    @UseGuards(CompositeAuthGuard, SchoolGuard)
     @Delete(':id/google-calendar/disconnect')
     @HttpCode(204)
     async disconnectGoogleCalendar(@Param('id') id: number): Promise<void> {

@@ -135,6 +135,25 @@ describe('Schools (e2e)', () => {
       });
   });
 
+  it('/schools/:id/google-calendar/auth (GET) - get auth URL', async () => {
+    // given
+    const school = Testdata.createSchool("School 1");
+    await testInstance.schoolRepository.save(school);
+    const teamMember = Testdata.createTeamMember(school, await testInstance.getDefaultUser(), true);
+    await testInstance.teamMemberRepository.save(teamMember);
+    const keycloakToken = JwtTestHelper.createKeycloakToken();
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .get(`/schools/${school.id}/google-calendar/auth`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .expect(200)
+      .then(async (response) => {
+        expect(response.body.authUrl).toBeDefined();
+        expect(response.body.authUrl).toBe(`https://mock-google-auth-url.com?state=${school.id}`);
+      });
+  });
+
   it('/schools/:id/google-calendar/disconnect (DELETE) - disconnect connected calendar', async () => {
     // given
     const school = Testdata.createSchool("School 1");

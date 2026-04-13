@@ -112,6 +112,17 @@ export class SchoolFacade {
         return { connected };
     }
 
+    async getGoogleCalendarAuthUrl(id: number): Promise<{ authUrl: string }> {
+        const school: School = await this.schoolRepository.getSchoolById(id);
+        
+        if (!school) {
+            throw SchoolException.notFoundException();
+        }
+
+        const authUrl = this.googleCalendarService.getAuthUrl(id);
+        return { authUrl };
+    }
+
     async disconnectGoogleCalendar(id: number): Promise<void> {
         const school: School = await this.schoolRepository.getSchoolById(id);
         
