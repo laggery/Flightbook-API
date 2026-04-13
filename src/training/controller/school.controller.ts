@@ -100,20 +100,33 @@ export class SchoolController {
     ) {
         const instructorAppUrl = this.configService.get<string>('INSTRUCTOR_APP_URL');
         
+        // Try to extract schoolId from state for all redirects
+        let schoolId: number | null = null;
+        if (state) {
+            try {
+                const parsedState = JSON.parse(state);
+                schoolId = parsedState.schoolId;
+            } catch (e) {
+                // Invalid state, continue without schoolId
+            }
+        }
+        
         if (error) {
-            return res.redirect(`${instructorAppUrl}/settings?google_calendar=error&message=${error}`);
+            const schoolParam = schoolId ? `&school=${schoolId}` : '';
+            return res.redirect(`${instructorAppUrl}/configuration?google_calendar=error&message=${error}${schoolParam}`);
         }
 
         if (!code || !state) {
-            return res.redirect(`${instructorAppUrl}/settings?google_calendar=error&message=no_code_or_state`);
+            const schoolParam = schoolId ? `&school=${schoolId}` : '';
+            return res.redirect(`${instructorAppUrl}/configuration?google_calendar=error&message=no_code_or_state${schoolParam}`);
         }
 
         try {
-            const { schoolId } = JSON.parse(state);
             await this.schoolFacade.handleGoogleCalendarOAuthCallback(code, schoolId);
-            return res.redirect(`${instructorAppUrl}/settings?google_calendar=success`);
+            return res.redirect(`${instructorAppUrl}/configuration?google_calendar=success&school=${schoolId}`);
         } catch (err) {
-            return res.redirect(`${instructorAppUrl}/settings?google_calendar=error&message=${err.message}`);
+            const schoolParam = schoolId ? `&school=${schoolId}` : '';
+            return res.redirect(`${instructorAppUrl}/configuration?google_calendar=error&message=${err.message}${schoolParam}`);
         }
     }
 
