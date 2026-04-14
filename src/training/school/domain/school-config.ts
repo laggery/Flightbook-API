@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { Expose, Type } from "class-transformer";
+import { Exclude, Expose, Type } from "class-transformer";
 import { IsBoolean, IsDate, IsOptional, IsString, ValidateNested } from "class-validator";
 
 @Expose()
@@ -64,7 +64,7 @@ export class SchoolConfig {
   @Type(() => TandemModuleDto)
   tandemModule: TandemModuleDto;
 
-  @ApiPropertyOptional()
+  @Exclude()
   @IsOptional()
   @ValidateNested()
   @Type(() => GoogleCalendarConfig)
