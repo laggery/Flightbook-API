@@ -25,4 +25,8 @@ export class SchoolException {
     public static googleCalendarNotConfiguredException() {
         throw new BadRequestException("Google Calendar not configured for this school")
     }
+
+    public static googleCalendarTokenExpiredException() {
+        throw new UnprocessableEntityException("GOOGLE_CALENDAR_TOKEN_EXPIRED")
+    }
 }

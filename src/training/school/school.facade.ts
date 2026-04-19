@@ -190,8 +190,8 @@ export class SchoolFacade {
             
             this.logger.debug(`Access token refreshed for school ${schoolId}`);
         } catch (error) {
-            this.logger.error(`Failed to refresh access token for school ${schoolId}:`, error);
-            throw error;
+            this.logger.debug(`Failed to refresh access token for school ${schoolId}:`, error);
+            throw SchoolException.googleCalendarTokenExpiredException();
         }
     }
 
@@ -206,15 +206,20 @@ export class SchoolFacade {
             throw SchoolException.googleCalendarNotConfiguredException();
         }
 
-        // Check if token needs refresh
-        if (this.googleCalendarService.isTokenExpired(school.configuration.googleCalendar.tokenExpiry)) {
-            await this.refreshGoogleCalendarToken(schoolId);
-            // Reload school after token refresh
-            const refreshedSchool = await this.schoolRepository.getSchoolById(schoolId);
-            return this.googleCalendarService.getAvailableCalendars(refreshedSchool);
-        }
+        try {
+            // Check if token needs refresh
+            if (this.googleCalendarService.isTokenExpired(school.configuration.googleCalendar.tokenExpiry)) {
+                await this.refreshGoogleCalendarToken(schoolId);
+                // Reload school after token refresh
+                const refreshedSchool = await this.schoolRepository.getSchoolById(schoolId);
+                return await this.googleCalendarService.getAvailableCalendars(refreshedSchool);
+            }
 
-        return this.googleCalendarService.getAvailableCalendars(school);
+            return await this.googleCalendarService.getAvailableCalendars(school);
+        } catch (error) {
+            this.logger.debug(`Failed to get calendars for school ${schoolId}:`, error);
+            throw SchoolException.googleCalendarTokenExpiredException();
+        }
     }
 
     async updateGoogleCalendarId(schoolId: number, calendarId: string): Promise<void> {

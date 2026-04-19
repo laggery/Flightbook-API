@@ -4,18 +4,22 @@ import { IsBoolean, IsDate, IsOptional, IsString, ValidateNested } from "class-v
 
 @Expose()
 export class GoogleCalendarConfig {
+  @Exclude()
   @ApiProperty()
   @IsString()
   accessToken: string;
 
+  @Exclude()
   @ApiProperty()
   @IsString()
   refreshToken: string;
 
+  @Expose()
   @ApiProperty()
   @IsString()
   calendarId: string;
 
+  @Exclude()
   @ApiProperty()
   @IsDate()
   @Type(() => Date)
@@ -64,7 +68,8 @@ export class SchoolConfig {
   @Type(() => TandemModuleDto)
   tandemModule: TandemModuleDto;
 
-  @Exclude()
+  @Expose()
+  @ApiPropertyOptional()
   @IsOptional()
   @ValidateNested()
   @Type(() => GoogleCalendarConfig)

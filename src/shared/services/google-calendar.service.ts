@@ -35,7 +35,7 @@ export class GoogleCalendarService {
 
     const authUrl = oauth2Client.generateAuthUrl({
       access_type: 'offline',
-      scope: ['https://www.googleapis.com/auth/calendar'],
+      scope: ['https://www.googleapis.com/auth/calendar.events', 'https://www.googleapis.com/auth/calendar.readonly'],
       state: JSON.stringify({ schoolId }),
       prompt: 'consent'
     });
@@ -173,11 +173,13 @@ export class GoogleCalendarService {
 
       const response = await calendar.calendarList.list();
       
-      return response.data.items?.map(cal => ({
-        id: cal.id || '',
-        summary: cal.summary || '',
-        primary: cal.primary || false
-      })) || [];
+      return response.data.items
+        ?.filter(cal => cal.accessRole === 'owner' || cal.accessRole === 'writer')
+        .map(cal => ({
+          id: cal.id || '',
+          summary: cal.summary || '',
+          primary: cal.primary || false
+        })) || [];
     } catch (error) {
       this.logger.error(`Failed to fetch calendars for school ${school.id}:`, error);
       throw error;
@@ -222,7 +224,9 @@ export class GoogleCalendarService {
       end: {
         dateTime: endDateTime.toISOString(),
         timeZone: 'Europe/Zurich'
-      }
+      },
+      guestsCanModify: false,
+      guestsCanInviteOthers: false,
     };
   }
 
