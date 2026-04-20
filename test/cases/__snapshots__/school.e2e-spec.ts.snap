@@ -46,6 +46,26 @@ exports[`Schools (e2e) /schools (POST) 2`] = `
 }
 `;
 
+exports[`Schools (e2e) /schools/:id/google-calendar/calendars (GET) - success 1`] = `
+[
+  {
+    "id": "primary",
+    "primary": true,
+    "summary": "Primary Calendar",
+  },
+  {
+    "id": "calendar-2",
+    "primary": false,
+    "summary": "Secondary Calendar",
+  },
+  {
+    "id": "calendar-3",
+    "primary": false,
+    "summary": "Test Calendar",
+  },
+]
+`;
+
 exports[`Schools (e2e) /schools/configuration (PUT) 1`] = `
 {
   "address1": "address",
@@ -89,6 +109,15 @@ exports[`Schools (e2e) /schools/configuration (PUT) 2`] = `
   "name": "School 1",
   "phone": "0123456789",
   "plz": "1234",
+}
+`;
+
+exports[`Schools (e2e) /schools/google-calendar/callback (GET) - success 1`] = `
+{
+  "accessToken": "mock-access-token",
+  "calendarId": "primary",
+  "refreshToken": "mock-refresh-token",
+  "tokenExpiry": Any<String>,
 }
 `;
 

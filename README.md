@@ -48,13 +48,17 @@ AWS_SECRET_ACCESS_KEY=flightbook_dev_secret
 JWT_SECRET=mySecret
 TOKEN_EXPIRATION=1000h
 
-FIREBASE_CREDENTIAL_JSON=
-
 # Origin
 ORIGIN_INSTRUCTOR=localhsot:4200
 
 # Mobile App URL
 MOBILE_APP_URL=http://localhost:8100
+
+# Instructor App URL
+INSTRUCTOR_APP_URL=http://localhost:4200
+
+# Backend API URL
+API_URL=http://localhost:8282
 
 # Email
 EMAIL_HOST:
@@ -78,6 +82,12 @@ MAP_URL=
 MAP_ATTRIBUTIONS=
 MAP_CROSS_ORIGIN=
 
+# Google OAuth Credentials (from Google Cloud Console)
+GOOGLE_CLIENT_ID=your-client-id-here.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-client-secret-here
+
+FIREBASE_CREDENTIAL_JSON=
+
 # Version Check (Mobile App)
 ANDROID_MINIMAL_VERSION_BUILD=
 ANDROID_LATEST_BUILD=
@@ -98,6 +108,29 @@ npm run start:dev
 ```
 MIGRATION_NAME=appointmentType npm run migration:generate
 ```
+
+## Google Cloud Console Setup
+
+### Create OAuth 2.0 Credentials
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Enable the **Google Calendar API**:
+   - Navigate to "APIs & Services" → "Library"
+   - Search for "Google Calendar API"
+   - Click "Enable"
+
+4. Create OAuth 2.0 credentials:
+   - Go to "APIs & Services" → "Credentials"
+   - Click "Create Credentials" → "OAuth 2.0 Client ID"
+   - Choose "Web application" as application type
+   - Configure the OAuth consent screen if prompted
+
+5. Add authorized redirect URIs:
+   - Add your backend callback URL: `{API_URL}/schools/google-calendar/callback`
+   - Note: We use a single redirect URI for all schools. The school ID is passed via the OAuth `state` parameter
+
+6. Copy the **Client ID** and **Client Secret**
 
 ## Security
 If you discover security related issues, please email yannick.lagger@flightbook.ch instead of using the issue tracker.

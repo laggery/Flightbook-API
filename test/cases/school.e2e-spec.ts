@@ -89,6 +89,281 @@ describe('Schools (e2e)', () => {
         await assertSchool(testInstance, response.body, plainToClass(SchoolDto, school));
       });
   });
+
+  it('/schools/:id/google-calendar/status (GET) - not connected', async () => {
+    // given
+    const school = Testdata.createSchool("School 1");
+    await testInstance.schoolRepository.save(school);
+    const teamMember = Testdata.createTeamMember(school, await testInstance.getDefaultUser(), true);
+    await testInstance.teamMemberRepository.save(teamMember);
+    const keycloakToken = JwtTestHelper.createKeycloakToken();
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .get(`/schools/${school.id}/google-calendar/status`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .expect(200)
+      .then(async (response) => {
+        expect(response.body).toEqual({ connected: false });
+      });
+  });
+
+  it('/schools/:id/google-calendar/status (GET) - connected', async () => {
+    // given
+    const school = Testdata.createSchool("School 1");
+    school.configuration = {
+      ...school.configuration,
+      googleCalendar: {
+        accessToken: 'test-access-token',
+        refreshToken: 'test-refresh-token',
+        calendarId: 'primary',
+        tokenExpiry: new Date(Date.now() + 3600000)
+      }
+    };
+    await testInstance.schoolRepository.save(school);
+    const teamMember = Testdata.createTeamMember(school, await testInstance.getDefaultUser(), true);
+    await testInstance.teamMemberRepository.save(teamMember);
+    const keycloakToken = JwtTestHelper.createKeycloakToken();
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .get(`/schools/${school.id}/google-calendar/status`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .expect(200)
+      .then(async (response) => {
+        expect(response.body).toEqual({ connected: true });
+      });
+  });
+
+  it('/schools/:id/google-calendar/auth (GET) - get auth URL', async () => {
+    // given
+    const school = Testdata.createSchool("School 1");
+    await testInstance.schoolRepository.save(school);
+    const teamMember = Testdata.createTeamMember(school, await testInstance.getDefaultUser(), true);
+    await testInstance.teamMemberRepository.save(teamMember);
+    const keycloakToken = JwtTestHelper.createKeycloakToken();
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .get(`/schools/${school.id}/google-calendar/auth`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .expect(200)
+      .then(async (response) => {
+        expect(response.body.authUrl).toBeDefined();
+        expect(response.body.authUrl).toBe(`https://mock-google-auth-url.com?state=${school.id}`);
+      });
+  });
+
+  it('/schools/:id/google-calendar/disconnect (DELETE) - disconnect connected calendar', async () => {
+    // given
+    const school = Testdata.createSchool("School 1");
+    school.configuration = {
+      ...school.configuration,
+      googleCalendar: {
+        accessToken: 'test-access-token',
+        refreshToken: 'test-refresh-token',
+        calendarId: 'primary',
+        tokenExpiry: new Date(Date.now() + 3600000)
+      }
+    };
+    await testInstance.schoolRepository.save(school);
+    const teamMember = Testdata.createTeamMember(school, await testInstance.getDefaultUser(), true);
+    await testInstance.teamMemberRepository.save(teamMember);
+    const keycloakToken = JwtTestHelper.createKeycloakToken();
+
+    //when
+    await request(testInstance.app.getHttpServer())
+      .delete(`/schools/${school.id}/google-calendar/disconnect`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .expect(204);
+
+    // then - verify calendar is disconnected
+    const updatedSchool = await testInstance.schoolRepository.findOne({
+      where: { id: school.id }
+    });
+    expect(updatedSchool.configuration.googleCalendar).toBeNull();
+  });
+
+  it('/schools/:id/google-calendar/disconnect (DELETE) - disconnect when not connected', async () => {
+    // given
+    const school = Testdata.createSchool("School 1");
+    await testInstance.schoolRepository.save(school);
+    const teamMember = Testdata.createTeamMember(school, await testInstance.getDefaultUser(), true);
+    await testInstance.teamMemberRepository.save(teamMember);
+    const keycloakToken = JwtTestHelper.createKeycloakToken();
+
+    //when
+    await request(testInstance.app.getHttpServer())
+      .delete(`/schools/${school.id}/google-calendar/disconnect`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .expect(204);
+
+    // then - verify school still exists and googleCalendar is set to null
+    const updatedSchool = await testInstance.schoolRepository.findOne({
+      where: { id: school.id }
+    });
+    expect(updatedSchool).toBeDefined();
+    expect(updatedSchool.configuration.googleCalendar).toBeNull();
+  });
+
+  it('/schools/:id/google-calendar/calendars (GET) - not configured', async () => {
+    // given
+    const school = Testdata.createSchool("School 1");
+    await testInstance.schoolRepository.save(school);
+    const teamMember = Testdata.createTeamMember(school, await testInstance.getDefaultUser(), true);
+    await testInstance.teamMemberRepository.save(teamMember);
+    const keycloakToken = JwtTestHelper.createKeycloakToken();
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .get(`/schools/${school.id}/google-calendar/calendars`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .expect(400)
+      .then(async (response) => {
+        expect(response.body.message).toContain('Google Calendar not configured');
+      });
+  });
+
+  it('/schools/:id/google-calendar/calendars (GET) - success', async () => {
+    // given
+    const school = Testdata.createSchool("School 1");
+    school.configuration = {
+      ...school.configuration,
+      googleCalendar: {
+        accessToken: 'test-access-token',
+        refreshToken: 'test-refresh-token',
+        calendarId: 'primary',
+        tokenExpiry: new Date(Date.now() + 3600000)
+      }
+    };
+    await testInstance.schoolRepository.save(school);
+    const teamMember = Testdata.createTeamMember(school, await testInstance.getDefaultUser(), true);
+    await testInstance.teamMemberRepository.save(teamMember);
+    const keycloakToken = JwtTestHelper.createKeycloakToken();
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .get(`/schools/${school.id}/google-calendar/calendars`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .expect(200)
+      .then(async (response) => {
+        expect(response.body).toHaveLength(3);
+        expect(response.body).toMatchSnapshot();
+      });
+  });
+
+  it('/schools/:id/google-calendar/calendar (PUT) - not configured', async () => {
+    // given
+    const school = Testdata.createSchool("School 1");
+    await testInstance.schoolRepository.save(school);
+    const teamMember = Testdata.createTeamMember(school, await testInstance.getDefaultUser(), true);
+    await testInstance.teamMemberRepository.save(teamMember);
+    const keycloakToken = JwtTestHelper.createKeycloakToken();
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .put(`/schools/${school.id}/google-calendar/calendar`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .send({ calendarId: 'calendar-2' })
+      .expect(400)
+      .then(async (response) => {
+        expect(response.body.message).toContain('Google Calendar not configured');
+      });
+  });
+
+  it('/schools/:id/google-calendar/calendar (PUT) - success', async () => {
+    // given
+    const school = Testdata.createSchool("School 1");
+    school.configuration = {
+      ...school.configuration,
+      googleCalendar: {
+        accessToken: 'test-access-token',
+        refreshToken: 'test-refresh-token',
+        calendarId: 'primary',
+        tokenExpiry: new Date(Date.now() + 3600000)
+      }
+    };
+    await testInstance.schoolRepository.save(school);
+    const teamMember = Testdata.createTeamMember(school, await testInstance.getDefaultUser(), true);
+    await testInstance.teamMemberRepository.save(teamMember);
+    const keycloakToken = JwtTestHelper.createKeycloakToken();
+
+    //when
+    await request(testInstance.app.getHttpServer())
+      .put(`/schools/${school.id}/google-calendar/calendar`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .send({ calendarId: 'calendar-2' })
+      .expect(204);
+
+    // then - verify calendar ID was updated
+    const updatedSchool = await testInstance.schoolRepository.findOne({
+      where: { id: school.id }
+    });
+    expect(updatedSchool.configuration.googleCalendar.calendarId).toBe('calendar-2');
+  });
+
+  it('/schools/google-calendar/callback (GET) - with error', async () => {
+    //when
+    return request(testInstance.app.getHttpServer())
+      .get('/schools/google-calendar/callback')
+      .query({ 
+        error: 'access_denied',
+        state: JSON.stringify({ schoolId: 1 })
+      })
+      .expect(302)
+      .then(async (response) => {
+        expect(response.headers.location).toBe('https://instructor.test.com/configuration?google_calendar=error&message=access_denied&school=1');
+      });
+  });
+
+  it('/schools/google-calendar/callback (GET) - missing code', async () => {
+    //when
+    return request(testInstance.app.getHttpServer())
+      .get('/schools/google-calendar/callback')
+      .query({ state: JSON.stringify({ schoolId: 1 }) })
+      .expect(302)
+      .then(async (response) => {
+        expect(response.headers.location).toBe('https://instructor.test.com/configuration?google_calendar=error&message=no_code_or_state&school=1');
+      });
+  });
+
+  it('/schools/google-calendar/callback (GET) - missing state', async () => {
+    //when
+    return request(testInstance.app.getHttpServer())
+      .get('/schools/google-calendar/callback')
+      .query({ code: 'test-code' })
+      .expect(302)
+      .then(async (response) => {
+        expect(response.headers.location).toBe('https://instructor.test.com/configuration?google_calendar=error&message=no_code_or_state');
+      });
+  });
+
+  it('/schools/google-calendar/callback (GET) - success', async () => {
+    // given
+    const school = Testdata.createSchool("School 1");
+    await testInstance.schoolRepository.save(school);
+
+    //when
+    await request(testInstance.app.getHttpServer())
+      .get('/schools/google-calendar/callback')
+      .query({
+        code: 'test-authorization-code',
+        state: JSON.stringify({ schoolId: school.id })
+      })
+      .expect(302)
+      .then(async (response) => {
+        expect(response.headers.location).toBe(`https://instructor.test.com/configuration?google_calendar=success&school=${school.id}`);
+      });
+
+    // then - verify Google Calendar was configured
+    const updatedSchool = await testInstance.schoolRepository.findOne({
+      where: { id: school.id }
+    });
+    expect(updatedSchool.configuration.googleCalendar).toBeDefined();
+    expect(updatedSchool.configuration.googleCalendar).toMatchSnapshot({
+      tokenExpiry: expect.any(String)
+    });
+  });
 });
 
 describe('Schools tandem pilots (e2e)', () => {

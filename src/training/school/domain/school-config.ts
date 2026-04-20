@@ -1,6 +1,30 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { Expose, Type } from "class-transformer";
-import { IsBoolean, IsOptional, IsString, ValidateNested } from "class-validator";
+import { Exclude, Expose, Type } from "class-transformer";
+import { IsBoolean, IsDate, IsOptional, IsString, ValidateNested } from "class-validator";
+
+@Expose()
+export class GoogleCalendarConfig {
+  @Exclude()
+  @ApiProperty()
+  @IsString()
+  accessToken: string;
+
+  @Exclude()
+  @ApiProperty()
+  @IsString()
+  refreshToken: string;
+
+  @Expose()
+  @ApiProperty()
+  @IsString()
+  calendarId: string;
+
+  @Exclude()
+  @ApiProperty()
+  @IsDate()
+  @Type(() => Date)
+  tokenExpiry: Date;
+}
 
 @Expose()
 export class TandemModuleDto {
@@ -43,4 +67,11 @@ export class SchoolConfig {
   @ValidateNested()
   @Type(() => TandemModuleDto)
   tandemModule: TandemModuleDto;
+
+  @Expose()
+  @ApiPropertyOptional()
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => GoogleCalendarConfig)
+  googleCalendar?: GoogleCalendarConfig;
 }

@@ -14,6 +14,8 @@ import { FlightRepository } from "../src/flight/flight.repository";
 import { VERSION_NEUTRAL, VersioningType } from "@nestjs/common";
 import { KeycloakService } from "../src/auth/service/keycloak.service";
 import { MockKeycloakService } from "./mock-keycloak.service";
+import { GoogleCalendarService } from "../src/shared/services/google-calendar.service";
+import { MockGoogleCalendarService } from "./mock-google-calendar.service";
 import { SchoolRepository } from "../src/training/school/school.repository";
 import { TeamMemberRepository } from "../src/training/team-member/team-member.repository";
 import { EnrollmentRepository } from "../src/training/enrollment/enrollment.repository";
@@ -36,6 +38,7 @@ const init = async () => {
     process.env.STRIPE_SECRET_KEY = 'test';
     process.env.ORIGIN_INSTRUCTOR = Testdata.INSTRUCTOR_APP_ORIGIN;
     process.env.ORIGIN_MOBILE = Testdata.MOBILE_APP_ORIGIN;
+    process.env.INSTRUCTOR_APP_URL = 'https://instructor.test.com';
     process.env.ANDROID_MINIMAL_VERSION_BUILD = '1';
     process.env.IOS_MINIMAL_VERSION_BUILD = '1';
     process.env.ANDROID_LATEST_BUILD = '2';
@@ -70,6 +73,8 @@ const init = async () => {
         .useClass(MockKeycloakStrategy)
         .overrideProvider(KeycloakService)
         .useClass(MockKeycloakService)
+        .overrideProvider(GoogleCalendarService)
+        .useClass(MockGoogleCalendarService)
         .compile();
 
     const app = moduleFixture.createNestApplication();

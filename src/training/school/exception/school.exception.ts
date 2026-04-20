@@ -1,4 +1,4 @@
-import {ConflictException, NotFoundException, UnprocessableEntityException} from "@nestjs/common";
+import {BadRequestException, ConflictException, NotFoundException, UnprocessableEntityException} from "@nestjs/common";
 
 export class SchoolException {
 
@@ -20,5 +20,13 @@ export class SchoolException {
 
     public static instructorNotFoundException() {
         throw new NotFoundException("The instructor was not found.")
+    }
+
+    public static googleCalendarNotConfiguredException() {
+        throw new BadRequestException("Google Calendar not configured for this school")
+    }
+
+    public static googleCalendarTokenExpiredException() {
+        throw new UnprocessableEntityException("GOOGLE_CALENDAR_TOKEN_EXPIRED")
     }
 }
