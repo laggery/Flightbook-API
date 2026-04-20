@@ -36,6 +36,12 @@
             "ANNOUNCED": "Annoncé",
             "CONFIRMED": "Confirmé",
             "CANCELED": "Annulé"
-        }
+        },
+        "state": "Statut",
+        "meetingPoint": "Point de rencontre",
+        "maxPeople": "Max participants",
+        "instructor": "Instructeur",
+        "takeOffCoordinator": "Aide au décollage",
+        "description": "Description"
     }
 }

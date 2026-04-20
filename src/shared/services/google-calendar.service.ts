@@ -4,6 +4,7 @@ import { google, Auth } from 'googleapis';
 import { School } from '../../training/school/domain/school.entity';
 import { Appointment } from '../../training/appointment/appointment.entity';
 import { I18nContext } from 'nestjs-i18n';
+import * as moment from 'moment';
 
 export interface OAuthTokens {
   accessToken: string;
@@ -52,7 +53,7 @@ export class GoogleCalendarService {
 
     try {
       const { tokens } = await oauth2Client.getToken(code);
-      
+
       if (!tokens.access_token || !tokens.refresh_token) {
         throw new Error('Failed to obtain access or refresh token');
       }
@@ -80,7 +81,7 @@ export class GoogleCalendarService {
 
     try {
       const { credentials } = await oauth2Client.refreshAccessToken();
-      
+
       return {
         accessToken: credentials.access_token,
         refreshToken: refreshToken,
@@ -172,7 +173,7 @@ export class GoogleCalendarService {
       const calendar = google.calendar({ version: 'v3', auth: authClient });
 
       const response = await calendar.calendarList.list();
-      
+
       return response.data.items
         ?.filter(cal => cal.accessRole === 'owner' || cal.accessRole === 'writer')
         .map(cal => ({
@@ -213,18 +214,73 @@ export class GoogleCalendarService {
 
     const translatedState = i18n.t(`translation.appointment.stateValue.${appointment.state as any}`, { lang: appointment.school.language });
 
+    // Build description with all fields
+    const descriptionParts: string[] = [];
+
+    // Status
+    const statusLabel = i18n.t('translation.appointment.state', { lang: appointment.school.language });
+    descriptionParts.push(`<b>${statusLabel}:</b> ${translatedState}`);
+
+    // Meeting Point with date/time
+    const meetingPointLabel = i18n.t('translation.appointment.meetingPoint', { lang: appointment.school.language });
+    const formattedDateTime = moment.utc(startDateTime).format('DD.MM.YYYY HH:mm');
+    descriptionParts.push(`<b>${meetingPointLabel}:</b> ${formattedDateTime} ${appointment.meetingPoint || ''}`);
+
+    // Max People
+    if (appointment.maxPeople) {
+      const maxPeopleLabel = i18n.t('translation.appointment.maxPeople', { lang: appointment.school.language });
+      descriptionParts.push(`<b>${maxPeopleLabel}:</b> ${appointment.maxPeople}`);
+    }
+
+    // Instructor
+    if (appointment.instructor) {
+      const instructorLabel = i18n.t('translation.appointment.instructor', { lang: appointment.school.language });
+      const instructorName = `${appointment.instructor.firstname} ${appointment.instructor.lastname}`;
+      descriptionParts.push(`<b>${instructorLabel}:</b> ${instructorName}`);
+    }
+
+    // Take Off Coordinator
+    if (appointment.takeOffCoordinatorText) {
+      const takeOffCoordinatorLabel = i18n.t('translation.appointment.takeOffCoordinator', { lang: appointment.school.language });
+      descriptionParts.push(`<b>${takeOffCoordinatorLabel}:</b> ${appointment.takeOffCoordinatorText}`);
+    }
+
+    // Description
+    if (appointment.description) {
+      const descriptionLabel = i18n.t('translation.appointment.description', { lang: appointment.school.language });
+      descriptionParts.push(`<b>${descriptionLabel}:</b> ${appointment.description}`);
+    }
+
+    const description = descriptionParts.join('<br>');
+
+    // Determine color from appointment type
+    const colorId = appointment.type?.color
+      ? this.mapColorToGoogleCalendarId(appointment.type.color)
+      : '9'; // Default Blueberry
+
     return {
-      summary: appointment.type? `${appointment.type.name} / ${translatedState}` : `Flightbook Appointment / ${translatedState}`,
+      summary: appointment.type ? `${appointment.type.name} / ${translatedState}` : `Flightbook Appointment / ${translatedState}`,
       location: appointment.meetingPoint || '',
-      description: appointment.description || '',
+      description: description,
+      // Full day event
+      colorId: colorId,
       start: {
-        dateTime: startDateTime.toISOString(),
+        date: moment(startDateTime).format('YYYY-MM-DD'),
         timeZone: 'Europe/Zurich'
       },
       end: {
-        dateTime: endDateTime.toISOString(),
+        date: moment(endDateTime).format('YYYY-MM-DD'),
         timeZone: 'Europe/Zurich'
       },
+      // For time-based events, use:
+      // start: {
+      //   dateTime: startDateTime.toISOString(),
+      //   timeZone: 'Europe/Zurich'
+      // },
+      // end: {
+      //   dateTime: endDateTime.toISOString(),
+      //   timeZone: 'Europe/Zurich'
+      // },
       guestsCanModify: false,
       guestsCanInviteOthers: false,
     };
@@ -240,5 +296,82 @@ export class GoogleCalendarService {
     const bufferTime = 5 * 60 * 1000;
 
     return expiryDate.getTime() - now.getTime() < bufferTime;
+  }
+
+  // Add this helper method to map custom colors to Google Calendar color IDs
+  private mapColorToGoogleCalendarId(color: string): string {
+    // Google Calendar color palette with their RGB values
+    const googleColors: { id: string; rgb: [number, number, number] }[] = [
+      { id: '1', rgb: [164, 189, 252] }, // Lavender
+      { id: '2', rgb: [122, 231, 191] }, // Sage
+      { id: '3', rgb: [219, 173, 255] }, // Grape
+      { id: '4', rgb: [255, 136, 124] }, // Flamingo
+      { id: '5', rgb: [251, 215, 91] },  // Banana
+      { id: '6', rgb: [255, 184, 120] }, // Tangerine
+      { id: '7', rgb: [70, 214, 219] },  // Peacock
+      { id: '8', rgb: [225, 225, 225] }, // Graphite
+      { id: '9', rgb: [84, 132, 237] },  // Blueberry
+      { id: '10', rgb: [81, 183, 73] },  // Basil
+      { id: '11', rgb: [220, 33, 39] },  // Tomato
+    ];
+
+    // Parse the input color (supports hex, rgb, rgba)
+    const rgb = this.parseColor(color);
+    if (!rgb) {
+      return '9'; // Default to Blueberry
+    }
+
+    // Find the closest color using Euclidean distance
+    let closestId = '9';
+    let minDistance = Infinity;
+
+    for (const googleColor of googleColors) {
+      const distance = Math.sqrt(
+        Math.pow(rgb[0] - googleColor.rgb[0], 2) +
+        Math.pow(rgb[1] - googleColor.rgb[1], 2) +
+        Math.pow(rgb[2] - googleColor.rgb[2], 2)
+      );
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestId = googleColor.id;
+      }
+    }
+
+    return closestId;
+  }
+
+  private parseColor(color: string): [number, number, number] | null {
+    if (!color) return null;
+
+    // Handle hex format (#rrggbb or #rgb)
+    if (color.startsWith('#')) {
+      const hex = color.slice(1);
+      if (hex.length === 3) {
+        return [
+          parseInt(hex[0] + hex[0], 16),
+          parseInt(hex[1] + hex[1], 16),
+          parseInt(hex[2] + hex[2], 16),
+        ];
+      } else if (hex.length === 6) {
+        return [
+          parseInt(hex.slice(0, 2), 16),
+          parseInt(hex.slice(2, 4), 16),
+          parseInt(hex.slice(4, 6), 16),
+        ];
+      }
+    }
+
+    // Handle rgb/rgba format: rgb(r, g, b) or rgba(r, g, b, a)
+    const rgbMatch = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    if (rgbMatch) {
+      return [
+        parseInt(rgbMatch[1]),
+        parseInt(rgbMatch[2]),
+        parseInt(rgbMatch[3]),
+      ];
+    }
+
+    return null;
   }
 }

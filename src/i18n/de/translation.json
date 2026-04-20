@@ -36,6 +36,12 @@
             "ANNOUNCED": "Angesagt",
             "CONFIRMED": "Bestätigt",
             "CANCELED": "Abgesagt"
-        }
+        },
+        "state": "Status",
+        "meetingPoint": "Treffpunkt",
+        "maxPeople": "Max Teilnehmer*innen",
+        "instructor": "Fluglehrer*in",
+        "takeOffCoordinator": "Starthelfer*in",
+        "description": "Beschreibung"
     }
 }
