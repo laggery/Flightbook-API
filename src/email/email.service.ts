@@ -104,7 +104,12 @@ export class EmailService {
         const i18n = I18nContext.current();
         const emailBody = new EmailBodyDto();
         emailBody.toAddress = enrollment.email;
-        emailBody.subject = i18n.t('email.enrollment.tandemPilot.subject', { lang: enrollment.school.language });
+        emailBody.subject = i18n.t('email.enrollment.tandemPilot.subject', {
+            lang: enrollment.school.language,
+            args: {
+                school: enrollment.school.name
+            }
+        });
         emailBody.content = i18n.t('email.enrollment.tandemPilot.content', {
             lang: enrollment.school.language,
             args: {

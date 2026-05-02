@@ -6,21 +6,25 @@ import { IsArray, IsBoolean, IsDate, IsEnum, IsOptional, IsString, ValidateNeste
 export class GoogleCalendarConfig {
   @Exclude()
   @ApiProperty()
+  @IsOptional()
   @IsString()
   accessToken: string;
 
   @Exclude()
   @ApiProperty()
+  @IsOptional()
   @IsString()
   refreshToken: string;
 
   @Expose()
   @ApiProperty()
+  @IsOptional()
   @IsString()
   calendarId: string;
 
   @Exclude()
   @ApiProperty()
+  @IsOptional()
   @IsDate()
   @Type(() => Date)
   tokenExpiry: Date;
