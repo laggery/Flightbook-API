@@ -2,11 +2,10 @@ import * as request from 'supertest';
 import { Testdata } from '../testdata';
 import { BaseE2ETest } from '../base-e2e-test';
 import { JwtTestHelper } from '../jwt-helper';
-import { Flight } from '../../src/flight/flight.entity';
+import { Flight } from '../../src/flight/domain/flight.entity';
 import { FlightDto } from '../../src/flight/interface/flight-dto';
 import { plainToClass } from 'class-transformer';
 import { removeIds } from '../utils/snapshot-utils';
-import { User } from '../../src/user/domain/user.entity';
 import { FlightValidationState } from '../../src/flight/flight-validation-state';
 
 describe('Flights (e2e)', () => {
@@ -114,6 +113,82 @@ describe('Flights (e2e)', () => {
         expect(db.gliderId).toEqual(response.body.glider.id);
         expect(db.startId).toEqual(response.body.start.id);
         expect(db.landingId).toEqual(response.body.landing.id);
+      });
+  });
+
+  it('/flights (POST) with custom field values from tandem school', async () => {
+    // given
+    const { tandemPilot, testSchool } = await testInstance.createSchoolData();
+
+    // Create glider for tandem pilot
+    const glider = Testdata.createGlider("Advance", "Bibeta 6", true, tandemPilot.user);
+    await testInstance.gliderRepository.save(glider);
+
+    const places = await testInstance.placeRepository.find();
+    const flightDto = {
+      ...Testdata.createFlightDto(places[0], places[1], glider, '2025-01-02'),
+      tandemSchoolData: {
+        tandemSchool: { id: testSchool.id },
+        schoolCustomValues: [
+          { key: "discount", value: 20 },
+          { key: "flightType", value: "Premium" },
+          { key: "foto", value: true }
+        ]
+      }
+    };
+    const keycloakToken = JwtTestHelper.createKeycloakToken({ sub: tandemPilot.user.id, email: tandemPilot.user.email });
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .post('/flights')
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .send(flightDto)
+      .expect(201)
+      .then(async (response) => {
+        expect(response.body.id).toBeDefined();
+        expect(response.body.tandemSchoolData.schoolCustomValues).toHaveLength(3);
+        expect(response.body.tandemSchoolData.schoolCustomValues).toMatchSnapshot();
+
+        // Verify database persistence
+        const db = await testInstance.flightRepository.findOne({
+          where: { id: response.body.id },
+          relations: ['tandemSchoolData']
+        });
+        expect(db.tandemSchoolData.schoolCustomValues).toHaveLength(3);
+        expect(db.tandemSchoolData.schoolCustomValues).toMatchSnapshot();
+      });
+  });
+
+  it('/flights (POST) with custom field values - missing required field', async () => {
+    // given
+    const { tandemPilot, testSchool } = await testInstance.createSchoolData();
+
+    // Create glider for tandem pilot
+    const glider = Testdata.createGlider("Advance", "Bibeta 6", true, tandemPilot.user);
+    await testInstance.gliderRepository.save(glider);
+
+    const places = await testInstance.placeRepository.find();
+    const flightDto = {
+      ...Testdata.createFlightDto(places[0], places[1], glider, '2025-01-02'),
+      tandemSchoolData: {
+        tandemSchool: { id: testSchool.id },
+        schoolCustomValues: [
+          { key: "discount", value: 20 },
+          { key: "foto", value: true }
+          // Missing required field: flightType
+        ]
+      }
+    };
+    const keycloakToken = JwtTestHelper.createKeycloakToken({ sub: tandemPilot.user.id, email: tandemPilot.user.email });
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .post('/flights')
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .send(flightDto)
+      .expect(400)
+      .then((response) => {
+        expect(response.body.message).toContain("Required custom field 'flightType' is missing");
       });
   });
 

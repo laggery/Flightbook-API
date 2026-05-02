@@ -9,7 +9,7 @@ import { PlaceMapper } from "../src/place/place.mapper";
 import { Glider } from "../src/glider/glider.entity";
 import { plainToClass } from "class-transformer";
 import { GliderDto } from "../src/glider/interface/glider-dto";
-import { Flight } from "../src/flight/flight.entity";
+import { Flight } from "../src/flight/domain/flight.entity";
 import { FlightDto } from "../src/flight/interface/flight-dto";
 import { UserWriteDto } from "../src/user/interface/user-write-dto";
 import { School } from "../src/training/school/domain/school.entity";
@@ -28,6 +28,7 @@ import { AppointmentTypeDto } from "../src/training/appointment/interface/appoin
 import { PassengerConfirmation } from "../src/tandem/passenger-confirmation/passenger-confirmation.entity";
 import { PassengerConfirmationDto } from "../src/tandem/passenger-confirmation/interface/passenger-confirmation-dto";
 import { TandemPilot } from "../src/training/tandem-pilot/tandem-pilot.entity";
+import { CustomFieldType } from "../src/training/school/domain/school-config";
 
 export class Testdata {
     public static EMAIL = "test@user.com";
@@ -119,7 +120,8 @@ export class Testdata {
                 paymentComment: undefined,
                 paymentAmount: undefined,
                 instructor: undefined,
-                paymentTimestamp: undefined
+                paymentTimestamp: undefined,
+                schoolCustomValues: undefined
             };
         }
         return flight;
@@ -224,7 +226,33 @@ export class Testdata {
                 userCanEditControlSheet: true,
             },
             tandemModule: {
-                active: true
+                active: true,
+                flightConfig: {
+                    customFields: [
+                        {
+                            key: "discount",
+                            type: CustomFieldType.NUMBER,
+                            label: "Discount",
+                            disabled: false,
+                            required: false
+                        },
+                        {
+                            key: "flightType",
+                            type: CustomFieldType.DROPDOWN,
+                            label: "Type",
+                            options: ["Classic", "Premium", "Deluxe"],
+                            disabled: false,
+                            required: true
+                        },
+                        {
+                            key: "foto",
+                            type: CustomFieldType.BOOLEAN,
+                            label: "Foto",
+                            disabled: false,
+                            required: false
+                        }
+                    ]
+                }
             }
         };
         return school;

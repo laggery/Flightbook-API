@@ -6,6 +6,7 @@ import {Appointment} from "../../appointment/appointment.entity";
 import { AppointmentType } from "../../appointment/appointment-type.entity";
 import { TandemPilot } from "../../tandem-pilot/tandem-pilot.entity";
 import { SchoolConfig } from "./school-config";
+import { SchoolException } from "../exception/school.exception";
 
 @Entity("school")
 export class School {
@@ -74,10 +75,43 @@ export class School {
     }
 
     if (update.tandemModule) {
-      this.configuration.tandemModule = {
+      // Merge tandemModule with special handling for flightConfig
+      const mergedTandemModule = {
         ...this.configuration.tandemModule,
         ...update.tandemModule
       };
+
+      // Handle flightConfig with immutability rules
+      if (update.tandemModule.flightConfig) {
+        const existingFields = this.configuration.tandemModule?.flightConfig?.customFields || [];
+        const updatedFields = update.tandemModule.flightConfig.customFields || [];
+
+        // Validate immutability: key and type cannot change
+        for (const updatedField of updatedFields) {
+          const existingField = existingFields.find(f => f.key === updatedField.key);
+          if (existingField) {
+            // Field exists - validate immutability
+            if (existingField.type !== updatedField.type) {
+              SchoolException.customFieldTypeImmutableException(updatedField.key);
+            }
+            // Note: key is used for matching, so it can't change by definition
+          }
+        }
+
+        // Check for duplicate keys in the update
+        const keys = updatedFields.map(f => f.key);
+        const duplicates = keys.filter((key, index) => keys.indexOf(key) !== index);
+        if (duplicates.length > 0) {
+          SchoolException.customFieldDuplicateKeysException(duplicates);
+        }
+
+        mergedTandemModule.flightConfig = update.tandemModule.flightConfig;
+      } else if (this.configuration.tandemModule?.flightConfig) {
+        // Preserve existing flightConfig if not provided in update
+        mergedTandemModule.flightConfig = this.configuration.tandemModule.flightConfig;
+      }
+
+      this.configuration.tandemModule = mergedTandemModule;
     }
   }
 }

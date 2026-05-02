@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { User } from "../user/domain/user.entity";
-import { Flight } from "../flight/flight.entity";
+import { Flight } from "../flight/domain/flight.entity";
 
 @Index("idx_16593_primary", ["id"], { unique: true })
 @Index("idx_16396_primary", ["id"], { unique: true })

@@ -7,7 +7,7 @@ import { Student } from '../../training/student/student.entity';
 import { Appointment } from '../../training/appointment/appointment.entity';
 import { Subscription } from '../../training/subscription/subscription.entity';
 import { I18nContext } from 'nestjs-i18n';
-import { Flight } from '../../flight/flight.entity';
+import { Flight } from '../../flight/domain/flight.entity';
 
 export enum NotificationType {
     APPOINTMENT = "APPOINTMENT",

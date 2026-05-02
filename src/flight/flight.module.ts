@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { FlightController } from './flight.controller';
 import { FlightRepository } from './flight.repository';
-import { Flight } from './flight.entity';
+import { Flight } from './domain/flight.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FlightFacade } from './flight.facade';
 import { UserModule } from '../user/user.module';

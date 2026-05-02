@@ -1,6 +1,6 @@
 import { FlightRepository } from './flight.repository';
 import { Repository } from 'typeorm';
-import { Flight } from './flight.entity';
+import { Flight } from './domain/flight.entity';
 
 describe('Flight Repository', () => {
   let flightRepository: FlightRepository;
