@@ -176,6 +176,8 @@ export class FlightFacade {
                 flightDto.tandemSchoolData.schoolCustomValues,
                 flight.tandemSchoolData.tandemSchool
             );
+            // Assign validated custom values to flight
+            flight.tandemSchoolData.schoolCustomValues = flightDto.tandemSchoolData.schoolCustomValues;
         }
 
         const flightResp: Flight = await this.flightRepository.save(flight);
