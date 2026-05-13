@@ -1,7 +1,7 @@
 import { Student } from "../../training/student/student.entity";
 import { TeamMember } from "../../training/team-member/team-member.entity";
 import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Flight } from "../../flight/flight.entity";
+import { Flight } from "../../flight/domain/flight.entity";
 import { Glider } from "../../glider/glider.entity";
 import { Place } from "../../place/place.entity";
 import { LoginType } from "../login-type";

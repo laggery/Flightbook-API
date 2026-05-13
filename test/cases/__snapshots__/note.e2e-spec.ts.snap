@@ -37,6 +37,36 @@ exports[`instructor note (e2e) /instructor/students/:id/notes (POST) 1`] = `
         },
         "tandemModule": {
           "active": true,
+          "flightConfig": {
+            "customFields": [
+              {
+                "disabled": false,
+                "key": "discount",
+                "label": "Discount",
+                "required": false,
+                "type": "number",
+              },
+              {
+                "disabled": false,
+                "key": "flightType",
+                "label": "Type",
+                "options": [
+                  "Classic",
+                  "Premium",
+                  "Deluxe",
+                ],
+                "required": true,
+                "type": "dropdown",
+              },
+              {
+                "disabled": false,
+                "key": "foto",
+                "label": "Foto",
+                "required": false,
+                "type": "boolean",
+              },
+            ],
+          },
         },
       },
       "email": "school@example.com",
@@ -93,6 +123,36 @@ exports[`instructor note (e2e) /instructor/students/:id/notes (PUT) 1`] = `
         },
         "tandemModule": {
           "active": true,
+          "flightConfig": {
+            "customFields": [
+              {
+                "disabled": false,
+                "key": "discount",
+                "label": "Discount",
+                "required": false,
+                "type": "number",
+              },
+              {
+                "disabled": false,
+                "key": "flightType",
+                "label": "Type",
+                "options": [
+                  "Classic",
+                  "Premium",
+                  "Deluxe",
+                ],
+                "required": true,
+                "type": "dropdown",
+              },
+              {
+                "disabled": false,
+                "key": "foto",
+                "label": "Foto",
+                "required": false,
+                "type": "boolean",
+              },
+            ],
+          },
         },
       },
       "email": "school@example.com",

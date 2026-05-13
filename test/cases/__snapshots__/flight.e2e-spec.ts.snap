@@ -37,6 +37,7 @@ exports[`Flights (e2e) /flights (POST) 1`] = `
     "paymentComment": null,
     "paymentState": null,
     "paymentTimestamp": null,
+    "schoolCustomValues": null,
   },
   "time": "01:30",
   "validation": {
@@ -60,6 +61,7 @@ exports[`Flights (e2e) /flights (POST) 2`] = `
     "paymentComment": null,
     "paymentState": null,
     "paymentTimestamp": null,
+    "schoolCustomValues": null,
   },
   "time": "01:30:00",
   "timestamp": {},
@@ -70,6 +72,40 @@ exports[`Flights (e2e) /flights (POST) 2`] = `
     "timestamp": null,
   },
 }
+`;
+
+exports[`Flights (e2e) /flights (POST) with custom field values from tandem school 1`] = `
+[
+  {
+    "key": "discount",
+    "value": 20,
+  },
+  {
+    "key": "flightType",
+    "value": "Premium",
+  },
+  {
+    "key": "foto",
+    "value": true,
+  },
+]
+`;
+
+exports[`Flights (e2e) /flights (POST) with custom field values from tandem school 2`] = `
+[
+  {
+    "key": "discount",
+    "value": 20,
+  },
+  {
+    "key": "flightType",
+    "value": "Premium",
+  },
+  {
+    "key": "foto",
+    "value": true,
+  },
+]
 `;
 
 exports[`Flights (e2e) /flights (PUT) 1`] = `
@@ -108,6 +144,7 @@ exports[`Flights (e2e) /flights (PUT) 1`] = `
     "paymentComment": null,
     "paymentState": null,
     "paymentTimestamp": null,
+    "schoolCustomValues": null,
   },
   "time": "02:15",
   "validation": {
@@ -131,6 +168,7 @@ exports[`Flights (e2e) /flights (PUT) 2`] = `
     "paymentComment": null,
     "paymentState": null,
     "paymentTimestamp": null,
+    "schoolCustomValues": null,
   },
   "time": "02:15:00",
   "timestamp": {},
@@ -183,6 +221,7 @@ exports[`Flights (e2e) /flights/:id (GET) 1`] = `
     "paymentComment": null,
     "paymentState": null,
     "paymentTimestamp": null,
+    "schoolCustomValues": null,
     "tandemSchool": null,
   },
   "time": "01:30:00",
@@ -250,6 +289,7 @@ exports[`Instructor Flight Validation (e2e) /instructor/schools/:school_id/stude
     "paymentComment": null,
     "paymentState": null,
     "paymentTimestamp": null,
+    "schoolCustomValues": null,
     "tandemSchool": null,
   },
   "time": "01:30:00",
@@ -275,6 +315,36 @@ exports[`Instructor Flight Validation (e2e) /instructor/schools/:school_id/stude
         },
         "tandemModule": {
           "active": true,
+          "flightConfig": {
+            "customFields": [
+              {
+                "disabled": false,
+                "key": "discount",
+                "label": "Discount",
+                "required": false,
+                "type": "number",
+              },
+              {
+                "disabled": false,
+                "key": "flightType",
+                "label": "Type",
+                "options": [
+                  "Classic",
+                  "Premium",
+                  "Deluxe",
+                ],
+                "required": true,
+                "type": "dropdown",
+              },
+              {
+                "disabled": false,
+                "key": "foto",
+                "label": "Foto",
+                "required": false,
+                "type": "boolean",
+              },
+            ],
+          },
         },
       },
       "email": "school@example.com",

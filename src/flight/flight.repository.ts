@@ -1,5 +1,5 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { Flight } from './flight.entity';
+import { Flight } from './domain/flight.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { FlightStatisticDto } from './interface/flight-statistic-dto';
@@ -10,8 +10,8 @@ import { FlightValidation } from './flight-validation.entity';
 import { FlightValidationState } from './flight-validation-state';
 import { User } from '../user/domain/user.entity';
 import { School } from '../training/school/domain/school.entity';
-import { TandemSchoolData } from './tandem-school-data.entity';
-import { TandemSchoolPaymentState } from './tandem-school-payment-state';
+import { TandemSchoolData } from './domain/tandem-school-data.entity';
+import { TandemSchoolPaymentState } from './domain/tandem-school-payment-state';
 
 @Injectable()
 export class FlightRepository extends Repository<Flight> {
@@ -73,6 +73,8 @@ export class FlightRepository extends Repository<Flight> {
                                 data.tandemSchoolData.paymentTimestamp = raw[key] as unknown as Date;
                             } else if (name === 'payment_amount') {
                                 data.tandemSchoolData.paymentAmount = raw[key] as unknown as number;
+                            } else if (name === 'custom_values') {
+                                data.tandemSchoolData.schoolCustomValues = raw[key] as unknown as any[];
                             }
                         }
                     } else {

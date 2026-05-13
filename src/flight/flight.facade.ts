@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { FlightRepository } from './flight.repository';
 import { UserRepository } from '../user/user.repository';
 import { FlightDto } from './interface/flight-dto';
-import { Flight } from './flight.entity';
+import { Flight } from './domain/flight.entity';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { User } from '../user/domain/user.entity';
 import { PlaceFacade } from '../place/place.facade';
@@ -23,8 +23,8 @@ import { FlightValidationDto } from './interface/flight-validation-dto';
 import { FlightValidationState } from './flight-validation-state';
 import { NotificationsService } from '../shared/services/notifications.service';
 import { SchoolRepository } from '../training/school/school.repository';
-import { TandemSchoolPaymentState } from './tandem-school-payment-state';
-import { TandemSchoolData } from './tandem-school-data.entity';
+import { TandemSchoolPaymentState } from './domain/tandem-school-payment-state';
+import { TandemSchoolData } from './domain/tandem-school-data.entity';
 import { TandemSchoolDataDto } from './interface/tandem-school-data-dto';
 
 @Injectable()
@@ -106,8 +106,24 @@ export class FlightFacade {
         flight.user = user;
         flight.validation = null;
 
+        // Validate schoolCustomValues if provided
+        if (flightDto.tandemSchoolData?.schoolCustomValues && flightDto.tandemSchoolData.schoolCustomValues.length > 0) {
+            if (!flightDto.tandemSchoolData?.tandemSchool?.id) {
+                FlightException.customValuesWithoutSchoolException();
+            }
+        }
+
         if (flightDto.tandemSchoolData?.tandemSchool) {
             flight.tandemSchoolData.tandemSchool = await this.schoolRepository.getSchoolById(flightDto.tandemSchoolData.tandemSchool.id);
+            
+            // Validate custom values against school configuration
+            if (flightDto.tandemSchoolData?.schoolCustomValues) {
+                this.validateCustomValues(
+                    flightDto.tandemSchoolData.schoolCustomValues,
+                    flight.tandemSchoolData.tandemSchool
+                );
+            }
+            
             // In Case of duplicate flight, the payment data is not duplicated
             flight.tandemSchoolData.paymentComment = null;
             flight.tandemSchoolData.paymentState = null;
@@ -143,9 +159,25 @@ export class FlightFacade {
             flight.validation.state = null;
         }
 
+        // Validate schoolCustomValues if provided
+        if (flightDto.tandemSchoolData?.schoolCustomValues && flightDto.tandemSchoolData.schoolCustomValues.length > 0) {
+            if (!flightDto.tandemSchoolData?.tandemSchool?.id && !flight.tandemSchoolData?.tandemSchool?.id) {
+                FlightException.customValuesWithoutSchoolException();
+            }
+        }
 
         if (flightDto.tandemSchoolData?.tandemSchool) {
             flight.tandemSchoolData.tandemSchool = await this.schoolRepository.getSchoolById(flightDto.tandemSchoolData.tandemSchool.id);
+        }
+
+        // Validate custom values against school configuration
+        if (flightDto.tandemSchoolData?.schoolCustomValues && flight.tandemSchoolData?.tandemSchool) {
+            this.validateCustomValues(
+                flightDto.tandemSchoolData.schoolCustomValues,
+                flight.tandemSchoolData.tandemSchool
+            );
+            // Assign validated custom values to flight
+            flight.tandemSchoolData.schoolCustomValues = flightDto.tandemSchoolData.schoolCustomValues;
         }
 
         const flightResp: Flight = await this.flightRepository.save(flight);
@@ -294,6 +326,8 @@ export class FlightFacade {
         tandemSchoolData.paymentState = tandemSchoolDataDto.paymentState;
         tandemSchoolData.paymentComment = tandemSchoolDataDto?.paymentComment == '' ? null : tandemSchoolDataDto.paymentComment;
         tandemSchoolData.paymentAmount = tandemSchoolDataDto?.paymentAmount == undefined ? null : tandemSchoolDataDto.paymentAmount;
+        // Preserve existing schoolCustomValues - school endpoint cannot modify custom values
+        tandemSchoolData.schoolCustomValues = flight.tandemSchoolData?.schoolCustomValues || null;
         flight.tandemSchoolData = tandemSchoolData;
 
         const flightResp: Flight = await this.flightRepository.save(flight);
@@ -301,6 +335,81 @@ export class FlightFacade {
             this.notificationsService.sendFlightPaymentRejected(flightResp);
         }
         return plainToClass(FlightDto, flightResp);
+    }
+
+    private validateCustomValues(customValues: any[], school: School): void {
+        const flightConfig = school.configuration?.tandemModule?.flightConfig;
+        
+        if (!flightConfig || !flightConfig.customFields || flightConfig.customFields.length === 0) {
+            // School has no custom fields configured, reject any custom values
+            if (customValues && customValues.length > 0) {
+                FlightException.invalidCustomFieldKeyException(customValues[0].key);
+            }
+            return;
+        }
+
+        const fieldDefinitions = flightConfig.customFields;
+        const activeFields = fieldDefinitions.filter(f => !f.disabled);
+        
+        // Check all provided values have valid keys
+        for (const customValue of customValues) {
+            const fieldDef = fieldDefinitions.find(f => f.key === customValue.key);
+            
+            if (!fieldDef) {
+                FlightException.invalidCustomFieldKeyException(customValue.key);
+            }
+            
+            // Only validate active fields
+            if (!fieldDef.disabled) {
+                // Type validation
+                this.validateCustomValueType(customValue, fieldDef);
+                
+                // Dropdown options validation
+                if (fieldDef.type === 'dropdown' && fieldDef.options) {
+                    if (!fieldDef.options.includes(customValue.value)) {
+                        FlightException.invalidDropdownValueException(customValue.key, customValue.value, fieldDef.options);
+                    }
+                }
+            }
+        }
+        
+        // Check all required active fields are provided
+        const providedKeys = customValues.map(cv => cv.key);
+        for (const fieldDef of activeFields) {
+            if (fieldDef.required && !providedKeys.includes(fieldDef.key)) {
+                FlightException.requiredCustomFieldMissingException(fieldDef.key);
+            }
+        }
+    }
+
+    private validateCustomValueType(customValue: any, fieldDef: any): void {
+        const value = customValue.value;
+        const type = fieldDef.type;
+        
+        switch (type) {
+            case 'text':
+            case 'dropdown':
+                if (typeof value !== 'string') {
+                    FlightException.invalidCustomFieldTypeException(fieldDef.key, type, value);
+                }
+                break;
+            case 'number':
+                if (typeof value !== 'number') {
+                    FlightException.invalidCustomFieldTypeException(fieldDef.key, type, value);
+                }
+                break;
+            case 'boolean':
+                if (typeof value !== 'boolean') {
+                    FlightException.invalidCustomFieldTypeException(fieldDef.key, type, value);
+                }
+                break;
+            case 'date':
+                // Accept string dates (ISO format)
+                if (typeof value !== 'string' || isNaN(Date.parse(value))) {
+                    FlightException.invalidCustomFieldTypeException(fieldDef.key, type, value);
+                }
+                break;
+        }
     }
 
 }

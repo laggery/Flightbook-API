@@ -7,7 +7,8 @@ import { plainToClass } from 'class-transformer';
 import { removeIds } from '../utils/snapshot-utils';
 import { EnrollmentWriteDto } from '../../src/training/enrollment/interface/enrollment-write-dto';
 import { EnrollmentType } from '../../src/training/enrollment/enrollment-type';
-import { TandemSchoolPaymentState } from '../../src/flight/tandem-school-payment-state';
+import { TandemSchoolPaymentState } from '../../src/flight/domain/tandem-school-payment-state';
+import { CustomFieldType } from '../../src/training/school/domain/school-config';
 
 describe('Schools (e2e)', () => {
   const testInstance = new BaseE2ETest();
@@ -64,7 +65,33 @@ describe('Schools (e2e)', () => {
         userCanEditControlSheet: true,
       },
       tandemModule: {
-        active: true
+        active: true,
+        flightConfig: {
+          customFields: [
+            {
+              key: "discount",
+              type: CustomFieldType.NUMBER,
+              label: "Discount",
+              disabled: false,
+              required: false
+            },
+            {
+              key: "flightType",
+              type: CustomFieldType.DROPDOWN,
+              label: "Type",
+              options: ["Classic", "Premium", "Deluxe"],
+              disabled: false,
+              required: true
+            },
+            {
+              key: "foto",
+              type: CustomFieldType.BOOLEAN,
+              label: "Foto",
+              disabled: false,
+              required: false
+            }
+          ]
+        }
       }
     });
 
@@ -75,7 +102,33 @@ describe('Schools (e2e)', () => {
         userCanEditControlSheet: false,
       },
       tandemModule: {
-        active: false
+        active: false,
+        flightConfig: {
+          customFields: [
+            {
+              key: "discount",
+              type: CustomFieldType.NUMBER,
+              label: "Discount 2",
+              disabled: true,
+              required: false
+            },
+            {
+              key: "flightType",
+              type: CustomFieldType.DROPDOWN,
+              label: "Type 2",
+              options: ["Classic", "Premium", "Deluxe"],
+              disabled: true,
+              required: true
+            },
+            {
+              key: "foto",
+              type: CustomFieldType.BOOLEAN,
+              label: "Foto 2",
+              disabled: true,
+              required: false
+            }
+          ]
+        }
       }
     };
 
@@ -87,6 +140,92 @@ describe('Schools (e2e)', () => {
       .expect(200)
       .then(async (response) => {
         await assertSchool(testInstance, response.body, plainToClass(SchoolDto, school));
+      });
+  });
+
+  it('/schools/configuration (PUT) with custom fields - all field types', async () => {
+    // given
+    const school = Testdata.createSchool("School 1");
+    await testInstance.schoolRepository.save(school);
+    const teamMember = Testdata.createTeamMember(school, await testInstance.getDefaultUser(), true);
+    await testInstance.teamMemberRepository.save(teamMember);
+    const keycloakToken = JwtTestHelper.createKeycloakToken();
+
+    const configWithCustomFields = {
+      schoolModule: {
+        active: true,
+        validateFlights: true,
+        userCanEditControlSheet: true,
+      },
+      tandemModule: {
+        active: true,
+        flightConfig: {
+          customFields: [
+            {
+              key: "discount",
+              type: "number",
+              label: "Discount",
+              disabled: false,
+              required: false
+            },
+            {
+              key: "flightType",
+              type: "dropdown",
+              label: "Type",
+              options: [
+                "Classic",
+                "Premium",
+                "Deluxe"
+              ],
+              disabled: false,
+              required: true
+            },
+            {
+              key: "foto",
+              type: "boolean",
+              label: "Foto",
+              disabled: false,
+              required: false
+            },
+            {
+              key: "additionalInformation",
+              type: "text",
+              label: "Additional Information",
+              disabled: false,
+              required: true
+            },
+            {
+              key: "flightDate",
+              type: "date",
+              label: "Flight Date",
+              disabled: false,
+              required: false
+            }
+          ]
+        }
+      }
+    };
+
+    //when
+    return request(testInstance.app.getHttpServer())
+      .put(`/schools/${school.id}/configuration`)
+      .set('Authorization', `Bearer ${keycloakToken}`)
+      .send(configWithCustomFields)
+      .expect(200)
+      .then(async (response) => {
+        // Verify response contains custom fields
+        expect(response.body.configuration.tandemModule.flightConfig).toBeDefined();
+        expect(response.body.configuration.tandemModule.flightConfig.customFields).toHaveLength(5);
+
+        // Snapshot test for all custom fields
+        expect(response.body.configuration.tandemModule.flightConfig.customFields).toMatchSnapshot();
+
+        // Verify database persistence
+        const dbSchool = await testInstance.schoolRepository.findOne({
+          where: { id: school.id }
+        });
+        expect(dbSchool.configuration.tandemModule.flightConfig.customFields).toHaveLength(5);
+        expect(dbSchool.configuration.tandemModule.flightConfig.customFields).toMatchSnapshot();
       });
   });
 
@@ -306,7 +445,7 @@ describe('Schools (e2e)', () => {
     //when
     return request(testInstance.app.getHttpServer())
       .get('/schools/google-calendar/callback')
-      .query({ 
+      .query({
         error: 'access_denied',
         state: JSON.stringify({ schoolId: 1 })
       })

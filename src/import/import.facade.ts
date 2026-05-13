@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { parse } from 'csv-parse';
-import { Flight } from '../flight/flight.entity';
+import { Flight } from '../flight/domain/flight.entity';
 import { Glider } from '../glider/glider.entity';
 import { GliderRepository } from '../glider/glider.repository';
 import { Place } from '../place/place.entity';

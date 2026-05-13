@@ -1,7 +1,8 @@
 import { Column, JoinColumn, ManyToOne } from "typeorm";
-import { User } from "../user/domain/user.entity";
-import { School } from "../training/school/domain/school.entity";
+import { User } from "../../user/domain/user.entity";
+import { School } from "../../training/school/domain/school.entity";
 import { TandemSchoolPaymentState } from "./tandem-school-payment-state";
+import { CustomValue } from "./custom-value";
 
 /**
  * Tandem school data value object
@@ -27,4 +28,7 @@ export class TandemSchoolData {
 
   @Column("timestamp with time zone", { name: "tandem_school_payment_timestamp", nullable: true })
   paymentTimestamp: Date | null;
+
+  @Column("jsonb", { name: "tandem_school_custom_values", nullable: true })
+  schoolCustomValues: CustomValue[] | null;
 }

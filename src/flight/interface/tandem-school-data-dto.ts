@@ -2,7 +2,8 @@ import { ApiPropertyOptional } from "@nestjs/swagger";
 import { Expose, Type } from "class-transformer";
 import { UserReadDto } from "../../user/interface/user-read-dto";
 import { SchoolDto } from "../../training/school/interface/school-dto";
-import { TandemSchoolPaymentState } from "../tandem-school-payment-state";
+import { TandemSchoolPaymentState } from "../domain/tandem-school-payment-state";
+import { CustomValueDto } from "./custom-value-dto";
 
 /**
  * Tandem school data DTO
@@ -34,4 +35,9 @@ export class TandemSchoolDataDto {
   @ApiPropertyOptional()
   @Expose()
   readonly paymentTimestamp: Date | null;
+
+  @ApiPropertyOptional({ type: [CustomValueDto] })
+  @Expose()
+  @Type(() => CustomValueDto)
+  readonly schoolCustomValues: CustomValueDto[] | null;
 }

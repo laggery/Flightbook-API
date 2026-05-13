@@ -10,7 +10,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { User } from "../user/domain/user.entity";
-import { Flight } from "../flight/flight.entity";
+import { Flight } from "../flight/domain/flight.entity";
 
 @Exclude()
 @Index("idx_16406_primary", ["id"], { unique: true })

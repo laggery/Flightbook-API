@@ -3,7 +3,7 @@ import { AltitudeFlight } from "../../src/training/control-sheet/altitude-flight
 import { Theory } from "../../src/training/control-sheet/theory.entity";
 import { TrainingHill } from "../../src/training/control-sheet/training-hill.entity";
 import { GuestSubscription } from "../../src/training/subscription/guest-subscription.entity";
-import { Flight } from "../../src/flight/flight.entity";
+import { Flight } from "../../src/flight/domain/flight.entity";
 import { Glider } from "../../src/glider/glider.entity";
 import { News } from "../../src/news/news.entity";
 import { Place } from "../../src/place/place.entity";

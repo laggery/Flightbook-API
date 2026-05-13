@@ -13,7 +13,7 @@ import { Appointment } from './appointment.entity';
 import { AppointmentFacade } from './appointment.facade';
 import { AppointmentRepository } from './appointment.repository';
 import { FlightRepository } from '../../flight/flight.repository';
-import { Flight } from '../../flight/flight.entity';
+import { Flight } from '../../flight/domain/flight.entity';
 
 @Module({
   imports: [
