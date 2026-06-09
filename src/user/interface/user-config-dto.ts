@@ -15,6 +15,7 @@ export class LinkDto {
 
 @Expose()
 export class PreparationDto {
+  // @TODO -> Contract: Remove shvLinkDisabled when mobile app is published and add database migration.
   @ApiPropertyOptional()
   shvLinkDisabled?: boolean;
 

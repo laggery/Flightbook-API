@@ -166,11 +166,15 @@ export class FlightFacade {
             }
         }
 
+        // Handle tandemSchool update or removal
         if (flightDto.tandemSchoolData?.tandemSchool) {
             flight.tandemSchoolData.tandemSchool = await this.schoolRepository.getSchoolById(flightDto.tandemSchoolData.tandemSchool.id);
+        } else if (flightDto.tandemSchoolData && flightDto.tandemSchoolData.tandemSchool === null) {
+            // Explicitly clear tandemSchool when set to null
+            flight.tandemSchoolData.tandemSchool = null;
         }
 
-        // Validate custom values against school configuration
+        // Handle schoolCustomValues update or removal
         if (flightDto.tandemSchoolData?.schoolCustomValues && flight.tandemSchoolData?.tandemSchool) {
             this.validateCustomValues(
                 flightDto.tandemSchoolData.schoolCustomValues,
@@ -178,6 +182,9 @@ export class FlightFacade {
             );
             // Assign validated custom values to flight
             flight.tandemSchoolData.schoolCustomValues = flightDto.tandemSchoolData.schoolCustomValues;
+        } else if (flightDto.tandemSchoolData && Array.isArray(flightDto.tandemSchoolData.schoolCustomValues) && flightDto.tandemSchoolData.schoolCustomValues.length === 0) {
+            // Explicitly clear schoolCustomValues when set to empty array
+            flight.tandemSchoolData.schoolCustomValues = [];
         }
 
         const flightResp: Flight = await this.flightRepository.save(flight);
